@@ -23,11 +23,11 @@ export class DataService {
   public role;
   public users;
   
-  private httpOptions = {
+  public httpOptions = {
     headers: new HttpHeaders({'Content-Type': 'application/json'})
   };
   
-  private authOptions;
+  public authOptions;
   
   constructor(private http: HttpClient, private router: Router) { }
   
@@ -60,10 +60,12 @@ export class DataService {
   {
     this.http.post('http://127.0.0.1:8000/scrum/api-token-auth/', JSON.stringify({'username': this.login_username, 'password': this.login_password}), this.httpOptions).subscribe(
         data => {
+            sessionStorage.setItem('username', this.login_username);
+            sessionStorage.setItem('role', data['role']);
+            sessionStorage.setItem('token', data['token']);
             this.username = this.login_username;
             this.role = data['role'];
-            this.users = data['data'];
-            this.message = data['message'];
+            this.message = 'Welcome';
             this.router.navigate(['profile']);
             this.login_username = '';
             this.login_password = '';
@@ -115,6 +117,9 @@ export class DataService {
     this.users = [];
     this.router.navigate(['login']);
     this.authOptions = {};
+    sessionStorage.removeItem('username');
+    sessionStorage.removeItem('role');
+    sessionStorage.removeItem('token');
   }
   
   moveGoal(goal_id, to_id)
@@ -141,7 +146,7 @@ export class DataService {
   
   changeOwner(from_id, to_id)
   {
-    this.http.put('http://127.0.0.1:8000/scrum/api/scrumgoals/', JSON.stringify({'from_id': from_id, 'to_id': to_id }), this.authOptions).subscribe(
+    this.http.put('http://127.0.0.1:8000/scrum/api/scrumgoals/', JSON.stringify({'mode': 0, 'from_id': from_id, 'to_id': to_id }), this.authOptions).subscribe(
         data => {
             this.users = data['data'];
             this.message = data['message'];
