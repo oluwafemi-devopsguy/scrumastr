@@ -7,6 +7,8 @@
     <input type="submit" value="Add Task">
 </form>
 <h3>{{dataservice.message}}</h3>
+<input type="checkbox" id="ourcheck" [checked]="show_zero" (click)="swapState()">
+<label for="ourcheck">Show Users With No Assigned Tasks</label> 
 <style>
     .full-box {
         display: table-cell;
@@ -46,8 +48,8 @@
         <th class="full-box">Remove</th>
     </div>
     <ng-container *ngFor="let user of dataservice.users">
-        <div *ngIf="user.scrumgoal_set.length == 0" style="display: table-row;" dragula="mainTable" [attr.id]="'u' + user.id">
-            <td class="full-box" id="author" colspan="6">{{user.nickname}} - NO TASKS FOR THIS USER</td>
+        <div *ngIf="user.scrumgoal_set.length == 0 && show_zero" style="display: table-row;" dragula="mainTable" [attr.id]="'u' + user.id">
+            <td class="full-box" id="author" colspan="6">{{user.nickname}} - NO TASKS ASSIGNED</td>
         </div>
         <div style="display: table-row" *ngFor="let goal of user.scrumgoal_set; let j = index; let k = count" dragula="mainTable" [attr.id] = "goal.id">
             <td *ngIf="j == 0" [attr.rowspan]="k" class="full-box" id="author">{{user.nickname}}</td>

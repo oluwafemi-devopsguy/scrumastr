@@ -12,6 +12,7 @@ export class ProfileComponent implements OnInit {
 
   public arrCount = [0, 1, 2, 3];
   subs = new Subscription();
+  public show_zero: boolean = false;
   
   constructor(private dataservice: DataService, private dragula: DragulaService, private http: HttpClient) { 
     this.dragula.createGroup('mainTable', {
@@ -77,7 +78,12 @@ export class ProfileComponent implements OnInit {
         }
     );
   }
-
+  
+  swapState()
+  {
+    this.show_zero = !this.show_zero;  
+  }
+  
   editGoal(event)
   {
     console.log(event); 
