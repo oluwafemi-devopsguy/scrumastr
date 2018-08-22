@@ -65,7 +65,7 @@ export class DataService {
             sessionStorage.setItem('token', data['token']);
             this.username = this.login_username;
             this.role = data['role'];
-            this.message = 'Welcome';
+            this.message = 'Welcome!';
             this.router.navigate(['profile']);
             this.login_username = '';
             this.login_password = '';
