@@ -225,11 +225,16 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             elif group == 'Quality Analyst':
                 from_allowed = [2, 3]
                 to_allowed = [2, 3]
-                
+            
             if (goal_item.status in from_allowed) and (to_id in to_allowed):
                 goal_item.status = to_id
             elif group == 'Quality Analyst' and goal_item.status == 2 and to_id == 0:
                 goal_item.status = to_id
+            elif request.user == goal_item.user.user:
+                if goal_item.status == 1 and to_id == 0:
+                    goal_item.status = to_id
+                elif goal_item.status == 0 and to_id == 1:
+                    goal_item.status = to_id
             else:
                 return JsonResponse({'message': 'Permission Denied: Unauthorized Movement of Goal.', 'data': filtered_users()})
             
