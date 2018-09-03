@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 class ScrumProject(models.Model):
     name = models.CharField(max_length=30)
-    
+    project_count = models.IntegerField(default=0)
     def __str__(self):
         return self.name
     
@@ -15,7 +15,6 @@ class ScrumProject(models.Model):
 class ScrumUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     nickname = models.CharField(max_length=50)
-    age = models.IntegerField(default=0)
     projects = models.ManyToManyField(ScrumProject)
     
     def __str__(self):
@@ -30,6 +29,7 @@ class ScrumGoal(models.Model):
     name = models.CharField(max_length=140)
     project = models.ForeignKey(ScrumProject, on_delete=models.CASCADE)
     status = models.IntegerField(default=-1)
+    goal_project_id = models.IntegerField(default=0)
     
     '''
     0 = Weekly Goal

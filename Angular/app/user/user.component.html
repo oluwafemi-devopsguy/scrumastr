@@ -1,23 +1,14 @@
 <h3>{{dataservice.message}}</h3>
 <h2><u>Create User</u></h2>
 <form (ngSubmit)="createUser()">
-    <label for="username">Username: </label>
-    <input type="text" id="username" [(ngModel)]="dataservice.createuser_username" name="username">
-    <br>
     <label for="email">Email: </label>
     <input type="text" id="email" [(ngModel)]="dataservice.createuser_email" name="email">
     <br>
     <label for="password">Password: </label>
     <input type="password" id="password" [(ngModel)]="dataservice.createuser_password" name="password">
     <br>
-    <label for="rtpassword">Retype Password: </label>
-    <input type="password" id="rtpassword" [(ngModel)]="dataservice.createuser_rtpassword" name="rtpassword">
-    <br>
     <label for="full_name">Full Name: </label>
     <input type="text" id="full_name" [(ngModel)]="dataservice.createuser_fullname" name="full_name">
-    <br>
-    <label for="age">Age: </label>
-    <input type="text" id="age" [(ngModel)]="dataservice.createuser_age" name="age">
     <br>
     <br>
     <label for="usertype"><u>User Type</u></label>

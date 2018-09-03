@@ -13,12 +13,9 @@ export class DataService {
   public login_password;
   public login_project;
   
-  public createuser_username;
   public createuser_email;
   public createuser_password;
-  public createuser_rtpassword;
   public createuser_fullname;
-  public createuser_age;
   public createuser_usertype = "User";
   public createuser_projname;
   
@@ -38,27 +35,21 @@ export class DataService {
   
   createUser()
   {
-    this.http.post('http://127.0.0.1:8000/scrum/api/scrumusers/', JSON.stringify({'username': this.createuser_username, 'email': this.createuser_email,'password': this.createuser_password, 'rtpassword': this.createuser_rtpassword, 'full_name': this.createuser_fullname, 'age': this.createuser_age, 'usertype': this.createuser_usertype, 'projname': this.createuser_projname}), this.httpOptions).subscribe(
+    this.http.post('http://127.0.0.1:8000/scrum/api/scrumusers/', JSON.stringify({'email': this.createuser_email, 'password': this.createuser_password, 'full_name': this.createuser_fullname, 'usertype': this.createuser_usertype, 'projname': this.createuser_projname}), this.httpOptions).subscribe(
         data => {
             this.message = data['message'];
-            this.createuser_username = '';
             this.createuser_email = '';
             this.createuser_password = '';
-            this.createuser_rtpassword = '';
             this.createuser_fullname = '';
-            this.createuser_age = '';
             this.createuser_usertype = '';
             this.createuser_projname = '';
         },
         err => {
             this.message = 'User Creation Failed! Unexpected Error!';
             console.error(err);
-            this.createuser_username = '';
             this.createuser_email = '';
             this.createuser_password = '';
-            this.createuser_rtpassword = '';
             this.createuser_fullname = '';
-            this.createuser_age = '';
             this.createuser_usertype = '';
             this.createuser_projname = '';
         }

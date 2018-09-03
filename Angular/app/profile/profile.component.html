@@ -54,7 +54,7 @@
         </div>
         <div style="display: table-row" *ngFor="let goal of user.scrumgoal_set; let j = index; let k = count" dragula="mainTable" [attr.id] = "goal.id">
             <td *ngIf="j == 0" [attr.rowspan]="k" class="full-box" id="author">{{user.nickname}}</td>
-            <div *ngFor="let arrItem of arrCount" [ngClass]="j == 0 ? 'top-box' : 'reg-box'" [innerText]="goal.status == arrItem ? goal.id + ') ' + goal.name : '-'" [attr.id]="goal.status == arrItem ? arrItem : 'blank'" (click)="goal.status == arrItem ? editGoal($event) : doNothing()"></div>
+            <div *ngFor="let arrItem of arrCount" [ngClass]="j == 0 ? 'top-box' : 'reg-box'" [innerText]="goal.status == arrItem ? goal.goal_project_id + ') ' + goal.name : '-'" [attr.id]="goal.status == arrItem ? arrItem : 'blank'" (click)="goal.status == arrItem ? editGoal($event) : doNothing()"></div>
             <div [ngClass]="j == 0 ? 'top-box' : 'reg-box'" id="remove">-</div>
         </div>
     </ng-container>

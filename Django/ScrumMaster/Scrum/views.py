@@ -151,28 +151,28 @@ class ScrumUserViewSet(viewsets.ModelViewSet):
     
     def create(self, request):
         password = request.data['password']
-        rtpassword = request.data['rtpassword']
-        if password != rtpassword:
-            return JsonResponse({'message': 'Error: Passwords Do Not Match.'})
-        user, created = User.objects.get_or_create(username=request.data['username'], email=request.data['email'])
+        
+        if request.data['usertype'] == 'Owner' and ScrumProject.objects.filter(name=request.data['projname']).count() > 0:
+            return JsonResponse({'message': 'Error: That project name is already taken.'})
+        user, created = User.objects.get_or_create(username=request.data['email'], email=request.data['email'])
         if created:
             if request.data['usertype'] == 'Owner':
                 Group.objects.get(name='Owner').user_set.add(user)
                 scrum_project = ScrumProject(name=request.data['projname'])
                 scrum_project.save()
-                scrum_user = ScrumUser(user=user, nickname=request.data['full_name'], age=request.data['age'])
+                scrum_user = ScrumUser(user=user, nickname=request.data['full_name'])
                 scrum_user.save()
                 scrum_user.projects.add(scrum_project)
                 scrum_user.save()
             else:
                 Group.objects.get(name='Developer').user_set.add(user)
-                scrum_user = ScrumUser(user=user, nickname=request.data['full_name'], age=request.data['age'])
+                scrum_user = ScrumUser(user=user, nickname=request.data['full_name'])
                 scrum_user.save()
             user.set_password(password)
             user.save()
             return JsonResponse({'message': 'User Created Successfully.'})
         else:
-            return JsonResponse({'message': 'Error: Username Already Exists.'})
+            return JsonResponse({'message': 'Error: User with that e-mail already exists.'})
             
 def filtered_users(project_id):
     project = ScrumProjectSerializer(ScrumProject.objects.get(id=project_id)).data
@@ -192,7 +192,8 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
     
     def create(self, request):
-        request.user.scrumuser.projects.add(ScrumProject.objects.get(id=request.data['project_id']))
+        scrum_project = ScrumProject.objects.get(id=request.data['project_id'])
+        request.user.scrumuser.projects.add(scrum_project)
         name_goal = request.data['name']
         group_name = request.user.groups.all()[0].name
         status_start = 0
@@ -200,7 +201,9 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             status_start = 1
         elif group_name == 'Quality Analyst':
             status_start = 2
-        goal = ScrumGoal(user=request.user.scrumuser, name=name_goal, project=ScrumProject.objects.get(id=request.data['project_id']), status=status_start)
+        scrum_project.project_count = scrum_project.project_count + 1
+        scrum_project.save()
+        goal = ScrumGoal(user=request.user.scrumuser, name=name_goal, project=scrum_project, status=status_start, goal_project_id=scrum_project.project_count)
         goal.save()
         return JsonResponse({'message': 'Goal Added!', 'data': filtered_users(request.data['project_id'])})
             
