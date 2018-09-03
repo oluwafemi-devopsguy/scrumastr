@@ -14,7 +14,7 @@ export class ProfileComponent implements OnInit {
   subs = new Subscription();
   public show_zero: boolean = false;
   
-  constructor(private dataservice: DataService, private dragula: DragulaService, private http: HttpClient) { 
+  constructor(public dataservice: DataService, private dragula: DragulaService, private http: HttpClient) { 
     this.dragula.createGroup('mainTable', {
         revertOnSpill: true,
         direction: 'horizontal',
@@ -60,15 +60,18 @@ export class ProfileComponent implements OnInit {
     
     this.dataservice.username = sessionStorage.getItem('username');
     this.dataservice.role = sessionStorage.getItem('role');
+    this.dataservice.project = sessionStorage.getItem('project_id');
     this.dataservice.authOptions = {
         headers: new HttpHeaders({'Content-Type': 'application/json', 'Authorization': 'JWT ' + sessionStorage.getItem('token')})
     };
-    this.http.get('http://127.0.0.1:8000/scrum/api/scrumusers/', this.dataservice.httpOptions).subscribe(
+    this.http.get('http://127.0.0.1:8000/scrum/api/scrumprojects/' + this.dataservice.project , this.dataservice.httpOptions).subscribe(
         data => {
+            this.dataservice.project_name = data['name'];
             console.log(data);
+            data = data['scrumuser_set'];
             for(var i = 0; i < data['length']; i++)
             {
-                data[i]['scrumgoal_set'] = data[i]['scrumgoal_set'].filter(s => s['visible']);
+                data[i]['scrumgoal_set'] = data[i]['scrumgoal_set'].filter(s => s['visible'] && s['project'] == this.dataservice.project);
             }
             this.dataservice.users = data;
         },
@@ -94,25 +97,24 @@ export class ProfileComponent implements OnInit {
         this.dataservice.message = 'Edit Canceled.';
     } else
     {
-        this.http.put('http://127.0.0.1:8000/scrum/api/scrumgoals/', JSON.stringify({'mode': 1, 'goal_id': items[0], 'new_name': goal_name}), this.dataservice.authOptions).subscribe(
-        data => {
-            this.dataservice.users = data['data'];
-            this.dataservice.message = data['message'];
-        },
-        err => {
-            console.error(err);
-            if(err['status'] == 401)
-            {
-                this.dataservice.message = 'Session Invalid or Expired. Please Login.';
-                this.dataservice.logout();
-            } else
-            {
-                this.dataservice.message = 'Unexpected Error!';    
+        this.http.put('http://127.0.0.1:8000/scrum/api/scrumgoals/', JSON.stringify({'mode': 1, 'goal_id': items[0], 'new_name': goal_name, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
+            data => {
+                this.dataservice.users = data['data'];
+                this.dataservice.message = data['message'];
+            },
+            err => {
+                console.error(err);
+                if(err['status'] == 401)
+                {
+                    this.dataservice.message = 'Session Invalid or Expired. Please Login.';
+                    this.dataservice.logout();
+                } else
+                {
+                    this.dataservice.message = 'Unexpected Error!';    
+                }
             }
-        }
-    );
+        );
     }
-    
   }
   
   doNothing()

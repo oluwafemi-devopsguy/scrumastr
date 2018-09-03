@@ -9,6 +9,7 @@ app_name = "Scrum"
 def_router = DefaultRouter()
 def_router.register('scrumusers', views.ScrumUserViewSet)
 def_router.register('scrumgoals', views.ScrumGoalViewSet)
+def_router.register('scrumprojects', views.ScrumProjectViewSet)
 
 urlpatterns = [
     path('create-user/', views.create_user, name="create_user"),

@@ -8,7 +8,7 @@ import { DataService } from '../data.service';
 })
 export class UserComponent implements OnInit {
 
-  constructor(private router: Router, private dataservice: DataService) { }
+  constructor(private router: Router, public dataservice: DataService) { }
 
   ngOnInit() {
   }

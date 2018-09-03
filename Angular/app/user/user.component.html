@@ -1,29 +1,37 @@
 <h3>{{dataservice.message}}</h3>
-<h2>Create User</h2>
+<h2><u>Create User</u></h2>
 <form (ngSubmit)="createUser()">
-    <label for="username">Username:</label>
+    <label for="username">Username: </label>
     <input type="text" id="username" [(ngModel)]="dataservice.createuser_username" name="username">
     <br>
-    <label for="password">Password:</label>
+    <label for="email">Email: </label>
+    <input type="text" id="email" [(ngModel)]="dataservice.createuser_email" name="email">
+    <br>
+    <label for="password">Password: </label>
     <input type="password" id="password" [(ngModel)]="dataservice.createuser_password" name="password">
     <br>
-    <label for="rtpassword">Retype Password:</label>
+    <label for="rtpassword">Retype Password: </label>
     <input type="password" id="rtpassword" [(ngModel)]="dataservice.createuser_rtpassword" name="rtpassword">
     <br>
-    <label for="full_name">Full Name:</label>
+    <label for="full_name">Full Name: </label>
     <input type="text" id="full_name" [(ngModel)]="dataservice.createuser_fullname" name="full_name">
     <br>
-    <label for="age">Age:</label>
+    <label for="age">Age: </label>
     <input type="text" id="age" [(ngModel)]="dataservice.createuser_age" name="age">
     <br>
-    <label for="usertype">User Type:</label>
-    <select id="usertype" [(ngModel)]="dataservice.createuser_usertype" name="usertype">
-        <option value="Owner">Owner</option>
-        <option value="Admin">Admin</option>
-        <option value="Developer" selected="selected">Developer</option>
-        <option value="Quality Analyst">Quality Analyst</option>
-    </select>
     <br>
+    <label for="usertype"><u>User Type</u></label>
+    <br>
+    <input type="radio" name="usertype" [(ngModel)]="dataservice.createuser_usertype" value="User">User
+    <br>
+    <input type="radio" name="usertype" [(ngModel)]="dataservice.createuser_usertype" value="Owner">Owner
+    <br>
+    <br>
+    <div *ngIf="dataservice.createuser_usertype == 'Owner'">
+        <label for="projname">Project Name: </label>
+        <br>
+        <textarea rows="1" cols="30" [(ngModel)]="dataservice.createuser_projname" id="projname" name="projname"></textarea>
+    </div>
     <input type="submit" value="Create User">
 </form>
 <br>

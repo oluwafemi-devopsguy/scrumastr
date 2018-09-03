@@ -1,4 +1,5 @@
-<h2>Currently Logged In As {{dataservice.username}} - {{dataservice.role}}</h2>
+<h2><u>Currently Logged In As {{dataservice.username}} - {{dataservice.role}}</u></h2>
+<h2>Current Project: {{dataservice.project_name}}</h2>
 <button (click)="logout()" style="border: 2px solid black; border-radius: 5px; padding: 10px; padding-top: 4px; padding-bottom: 4px">Logout</button>
 <h3><u>Add Task</u></h3>
 <form (ngSubmit)="addGoal()">
