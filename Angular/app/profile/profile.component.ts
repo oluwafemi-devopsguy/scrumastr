@@ -68,10 +68,10 @@ export class ProfileComponent implements OnInit {
         data => {
             this.dataservice.project_name = data['name'];
             console.log(data);
-            data = data['scrumuser_set'];
+            data = data['scrumprojectrole_set'];
             for(var i = 0; i < data['length']; i++)
             {
-                data[i]['scrumgoal_set'] = data[i]['scrumgoal_set'].filter(s => s['visible'] && s['project'] == this.dataservice.project);
+                data[i]['scrumgoal_set'] = data[i]['scrumgoal_set'].filter(s => s['visible'] == this.dataservice.project);
             }
             this.dataservice.users = data;
         },
@@ -114,6 +114,38 @@ export class ProfileComponent implements OnInit {
                 }
             }
         );
+    }
+  }
+  
+  manageUser(event)
+  {
+    console.log(event);
+    var role_name = window.prompt('Change User Role:\nSelect Between: Developer, Admin, Quality Analyst, or Owner:', '');
+    if(role_name == null || role_name == '')
+    {
+        this.dataservice.message = 'Edit Canceled.';
+    } else if(role_name == 'Developer' || role_name == 'Quality Analyst' || role_name == 'Admin' || role_name == 'Owner')
+    {
+        this.http.patch('http://127.0.0.1:8000/scrum/api/scrumprojectroles/', JSON.stringify({'role': role_name, 'id': event.path[1].id, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
+            data => {
+                this.dataservice.users = data['data'];
+                this.dataservice.message = data['message'];
+            },
+            err => {
+                console.error(err);
+                if(err['status'] == 401)
+                {
+                    this.dataservice.message = 'Session Invalid or Expired. Please Login.';
+                    this.dataservice.logout();
+                } else
+                {
+                    this.dataservice.message = 'Unexpected Error!';    
+                }
+            }
+        );
+    } else
+    {
+        this.dataservice.message = 'Invalid Input.';
     }
   }
   

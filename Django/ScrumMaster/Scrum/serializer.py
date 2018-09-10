@@ -4,16 +4,23 @@ from .models import *
 class ScrumGoalSerializer(serializers.ModelSerializer):
     class Meta:
         model = ScrumGoal
-        fields = ('visible', 'id', 'name', 'status', 'project', 'goal_project_id')
+        fields = ('visible', 'id', 'name', 'status', 'goal_project_id')
         
 class ScrumUserSerializer(serializers.ModelSerializer):
-    scrumgoal_set = ScrumGoalSerializer(many=True)
     class Meta:
         model = ScrumUser
-        fields = ('nickname', 'id', 'scrumgoal_set', 'projects')
+        fields = ('nickname', 'id')
+        
+class ScrumProjectRoleSerializer(serializers.ModelSerializer):
+    user = ScrumUserSerializer()
+    scrumgoal_set = ScrumGoalSerializer(many=True)
+    
+    class Meta:
+        model = ScrumProjectRole
+        fields = ('role', 'user', 'id', 'scrumgoal_set')        
         
 class ScrumProjectSerializer(serializers.HyperlinkedModelSerializer):
-    scrumuser_set = ScrumUserSerializer(many=True)
+    scrumprojectrole_set = ScrumProjectRoleSerializer(many=True)
     class Meta:
         model = ScrumProject
-        fields = ('name', 'id', 'scrumuser_set', 'project_count')
+        fields = ('name', 'id', 'scrumprojectrole_set', 'project_count')

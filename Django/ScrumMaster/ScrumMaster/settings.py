@@ -144,3 +144,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Channel layer definitions
+# http://channels.readthedocs.org/en/latest/deploying.html#setting-up-a-channel-backend
+CHANNEL_LAYERS = {
+    "default": {
+        # This example app uses the Redis channel layer implementation asgi_redis
+        "BACKEND": "asgi_redis.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [('localhost', 6379)],
+        },
+       "ROUTING": "ScrumMaster.routing.channel_routing", # We will create it in a moment
+    },
+}
