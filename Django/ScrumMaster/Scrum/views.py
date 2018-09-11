@@ -181,6 +181,13 @@ class ScrumProjectViewSet(viewsets.ModelViewSet):
     queryset = ScrumProject.objects.all()
     serializer_class = ScrumProjectSerializer
     
+    def retrieve(self, request, pk=None):
+        try:
+            queryset = ScrumProject.objects.get(pk=pk)
+            return JsonResponse({'project_name': queryset.name, 'data': filtered_users(pk)})
+        except ScrumProject.DoesNotExist:
+            return JsonResponse({'detail': 'Not found.'})
+    
 class ScrumProjectRoleViewSet(viewsets.ModelViewSet):
     queryset = ScrumProjectRole.objects.all()
     serializer_class = ScrumProjectRoleSerializer

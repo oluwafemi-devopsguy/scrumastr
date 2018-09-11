@@ -66,14 +66,9 @@ export class ProfileComponent implements OnInit {
     };
     this.http.get('http://127.0.0.1:8000/scrum/api/scrumprojects/' + this.dataservice.project , this.dataservice.httpOptions).subscribe(
         data => {
-            this.dataservice.project_name = data['name'];
             console.log(data);
-            data = data['scrumprojectrole_set'];
-            for(var i = 0; i < data['length']; i++)
-            {
-                data[i]['scrumgoal_set'] = data[i]['scrumgoal_set'].filter(s => s['visible'] == this.dataservice.project);
-            }
-            this.dataservice.users = data;
+            this.dataservice.project_name = data['project_name'];
+            this.dataservice.users = data['data'];
         },
         err => {
             this.dataservice.message = 'Unexpected Error!';
