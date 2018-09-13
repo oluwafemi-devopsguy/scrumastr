@@ -1,0 +1,55 @@
+
+<div class="navbar-fixed">
+  
+    <nav>
+    <div class="container-fluid">
+      <div class="nav-wrapper">
+        <a href="#!" class="brand-logo">ChatScrum</a>
+        <ul class="right hide-on-med-and-down">
+          <li><a href="">LOGIN</a></li>
+          <li><a href="#">SIGN UP</a></li>
+        </ul>
+      </div>
+    </div>
+    </nav>
+   
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col m6">
+      <div class="image_wrapper">
+        <img src="/src/assets/image/Scrum.png" alt="banner" srcset="">
+      </div>
+      
+        <h5 class="click">Click here for <span><a href="#" class="demo">DEMO</a></span></h5>
+      
+    </div>
+    <div class="col m6">
+      <div class="login_wrapper">
+          <h4 class="bold center" id="home_login">LOGIN</h4>
+          <hr>
+          <br>
+          <form (ngSubmit)="login()">
+              <div class="form-group">
+                  <input class="form-control" type="text" id="login_username" [(ngModel)]="dataservice.login_username" name="login_username" placeholder="Email">
+              </div>
+              <br>
+              <div class="form-group">
+                  <input class="form-control" type="password" id="login_password" [(ngModel)]="dataservice.login_password" name="login_password" placeholder="Password">
+              </div>
+              <br>
+              <div class="form-group">
+                  <input class="form-control" type="text" id="login_project" [(ngModel)]="dataservice.login_project" name="login_project" placeholder="Project Name">
+              </div>
+              <br>
+              <div class="form-group">
+                  <input class="form-control btn btn-default submit" type="submit" value="Login">
+              </div>
+          </form>
+          <br>
+          <p style="text-align: center;"><span><a href="#" class="forget_password">Forgot Password? </a> | </span> <span><a href="" class="sign_up"> SIGN UP</a></span></p>
+      </div>
+    </div>
+  </div>
+</div>
