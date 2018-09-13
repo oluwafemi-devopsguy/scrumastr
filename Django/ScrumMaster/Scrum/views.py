@@ -230,27 +230,28 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             
     def patch(self, request):
         scrum_project = ScrumProject.objects.get(id=request.data['project_id'])
-        scrum_project_role = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
+        scrum_project_a = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
+        scrum_project_b = ScrumGoal.objects.get(id=request.data['goal_id']).user
         goal_id = request.data['goal_id']
         to_id = request.data['to_id']
         
         if to_id == 4:
-            if scrum_project_role.role == 'Developer':
-                if request.user != scrum_project_role.user.user:
+            if scrum_project_a.role == 'Developer':
+                if request.user != scrum_project_b.user.user:
                     return JsonResponse({'message': 'Permission Denied: Unauthorized Deletion of Goal.', 'data': filtered_users(request.data['project_id'])})
                     
-            del_goal = scrum_project_role.scrumgoal_set.get(id=goal_id)
+            del_goal = ScrumGoal.objects.get(id=goal_id)
             del_goal.visible = False
             del_goal.save()
             return JsonResponse({'message': 'Goal Removed Successfully!', 'data': filtered_users(request.data['project_id'])})
         else:
-            goal_item = scrum_project_role.scrumgoal_set.get(id=goal_id)
-            group = scrum_project_role.role
+            goal_item = ScrumGoal.objects.get(id=goal_id)
+            group = scrum_project_a.role
             from_allowed = []
             to_allowed = []
             
             if group == 'Developer':
-                if request.user != scrum_project_role.user.user:
+                if request.user != scrum_project_b.user.user:
                     return JsonResponse({'message': 'Permission Denied: Unauthorized Movement of Goal.', 'data': filtered_users(request.data['project_id'])})
             
             if group == 'Owner':
@@ -270,7 +271,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
                 goal_item.status = to_id
             elif group == 'Quality Analyst' and goal_item.status == 2 and to_id == 0:
                 goal_item.status = to_id
-            elif request.user == scrum_project_role.user.user:
+            elif request.user == scrum_project_b.user.user:
                 if goal_item.status == 1 and to_id == 0:
                     goal_item.status = to_id
                 elif goal_item.status == 0 and to_id == 1:
@@ -304,10 +305,12 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             goal.save()
             return JsonResponse({'message': 'Goal Reassigned Successfully!', 'data': filtered_users(request.data['project_id'])})
         else:
-            goal = ScrumGoal.objects.get(id=request.data['goal_id'])
-            if scrum_project_role.role != 'Owner' and request.user != scrum_project_role.user.user:
+            scrum_project_b = ScrumGoal.objects.get(id=request.data['goal_id']).user
+            if scrum_project_role.role != 'Owner' and request.user != scrum_project_b.user.user:
                 return JsonResponse({'message': 'Permission Denied: Unauthorized Name Change of Goal.', 'data': filtered_users(request.data['project_id'])})
-                
+            
+            goal = ScrumGoal.objects.get(id=request.data['goal_id'])
+            
             goal.name = request.data['new_name']
             goal.save()
             return JsonResponse({'message': 'Goal Name Changed!', 'data': filtered_users(request.data['project_id'])})
