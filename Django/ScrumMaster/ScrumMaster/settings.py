@@ -93,28 +93,28 @@ WSGI_APPLICATION = 'ScrumMaster.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'mysql.connector.django',
-        'NAME': 'scrum',
-        'USER': 'root',
-        'PASSWORD': '8iu7*IU&',
-        'OPTIONS': {
-            'raise_on_warnings': False,
-            'use_pure': True
-        }
-    }
-}
-
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'scrum_integration',
+#         'ENGINE': 'mysql.connector.django',
+#         'NAME': 'scrum',
 #         'USER': 'root',
-#         'PASSWORD': '',
-#         'HOST': 'localhost'
+#         'PASSWORD': '8iu7*IU&',
+#         'OPTIONS': {
+#             'raise_on_warnings': False,
+#             'use_pure': True
+#         }
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'scrum_integration',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost'
+    }
+}
 
 
 # Password validation

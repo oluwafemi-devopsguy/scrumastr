@@ -1,5 +1,11 @@
+
 nav {
     background-color: #26a69a;
+}
+
+.nav-wrapper {
+  padding-left: 35px;
+  padding-right: 30px;
 }
 
 
@@ -78,8 +84,29 @@ nav {
       color: rgb(80, 78, 78);
       font-weight: bold;
   }
+
   img {
+      margin-top: 25px;
       align-content: center;
       height: 120%;
       width: 100%;
+  }
+
+  .signinbtn {
+    background: none;
+    border: 2px solid #26a69a;
+    border-radius: 6px;
+    text-align: center!important;
+    color:#26a69a;
+    box-shadow: none!important;
+  
+  }
+  
+  .signinbtn:hover {
+    background-color:rgba(175, 240, 224, 0.973);
+  }
+  
+  .logo_section {
+    margin-left: 40px;
+    padding-right: 100px;
   }

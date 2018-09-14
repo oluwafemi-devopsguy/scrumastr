@@ -42,3 +42,17 @@
 .submit {
   width:102%!important;
 }
+
+.createbtn {
+  background: none;
+  border: 2px solid #26a69a;
+  border-radius: 6px;
+  text-align: center!important;
+  color:#26a69a;
+  box-shadow: none!important;
+
+}
+
+.createbtn:hover {
+  background-color:rgba(175, 240, 224, 0.973);
+}
