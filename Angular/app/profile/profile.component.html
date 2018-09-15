@@ -1,6 +1,12 @@
 <h2><u>Currently Logged In As {{dataservice.username}} - {{dataservice.role}}</u></h2>
 <h2>Current Project: {{dataservice.project_name}}</h2>
 <button (click)="logout()" style="border: 2px solid black; border-radius: 5px; padding: 10px; padding-top: 4px; padding-bottom: 4px">Logout</button>
+<h3><u>Chat</u></h3>
+<ul style="overflow: auto; width: 450px; height:100px; border: 2px solid black; padding: 10px">
+    <li *ngFor="let message of messages" [innerText]="message"></li>
+</ul>
+<input type="text" id="chat_text" name="chat_text" [(ngModel)]="chat_text" style="width: 365px">
+<button (click)="sendMessage(chat_text)">Send Message</button>
 <h3><u>Add Task</u></h3>
 <form (ngSubmit)="addGoal()">
     <textarea rows="4" cols="35" id="goal" [(ngModel)]="dataservice.goal_name" name="goal"></textarea>

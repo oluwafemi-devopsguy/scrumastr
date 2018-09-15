@@ -32,6 +32,8 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
+    'channels_redis',
     'Scrum.apps.ScrumConfig',
     'rest_framework',
     'corsheaders',
@@ -144,3 +146,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+ASGI_APPLICATION = "ScrumMaster.routing.application"
+
+'''
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('localhost', 6379)]
+        }
+    }
+}
+'''

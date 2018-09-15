@@ -13,6 +13,9 @@ export class ProfileComponent implements OnInit {
   public arrCount = [0, 1, 2, 3];
   subs = new Subscription();
   public show_zero: boolean = false;
+  public chat_text: string = "";
+  public messages = [];
+  public websocket;
   
   constructor(public dataservice: DataService, private dragula: DragulaService, private http: HttpClient) { 
     this.dragula.createGroup('mainTable', {
@@ -57,6 +60,15 @@ export class ProfileComponent implements OnInit {
             }
         )
     );
+    
+    this.websocket = new WebSocket('ws://localhost:8000');
+    this.websocket.onopen = (evt) => {
+        this.websocket.send(JSON.stringify({'message': 'Hey!'}))
+    }
+    this.websocket.onmessage = (evt) => {
+        this.messages.push(JSON.parse(evt.data)['message']);
+        console.log(this.messages);
+    }
     
     this.dataservice.username = sessionStorage.getItem('username');
     this.dataservice.role = sessionStorage.getItem('role');
@@ -149,6 +161,12 @@ export class ProfileComponent implements OnInit {
      
   }
   
+  sendMessage(message)
+  {
+    this.websocket.send(JSON.stringify({'message': this.chat_text}))
+    this.chat_text = '';
+  }
+  
   ngOnInit() {
   }
 
@@ -166,6 +184,7 @@ export class ProfileComponent implements OnInit {
   ngOnDestroy()
   {
     this.subs.unsubscribe();  
-    this.dragula.destroy('mainTable');  
+    this.dragula.destroy('mainTable');
+    this.websocket.close();
   }
 }
