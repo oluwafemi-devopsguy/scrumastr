@@ -1,0 +1,58 @@
+
+#login_header {
+  font-family: Gotham SSm A, Gotham SSm B, sans-serif;
+  color:#2d3237;
+  font-weight: bolder;
+  line-height: 1.2;
+}
+
+#login_username {
+  display: block!important;
+  height:1.82rem!important;
+  padding: .5rem!important;
+  border: 1px solid #cdd1d4de;
+  transition: all 1s;
+  border-radius: .25rem!important;
+  box-shadow: none;
+  width: 98%!important;
+}
+
+#login_password {
+  display: block!important;
+  height:1.82rem!important;
+  padding: .5rem!important;
+  border: 1px solid #cdd1d4de;
+  transition: all 1s;
+  border-radius: .25rem!important;
+  box-shadow: none;
+  width: 98%!important;
+}
+
+#login_project {
+  display: block!important;
+  height:1.82rem!important;
+  padding: .5rem!important;
+  border: 1px solid #cdd1d4de;
+  transition: all 1s;
+  border-radius: .25rem!important;
+  box-shadow: none;
+  width: 98%!important;
+}
+
+.submit {
+  width:102%!important;
+}
+
+.createbtn {
+  background: none;
+  border: 2px solid #26a69a;
+  border-radius: 6px;
+  text-align: center!important;
+  color:#26a69a;
+  box-shadow: none!important;
+
+}
+
+.createbtn:hover {
+  background-color:rgba(175, 240, 224, 0.973);
+}

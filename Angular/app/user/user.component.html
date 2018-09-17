@@ -1,29 +1,41 @@
-<h3>{{dataservice.message}}</h3>
-<h2><u>Create User</u></h2>
-<form (ngSubmit)="createUser()">
-    <label for="email">Email: </label>
-    <input type="text" id="email" [(ngModel)]="dataservice.createuser_email" name="email">
-    <br>
-    <label for="password">Password: </label>
-    <input type="password" id="password" [(ngModel)]="dataservice.createuser_password" name="password">
-    <br>
-    <label for="full_name">Full Name: </label>
-    <input type="text" id="full_name" [(ngModel)]="dataservice.createuser_fullname" name="full_name">
-    <br>
-    <br>
-    <label for="usertype"><u>User Type</u></label>
-    <br>
-    <input type="radio" name="usertype" [(ngModel)]="dataservice.createuser_usertype" value="User">User
-    <br>
-    <input type="radio" name="usertype" [(ngModel)]="dataservice.createuser_usertype" value="Owner">Owner
-    <br>
-    <br>
-    <div *ngIf="dataservice.createuser_usertype == 'Owner'">
-        <label for="projname">Project Name: </label>
-        <br>
-        <textarea rows="1" cols="30" [(ngModel)]="dataservice.createuser_projname" id="projname" name="projname"></textarea>
+<div class="">
+    <div class="container-fluid">
+        <div class="row">
+        <div class="col m4"></div>
+        <div class="col m4">
+            <h3>{{dataservice.message}}</h3>
+            <h4 class="bold center" id="signUpheader">Create a new account</h4>
+            <p id="p-tag">or if you already have an account <input (click)="toLogin()" class="btn btn- signinbtn" type="submit" value="SIGN IN"></p>
+            <form (ngSubmit)="createUser()" id="signUp">
+                <div class="form-group">
+                    <input class="form-control" type="text" id="email" [(ngModel)]="dataservice.createuser_email" name="email" placeholder="Email" required>
+                </div>
+                <br>
+                <div class="form-group">
+                    <input class="form-control" type="password" id="password" [(ngModel)]="dataservice.createuser_password" name="password" placeholder="Password" required>
+                </div>
+                <br>
+                <div class="form-group">
+                    <input class="form-control" type="text" id="full_name" [(ngModel)]="dataservice.createuser_fullname" name="full_name" placeholder="Full Name" required>
+                </div>
+                
+                <div class="form-group">
+                    <form action="">
+                    <label for="usertype"><h6 id="user-type">User Type:</h6></label>
+                    <label><input class="form-control with-gap" type="radio" name="usertype" [(ngModel)]="dataservice.createuser_usertype" value="User"><span>User  </span></label>
+                    <label><input class="form-control with-gap" type="radio" name="usertype" [(ngModel)]="dataservice.createuser_usertype" value="Owner"><span>Owner</span></label>
+                    </form>
+                </div>
+                <br>
+                <div class="form-group" *ngIf="dataservice.createuser_usertype == 'Owner'">
+                    
+                    <input class="form-control" rows="1" cols="30" [(ngModel)]="dataservice.createuser_projname" id="projname" name="projname" placeholder="Project Name">
+                </div>
+                <br>
+                <input class="btn btn-default" type="submit" value="Create User" id="create_user">
+            </form>
+        </div>
+        <div class="col m4"></div>
+        </div>
     </div>
-    <input type="submit" value="Create User">
-</form>
-<br>
-<button (click)="toLogin()" style="border: 2px solid black; border-radius: 5px; padding: 10px; padding-top: 4px; padding-bottom: 4px">Back To Login</button>
+</div>

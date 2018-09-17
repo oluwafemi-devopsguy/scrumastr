@@ -328,6 +328,7 @@ def jwt_response_payload_handler(token, user=None, request=None):
         
     return {
         'token': token,
+        'name': user.scrumuser.nickname,
         'role': project.scrumprojectrole_set.get(user=user.scrumuser).role,
         'project_id': project.id
     }

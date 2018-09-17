@@ -20,6 +20,7 @@ export class DataService {
   public createuser_projname;
   
   public username;
+  public realname;
   public role;
   public project;
   public project_name;
@@ -61,11 +62,13 @@ export class DataService {
     this.http.post('http://127.0.0.1:8000/scrum/api-token-auth/', JSON.stringify({'username': this.login_username, 'password': this.login_password, 'project': this.login_project}), this.httpOptions).subscribe(
         data => {
             sessionStorage.setItem('username', this.login_username);
+            sessionStorage.setItem('realname', data['name']);
             sessionStorage.setItem('role', data['role']);
             sessionStorage.setItem('token', data['token']);
             sessionStorage.setItem('project_id', data['project_id']);
             this.username = this.login_username;
             this.role = data['role'];
+            this.realname = data['name'];
             this.project = data['project_id'];
             this.message = 'Welcome!';
             this.router.navigate(['profile']);
@@ -120,14 +123,16 @@ export class DataService {
     this.username = '';
     this.role = '';
     this.users = [];
+    this.realname = '';
     this.project = 0;
     this.project_name = '';
-    this.router.navigate(['login']);
+    this.router.navigate(['home']);
     this.authOptions = {};
     sessionStorage.removeItem('username');
     sessionStorage.removeItem('role');
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('project_id');
+    sessionStorage.removeItem('realname');
   }
   
   moveGoal(goal_id, to_id)
