@@ -13,6 +13,9 @@ export class ProfileComponent implements OnInit {
   public arrCount = [0, 1, 2, 3];
   subs = new Subscription();
   public show_zero: boolean = false;
+  public chat_text: string = "";
+  public messages = [];
+  public websocket;
   
   constructor(public dataservice: DataService, private dragula: DragulaService, private http: HttpClient) { 
     this.dragula.createGroup('mainTable', {
@@ -58,22 +61,28 @@ export class ProfileComponent implements OnInit {
         )
     );
     
+    this.dataservice.realname = sessionStorage.getItem('realname');
+    this.websocket = new WebSocket('ws://127.0.0.1:8000');
+    this.websocket.onopen = (evt) => {
+        this.websocket.send(JSON.stringify({'message': this.dataservice.realname + ' has joined the room.'}))
+    }
+    this.websocket.onmessage = (evt) => {
+        this.messages.push(JSON.parse(evt.data)['message']);
+        console.log(this.messages);
+    }
+    
     this.dataservice.username = sessionStorage.getItem('username');
     this.dataservice.role = sessionStorage.getItem('role');
     this.dataservice.project = sessionStorage.getItem('project_id');
+    
     this.dataservice.authOptions = {
         headers: new HttpHeaders({'Content-Type': 'application/json', 'Authorization': 'JWT ' + sessionStorage.getItem('token')})
     };
     this.http.get('http://127.0.0.1:8000/scrum/api/scrumprojects/' + this.dataservice.project , this.dataservice.httpOptions).subscribe(
         data => {
-            this.dataservice.project_name = data['name'];
             console.log(data);
-            data = data['scrumprojectrole_set'];
-            for(var i = 0; i < data['length']; i++)
-            {
-                data[i]['scrumgoal_set'] = data[i]['scrumgoal_set'].filter(s => s['visible'] == this.dataservice.project);
-            }
-            this.dataservice.users = data;
+            this.dataservice.project_name = data['project_name'];
+            this.dataservice.users = data['data'];
         },
         err => {
             this.dataservice.message = 'Unexpected Error!';
@@ -154,6 +163,12 @@ export class ProfileComponent implements OnInit {
      
   }
   
+  sendMessage(message)
+  {
+    this.websocket.send(JSON.stringify({'message': this.dataservice.realname + ': ' + this.chat_text}))
+    this.chat_text = '';
+  }
+  
   ngOnInit() {
   }
 
@@ -165,12 +180,14 @@ export class ProfileComponent implements OnInit {
   logout()
   {
     this.dataservice.message = 'Thank you for using Scrum!';
+    this.websocket.send(JSON.stringify({'message': this.dataservice.realname + ' has left the room.'}))
+    this.websocket.close();
     this.dataservice.logout();
   }
   
   ngOnDestroy()
   {
     this.subs.unsubscribe();  
-    this.dragula.destroy('mainTable');  
+    this.dragula.destroy('mainTable');
   }
 }
