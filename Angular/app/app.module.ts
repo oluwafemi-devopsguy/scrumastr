@@ -14,6 +14,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ProfileComponent } from './profile/profile.component';
 
 import { DragulaModule } from 'ng2-dragula';
+import { MzButtonModule, MzModalModule } from 'ngx-materialize';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,8 @@ import { DragulaModule } from 'ng2-dragula';
     BrowserModule,
     AppRoutingModule,
     FormsModule,
+    MzButtonModule,
+    MzModalModule,
     DragulaModule.forRoot()
   ],
   providers: [DataService],

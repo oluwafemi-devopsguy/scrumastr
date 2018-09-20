@@ -1,8 +1,10 @@
+/* @import "./assets/materialize/css/materialize.min.css"; */
+
 nav {
     background-color: white;
     box-shadow: none;
     border-bottom: 1px;
-    border-bottom: 1px solid #cdd1d4de;
+    
 }
 
 .nav-wrapper {
@@ -66,6 +68,15 @@ h3 {
     font-size: 1.4rem;
     font-weight: bold;
 }
+.card {
+    width: 120%;
+}
+.chat_area {
+    bottom: 0px;
+    position: fixed;
+    
+  
+}
 
 #chat_text {
     display: block!important;
@@ -75,5 +86,19 @@ h3 {
     transition: all 1s;
     border-radius: .25rem!important;
     box-shadow: none;
-    width: 90%;
+    width: 92%;
+}
+
+.send {
+    width: 100%;
+}
+
+#username {
+    color: black;
+}
+#project_title {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-weight: bolder;
+    color: rgba(0, 0, 0, 0.74);
+    margin-top: 19px;
 }
