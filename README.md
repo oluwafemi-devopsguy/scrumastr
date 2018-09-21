@@ -24,6 +24,7 @@ Angular
 Use npm to install these:
 
 * ng2-dragula
+* ngx-materialize
 
 
 

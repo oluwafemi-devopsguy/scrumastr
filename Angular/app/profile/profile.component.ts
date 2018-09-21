@@ -3,6 +3,7 @@ import { DataService } from '../data.service';
 import { DragulaService } from 'ng2-dragula';
 import { Subscription } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { MzModalModule } from 'ngx-materialize';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
@@ -16,8 +17,24 @@ export class ProfileComponent implements OnInit {
   public chat_text: string = "";
   public messages = [];
   public websocket;
+
+  public modalOptions: Materialize.ModalOptions = {
+    dismissible: false, // Modal can be dismissed by clicking outside of the modal
+    opacity: .5, // Opacity of modal background
+    inDuration: 300, // Transition in duration
+    outDuration: 200, // Transition out duration
+    startingTop: '100%', // Starting top style attribute
+    endingTop: '10%', // Ending top style attribute
+    ready: (modal, trigger) => { // Callback for Modal open. Modal and trigger parameters available.
+      alert('Ready');
+      console.log(modal, trigger);
+    },
+    complete: () => { alert('Closed'); } // Callback for Modal close
+  };
   
-  constructor(public dataservice: DataService, private dragula: DragulaService, private http: HttpClient) { 
+  constructor(
+      public dataservice: DataService, private dragula: DragulaService, private http: HttpClient, private modalModule: MzModalModule
+      ) { 
     this.dragula.createGroup('mainTable', {
         revertOnSpill: true,
         direction: 'horizontal',
@@ -190,4 +207,11 @@ export class ProfileComponent implements OnInit {
     this.subs.unsubscribe();  
     this.dragula.destroy('mainTable');
   }
+
+//   addGoalModal(){
+//     $(document).ready(function(){
+//         // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+//         $('.modal-trigger').leanModal();
+//       });
+//   }
 }
