@@ -44,7 +44,7 @@ nav ul a:hover {
     margin-top: 15px;
     height: 150%;
     width: 110%;
-    border: 2px solid #cdd1d4de;
+    /* border: 2px solid #cdd1d4de; */
     border-radius: .25rem;
     padding-left: 12px;
     padding-right: 13px;

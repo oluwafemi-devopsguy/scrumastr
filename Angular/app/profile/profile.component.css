@@ -1,4 +1,4 @@
-/* @import "./assets/materialize/css/materialize.min.css"; */
+
 
 nav {
     background-color: white;
@@ -69,15 +69,20 @@ h3 {
     font-weight: bold;
 }
 .card {
-    width: 120%;
+    
+    height: 400px;
 }
 .chat_area {
+    width: 50%;
     bottom: 0px;
-    position: fixed;
-    
-  
+    position: fixed; 
 }
 
+.chat_space {
+    width: 60%;
+    margin-right: 450px;
+    
+}
 #chat_text {
     display: block!important;
     height:1.82rem!important;
@@ -86,8 +91,9 @@ h3 {
     transition: all 1s;
     border-radius: .25rem!important;
     box-shadow: none;
-    width: 92%;
+    width: 94%;
 }
+
 
 .send {
     width: 100%;
@@ -101,4 +107,32 @@ h3 {
     font-weight: bolder;
     color: rgba(0, 0, 0, 0.74);
     margin-top: 19px;
+}
+
+.board-area {
+    overflow: hidden;
+    height: 600px;
+    width: 670px;
+}
+
+.board-area:hover {
+    overflow: auto;
+}
+
+.add-icon {
+    width: 50%!important;
+    padding: 0px;
+    box-shadow: none;
+}
+
+.change-role {
+    width: 50%!important;
+    padding: 0px;
+    box-shadow: none;
+}
+#edit {
+    align-content: center;
+}
+#add {
+    align-content: center;
 }
