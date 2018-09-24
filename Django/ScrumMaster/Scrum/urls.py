@@ -21,9 +21,10 @@ def_router.register('scrumprojectroles', views.ScrumProjectRoleViewSet)
     path('add-goal/', views.add_goal, name="add_goal"),
     path('remove-goal/<int:goal_id>/', views.remove_goal, name="remove_goal"),
     path('move-goal/<int:goal_id>/<int:to_id>/', views.move_goal, name="move_goal"),
-    '''
+'''
     
 urlpatterns = [
     url(r'api/', include(def_router.urls)),
     url(r'^api-token-auth/', obtain_jwt_token),
+    path(r'create-demo/', views.createDemoUser)
 ]

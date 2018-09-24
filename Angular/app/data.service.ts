@@ -34,6 +34,22 @@ export class DataService {
   
   constructor(private http: HttpClient, private router: Router) { }
   
+  createDemo()
+  {
+    this.message = "Creating the Demo, please wait...";
+    this.http.get('http://127.0.0.1:8000/scrum/create-demo', this.httpOptions).subscribe(
+        data => {
+            this.login_username = data['username'];
+            this.login_password = data['password'];
+            this.login_project = data['project'];
+            this.login();
+        },
+        err => {
+            console.log(err);
+        }
+    );
+  }
+  
   createUser()
   {
     this.http.post('http://127.0.0.1:8000/scrum/api/scrumusers/', JSON.stringify({'email': this.createuser_email, 'password': this.createuser_password, 'full_name': this.createuser_fullname, 'usertype': this.createuser_usertype, 'projname': this.createuser_projname}), this.httpOptions).subscribe(
@@ -94,9 +110,9 @@ export class DataService {
     );
   }
   
-  addGoal()
+  addGoal(on_user)
   {
-    this.http.post('http://127.0.0.1:8000/scrum/api/scrumgoals/', JSON.stringify({'name': this.goal_name, 'project_id': this.project}), this.authOptions).subscribe(
+    this.http.post('http://127.0.0.1:8000/scrum/api/scrumgoals/', JSON.stringify({'name': this.goal_name, 'user': on_user, 'project_id': this.project}), this.authOptions).subscribe(
         data => {
             console.log(data);
             this.users = data['data'];

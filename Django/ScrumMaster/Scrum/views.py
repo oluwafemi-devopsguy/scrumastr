@@ -9,6 +9,9 @@ from .serializer import *
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.serializers import ValidationError
+import random
+import datetime
+
 # Create your views here.
 
 '''
@@ -146,7 +149,29 @@ def move_goal(request, goal_id, to_id):
         messages.error(request, 'Error: Please login first.')
         return HttpResponseRedirect(reverse('login'))
 '''
-        
+
+def createDemoUser(request):
+    demo_user = User.objects.create(username='demouser' + str(random.random()))
+    demo_user_password = 'demopassword' + str(random.random())
+    demo_user.set_password(demo_user_password)
+    demo_user.save()
+    
+    demo_scrumuser = ScrumUser(user=demo_user, nickname='Demo User')
+    demo_scrumuser.save()
+    
+    demo_project_name = 'Demo Project #' + user.pk
+    demo_project = ScrumProject(name='Demo Project #' + user.pk)
+    demo_project.save()
+    
+    demo_projectrole = ScrumProjectRole(role="Owner", user=demo_scrumuser, project=demo_project)
+    demo_projectrole.save()
+    
+    demo_projectdemo = ScrumDemoProject(project=demo_project, expiration_date=datetime.datetime.now() + datetime.timedelta(hours=24))
+    demo_projectdemo.save()
+    
+    return JsonResponse({'username': demo_user.username, 'password': demo_user_password, 'project': demo_project_name})
+    
+    
 class ScrumUserViewSet(viewsets.ModelViewSet):
     queryset = ScrumUser.objects.all()
     serializer_class = ScrumUserSerializer
@@ -215,16 +240,27 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
     
     def create(self, request):
+        user_id = request.data['user']
         scrum_project = ScrumProject.objects.get(id=request.data['project_id'])
         scrum_project_role = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
+        
+        author = None
+        if user_id[0] == 'u':
+            author = ScrumProjectRole.objects.get(id=user_id[1:])
+        else:
+            author = ScrumGoal.objects.get(id=user_id).user
+            
+        if scrum_project_role != author and scrum_project_role.role != 'Owner': 
+            return JsonResponse({'message': 'Permission Denied: Unauthorized Addition of a Goal.'})
+        
         status_start = 0
-        if scrum_project_role.role == 'Admin':
+        if author.role == 'Admin':
             status_start = 1
-        elif scrum_project_role.role == 'Quality Analyst':
+        elif author.role == 'Quality Analyst':
             status_start = 2
         scrum_project.project_count = scrum_project.project_count + 1
         scrum_project.save()
-        goal = ScrumGoal(name=request.data['name'], status=status_start, goal_project_id=scrum_project.project_count, user=scrum_project_role)
+        goal = ScrumGoal(name=request.data['name'], status=status_start, goal_project_id=scrum_project.project_count, user=author)
         goal.save()
         return JsonResponse({'message': 'Goal Added!', 'data': filtered_users(request.data['project_id'])})
             

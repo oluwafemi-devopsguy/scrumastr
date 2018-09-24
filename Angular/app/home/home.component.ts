@@ -15,6 +15,11 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
   }
+  
+  createDemo()
+  {
+    this.dataservice.createDemo();
+  }
   //Login method
   login()
   {

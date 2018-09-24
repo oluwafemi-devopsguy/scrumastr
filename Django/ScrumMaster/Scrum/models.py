@@ -30,6 +30,13 @@ class ScrumProjectRole(models.Model):
     
     def __str__(self):
         return self.role
+
+class ScrumDemoProject(models.Model):
+    project = models.ForeignKey(ScrumProject, on_delete=models.CASCADE)
+    expiration_date = models.DateTimeField()
+    
+    def __str__(self):
+        return expiration_date
         
 class ScrumGoal(models.Model):
     visible = models.BooleanField(default=True)

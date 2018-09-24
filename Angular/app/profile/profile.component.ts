@@ -17,6 +17,7 @@ export class ProfileComponent implements OnInit {
   public chat_text: string = "";
   public messages = [];
   public websocket;
+  public on_user;
 
   public modalOptions: Materialize.ModalOptions = {
     dismissible: false, // Modal can be dismissed by clicking outside of the modal
@@ -152,7 +153,7 @@ export class ProfileComponent implements OnInit {
         this.dataservice.message = 'Edit Canceled.';
     } else if(role_name == 'Developer' || role_name == 'Quality Analyst' || role_name == 'Admin' || role_name == 'Owner')
     {
-        this.http.patch('http://127.0.0.1:8000/scrum/api/scrumprojectroles/', JSON.stringify({'role': role_name, 'id': event.path[1].id, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
+        this.http.patch('http://127.0.0.1:8000/scrum/api/scrumprojectroles/', JSON.stringify({'role': role_name, 'id': event.path[4].id, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
             data => {
                 this.dataservice.users = data['data'];
                 this.dataservice.message = data['message'];
@@ -188,10 +189,20 @@ export class ProfileComponent implements OnInit {
   
   ngOnInit() {
   }
+  
+  getClicked(event)
+  {
+    console.log(event);
+    if(event.path[2].id == "author")
+        this.on_user = event.path[3].id;
+    else
+        this.on_user = event.path[4].id;
+    console.log(this.on_user);
+  }
 
   addGoal()
   {
-    this.dataservice.addGoal();  
+    this.dataservice.addGoal(this.on_user);
   }
   
   logout()

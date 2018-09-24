@@ -1,6 +1,6 @@
 Django contains the full source.
 
-For Angular, you need to initialize an Angular2 application and replace the APP directory, ASSETS directory, the polyfills.ts, and the styles.css files with the ones in this directory.
+For Angular, you need to initialize an Angular2 application and replace the files and folders in the src folder with the ones in this directory.
 
 Extra Dependencies
 ==================
@@ -26,5 +26,7 @@ Use npm to install these:
 * ng2-dragula
 * ngx-materialize
 
+Follow further instructions for ngx-materialize here:
+https://github.com/sherweb/ngx-materialize
 
 
