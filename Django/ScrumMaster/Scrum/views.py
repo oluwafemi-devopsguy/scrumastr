@@ -151,16 +151,16 @@ def move_goal(request, goal_id, to_id):
 '''
 
 def createDemoUser(request):
-    demo_user = User.objects.create(username='demouser' + str(random.random()))
-    demo_user_password = 'demopassword' + str(random.random())
+    demo_user = User.objects.create(username='demouser' + str(random.random())[2:])
+    demo_user_password = 'demopassword' + str(random.random())[2:]
     demo_user.set_password(demo_user_password)
     demo_user.save()
     
     demo_scrumuser = ScrumUser(user=demo_user, nickname='Demo User')
     demo_scrumuser.save()
     
-    demo_project_name = 'Demo Project #' + user.pk
-    demo_project = ScrumProject(name='Demo Project #' + user.pk)
+    demo_project_name = 'Demo Project #' + str(demo_user.pk)
+    demo_project = ScrumProject(name=demo_project_name)
     demo_project.save()
     
     demo_projectrole = ScrumProjectRole(role="Owner", user=demo_scrumuser, project=demo_project)
@@ -251,7 +251,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             author = ScrumGoal.objects.get(id=user_id).user
             
         if scrum_project_role != author and scrum_project_role.role != 'Owner': 
-            return JsonResponse({'message': 'Permission Denied: Unauthorized Addition of a Goal.'})
+            return JsonResponse({'message': 'Permission Denied: Unauthorized Addition of a Goal.', 'data': filtered_users(request.data['project_id'])})
         
         status_start = 0
         if author.role == 'Admin':

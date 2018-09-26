@@ -165,6 +165,7 @@ LOGIN_REDIRECT_URL = '/home'
 ASGI_APPLICATION = "ScrumMaster.routing.application"
 
 '''
+#Uncomment if you have redis.
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',

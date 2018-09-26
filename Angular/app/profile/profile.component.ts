@@ -80,7 +80,7 @@ export class ProfileComponent implements OnInit {
     );
     
     this.dataservice.realname = sessionStorage.getItem('realname');
-    this.websocket = new WebSocket('ws://127.0.0.1:8000');
+    this.websocket = new WebSocket('ws://' + this.dataservice.domain_name);
     this.websocket.onopen = (evt) => {
         this.websocket.send(JSON.stringify({'message': this.dataservice.realname + ' has joined the room.'}))
     }
@@ -96,7 +96,7 @@ export class ProfileComponent implements OnInit {
     this.dataservice.authOptions = {
         headers: new HttpHeaders({'Content-Type': 'application/json', 'Authorization': 'JWT ' + sessionStorage.getItem('token')})
     };
-    this.http.get('http://127.0.0.1:8000/scrum/api/scrumprojects/' + this.dataservice.project , this.dataservice.httpOptions).subscribe(
+    this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumprojects/' + this.dataservice.project , this.dataservice.httpOptions).subscribe(
         data => {
             console.log(data);
             this.dataservice.project_name = data['project_name'];
@@ -124,7 +124,7 @@ export class ProfileComponent implements OnInit {
         this.dataservice.message = 'Edit Canceled.';
     } else
     {
-        this.http.put('http://127.0.0.1:8000/scrum/api/scrumgoals/', JSON.stringify({'mode': 1, 'goal_id': event.path[1].id, 'new_name': goal_name, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
+        this.http.put('http://' + this.dataservice.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'mode': 1, 'goal_id': event.target.parentElement.id, 'new_name': goal_name, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
             data => {
                 this.dataservice.users = data['data'];
                 this.dataservice.message = data['message'];
@@ -153,7 +153,7 @@ export class ProfileComponent implements OnInit {
         this.dataservice.message = 'Edit Canceled.';
     } else if(role_name == 'Developer' || role_name == 'Quality Analyst' || role_name == 'Admin' || role_name == 'Owner')
     {
-        this.http.patch('http://127.0.0.1:8000/scrum/api/scrumprojectroles/', JSON.stringify({'role': role_name, 'id': event.path[4].id, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
+        this.http.patch('http://' + this.dataservice.domain_name + '/scrum/api/scrumprojectroles/', JSON.stringify({'role': role_name, 'id': event.target.parentElement.parentElement.parentElement.parentElement.id, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
             data => {
                 this.dataservice.users = data['data'];
                 this.dataservice.message = data['message'];
@@ -193,10 +193,10 @@ export class ProfileComponent implements OnInit {
   getClicked(event)
   {
     console.log(event);
-    if(event.path[2].id == "author")
-        this.on_user = event.path[3].id;
+    if(event.target.parentElement.parentElement.id == "author")
+        this.on_user = event.target.parentElement.parentElement.parentElement.id;
     else
-        this.on_user = event.path[4].id;
+        this.on_user = event.target.parentElement.parentElement.parentElement.parentElement.id;
     console.log(this.on_user);
   }
 
