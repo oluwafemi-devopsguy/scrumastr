@@ -120,8 +120,8 @@
                     <div class=" card medium chat_space right">
                         <h3 style="text-align: center;">Chat Area</h3>
                         <hr>
-                        <div class="">
-                        <ul style="overflow: auto; height:100px; padding: 20px;">
+                        <div class="" id="chat_div_space">
+                        <ul style="overflow: auto; height:200px; padding: 20px;">
                             <li *ngFor="let message of messages" [innerText]="message"></li>
                         </ul>
                         </div>

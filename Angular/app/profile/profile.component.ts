@@ -82,13 +82,16 @@ export class ProfileComponent implements OnInit {
     this.dataservice.realname = sessionStorage.getItem('realname');
     this.websocket = new WebSocket('ws://' + this.dataservice.domain_name);
     this.websocket.onopen = (evt) => {
-        this.websocket.send(JSON.stringify({'message': this.dataservice.realname + ' has joined the room.'}))
+        this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '<- This user has joined the room.'}))
     }
     this.websocket.onmessage = (evt) => {
-        this.messages.push(JSON.parse(evt.data)['message']);
+        var data = JSON.parse(evt.data);
+        this.messages.push(data['user'] + ': ' + data['message']);
+        var chat_scroll = document.getElementById('chat_div_space');
+        chat_scroll.scrollTop = chat_scroll.scrollHeight;
         console.log(this.messages);
     }
-    
+
     this.dataservice.username = sessionStorage.getItem('username');
     this.dataservice.role = sessionStorage.getItem('role');
     this.dataservice.project = sessionStorage.getItem('project_id');
@@ -183,7 +186,7 @@ export class ProfileComponent implements OnInit {
   
   sendMessage(message)
   {
-    this.websocket.send(JSON.stringify({'message': this.dataservice.realname + ': ' + this.chat_text}))
+    this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': this.chat_text}))
     this.chat_text = '';
   }
   
@@ -208,7 +211,7 @@ export class ProfileComponent implements OnInit {
   logout()
   {
     this.dataservice.message = 'Thank you for using Scrum!';
-    this.websocket.send(JSON.stringify({'message': this.dataservice.realname + ' has left the room.'}))
+    this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '<- This user has left the room.'}))
     this.websocket.close();
     this.dataservice.logout();
   }
