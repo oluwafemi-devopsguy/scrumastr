@@ -80,18 +80,6 @@ export class ProfileComponent implements OnInit {
     );
     
     this.dataservice.realname = sessionStorage.getItem('realname');
-    this.websocket = new WebSocket('ws://' + this.dataservice.domain_name);
-    this.websocket.onopen = (evt) => {
-        this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '<- This user has joined the room.'}))
-    }
-    this.websocket.onmessage = (evt) => {
-        var data = JSON.parse(evt.data);
-        this.messages.push(data['user'] + ': ' + data['message']);
-        var chat_scroll = document.getElementById('chat_div_space');
-        chat_scroll.scrollTop = chat_scroll.scrollHeight;
-        console.log(this.messages);
-    }
-
     this.dataservice.username = sessionStorage.getItem('username');
     this.dataservice.role = sessionStorage.getItem('role');
     this.dataservice.project = sessionStorage.getItem('project_id');
@@ -99,11 +87,30 @@ export class ProfileComponent implements OnInit {
     this.dataservice.authOptions = {
         headers: new HttpHeaders({'Content-Type': 'application/json', 'Authorization': 'JWT ' + sessionStorage.getItem('token')})
     };
+    
+    this.websocket = new WebSocket('ws://' + this.dataservice.domain_name);
+    this.websocket.onopen = (evt) => {
+        
+    }
+    
+    this.websocket.onmessage = (evt) => {
+        var data = JSON.parse(evt.data);
+        this.messages.push(data['user'] + ': ' + data['message']);
+        var chat_scroll = document.getElementById('chat_div_space');
+        chat_scroll.scrollTop = chat_scroll.scrollHeight;
+        console.log(this.messages);
+    }
+    
+    this.websocket.onclose = (evt) => {
+        console.log('Disconnected!');
+    }
+    
     this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumprojects/' + this.dataservice.project , this.dataservice.httpOptions).subscribe(
         data => {
             console.log(data);
             this.dataservice.project_name = data['project_name'];
             this.dataservice.users = data['data'];
+            this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '!join ' + this.dataservice.project_name}));
         },
         err => {
             this.dataservice.message = 'Unexpected Error!';
@@ -211,7 +218,7 @@ export class ProfileComponent implements OnInit {
   logout()
   {
     this.dataservice.message = 'Thank you for using Scrum!';
-    this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '<- This user has left the room.'}))
+    this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '<- This user has left.'}))
     this.websocket.close();
     this.dataservice.logout();
   }

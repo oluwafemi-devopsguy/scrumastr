@@ -70,17 +70,17 @@ h3 {
 }
 .card {
     
-    height: 400px;
+    height: 700px;
 }
 .chat_area {
-    width: 50%;
+    width: 100%;
     bottom: 0px;
+    right: 0px;
     position: fixed; 
 }
 
 .chat_space {
-    width: 60%;
-    margin-right: 450px;
+    width: 40%;
     
 }
 #chat_text {
@@ -111,8 +111,7 @@ h3 {
 
 .board-area {
     overflow: hidden;
-    height: 600px;
-    width: 670px;
+    width: 700px;
 }
 
 .board-area:hover {

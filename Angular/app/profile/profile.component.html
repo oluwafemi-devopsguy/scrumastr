@@ -25,9 +25,9 @@
 </div>
 
 
-<div class=container>
+<div class="container">
     <div class="row">
-        <div class="col m8 main_area">
+        <div class="main_area">
             <!-- <h2><u>Currently Logged In As {{dataservice.username}} - {{dataservice.role}}</u></h2> -->
             
             
@@ -61,7 +61,7 @@
                 }
             </style>
             <div class="board-area">
-                <div style="display: table; table-layout: fixed; width: 650px; word-wrap: break-word; border-collapse: collapse; border: 2px solid black;">
+                <div style="display: table; table-layout: fixed; width: 700px; word-wrap: break-word; border-collapse: collapse; border: 2px solid black;">
                     <div style="display: table-row">
                         <th colspan="6" class="full-box">Available Tasks</th>
                     </div>
@@ -121,7 +121,7 @@
                         <h3 style="text-align: center;">Chat Area</h3>
                         <hr>
                         <div class="" id="chat_div_space">
-                        <ul style="overflow: auto; height:200px; padding: 20px;">
+                        <ul style="overflow: auto; height:175px; padding: 20px;">
                             <li *ngFor="let message of messages" [innerText]="message"></li>
                         </ul>
                         </div>
