@@ -6,7 +6,7 @@
       <div class="nav-wrapper">
           <div class="row">
               <div class="col m4">
-                <a href="#!" class="brand-logo"><img src="/src/assets/image/scrum_logo.png" alt="nav-logo" class="logo"><span class="logo-text">ChatScrum</span></a>
+                <a href="#!" class="brand-logo"><img src="/src/assets/image/scrum_new_logo.png" alt="nav-logo" class="logo"><span class="logo-text">ChatScrum</span></a>
               </div>
               <div class="col m4">
                 <h5 id="project_title">Current Project: {{dataservice.project_name}}</h5>
@@ -27,106 +27,108 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="main_area" style="padding: 10px;">
-            <!-- <h2><u>Currently Logged In As {{dataservice.username}} - {{dataservice.role}}</u></h2> -->
-            
-            
-            <h3>{{dataservice.message}}</h3>
-            <input type="checkbox" id="ourcheck" [checked]="show_zero" (click)="swapState()">
-            <label for="ourcheck">Show Users With No Assigned Tasks</label> 
-            <style>
-                .full-box {
-                    display: table-cell;
-                    vertical-align: middle;
-                    text-align: center;
-                    border: 2px solid black;
-                    padding: 10px;
-                }
-                .top-box {
-                    display: table-cell;
-                    font-size: 10pt;
-                    vertical-align: middle;
-                    text-align: center;
-                    border: 1px solid gray;
-                    border-top: 2px solid black;
-                    padding: 10px;
-                }
-                .reg-box {
-                    display: table-cell;
-                    font-size: 10pt;
-                    vertical-align: middle;
-                    text-align: center;
-                    border: 1px solid gray;
-                    padding: 10px;
-                }
-            </style>
-            <div class="board-area">
-                <div style="display: table; table-layout: fixed; width: 700px; word-wrap: break-word; border-collapse: collapse; border: 2px solid black;">
-                    <div style="display: table-row">
-                        <th colspan="6" class="full-box">Available Tasks</th>
-                    </div>
-                    <div style="display: table-row">
-                        <th class="full-box">Created By</th>
-                        <th class="full-box">Weekly Goal</th>
-                        <th class="full-box">Daily Target</th>
-                        <th class="full-box">Verify</th>
-                        <th class="full-box">Done</th>
-                        <th class="full-box">Remove</th>
-                    </div>
-                    <ng-container *ngFor="let user of dataservice.users">
-                        <div *ngIf="user.scrumgoal_set.length == 0 && show_zero" style="display: table-row;" dragula="mainTable" [attr.id]="'u' + user.id">
-                            <td class="full-box" id="author" colspan="6">
-                                {{user.user.nickname}} - NO TASKS ASSIGNED
-                                <div style="display:flex;">
-                                    <a mz-button (click)="dataservice.role == 'Owner' ? manageUser($event) : doNothing()" class="btn-floating change-role"><i class="material-icons" id="edit">edit</i></a>
-                                    <a mz-button (click)="getClicked($event); basicModal.openModal()" class="btn-floating add-icon"><i class="material-icons" id="add">add</i></a>
-                                </div>
-                            </td>
+        <div class="col s2">
+        </div>
+        <div class="col s7">
+            <div class="main_area">
+                <!-- <h2><u>Currently Logged In As {{dataservice.username}} - {{dataservice.role}}</u></h2> -->
+                
+                
+                <h3>{{dataservice.message}}</h3>
+                <input type="checkbox" id="ourcheck" [checked]="show_zero" (click)="swapState()">
+                <label for="ourcheck">Show Users With No Assigned Tasks</label> 
+                <style>
+                    .full-box {
+                        display: table-cell;
+                        vertical-align: middle;
+                        text-align: center;
+                        border: 2px solid black;
+                        padding: 10px;
+                    }
+                    .top-box {
+                        display: table-cell;
+                        font-size: 10pt;
+                        vertical-align: middle;
+                        text-align: center;
+                        border: 1px solid gray;
+                        border-top: 2px solid black;
+                        padding: 10px;
+                    }
+                    .reg-box {
+                        display: table-cell;
+                        font-size: 10pt;
+                        vertical-align: middle;
+                        text-align: center;
+                        border: 1px solid gray;
+                        padding: 10px;
+                    }
+                </style>
+                <div class="board-area">
+                    <div style="display: table; table-layout: fixed; width: 100%; word-wrap: break-word; border-collapse: collapse; border: 2px solid black;">
+                        <div style="display: table-row">
+                            <th colspan="6" class="full-box">Available Tasks</th>
                         </div>
-                        <div style="display: table-row" *ngFor="let goal of user.scrumgoal_set; let j = index; let k = count" dragula="mainTable" [attr.id] = "goal.id">
-                            <td *ngIf="j == 0" [attr.rowspan]="k" class="full-box" id="author">
-                                {{user.user.nickname}}
-                                <div style="display:flex;">
-                                    <a mz-button (click)="dataservice.role == 'Owner' ? manageUser($event) : doNothing()" class="btn-floating change-role"><i class="material-icons" id="edit">edit</i></a>
-                                    <a mz-button (click)="getClicked($event); basicModal.openModal()" class="btn-floating add-icon"><i class="material-icons" id="add">add</i></a>
-                                </div>
-                            </td>
-                            <div *ngFor="let arrItem of arrCount" [ngClass]="j == 0 ? 'top-box' : 'reg-box'" [innerText]="goal.status == arrItem ? goal.goal_project_id + ') ' + goal.name : '-'" [attr.id]="goal.status == arrItem ? arrItem : 'blank'" (click)="goal.status == arrItem ? editGoal($event) : doNothing()" style="font-size: 0.8rem"></div>
-                            <div [ngClass]="j == 0 ? 'top-box' : 'reg-box'" id="remove">-</div>
+                        <div style="display: table-row">
+                            <th class="full-box">Created By</th>
+                            <th class="full-box">Weekly Goal</th>
+                            <th class="full-box">Daily Target</th>
+                            <th class="full-box">Verify</th>
+                            <th class="full-box">Done</th>
+                            <th class="full-box">Remove</th>
                         </div>
-                    </ng-container>
+                        <ng-container *ngFor="let user of dataservice.users">
+                            <div *ngIf="user.scrumgoal_set.length == 0 && show_zero" style="display: table-row;" dragula="mainTable" [attr.id]="'u' + user.id">
+                                <td class="full-box" id="author" colspan="6">
+                                    {{user.user.nickname}} - NO TASKS ASSIGNED
+                                    <div style="display:flex;">
+                                        <a mz-button (click)="dataservice.role == 'Owner' ? manageUser($event) : doNothing()" class="btn-floating change-role"><i class="material-icons" id="edit">edit</i></a>
+                                        <a mz-button (click)="getClicked($event); basicModal.openModal()" class="btn-floating add-icon"><i class="material-icons" id="add">add</i></a>
+                                    </div>
+                                </td>
+                            </div>
+                            <div style="display: table-row" *ngFor="let goal of user.scrumgoal_set; let j = index; let k = count" dragula="mainTable" [attr.id] = "goal.id">
+                                <td *ngIf="j == 0" [attr.rowspan]="k" class="full-box" id="author">
+                                    {{user.user.nickname}}
+                                    <div style="display:flex;">
+                                        <a mz-button (click)="dataservice.role == 'Owner' ? manageUser($event) : doNothing()" class="btn-floating change-role"><i class="material-icons" id="edit">edit</i></a>
+                                        <a mz-button (click)="getClicked($event); basicModal.openModal()" class="btn-floating add-icon"><i class="material-icons" id="add">add</i></a>
+                                    </div>
+                                </td>
+                                <div *ngFor="let arrItem of arrCount" [ngClass]="j == 0 ? 'top-box' : 'reg-box'" [innerText]="goal.status == arrItem ? goal.goal_project_id + ') ' + goal.name : '-'" [attr.id]="goal.status == arrItem ? arrItem : 'blank'" (click)="goal.status == arrItem ? editGoal($event) : doNothing()" style="font-size: 0.8rem"></div>
+                                <div [ngClass]="j == 0 ? 'top-box' : 'reg-box'" id="remove">-</div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+            <div class="col m4">
+                <mz-modal #basicModal>
+                    <mz-modal-header>
+                        <h4>Add A Task</h4>
+                    </mz-modal-header>
+                    <mz-modal-content>
+                        <h6>Click outside this dialog to cancel.</h6>
+                        <form (ngSubmit)="addGoal($event)">
+                            <textarea rows="4" cols="35" id="goal" [(ngModel)]="dataservice.goal_name" name="goal"></textarea>
+                            <br>
+                            <input class="modal-close waves-effect btn btn-default" type="submit" value="Add Task">
+                        </form>
+                    </mz-modal-content>
+                </mz-modal>
+            </div>
+        </div>
+        <div class="col s3">
+            <div class="card medium" style="height: 400px">
+                <h3 style="text-align: center; padding-top: 20px">Chat Area</h3>
+                <hr>
+                <ul style="overflow: auto; height: 170px; padding-left: 10px; padding-right: 10px" id="chat_div_space">
+                    <li *ngFor="let message of messages" [innerText]="message" style="font-size: 0.85rem"></li>
+                </ul>
+                <div class="card-action">
+                    <input type="text" id="chat_text" name="chat_text" [(ngModel)]="chat_text" (keyup.enter)="sendMessage(chat_text)" style="width: 95%; font-size: 0.85rem">
+                    <button class="btn btn-default send" (click)="sendMessage(chat_text)">Send Message</button>
                 </div>
             </div>
         </div>
-        <div class="col m4">
-            <mz-modal #basicModal>
-                <mz-modal-header>
-                    <h4>Add A Task</h4>
-                </mz-modal-header>
-                <mz-modal-content>
-                    <h6>Click outside this dialog to cancel.</h6>
-                    <form (ngSubmit)="addGoal($event)">
-                        <textarea rows="4" cols="35" id="goal" [(ngModel)]="dataservice.goal_name" name="goal"></textarea>
-                        <br>
-                        <input class="modal-close waves-effect btn btn-default" type="submit" value="Add Task">
-                    </form>
-                </mz-modal-content>
-            </mz-modal>
-        </div>
     </div>
-
-    <div class="row right">
-        <div class=" card medium chat_area right">
-            <h3 style="text-align: center;">Chat Area</h3>
-            <hr>
-            <ul style="overflow: auto; height: 370px; padding-left: 10px; padding-right: 10px" id="chat_div_space">
-                <li *ngFor="let message of messages" [innerText]="message" style="font-size: 0.85rem"></li>
-            </ul>
-            <div class="card-action">
-                <input type="text" id="chat_text" name="chat_text" [(ngModel)]="chat_text" (keyup.enter)="sendMessage(chat_text)">
-                <button class="btn btn-default send" (click)="sendMessage(chat_text)">Send Message</button>
-            </div>
-        </div>   
-    </div>
-
 </div>
