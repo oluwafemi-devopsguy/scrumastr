@@ -70,12 +70,12 @@ h3 {
 }
 .card {
     
-    height: 700px;
+    height: 600px;
 }
 .chat_area {
-    width: 100%;
+    left: 725px;
     bottom: 0px;
-    right: 0px;
+    right: 15px;
     position: fixed; 
 }
 

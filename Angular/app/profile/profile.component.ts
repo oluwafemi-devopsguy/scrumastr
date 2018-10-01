@@ -90,33 +90,31 @@ export class ProfileComponent implements OnInit {
     
     this.websocket = new WebSocket('ws://' + this.dataservice.domain_name);
     this.websocket.onopen = (evt) => {
-        
+        this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumprojects/' + this.dataservice.project , this.dataservice.httpOptions).subscribe(
+            data => {
+                console.log(data);
+                this.dataservice.project_name = data['project_name'];
+                this.dataservice.users = data['data'];
+                this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '!join ' + this.dataservice.project_name}));
+            },
+            err => {
+                this.dataservice.message = 'Unexpected Error!';
+                console.log(err);
+            }
+        );
     }
     
     this.websocket.onmessage = (evt) => {
         var data = JSON.parse(evt.data);
         this.messages.push(data['user'] + ': ' + data['message']);
         var chat_scroll = document.getElementById('chat_div_space');
-        chat_scroll.scrollTop = chat_scroll.scrollHeight;
+        chat_scroll.scrollTop = chat_scroll.scrollHeight - chat_scroll.clientHeight;
         console.log(this.messages);
     }
     
     this.websocket.onclose = (evt) => {
         console.log('Disconnected!');
     }
-    
-    this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumprojects/' + this.dataservice.project , this.dataservice.httpOptions).subscribe(
-        data => {
-            console.log(data);
-            this.dataservice.project_name = data['project_name'];
-            this.dataservice.users = data['data'];
-            this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '!join ' + this.dataservice.project_name}));
-        },
-        err => {
-            this.dataservice.message = 'Unexpected Error!';
-            console.log(err);
-        }
-    );
   }
   
   swapState()

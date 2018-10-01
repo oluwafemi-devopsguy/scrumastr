@@ -25,9 +25,9 @@
 </div>
 
 
-<div class="container">
+<div class="container-fluid">
     <div class="row">
-        <div class="main_area">
+        <div class="main_area" style="padding: 10px;">
             <!-- <h2><u>Currently Logged In As {{dataservice.username}} - {{dataservice.role}}</u></h2> -->
             
             
@@ -91,7 +91,7 @@
                                     <a mz-button (click)="getClicked($event); basicModal.openModal()" class="btn-floating add-icon"><i class="material-icons" id="add">add</i></a>
                                 </div>
                             </td>
-                            <div *ngFor="let arrItem of arrCount" [ngClass]="j == 0 ? 'top-box' : 'reg-box'" [innerText]="goal.status == arrItem ? goal.goal_project_id + ') ' + goal.name : '-'" [attr.id]="goal.status == arrItem ? arrItem : 'blank'" (click)="goal.status == arrItem ? editGoal($event) : doNothing()"></div>
+                            <div *ngFor="let arrItem of arrCount" [ngClass]="j == 0 ? 'top-box' : 'reg-box'" [innerText]="goal.status == arrItem ? goal.goal_project_id + ') ' + goal.name : '-'" [attr.id]="goal.status == arrItem ? arrItem : 'blank'" (click)="goal.status == arrItem ? editGoal($event) : doNothing()" style="font-size: 0.8rem"></div>
                             <div [ngClass]="j == 0 ? 'top-box' : 'reg-box'" id="remove">-</div>
                         </div>
                     </ng-container>
@@ -116,21 +116,17 @@
     </div>
 
     <div class="row right">
-            <div class="col chat_area">
-                    <div class=" card medium chat_space right">
-                        <h3 style="text-align: center;">Chat Area</h3>
-                        <hr>
-                        <div class="" id="chat_div_space">
-                        <ul style="overflow: auto; height:175px; padding: 20px;">
-                            <li *ngFor="let message of messages" [innerText]="message"></li>
-                        </ul>
-                        </div>
-                        <div class="card-action">
-                            <input type="text" id="chat_text" name="chat_text" [(ngModel)]="chat_text">
-                            <button class="btn btn-default send" (click)="sendMessage(chat_text)">Send Message</button>
-                        </div>
-                    </div>
-                </div>
+        <div class=" card medium chat_area right">
+            <h3 style="text-align: center;">Chat Area</h3>
+            <hr>
+            <ul style="overflow: auto; height: 370px; padding-left: 10px; padding-right: 10px" id="chat_div_space">
+                <li *ngFor="let message of messages" [innerText]="message" style="font-size: 0.85rem"></li>
+            </ul>
+            <div class="card-action">
+                <input type="text" id="chat_text" name="chat_text" [(ngModel)]="chat_text" (keyup.enter)="sendMessage(chat_text)">
+                <button class="btn btn-default send" (click)="sendMessage(chat_text)">Send Message</button>
+            </div>
+        </div>   
     </div>
 
 </div>
