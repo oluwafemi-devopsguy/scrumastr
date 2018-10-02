@@ -39,7 +39,7 @@ export class DataService {
   createDemo()
   {
     this.message = "Creating the Demo, please wait...";
-    this.http.get('http://' + this.domain_name + '/scrum/create-demo', this.httpOptions).subscribe(
+    this.http.get('http://' + this.domain_name + '/scrum/create-demo/', this.httpOptions).subscribe(
         data => {
             this.login_username = data['username'];
             this.login_password = data['password'];

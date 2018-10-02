@@ -88,9 +88,9 @@ export class ProfileComponent implements OnInit {
         headers: new HttpHeaders({'Content-Type': 'application/json', 'Authorization': 'JWT ' + sessionStorage.getItem('token')})
     };
     
-    this.websocket = new WebSocket('ws://' + this.dataservice.domain_name);
+    this.websocket = new WebSocket('ws://' + this.dataservice.domain_name + '/');
     this.websocket.onopen = (evt) => {
-        this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumprojects/' + this.dataservice.project , this.dataservice.httpOptions).subscribe(
+        this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumprojects/' + this.dataservice.project + '/', this.dataservice.httpOptions).subscribe(
             data => {
                 console.log(data);
                 this.dataservice.project_name = data['project_name'];
