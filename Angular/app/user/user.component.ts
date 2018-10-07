@@ -15,7 +15,7 @@ export class UserComponent implements OnInit {
   
   toLogin()
   {
-    this.router.navigate(['login']);
+    this.router.navigate(['home']);
     this.dataservice.message = '';
   }
   

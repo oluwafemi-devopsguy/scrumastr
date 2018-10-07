@@ -260,7 +260,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             status_start = 2
         scrum_project.project_count = scrum_project.project_count + 1
         scrum_project.save()
-        goal = ScrumGoal(name=request.data['name'], status=status_start, goal_project_id=scrum_project.project_count, user=author)
+        goal = ScrumGoal(name=request.data['name'][:140], status=status_start, goal_project_id=scrum_project.project_count, user=author)
         goal.save()
         return JsonResponse({'message': 'Goal Added!', 'data': filtered_users(request.data['project_id'])})
             

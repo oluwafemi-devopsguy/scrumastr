@@ -17,6 +17,7 @@ export class ProfileComponent implements OnInit {
   public chat_text: string = "";
   public messages = [];
   public websocket;
+  public msg_obs;
   public on_user;
 
   public modalOptions: Materialize.ModalOptions = {
@@ -88,7 +89,22 @@ export class ProfileComponent implements OnInit {
         headers: new HttpHeaders({'Content-Type': 'application/json', 'Authorization': 'JWT ' + sessionStorage.getItem('token')})
     };
     
-    this.websocket = new WebSocket('ws://' + this.dataservice.domain_name + '/');
+    this.msg_obs = new MutationObserver((mutations) => {
+        var chat_scroll = document.getElementById('chat_div_space');
+        // console.log(chat_scroll.scrollHeight - chat_scroll.clientHeight);
+        // console.log(chat_scroll.scrollTop);
+        if(chat_scroll.scrollTop + 20 > chat_scroll.scrollHeight - chat_scroll.clientHeight)
+        {
+            chat_scroll.scrollTop = chat_scroll.scrollHeight - chat_scroll.clientHeight;
+        }
+        console.log(this.messages);
+    });
+        
+    document.addEventListener('DOMContentLoaded', (event) => {
+        this.msg_obs.observe(document.getElementById('chat_div_space'), { attributes: true, childList: true, subtree: true });
+    });
+    
+    this.websocket = new WebSocket('ws://' + this.dataservice.domain_name + '/scrum/');
     this.websocket.onopen = (evt) => {
         this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumprojects/' + this.dataservice.project + '/', this.dataservice.httpOptions).subscribe(
             data => {
@@ -107,13 +123,11 @@ export class ProfileComponent implements OnInit {
     this.websocket.onmessage = (evt) => {
         var data = JSON.parse(evt.data);
         this.messages.push(data['user'] + ': ' + data['message']);
-        var chat_scroll = document.getElementById('chat_div_space');
-        chat_scroll.scrollTop = chat_scroll.scrollHeight - chat_scroll.clientHeight;
-        console.log(this.messages);
     }
     
     this.websocket.onclose = (evt) => {
         console.log('Disconnected!');
+        this.msg_obs.disconnect();
     }
   }
   
@@ -216,7 +230,6 @@ export class ProfileComponent implements OnInit {
   logout()
   {
     this.dataservice.message = 'Thank you for using Scrum!';
-    this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '<- This user has left.'}))
     this.websocket.close();
     this.dataservice.logout();
   }

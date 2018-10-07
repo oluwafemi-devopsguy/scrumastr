@@ -6,7 +6,7 @@
       <div class="nav-wrapper">
           <div class="row">
               <div class="col m4">
-                <a href="#!" class="brand-logo"><img src="/src/assets/image/scrum_new_logo.png" alt="nav-logo" class="logo"><span class="logo-text">ChatScrum</span></a>
+                <a href="#!" class="brand-logo"><img src="/src/assets/image/Converted-PNG.png" alt="nav-logo" class="logo"></a>
               </div>
               <div class="col m4">
                 <h5 id="project_title">Current Project: {{dataservice.project_name}}</h5>
@@ -108,7 +108,7 @@
                     </mz-modal-header>
                     <mz-modal-content>
                         <h6>Click outside this dialog to cancel.</h6>
-                        <form (ngSubmit)="addGoal($event)">
+                        <form (ngSubmit)="addGoal()">
                             <textarea rows="4" cols="35" id="goal" [(ngModel)]="dataservice.goal_name" name="goal"></textarea>
                             <br>
                             <input class="modal-close waves-effect btn btn-default" type="submit" value="Add Task">
@@ -117,8 +117,8 @@
                 </mz-modal>
             </div>
         </div>
-        <div class="col s3">
-            <div class="card medium" style="height: 400px">
+        <div class="col s3" style="position: fixed; right: 0px; top: 0 px">
+            <div class="card" style="">
                 <h3 style="text-align: center; padding-top: 20px">Chat Area</h3>
                 <hr>
                 <ul style="overflow: auto; height: 170px; padding-left: 10px; padding-right: 10px" id="chat_div_space">

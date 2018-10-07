@@ -57,3 +57,15 @@ class ScrumGoal(models.Model):
     
     class Meta:
         ordering = ['-id']
+        
+class ScrumChatRoom(models.Model):
+    name = models.CharField(max_length=60)
+    hash = models.CharField(max_length=32)
+    
+class ScrumChatMessage(models.Model):
+    user = models.CharField(max_length=50)
+    message = models.CharField(max_length=300)
+    room = models.ForeignKey(ScrumChatRoom, on_delete=models.CASCADE)
+    
+    
+    
