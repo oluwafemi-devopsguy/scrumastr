@@ -19,7 +19,8 @@ export class ProfileComponent implements OnInit {
   public websocket;
   public msg_obs;
   public on_user;
-
+  public at_bottom: boolean = true;
+    
   public modalOptions: Materialize.ModalOptions = {
     dismissible: false, // Modal can be dismissed by clicking outside of the modal
     opacity: .5, // Opacity of modal background
@@ -84,31 +85,26 @@ export class ProfileComponent implements OnInit {
     this.dataservice.username = sessionStorage.getItem('username');
     this.dataservice.role = sessionStorage.getItem('role');
     this.dataservice.project = sessionStorage.getItem('project_id');
-    
+
     this.dataservice.authOptions = {
         headers: new HttpHeaders({'Content-Type': 'application/json', 'Authorization': 'JWT ' + sessionStorage.getItem('token')})
     };
-    
+
     this.msg_obs = new MutationObserver((mutations) => {
         var chat_scroll = document.getElementById('chat_div_space');
-        // console.log(chat_scroll.scrollHeight - chat_scroll.clientHeight);
-        // console.log(chat_scroll.scrollTop);
-        if(chat_scroll.scrollTop + 20 > chat_scroll.scrollHeight - chat_scroll.clientHeight)
-        {
+        console.log(chat_scroll.scrollHeight - chat_scroll.clientHeight);
+        console.log(chat_scroll.scrollTop);
+        if(this.at_bottom)
             chat_scroll.scrollTop = chat_scroll.scrollHeight - chat_scroll.clientHeight;
-        }
         console.log(this.messages);
     });
-        
-    document.addEventListener('DOMContentLoaded', (event) => {
-        this.msg_obs.observe(document.getElementById('chat_div_space'), { attributes: true, childList: true, subtree: true });
-    });
-    
+
     this.websocket = new WebSocket('ws://' + this.dataservice.domain_name + '/scrum/');
     this.websocket.onopen = (evt) => {
         this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumprojects/' + this.dataservice.project + '/', this.dataservice.httpOptions).subscribe(
             data => {
                 console.log(data);
+                this.msg_obs.observe(document.getElementById('chat_div_space'), { attributes: true, childList: true, subtree: true });
                 this.dataservice.project_name = data['project_name'];
                 this.dataservice.users = data['data'];
                 this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '!join ' + this.dataservice.project_name}));
@@ -119,12 +115,26 @@ export class ProfileComponent implements OnInit {
             }
         );
     }
-    
+
     this.websocket.onmessage = (evt) => {
         var data = JSON.parse(evt.data);
-        this.messages.push(data['user'] + ': ' + data['message']);
+        if(data['messages'] !== undefined)
+        {
+            this.messages = []
+            for(var i = 0; i < data['messages']['length']; i++)
+            {
+                this.messages.push(data['messages'][i]['user'] + ': ' + data['messages'][i]['message']);
+            }
+        } else
+        {
+            this.messages.push(data['user'] + ': ' + data['message']);
+        }
+        this.at_bottom = false;
+        var chat_scroll = document.getElementById('chat_div_space');
+        if(chat_scroll.scrollTop == chat_scroll.scrollHeight - chat_scroll.clientHeight)
+            this.at_bottom = true;
     }
-    
+
     this.websocket.onclose = (evt) => {
         console.log('Disconnected!');
         this.msg_obs.disconnect();

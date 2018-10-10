@@ -60,7 +60,7 @@ class ScrumGoal(models.Model):
         
 class ScrumChatRoom(models.Model):
     name = models.CharField(max_length=60)
-    hash = models.CharField(max_length=32)
+    hash = models.CharField(max_length=64)
     
 class ScrumChatMessage(models.Model):
     user = models.CharField(max_length=50)

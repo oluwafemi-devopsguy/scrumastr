@@ -23,15 +23,28 @@ class ChatConsumer(AsyncWebsocketConsumer):
 '''        
 #For when you do have redis; You can see everyone's chat.
 class ChatConsumer(AsyncWebsocketConsumer):
-    def generate_room(name, hash):
-        new_room = ScrumChatRoom(name=name, hash=hash)
+    def getRecentMessages(self):
+        messages = []
+        for message in self.room_object.scrumchatmessage_set.order_by('-pk')[:30]:
+            messages.insert(0, {'user': message.user, 'message': message.message})
+        del messages[-1]
+        return messages
+
+    def getCount(self, object):
+        return object.count()
+
+    def firstObject(self, object):
+        return object[0]
+
+    def generate_room(self, this_name, this_hash):
+        new_room = ScrumChatRoom(name=this_name, hash=this_hash)
         new_room.save()
         return new_room
-        
-    def generate_message(room, user, message):
-        new_message = ScrumChatMessage(room=room, user=user, message=message)
+
+    def generate_message(self, this_room, this_user, this_message):
+        new_message = ScrumChatMessage(room=this_room, user=this_user, message=this_message)
         new_message.save()
-    
+
     async def connect(self):
         self.room_group_name = hashlib.sha256(b'._global_chat_.').hexdigest()
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
@@ -39,7 +52,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_send(self.room_group_name, {'type': 'chat_message', 'user': 'SERVER INFO', 'message': self.user + ' has left.'})
-        await database_sync_to_async(generate_message)('SERVER INFO', str(self.user + 'has left.'))
+        await database_sync_to_async(self.generate_message)(self.room_object, 'SERVER INFO', str(self.user + ' has left.'))
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
     async def receive(self, text_data):
@@ -49,27 +62,30 @@ class ChatConsumer(AsyncWebsocketConsumer):
         if message[:6] == '!join ':
             await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
             self.room_group_name = hashlib.sha256(message[6:].encode('UTF-8')).hexdigest()
-            
+            print(self.room_group_name)
             room = await database_sync_to_async(ScrumChatRoom.objects.filter)(hash=self.room_group_name)
-            
-            if room.count() == 0:
-                new_room = await database_sync_to_async(generate_room)(name=message[6:66], hash=self.room_group_name)
-                await database_sync_to_async(generate_message)(room=new_room, user='SERVER INFO', message='=== This is the beginning of the chatroom history. ===')
+            room_count = await database_sync_to_async(self.getCount)(room)
+
+            if room_count == 0:
+                new_room = await database_sync_to_async(self.generate_room)(message[6:66], self.room_group_name)
+                await database_sync_to_async(self.generate_message)(new_room, 'SERVER INFO', '=== This is the beginning of the chatroom history. ===')
                 self.room_object = new_room
             else:
-                self.room_object = room[0]
-                
+                self.room_object = await database_sync_to_async(self.firstObject)(room)
+
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)
             await self.channel_layer.group_send(self.room_group_name, {'type': 'chat_message', 'user': 'SERVER INFO', 'message': self.user + ' has joined.'})
-            await database_sync_to_async(generate_message)(room=self.room_object, user='SERVER INFO', message=(self.user + ' has joined.'))
+            await database_sync_to_async(self.generate_message)(self.room_object, 'SERVER INFO', str(self.user + ' has joined.'))
+
+            messages = await database_sync_to_async(self.getRecentMessages)()
+            await self.send(text_data=json.dumps({'messages': messages}))
         else:
             print(message)
             await self.channel_layer.group_send(self.room_group_name, {'type': 'chat_message', 'user': self.user, 'message': message})
-            await database_sync_to_async(generate_message)(room=self.room_object, user=self.user, message=message)
+            await database_sync_to_async(self.generate_message)(self.room_object, self.user, message)
 
     async def chat_message(self, event):
         user = event['user']
         message = event['message']
-        await self.send(text_data=json.dumps({'user': user, 'message': message}))
-        
+        await self.send(text_data=json.dumps({'user': user, 'message': message}))        
 '''

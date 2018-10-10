@@ -9,7 +9,8 @@
                 <a href="#!" class="brand-logo"><img src="/src/assets/image/Converted-PNG.png" alt="nav-logo" class="logo"></a>
               </div>
               <div class="col m4">
-                <h5 id="project_title">Current Project: {{dataservice.project_name}}</h5>
+                
+                <h5 id="project_title" style="text-align: center">{{dataservice.project_name}}</h5>
              </div>
              <div class="col m4">
                 <ul class="right hide-on-med-and-down">
@@ -117,15 +118,17 @@
                 </mz-modal>
             </div>
         </div>
-        <div class="col s3" style="position: fixed; right: 0px; top: 0 px">
-            <div class="card" style="">
+        <div class="col s3" style="position: fixed; right: 0px; top: 0 px;">
+            <div class="card">
                 <h3 style="text-align: center; padding-top: 20px">Chat Area</h3>
                 <hr>
-                <ul style="overflow: auto; height: 170px; padding-left: 10px; padding-right: 10px" id="chat_div_space">
-                    <li *ngFor="let message of messages" [innerText]="message" style="font-size: 0.85rem"></li>
-                </ul>
+                <div style="overflow: auto; height: calc(100vh - 300px); padding-left: 10px; padding-right: 10px" id="chat_div_space">
+                    <div *ngFor="let message of messages" style="font-size: 0.85rem">
+                        <li [innerText]="message" style="padding-top: 5px; padding-bottom: 5px"></li>
+                    </div>
+                </div>
                 <div class="card-action">
-                    <input type="text" id="chat_text" name="chat_text" [(ngModel)]="chat_text" (keyup.enter)="sendMessage(chat_text)" style="width: 95%; font-size: 0.85rem">
+                    <input type="text" id="chat_text" name="chat_text" [(ngModel)]="chat_text" (keyup.enter)="sendMessage(chat_text)" style="font-size: 0.85rem">
                     <button class="btn btn-default send" (click)="sendMessage(chat_text)">Send Message</button>
                 </div>
             </div>

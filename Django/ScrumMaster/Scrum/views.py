@@ -11,6 +11,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.serializers import ValidationError
 import random
 import datetime
+import re
 
 # Create your views here.
 
@@ -177,6 +178,10 @@ class ScrumUserViewSet(viewsets.ModelViewSet):
     serializer_class = ScrumUserSerializer
     
     def create(self, request):
+        # Pattern Match For an Email: https://www.regular-expressions.info/email.html
+        regex_pattern = re.compile(r'(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)')
+        if regex_pattern.match(request.data['email']) == None:
+            return JsonResponse({'message': 'Error: Invalid email specified.'})
         if request.data['usertype'] == 'Owner' and ScrumProject.objects.filter(name__iexact=request.data['projname']).count() > 0:
             return JsonResponse({'message': 'Error: That project name is already taken.'})
         user, created = User.objects.get_or_create(username=request.data['email'], email=request.data['email'])
