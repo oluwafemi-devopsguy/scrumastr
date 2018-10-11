@@ -5,10 +5,6 @@
     <div class="container-fluid">
       <div class="nav-wrapper">
         <a href="#!" class="brand-logo"><img src="/src/assets/image/Converted-PNG.png" alt="nav-logo" class="logo"></a>
-        <ul class="right hide-on-med-and-down">
-          <li><a href="/login" id="login">LOGIN</a></li>
-          <li><a href="/createuser" id="signup">SIGN UP</a></li>
-        </ul>
       </div>
     </div>
     </nav>
@@ -17,17 +13,14 @@
 
 <div class="container content">
   <div class="row">
-    <div class="col m6 logo_section">
-      <div class="image_wrapper">
+    <div class="col m6 logo_section" style="text-align: center">
         <img src="/src/assets/image/banner.png" alt="banner">
-      </div>
-      
-        <h5 class="click">Click here for <span><a (click)="createDemo()" class="demo">DEMO</a></span></h5>
-      
+        <a class="btn" (click)="createDemo()">Click here for a Demo</a>
     </div>
     <div class="col m6 login_section">
       <div class="login_wrapper">
           <h4 class="bold center" id="home_login">LOGIN</h4>
+          <h4 class="bold center" id="home_login">{{dataservice.message}}</h4>
           <!-- <hr> -->
           <br>
           <form (ngSubmit)="login()">

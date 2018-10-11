@@ -9,13 +9,12 @@
                 <a href="#!" class="brand-logo"><img src="/src/assets/image/Converted-PNG.png" alt="nav-logo" class="logo"></a>
               </div>
               <div class="col m4">
-                
-                <h5 id="project_title" style="text-align: center">{{dataservice.project_name}}</h5>
+                <h3 id="project_title" style="text-align: center">{{dataservice.project_name}}</h3>
              </div>
              <div class="col m4">
                 <ul class="right hide-on-med-and-down">
                     <li id="username"> {{dataservice.username}} - {{dataservice.role}} </li>
-                <li><a (click)="logout()" id="logout">LOGOUT</a></li>
+                    <li><a (click)="logout()" id="logout">LOGOUT</a></li>
                 </ul>
             </div>
           </div>
@@ -33,10 +32,8 @@
         <div class="col s7">
             <div class="main_area">
                 <!-- <h2><u>Currently Logged In As {{dataservice.username}} - {{dataservice.role}}</u></h2> -->
-                
-                
                 <h3>{{dataservice.message}}</h3>
-                <input type="checkbox" id="ourcheck" [checked]="show_zero" (click)="swapState()">
+                <input type="checkbox" id="ourcheck" class="filled-in"[checked]="show_zero" (click)="swapState()">
                 <label for="ourcheck">Show Users With No Assigned Tasks</label> 
                 <style>
                     .full-box {
@@ -82,7 +79,7 @@
                                 <td class="full-box" id="author" colspan="6">
                                     {{user.user.nickname}} - NO TASKS ASSIGNED
                                     <div style="display:flex;">
-                                        <a mz-button (click)="dataservice.role == 'Owner' ? manageUser($event) : doNothing()" class="btn-floating change-role"><i class="material-icons" id="edit">edit</i></a>
+                                        <a mz-button (click)="dataservice.role == 'Owner' ? manageUser($event) : doNothing()" class="btn-floating change-role"><i class="material-icons" id="settings">settings</i></a>
                                         <a mz-button (click)="getClicked($event); basicModal.openModal()" class="btn-floating add-icon"><i class="material-icons" id="add">add</i></a>
                                     </div>
                                 </td>
@@ -91,7 +88,7 @@
                                 <td *ngIf="j == 0" [attr.rowspan]="k" class="full-box" id="author">
                                     {{user.user.nickname}}
                                     <div style="display:flex;">
-                                        <a mz-button (click)="dataservice.role == 'Owner' ? manageUser($event) : doNothing()" class="btn-floating change-role"><i class="material-icons" id="edit">edit</i></a>
+                                        <a mz-button (click)="dataservice.role == 'Owner' ? manageUser($event) : doNothing()" class="btn-floating change-role"><i class="material-icons" id="settings">settings</i></a>
                                         <a mz-button (click)="getClicked($event); basicModal.openModal()" class="btn-floating add-icon"><i class="material-icons" id="add">add</i></a>
                                     </div>
                                 </td>
@@ -120,16 +117,19 @@
         </div>
         <div class="col s3" style="position: fixed; right: 0px; top: 0 px;">
             <div class="card">
-                <h3 style="text-align: center; padding-top: 20px">Chat Area</h3>
+                <h5 style="text-align: center; padding-top: 10px">Group Chat</h5>
                 <hr>
-                <div style="overflow: auto; height: calc(100vh - 300px); padding-left: 10px; padding-right: 10px" id="chat_div_space">
+                <div style="overflow: auto; height: calc(100vh - 235px); padding-left: 10px; padding-right: 10px" id="chat_div_space">
                     <div *ngFor="let message of messages" style="font-size: 0.85rem">
-                        <li [innerText]="message" style="padding-top: 5px; padding-bottom: 5px"></li>
+                        <li [innerText]="message" style="list-style-type: none; padding-top: 5px; padding-bottom: 5px"></li>
                     </div>
                 </div>
-                <div class="card-action">
-                    <input type="text" id="chat_text" name="chat_text" [(ngModel)]="chat_text" (keyup.enter)="sendMessage(chat_text)" style="font-size: 0.85rem">
-                    <button class="btn btn-default send" (click)="sendMessage(chat_text)">Send Message</button>
+                <hr>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input type="text" id="chat_text" name="chat_text" [(ngModel)]="chat_text" (keyup.enter)="sendMessage(chat_text)" style="font-size: 0.85rem">
+                        <label for="chat_text">Send a message</label>
+                    </div>
                 </div>
             </div>
         </div>

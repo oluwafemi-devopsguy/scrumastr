@@ -13,7 +13,7 @@ export class ProfileComponent implements OnInit {
 
   public arrCount = [0, 1, 2, 3];
   subs = new Subscription();
-  public show_zero: boolean = false;
+  public show_zero: boolean = true;
   public chat_text: string = "";
   public messages = [];
   public websocket;
@@ -180,12 +180,13 @@ export class ProfileComponent implements OnInit {
   {
     console.log(event);
     var role_name = window.prompt('Change User Role:\nSelect Between: Developer, Admin, Quality Analyst, or Owner:', '');
+    role_name = role_name.toLowerCase();
     if(role_name == null || role_name == '')
     {
         this.dataservice.message = 'Edit Canceled.';
-    } else if(role_name == 'Developer' || role_name == 'Quality Analyst' || role_name == 'Admin' || role_name == 'Owner')
+    } else if(role_name == 'developer' || role_name == 'quality analyst' || role_name == 'admin' || role_name == 'owner')
     {
-        this.http.patch('http://' + this.dataservice.domain_name + '/scrum/api/scrumprojectroles/', JSON.stringify({'role': role_name, 'id': event.target.parentElement.parentElement.parentElement.parentElement.id, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
+        this.http.patch('http://' + this.dataservice.domain_name + '/scrum/api/scrumprojectroles/', JSON.stringify({'role': role_name, 'id': event.target.parentElement.parentElement.parentElement.id, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
             data => {
                 this.dataservice.users = data['data'];
                 this.dataservice.message = data['message'];
