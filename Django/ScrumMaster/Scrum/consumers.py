@@ -67,7 +67,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             room_count = await database_sync_to_async(self.getCount)(room)
 
             if room_count == 0:
-                new_room = await database_sync_to_async(self.generate_room)(message[6:66], self.room_group_name)
+                new_room = await database_sync_to_async(self.generate_room)(message, self.room_group_name)
                 await database_sync_to_async(self.generate_message)(new_room, 'SERVER INFO', '=== This is the beginning of the chatroom history. ===')
                 self.room_object = new_room
             else:

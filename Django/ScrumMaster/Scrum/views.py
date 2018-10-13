@@ -184,6 +184,11 @@ class ScrumUserViewSet(viewsets.ModelViewSet):
             return JsonResponse({'message': 'Error: Invalid email specified.'})
         if request.data['usertype'] == 'Owner' and ScrumProject.objects.filter(name__iexact=request.data['projname']).count() > 0:
             return JsonResponse({'message': 'Error: That project name is already taken.'})
+        if request.data['usertype'] == 'Owner' and len(request.data['projname']) > 50:
+            return JsonResponse({'message': 'Error: A project name cannot go over 50 characters.'})
+        if len(request.data['full_name']) > 50:
+            return JsonResponse({'message': 'Error: A user nickname cannot go over 50 characters.'})
+        
         user, created = User.objects.get_or_create(username=request.data['email'], email=request.data['email'])
         if created:
             scrum_user = ScrumUser(user=user, nickname=request.data['full_name'])
@@ -265,7 +270,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             status_start = 2
         scrum_project.project_count = scrum_project.project_count + 1
         scrum_project.save()
-        goal = ScrumGoal(name=request.data['name'][:140], status=status_start, goal_project_id=scrum_project.project_count, user=author)
+        goal = ScrumGoal(name=request.data['name'], status=status_start, goal_project_id=scrum_project.project_count, user=author)
         goal.save()
         return JsonResponse({'message': 'Goal Added!', 'data': filtered_users(request.data['project_id'])})
             

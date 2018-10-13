@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 class ScrumProject(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=50)
     project_count = models.IntegerField(default=0)
     
     def __str__(self):
@@ -40,7 +40,7 @@ class ScrumDemoProject(models.Model):
         
 class ScrumGoal(models.Model):
     visible = models.BooleanField(default=True)
-    name = models.CharField(max_length=140)
+    name = models.TextField()
     status = models.IntegerField(default=-1)
     goal_project_id = models.IntegerField(default=0)
     user = models.ForeignKey(ScrumProjectRole, on_delete=models.CASCADE)
@@ -59,13 +59,11 @@ class ScrumGoal(models.Model):
         ordering = ['-id']
         
 class ScrumChatRoom(models.Model):
-    name = models.CharField(max_length=60)
+    name = models.TextField()
     hash = models.CharField(max_length=64)
     
 class ScrumChatMessage(models.Model):
     user = models.CharField(max_length=50)
-    message = models.CharField(max_length=300)
+    message = models.TextField()
     room = models.ForeignKey(ScrumChatRoom, on_delete=models.CASCADE)
-    
-    
     

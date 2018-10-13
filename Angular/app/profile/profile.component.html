@@ -6,7 +6,7 @@
       <div class="nav-wrapper">
           <div class="row">
               <div class="col m4">
-                <a href="#!" class="brand-logo"><img src="/src/assets/image/Converted-PNG.png" alt="nav-logo" class="logo"></a>
+                <a href="#" class="brand-logo"><img src="/src/assets/image/Converted-PNG.png" alt="nav-logo" class="logo"></a>
               </div>
               <div class="col m4">
                 <h3 id="project_title" style="text-align: center">{{dataservice.project_name}}</h3>
@@ -33,8 +33,10 @@
             <div class="main_area">
                 <!-- <h2><u>Currently Logged In As {{dataservice.username}} - {{dataservice.role}}</u></h2> -->
                 <h3>{{dataservice.message}}</h3>
-                <input type="checkbox" id="ourcheck" class="filled-in"[checked]="show_zero" (click)="swapState()">
-                <label for="ourcheck">Show Users With No Assigned Tasks</label> 
+                <label>
+                    <input type="checkbox" id="ourcheck" class="filled-in" [checked]="show_zero" (click)="swapState()">
+                    <span >Show Users With No Assigned Tasks</span>
+                </label>
                 <style>
                     .full-box {
                         display: table-cell;
@@ -92,7 +94,7 @@
                                         <a mz-button (click)="getClicked($event); basicModal.openModal()" class="btn-floating add-icon"><i class="material-icons" id="add">add</i></a>
                                     </div>
                                 </td>
-                                <div *ngFor="let arrItem of arrCount" [ngClass]="j == 0 ? 'top-box' : 'reg-box'" [innerText]="goal.status == arrItem ? goal.goal_project_id + ') ' + goal.name : '-'" [attr.id]="goal.status == arrItem ? arrItem : 'blank'" (click)="goal.status == arrItem ? editGoal($event) : doNothing()" style="font-size: 0.8rem"></div>
+                                <div *ngFor="let arrItem of arrCount" [ngClass]="j == 0 ? 'top-box' : 'reg-box'" [innerText]="goal.status == arrItem ? goal.goal_project_id + ') ' + goal.name : '-'" [attr.id]="goal.status == arrItem ? arrItem : 'blank'" (dblclick)="goal.status == arrItem ? editGoal($event) : doNothing()" style="font-size: 0.8rem"></div>
                                 <div [ngClass]="j == 0 ? 'top-box' : 'reg-box'" id="remove">-</div>
                             </div>
                         </ng-container>
@@ -107,7 +109,7 @@
                     <mz-modal-content>
                         <h6>Click outside this dialog to cancel.</h6>
                         <form (ngSubmit)="addGoal()">
-                            <textarea rows="4" cols="35" id="goal" [(ngModel)]="dataservice.goal_name" name="goal"></textarea>
+                            <textarea id="goal" [(ngModel)]="dataservice.goal_name" name="goal"></textarea>
                             <br>
                             <input class="modal-close waves-effect btn btn-default" type="submit" value="Add Task">
                         </form>
@@ -119,15 +121,15 @@
             <div class="card">
                 <h5 style="text-align: center; padding-top: 10px">Group Chat</h5>
                 <hr>
-                <div style="overflow: auto; height: calc(100vh - 235px); padding-left: 10px; padding-right: 10px" id="chat_div_space">
+                <div style="overflow: auto; height: calc(100vh - 345px); padding-left: 10px; padding-right: 10px" id="chat_div_space">
                     <div *ngFor="let message of messages" style="font-size: 0.85rem">
                         <li [innerText]="message" style="list-style-type: none; padding-top: 5px; padding-bottom: 5px"></li>
                     </div>
                 </div>
                 <hr>
-                <div class="row">
+                <div class="row" style="padding-left: 10px; padding-right: 10px">
                     <div class="input-field col s12">
-                        <input type="text" id="chat_text" name="chat_text" [(ngModel)]="chat_text" (keyup.enter)="sendMessage(chat_text)" style="font-size: 0.85rem">
+                        <textarea id="chat_text" class="materialize-textarea" [(ngModel)]="chat_text" (keyup.enter)="sendMessage()" style="font-size: 0.85rem"></textarea>
                         <label for="chat_text">Send a message</label>
                     </div>
                 </div>

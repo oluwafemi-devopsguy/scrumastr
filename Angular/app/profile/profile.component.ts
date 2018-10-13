@@ -214,7 +214,7 @@ export class ProfileComponent implements OnInit {
      
   }
   
-  sendMessage(message)
+  sendMessage()
   {
     this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': this.chat_text}))
     this.chat_text = '';
