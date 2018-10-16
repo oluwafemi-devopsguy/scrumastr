@@ -54,29 +54,31 @@ export class ProfileComponent implements OnInit {
                 var target = value['target'];
                 var source = value['source'];
                 
-                if(target['id'] == source['id'])
-                {
+                if(target['id']){
                     var offset = 0;
-                    
-                    for(var i = 0; i < target['children'].length; i++)
-                    {
-                        if(i == 0 && target['children'][i]['id'] == 'author')
-                        {
-                            offset = 1;
-                            continue;
-                        }
-                        
-                        if(target['children'][i]['id'] == el['id'])
-                        {
-                            console.log(i - offset);
-                            this.dataservice.moveGoal(source['id'], i - offset);
-                            break;
-                        }
+
+                    for(var i = 0; i < target['children'].length; i++) {
+                      if (target['children'][i]['id'] == 'user') {
+                        var t_count = i - 1
+                        var t_owner = target['children'][t_count]['id']
+                      }
                     }
-                } else
-                {
-                    this.dataservice.changeOwner(source['id'], target['id']);
-                }
+
+
+                     for(var i = 0; i < source['children'].length; i++) {
+                      if (source['children'][i]['id'] == 'user') {
+                        var s_count = i - 1                        
+                        var s_owner = source['children'][s_count]['id']
+                      }
+                    }
+
+                    if (t_owner == s_owner) {
+                      this.dataservice.moveGoal(el['id'], target['id']);
+                    } else{
+                      this.dataservice.changeOwner(source['id'], target['id']);
+                    }         
+  
+                } 
             }
         )
     );
@@ -250,6 +252,17 @@ export class ProfileComponent implements OnInit {
     this.subs.unsubscribe();  
     this.dragula.destroy('mainTable');
   }
+
+  scrollIntoView(anchorHash) {
+    setTimeout(() => {
+        const anchor = document.getElementById(anchorHash);
+        console.log(anchorHash);
+        if (anchor) {
+            anchor.focus();
+            anchor.scrollIntoView();
+        }
+    });
+}
 
 //   addGoalModal(){
 //     $(document).ready(function(){

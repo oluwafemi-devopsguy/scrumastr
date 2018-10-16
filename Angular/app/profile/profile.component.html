@@ -28,7 +28,15 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col s2">
+            <div class="" style="height: 400px">
+                <h3 style="text-align: center; padding-top: 20px">Scrum Users</h3>
+                <hr>
+                <ul *ngFor="let user of dataservice.users">
+                    <li><a [routerLink] fragment='{{user.id}}' (click)="scrollIntoView(user.id)"><i class="material-icons" id="account_circle">account_circle</i>{{user.user.nickname}}</a></li>
+                </ul>
+            </div>
         </div>
+
         <div class="col s7">
             <div class="main_area">
                 <!-- <h2><u>Currently Logged In As {{dataservice.username}} - {{dataservice.role}}</u></h2> -->
@@ -86,16 +94,27 @@
                                     </div>
                                 </td>
                             </div>
-                            <div style="display: table-row" *ngFor="let goal of user.scrumgoal_set; let j = index; let k = count" dragula="mainTable" [attr.id] = "goal.id">
-                                <td *ngIf="j == 0" [attr.rowspan]="k" class="full-box" id="author">
+                            <div style="display: table-row"  *ngIf="user.scrumgoal_set.length != 0" id={{user.id}}  tabindex="-1">
+                                <td class="full-box" id="author">
                                     {{user.user.nickname}}
                                     <div style="display:flex;">
                                         <a mz-button (click)="dataservice.role == 'Owner' ? manageUser($event) : doNothing()" class="btn-floating change-role"><i class="material-icons" id="settings">settings</i></a>
                                         <a mz-button (click)="getClicked($event); basicModal.openModal()" class="btn-floating add-icon"><i class="material-icons" id="add">add</i></a>
                                     </div>
                                 </td>
-                                <div *ngFor="let arrItem of arrCount" [ngClass]="j == 0 ? 'top-box' : 'reg-box'" [innerText]="goal.status == arrItem ? goal.goal_project_id + ') ' + goal.name : '-'" [attr.id]="goal.status == arrItem ? arrItem : 'blank'" (dblclick)="goal.status == arrItem ? editGoal($event) : doNothing()" style="font-size: 0.8rem"></div>
-                                <div [ngClass]="j == 0 ? 'top-box' : 'reg-box'" id="remove">-</div>
+                                <div *ngFor="let arrItem of arrCount" class="top-box" dragula="mainTable" [attr.id] = "arrItem" >
+
+                                    <div class="div_lister" *ngFor="let goal of user.scrumgoal_set; let j = index; let k = count" [attr.id]="goal.goal_project_id">
+                                        <div class="list_div"  *ngIf ="goal.status == arrItem"   (click)="goal.status == arrItem ? editGoal($event) : doNothing()" style="font-size: 0.8rem" id={{user.id}}>
+                                            {{goal.goal_project_id}}) {{ (goal.name.length>40) ? (goal.name | slice:0:40)+'..':(goal.name) }}
+
+                                        <span class="tooltiptext">{{goal.name}}</span>
+
+                                        </div>                                    </div>
+                                    <div id='{{user.id}}'></div>
+                                    <div id='user'></div>
+                                </div>
+                                <div class="top-box" id="remove">-</div>
                             </div>
                         </ng-container>
                     </div>
