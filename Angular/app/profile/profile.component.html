@@ -25,6 +25,7 @@
 </div>
 
 
+
 <div class="container-fluid">
     <div class="row">
         <div class="col s2">
@@ -105,7 +106,7 @@
                                 <div *ngFor="let arrItem of arrCount" class="top-box" dragula="mainTable" [attr.id] = "arrItem" >
 
                                     <div class="div_lister" *ngFor="let goal of user.scrumgoal_set; let j = index; let k = count" [attr.id]="goal.goal_project_id">
-                                        <div class="list_div"  *ngIf ="goal.status == arrItem && goal.name; let thisGoal"   (click)="goal.status == arrItem ? editGoal($event) : doNothing()" style="font-size: 0.8rem" id={{user.id}}>    {{goal.goal_project_id}}) {{ (thisGoal.length>40) ? (thisGoal | slice:0:40)+'..':(thisGoal) }}
+                                        <div class="list_div"  *ngIf ="goal.status == arrItem && goal.name; let thisGoal"   (click)="goal.status == arrItem ? editGoal($event) : doNothing()" style="font-size: 0.8rem" id={{user.id}}>    {{goal.goal_project_id}}) {{ (goal.name.length>40) ? (thisGoal | slice:0:40)+'..':(thisGoal) }}
                                             <span class="tooltiptext">{{goal.name}}</span>                                    
                                         </div>                                   
                                 </div>
