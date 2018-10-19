@@ -153,9 +153,9 @@ export class DataService {
     sessionStorage.removeItem('realname');
   }
   
-  moveGoal(goal_id, to_id)
+  moveGoal(goal_id, to_id, hours)
   {
-    this.http.patch('http://' + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'goal_id': goal_id, 'to_id': to_id, 'project_id': this.project}), this.authOptions).subscribe(
+    this.http.patch('http://' + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'goal_id': goal_id, 'to_id': to_id, 'hours': hours, 'project_id': this.project}), this.authOptions).subscribe(
         data => {
             this.users = data['data'];
             this.message = data['message'];

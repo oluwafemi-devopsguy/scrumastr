@@ -136,7 +136,7 @@ h5 {
                         border-top: 6px solid lightblue;
                         border-radius: px;
                         width: 75px;
-                        height: 100px;
+                        min-height: 100px;
                         padding:3px;
                         margin: 5px;
                         text-align: center;

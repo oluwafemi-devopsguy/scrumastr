@@ -11,7 +11,7 @@ import { MzModalModule } from 'ngx-materialize';
 })
 export class ProfileComponent implements OnInit {
 
-  public arrCount = [0, 1, 2, 3];
+  public arrCount = [0, 1, 2, 3, 4];
   subs = new Subscription();
   public show_zero: boolean = true;
   public chat_text: string = "";
@@ -54,30 +54,18 @@ export class ProfileComponent implements OnInit {
                 var target = value['target'];
                 var source = value['source'];
                 
-                if(target['id']){
-                    var offset = 0;
-
-                    for(var i = 0; i < target['children'].length; i++) {
-                      if (target['children'][i]['id'] == 'user') {
-                        var t_count = i - 1
-                        var t_owner = target['children'][t_count]['id']
-                      }
+                if (target['parentElement'] == source['parentElement']) {
+                    var hours = -1;
+                    if(target['id'] == '2' && source['id'] == '1')
+                    {
+                        var hours_in = window.prompt('How many hours did you spend on this task?');
+                        hours = parseInt(hours_in, 10);
+                        if(hours + '' == 'NaN')
+                            hours = -1;
                     }
-
-
-                     for(var i = 0; i < source['children'].length; i++) {
-                      if (source['children'][i]['id'] == 'user') {
-                        var s_count = i - 1                        
-                        var s_owner = source['children'][s_count]['id']
-                      }
-                    }
-
-                    if (t_owner == s_owner) {
-                      this.dataservice.moveGoal(el['id'], target['id']);
-                    } else{
-                      this.dataservice.changeOwner(source['id'], target['id']);
-                    }         
-  
+                    this.dataservice.moveGoal(el['id'], target['id'], hours);
+                } else {
+                    this.dataservice.changeOwner(el['id'], target['id']);
                 } 
             }
         )
@@ -150,9 +138,26 @@ export class ProfileComponent implements OnInit {
   
   editGoal(event)
   {
-    console.log(event); 
-    var items = event.target.innerText.split(/\)\s(.+)/);
-    var goal_name = window.prompt('Editing Task ID #' + items[0] + ':', items[1]);
+    console.log(event);
+    console.log(this.dataservice.users);
+    var taskID = event.target.parentElement.id;
+    var message = null;
+    for(var i = 0; i < this.dataservice.users.length; i++)
+    {
+        if(this.dataservice.users[i].id == event.target.id)
+        {
+            for(var j = 0; j < this.dataservice.users[i].scrumgoal_set.length; j++)
+            {
+                if(this.dataservice.users[i].scrumgoal_set[j].id == taskID)
+                {
+                    message = this.dataservice.users[i].scrumgoal_set[j].name;
+                    break;
+                }
+            }
+            break;
+        }
+    }
+    var goal_name = window.prompt('Editing Task ID #' + taskID + ':', message);
     if(goal_name == null || goal_name == '')
     {
         this.dataservice.message = 'Edit Canceled.';
@@ -181,6 +186,10 @@ export class ProfileComponent implements OnInit {
   manageUser(event)
   {
     console.log(event);
+    if(event.target.parentElement.parentElement.id == "author")
+        this.on_user = event.target.parentElement.parentElement.parentElement.id;
+    else
+        this.on_user = event.target.parentElement.parentElement.parentElement.parentElement.id;
     var role_name = window.prompt('Change User Role:\nSelect Between: Developer, Admin, Quality Analyst, or Owner:', '');
     role_name = role_name.toLowerCase();
     if(role_name == null || role_name == '')
@@ -188,7 +197,7 @@ export class ProfileComponent implements OnInit {
         this.dataservice.message = 'Edit Canceled.';
     } else if(role_name == 'developer' || role_name == 'quality analyst' || role_name == 'admin' || role_name == 'owner')
     {
-        this.http.patch('http://' + this.dataservice.domain_name + '/scrum/api/scrumprojectroles/', JSON.stringify({'role': role_name, 'id': event.target.parentElement.parentElement.parentElement.id, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
+        this.http.patch('http://' + this.dataservice.domain_name + '/scrum/api/scrumprojectroles/', JSON.stringify({'role': role_name, 'id': this.on_user, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
             data => {
                 this.dataservice.users = data['data'];
                 this.dataservice.message = data['message'];

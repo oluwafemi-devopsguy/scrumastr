@@ -26,9 +26,9 @@ import { MzButtonModule, MzModalModule } from 'ngx-materialize';
     HomeComponent,
     LoginComponent,
     UserComponent,
-    ProfileComponent
-    GenerateTokenComponent
-    GroupClassComponent
+    ProfileComponent,
+    GenerateTokenComponent,
+    GroupClassComponent,
     SignupComponent
   ],
   imports: [

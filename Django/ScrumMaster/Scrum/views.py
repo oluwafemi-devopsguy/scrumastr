@@ -233,12 +233,7 @@ class ScrumProjectRoleViewSet(viewsets.ModelViewSet):
         scrum_project_role = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
         to_id = request.data['id']
         
-        author = None
-        if to_id[0] == 'u':
-            author = ScrumProjectRole.objects.get(id=to_id[1:])
-        else:
-            author = ScrumGoal.objects.get(id=to_id).user
-        
+        author = ScrumProjectRole.objects.get(id=to_id)
         author.role = request.data['role']
         author.save()
         
@@ -254,11 +249,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
         scrum_project = ScrumProject.objects.get(id=request.data['project_id'])
         scrum_project_role = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
         
-        author = None
-        if user_id[0] == 'u':
-            author = ScrumProjectRole.objects.get(id=user_id[1:])
-        else:
-            author = ScrumGoal.objects.get(id=user_id).user
+        author = ScrumProjectRole.objects.get(id=user_id)
             
         if scrum_project_role != author and scrum_project_role.role != 'Owner': 
             return JsonResponse({'message': 'Permission Denied: Unauthorized Addition of a Goal.', 'data': filtered_users(request.data['project_id'])})
@@ -279,7 +270,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
         scrum_project_a = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
         scrum_project_b = ScrumGoal.objects.get(id=request.data['goal_id']).user
         goal_id = request.data['goal_id']
-        to_id = request.data['to_id']
+        to_id = int(request.data['to_id'])
         
         if to_id == 4:
             if scrum_project_a.role == 'Developer':
@@ -295,7 +286,6 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             group = scrum_project_a.role
             from_allowed = []
             to_allowed = []
-            
             if group == 'Developer':
                 if request.user != scrum_project_b.user.user:
                     return JsonResponse({'message': 'Permission Denied: Unauthorized Movement of Goal.', 'data': filtered_users(request.data['project_id'])})
@@ -304,14 +294,16 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
                 from_allowed = [0, 1, 2, 3]
                 to_allowed = [0, 1, 2, 3]
             elif group == 'Admin':
-                from_allowed = [0, 1, 2]
-                to_allowed = [0, 1, 2]
-            elif group == 'Developer':
                 from_allowed = [0, 1]
                 to_allowed = [0, 1]
+            elif group == 'Developer':
+                from_allowed = [0, 1, 2]
+                to_allowed = [0, 1, 2]
             elif group == 'Quality Analyst':
                 from_allowed = [2, 3]
                 to_allowed = [2, 3]
+            
+            state_prev = goal_item.status
             
             if (goal_item.status in from_allowed) and (to_id in to_allowed):
                 goal_item.status = to_id
@@ -327,8 +319,16 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             else:
                 return JsonResponse({'message': 'Permission Denied: Unauthorized Movement of Goal.', 'data': filtered_users(request.data['project_id'])})
             
+            message = 'Goal Moved Successfully!'
+            if state_prev == 1 and to_id == 2:
+                goal_item.hours = request.data['hours']
+                message = 'Goal Moved Successfully! Hours Applied!'
+            elif to_id == 2:
+                message = 'Goal Moved Successfully! Hours Not Applied!'
+                
             goal_item.save()
-            return JsonResponse({'message': 'Goal Moved Successfully!', 'data': filtered_users(request.data['project_id'])})
+            
+            return JsonResponse({'message': message, 'data': filtered_users(request.data['project_id'])})
             
     def put(self, request):
         scrum_project = ScrumProject.objects.get(id=request.data['project_id'])
@@ -342,11 +342,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
                 
             goal = ScrumGoal.objects.get(id=from_id)
             
-            author = None
-            if to_id[0] == 'u':
-                author = ScrumProjectRole.objects.get(id=to_id[1:])
-            else:
-                author = ScrumGoal.objects.get(id=to_id).user
+            author = ScrumProjectRole.objects.get(id=to_id)
             goal.user = author
             goal.save()
             return JsonResponse({'message': 'Goal Reassigned Successfully!', 'data': filtered_users(request.data['project_id'])})
