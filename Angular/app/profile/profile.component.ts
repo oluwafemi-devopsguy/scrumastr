@@ -65,7 +65,7 @@ export class ProfileComponent implements OnInit {
                     }
                     this.dataservice.moveGoal(el['id'], target['id'], hours);
                 } else {
-                    this.dataservice.changeOwner(el['id'], target['id']);
+                    this.dataservice.changeOwner(el['id'], target['parentElement']['id']);
                 } 
             }
         )
@@ -185,17 +185,15 @@ export class ProfileComponent implements OnInit {
   
   manageUser(event)
   {
-    console.log(event);
-    if(event.target.parentElement.parentElement.id == "author")
-        this.on_user = event.target.parentElement.parentElement.parentElement.id;
-    else
-        this.on_user = event.target.parentElement.parentElement.parentElement.parentElement.id;
+    this.getClicked(event);
     var role_name = window.prompt('Change User Role:\nSelect Between: Developer, Admin, Quality Analyst, or Owner:', '');
-    role_name = role_name.toLowerCase();
     if(role_name == null || role_name == '')
     {
         this.dataservice.message = 'Edit Canceled.';
-    } else if(role_name == 'developer' || role_name == 'quality analyst' || role_name == 'admin' || role_name == 'owner')
+        return;
+    }
+    role_name = role_name.toLowerCase();
+    if(role_name == 'developer' || role_name == 'quality analyst' || role_name == 'admin' || role_name == 'owner')
     {
         this.http.patch('http://' + this.dataservice.domain_name + '/scrum/api/scrumprojectroles/', JSON.stringify({'role': role_name, 'id': this.on_user, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
             data => {
@@ -237,10 +235,11 @@ export class ProfileComponent implements OnInit {
   getClicked(event)
   {
     console.log(event);
-    if(event.target.parentElement.parentElement.id == "author")
-        this.on_user = event.target.parentElement.parentElement.parentElement.id;
-    else
-        this.on_user = event.target.parentElement.parentElement.parentElement.parentElement.id;
+    this.on_user = event.target.parentElement.parentElement.parentElement.parentElement.parentElement.id;
+    if(this.on_user == '')
+    {
+        this.on_user = event.target.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.id;
+    }
     console.log(this.on_user);
   }
 

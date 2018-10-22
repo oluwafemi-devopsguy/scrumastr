@@ -13,8 +13,8 @@ nav {
 }
 
 .logo {
-  height: 15%;
-  width: 15%;
+  height: 60%;
+  width: 60%;
   padding: 10px;
   vertical-align: center;
 }
@@ -100,14 +100,6 @@ h5 {
     font-weight: bolder;
     color: rgba(0, 0, 0, 0.74);
     vertical-align: center;
-}
-
-.board-area {
-    overflow: hidden;
-}
-
-.board-area:hover {
-    overflow: auto;
 }
 
 .add-icon {

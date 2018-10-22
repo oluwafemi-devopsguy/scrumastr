@@ -6,10 +6,10 @@
       <div class="nav-wrapper">
           <div class="row">
               <div class="col m4">
-                <a href="#" class="brand-logo"><img src="/src/assets/image/Converted-PNG.png" alt="nav-logo" class="logo"></a>
+                <img src="/src/assets/image/Converted-PNG.png" alt="nav-logo" class="logo">
               </div>
               <div class="col m4">
-                <h3 id="project_title" style="text-align: center">{{dataservice.project_name}}</h3>
+                <h3 id="project_title" style="text-align: center; vertical-align: center">{{dataservice.project_name}}</h3>
              </div>
              <div class="col m4">
                 <ul class="right hide-on-med-and-down">
@@ -28,19 +28,30 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col s2">
+        <div class="col s2" style="height: calc(100vh - 65px); overflow: auto">
             <div class="">
-                <h3 style="text-align: center; padding-top: 20px">Scrum Users</h3>
+                <h5 style="text-align: center; padding-top: 10px">Members</h5>
                 <hr>
                 <ul *ngFor="let user of dataservice.users">
-                    <li><a [routerLink] fragment='{{user.id}}' (click)="scrollIntoView(user.id)"><i class="material-icons" id="account_circle">account_circle</i>{{user.user.nickname}}</a></li>
+                    <li>
+                        <table [attr.id]="'m' + user.id">
+                            <tr>
+                                <th rowspan="2"><a [routerLink] fragment='{{user.id}}' (click)="scrollIntoView('u' + user.id)"><i class="material-icons" id="account_circle">account_circle</i></a></th>
+                                <th><a [routerLink] fragment='{{user.id}}' (click)="scrollIntoView('u' + user.id)">{{user.user.nickname}} ({{user.total_week_hours}} hours)</a></th>
+                            </tr>
+                            <tr>
+                                <th><div style="display:flex;">
+                                    <a mz-button (click)="dataservice.role.toLowerCase() == 'owner' ? manageUser($event) : doNothing()" class="btn-floating change-role"><i class="material-icons" id="settings">settings</i></a>
+                                    <a mz-button (click)="getClicked($event); basicModal.openModal()" class="btn-floating add-icon"><i class="material-icons" id="add">add</i></a>
+                                </div></th>
+                            </tr>
+                        </table>
+                    </li>
                 </ul>
             </div>
         </div>
-
-        <div class="col s7">
+        <div class="col s6" style="height: calc(100vh - 65px); overflow: auto">
             <div class="main_area">
-                <!-- <h2><u>Currently Logged In As {{dataservice.username}} - {{dataservice.role}}</u></h2> -->
                 <h3>{{dataservice.message}}</h3>
                 <label>
                     <input type="checkbox" id="ourcheck" class="filled-in" [checked]="show_zero" (click)="swapState()">
@@ -73,12 +84,11 @@
                     }
                 </style>
                 <div class="board-area">
-                    <div style="display: table; table-layout: fixed; width: 100%; word-wrap: break-word; border-collapse: collapse; border: 2px solid black;">
+                    <div style="display: table; width: 100%; word-wrap: break-word; border-collapse: collapse; border: 2px solid black;">
                         <div style="display: table-row">
-                            <th colspan="6" class="full-box">Available Tasks</th>
-                        </div>
-                        <div style="display: table-row">
+                            <!--
                             <th class="full-box">Created By</th>
+                            -->
                             <th class="full-box">Weekly Goal</th>
                             <th class="full-box">Daily Target</th>
                             <th class="full-box">Verify</th>
@@ -86,16 +96,19 @@
                             <th class="full-box">Remove</th>
                         </div>
                         <ng-container *ngFor="let user of dataservice.users">
-                            <div *ngIf="user.scrumgoal_set.length == 0 && show_zero" style="display: table-row;" dragula="mainTable" [attr.id]="user.id">
+                            <div *ngIf="user.scrumgoal_set.length == 0 && show_zero" style="display: table-row;" dragula="mainTable" [attr.id]="'u' + user.id">
                                 <td class="full-box" id="author" colspan="6">
                                     {{user.user.nickname}} - NO TASKS ASSIGNED
+                                    <!--
                                     <div style="display:flex;">
                                         <a mz-button (click)="dataservice.role.toLowerCase() == 'owner' ? manageUser($event) : doNothing()" class="btn-floating change-role"><i class="material-icons" id="settings">settings</i></a>
                                         <a mz-button (click)="getClicked($event); basicModal.openModal()" class="btn-floating add-icon"><i class="material-icons" id="add">add</i></a>
                                     </div>
+                                    -->
                                 </td>
                             </div>
-                            <div style="display: table-row" *ngIf="user.scrumgoal_set.length != 0" [attr.id]="user.id" tabindex="-1">
+                            <div style="display: table-row" *ngIf="user.scrumgoal_set.length != 0" [attr.id]="'u' + user.id" tabindex="-1">
+                                <!--
                                 <td class="full-box" id="author">
                                     {{user.user.nickname}}
                                     <div style="display:flex;">
@@ -103,15 +116,14 @@
                                         <a mz-button (click)="getClicked($event); basicModal.openModal()" class="btn-floating add-icon"><i class="material-icons" id="add">add</i></a>
                                     </div>
                                 </td>
+                                -->
                                 <div *ngFor="let arrItem of arrCount" class="top-box" dragula="mainTable" [attr.id]="arrItem">
-                                    <div class="div_lister" *ngFor="let goal of user.scrumgoal_set; let j = index; let k = count" [attr.id]="goal.id">
-                                        <div class="list_div" *ngIf ="goal.status == arrItem && goal.name; let thisGoal" (click)="goal.status == arrItem ? editGoal($event) : doNothing()" style="font-size: 0.8rem" id={{user.id}}>
-                                            {{goal.goal_project_id}}) {{ (goal.name.length>40) ? (thisGoal | slice:0:40)+'...':(thisGoal) }} {{(goal.hours != -1 && goal.status == 3 ? ' (' + goal.hours + ')' : '' )}}
+                                    <div class="div_lister" *ngFor="let goal of user.scrumgoal_set; let j = index; let k = count" [attr.id]="'g' + goal.id">
+                                        <div class="list_div" *ngIf ="goal.status == arrItem && goal.name; let thisGoal" (click)="goal.status == arrItem ? editGoal($event) : doNothing()" style="font-size: 0.8rem">
+                                            {{goal.goal_project_id}}) {{ (goal.name.length>40) ? (thisGoal | slice:0:40)+'...':(thisGoal) }} {{(goal.hours != -1 && (goal.status == 3 || goal.status == 2) ? ' (' + goal.hours + ')' : '' )}}
                                             <span class="tooltiptext">{{goal.name}}</span>                                    
                                         </div>                                   
                                     </div>
-                                    <div id='{{user.id}}'></div>
-                                    <div id='user'></div>
                                 </div>
                             </div>
                         </ng-container>
@@ -134,7 +146,8 @@
                 </mz-modal>
             </div>
         </div>
-        <div class="col s3" style="position: fixed; right: 0px; top: 0 px;">
+        
+        <div class="col s4" style="position: fixed; right: 0px; top: 0 px;">
             <div class="card">
                 <h5 style="text-align: center; padding-top: 10px">Group Chat</h5>
                 <hr>
@@ -145,10 +158,12 @@
                 </div>
                 <hr>
                 <div class="row" style="padding-left: 10px; padding-right: 10px">
-                    <div class="input-field col s12">
-                        <textarea id="chat_text" class="materialize-textarea" [(ngModel)]="chat_text" (keyup.enter)="sendMessage()" style="font-size: 0.85rem"></textarea>
-                        <label for="chat_text">Send a message</label>
-                    </div>
+                    <div style="height: 190px; overflow: auto">
+                        <div class="input-field col s12">
+                            <textarea id="chat_text" class="materialize-textarea" [(ngModel)]="chat_text" (keyup.enter)="sendMessage()" style="font-size: 0.85rem"></textarea>
+                            <label for="chat_text">Send a message</label>
+                        </div>
+                    <div>
                 </div>
             </div>
         </div>

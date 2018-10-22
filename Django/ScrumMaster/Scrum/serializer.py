@@ -4,7 +4,7 @@ from .models import *
 class ScrumGoalSerializer(serializers.ModelSerializer):
     class Meta:
         model = ScrumGoal
-        fields = ('visible', 'id', 'name', 'status', 'goal_project_id', 'hours')
+        fields = ('visible', 'id', 'name', 'status', 'goal_project_id', 'hours', 'time_created')
         
 class ScrumUserSerializer(serializers.ModelSerializer):
     class Meta:

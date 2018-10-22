@@ -45,6 +45,7 @@ class ScrumGoal(models.Model):
     goal_project_id = models.IntegerField(default=0)
     user = models.ForeignKey(ScrumProjectRole, on_delete=models.CASCADE)
     hours = models.IntegerField(default=-1)
+    time_created = models.DateTimeField(auto_now_add=True)
     
     '''
     0 = Weekly Goal
