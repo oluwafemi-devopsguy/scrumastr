@@ -9,7 +9,7 @@
                 <img src="/src/assets/image/Converted-PNG.png" alt="nav-logo" class="logo">
               </div>
               <div class="col m4">
-                <h3 id="project_title" style="text-align: center; vertical-align: center">{{dataservice.project_name}}</h3>
+                <h3 id="project_title" style="text-align: center">{{dataservice.project_name}}</h3>
              </div>
              <div class="col m4">
                 <ul class="right hide-on-med-and-down">
@@ -34,7 +34,7 @@
                 <hr>
                 <ul *ngFor="let user of dataservice.users">
                     <li>
-                        <table [attr.id]="'m' + user.id">
+                        <table [attr.id]="'m' + user.id" (mouseover)="setSelectedUser(user.id)" (mouseleave)="setSelectedUser(-1)">
                             <tr>
                                 <th rowspan="2"><a [routerLink] fragment='{{user.id}}' (click)="scrollIntoView('u' + user.id)"><i class="material-icons" id="account_circle">account_circle</i></a></th>
                                 <th><a [routerLink] fragment='{{user.id}}' (click)="scrollIntoView('u' + user.id)">{{user.user.nickname}} ({{user.total_week_hours}} hours)</a></th>
@@ -107,7 +107,7 @@
                                     -->
                                 </td>
                             </div>
-                            <div style="display: table-row" *ngIf="user.scrumgoal_set.length != 0" [attr.id]="'u' + user.id" tabindex="-1">
+                            <div style="display: table-row" *ngIf="user.scrumgoal_set.length != 0" [attr.id]="'u' + user.id" [style.background]="user.id == id_click ? 'rgba(0, 128, 128, 0.5)' : (user.id == id_hover ? 'rgba(0, 128, 128, 0.15)' : 'none')" tabindex="-1">
                                 <!--
                                 <td class="full-box" id="author">
                                     {{user.user.nickname}}
@@ -119,7 +119,7 @@
                                 -->
                                 <div *ngFor="let arrItem of arrCount" class="top-box" dragula="mainTable" [attr.id]="arrItem">
                                     <div class="div_lister" *ngFor="let goal of user.scrumgoal_set; let j = index; let k = count" [attr.id]="'g' + goal.id">
-                                        <div class="list_div" *ngIf ="goal.status == arrItem && goal.name; let thisGoal" (click)="goal.status == arrItem ? editGoal($event) : doNothing()" style="font-size: 0.8rem">
+                                        <div class="list_div" *ngIf ="goal.status == arrItem && goal.name; let thisGoal" (dblclick)="goal.status == arrItem ? editGoal($event) : doNothing()" style="font-size: 0.8rem">
                                             {{goal.goal_project_id}}) {{ (goal.name.length>40) ? (thisGoal | slice:0:40)+'...':(thisGoal) }} {{(goal.hours != -1 && (goal.status == 3 || goal.status == 2) ? ' (' + goal.hours + ')' : '' )}}
                                             <span class="tooltiptext">{{goal.name}}</span>                                    
                                         </div>                                   

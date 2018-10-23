@@ -20,6 +20,8 @@ export class ProfileComponent implements OnInit {
   public msg_obs;
   public on_user;
   public at_bottom: boolean = true;
+  public id_hover = -1;
+  public id_click = -1;
     
   public modalOptions: Materialize.ModalOptions = {
     dismissible: false, // Modal can be dismissed by clicking outside of the modal
@@ -140,11 +142,11 @@ export class ProfileComponent implements OnInit {
   {
     console.log(event);
     console.log(this.dataservice.users);
-    var taskID = event.target.parentElement.id;
+    var taskID = event.target.parentElement.id.substring(1);
     var message = null;
     for(var i = 0; i < this.dataservice.users.length; i++)
     {
-        if(this.dataservice.users[i].id == event.target.id)
+        if(this.dataservice.users[i].id == event.target.parentElement.parentElement.parentElement.id.substring(1))
         {
             for(var j = 0; j < this.dataservice.users[i].scrumgoal_set.length; j++)
             {
@@ -248,6 +250,11 @@ export class ProfileComponent implements OnInit {
     this.dataservice.addGoal(this.on_user);
   }
   
+  setSelectedUser(id)
+  {
+    this.id_hover = id;    
+  }
+  
   logout()
   {
     this.dataservice.message = 'Thank you for using Scrum!';
@@ -262,6 +269,7 @@ export class ProfileComponent implements OnInit {
   }
 
   scrollIntoView(anchorHash) {
+    this.id_click = parseInt(anchorHash.substring(1), 10);
     setTimeout(() => {
         const anchor = document.getElementById(anchorHash);
         console.log(anchorHash);

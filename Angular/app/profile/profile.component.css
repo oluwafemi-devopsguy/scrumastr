@@ -13,8 +13,8 @@ nav {
 }
 
 .logo {
-  height: 60%;
-  width: 60%;
+  height: 40%;
+  width: 40%;
   padding: 10px;
   vertical-align: center;
 }
@@ -134,14 +134,14 @@ h5 {
                         text-align: center;
                         position: relative;
                         display: inline-block;
-                        border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+                        border-bottom: 1px solid black; /* If you want dots under the hoverable text */
                     }
 
                     /* Tooltip container */
                     .tooltip {
                         position: relative;
                         display: inline-block;
-                        border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+                        border-bottom: 1px solid black; /* If you want dots under the hoverable text */
                     }
 
                     /* Tooltip text */
