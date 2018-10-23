@@ -59,6 +59,8 @@ body {
     font-size: 1.2rem;
 }
 
+
+
 h2 {
     font-size: 2.0rem;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -120,28 +122,30 @@ h5 {
     align-content: center;
 }
 
+/*=======================================================BOLU====================================================================*/
 
-                    .list_div {
+                        .list_div {
                         font-size: 7px;
                         font-family: arial;
                         border:1px solid grey;
                         border-top: 6px solid lightblue;
                         border-radius: px;
                         width: 75px;
-                        min-height: 100px;
+                        height: 100px;
                         padding:3px;
                         margin: 5px;
                         text-align: center;
                         position: relative;
                         display: inline-block;
-                        border-bottom: 1px solid black; /* If you want dots under the hoverable text */
+                        border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
                     }
 
                     /* Tooltip container */
-                    .tooltip {
+                    .list_div {
                         position: relative;
                         display: inline-block;
-                        border-bottom: 1px solid black; /* If you want dots under the hoverable text */
+                        border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+                        margin: 15px 0;
                     }
 
                     /* Tooltip text */
@@ -151,15 +155,67 @@ h5 {
                         background-color: lightblue;
                         color: white;
                         text-align: center;
-                        padding: 5px 0;
+                        padding: 5px;
                         border-radius: 6px;
                      
                         /* Position the tooltip text - see examples below! */
                         position: absolute;
                         z-index: 1;
+                        top: -15px ;                       
+                        left: 110%;
                     }
 
                     /* Show the tooltip text when you mouse over the tooltip container */
                     .list_div:hover .tooltiptext {
                         visibility: visible;
+                    }
+
+                                        /* Tooltip text */
+                    .list_div .tooltiptext2 {
+                        visibility: hidden;
+                        background-color: red;
+                        color: black;
+                        border: 1px dotted black;
+                        opacity: 0.6;
+                        filter: alpha(opacity=60);
+                        font-size: 12px;
+                        font-weight: bold;
+                        padding: 0;
+                                         
+                        /* Position the tooltip text - see examples below! */
+                        position: absolute;
+                        z-index: 1; 
+                        left: -3px;
+                        top: -27px;  
+                    }
+
+                    /* Show the tooltip text when you mouse over the tooltip container */
+                    .list_div:hover .tooltiptext2 {
+                        visibility: visible;
+                    }
+
+                    a:link, a:visited{
+                        background-color: #white;
+                        color: grey;
+                        padding: 3px 5px;
+                        text-align: center; 
+                        text-decoration: none;
+                        display: inline-block;
+                    }
+
+                    a:hover, a:active {
+                        color: white;
+                        background-color: grey;
+
+                    }
+
+                    .delete_task { 
+                        color: red; 
+                        border: 2px solid #008CBA;
+                        background: white;
+                    }
+
+                    .delete_task:hover {
+                        background-color: red;
+                        color: black;
                     }

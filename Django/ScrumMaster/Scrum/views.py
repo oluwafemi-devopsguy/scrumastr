@@ -358,6 +358,16 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             goal.user = author
             goal.save()
             return JsonResponse({'message': 'Goal Reassigned Successfully!', 'data': filtered_users(request.data['project_id'])})
+        elif request.data['mode'] == 2:
+            goal = ScrumGoal.objects.get(id=request.data['goal_id'])
+            if request.user.id == goal.user_id:
+                goal.visible = 0
+                goal.save()
+                print(request.user.id)
+                return JsonResponse({'message': 'Goal Deleted Successfully!', 'data': filtered_users(request.data['project_id'])})
+            else:
+                return JsonResponse({'message': 'Permission Denied: Unauthorized Deletion of Goal.', 'data': filtered_users(request.data['project_id'])})
+            
         else:
             scrum_project_b = ScrumGoal.objects.get(id=request.data['goal_id'][1:]).user
             if scrum_project_role.role != 'Owner' and request.user != scrum_project_b.user.user:
