@@ -184,31 +184,6 @@ export class ProfileComponent implements OnInit {
         );
     }
   }
-
-  deleteTask(goal_name, goal_id) {
-      var pop_event = window.confirm('Delete " ' + goal_name + '"?');
-      if (pop_event) {
-          this.http.put('http://' + this.dataservice.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'mode': 2, 'goal_id':goal_id, 'new_name': goal_name, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
-            data => {
-                this.dataservice.users = data['data'];
-                this.dataservice.message = data['message'];
-            },
-            err => {
-                console.error(err);
-                if(err['status'] == 401)
-                {
-                    this.dataservice.message = 'Session Invalid or Expired. Please Login.';
-                    this.dataservice.logout();
-                } else
-                {
-                    this.dataservice.message = 'Unexpected Error!';    
-                }
-            }
-        );
-      } else {
-          console.log('cancel');
-      };
-    }
   
   manageUser(event)
   {
@@ -265,11 +240,9 @@ export class ProfileComponent implements OnInit {
     this.on_user = event.target.parentElement.parentElement.parentElement.parentElement.parentElement.id;
     if(this.on_user == '')
     {
-        console.log('user empty')
         this.on_user = event.target.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.id;
     }
     console.log(this.on_user);
-    console.log('user is AVAILABLE')
   }
 
   addGoal()

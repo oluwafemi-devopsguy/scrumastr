@@ -10,10 +10,6 @@ import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { UserComponent } from './user/user.component';
 
-import { GenerateTokenComponent } from './generate-token/generate-token.component';
-import { GroupClassComponent } from './group-class/group-class.component';
-import { SignupComponent } from './signup/signup.component';
-
 import { HttpClientModule } from '@angular/common/http';
 import { ProfileComponent } from './profile/profile.component';
 
@@ -26,10 +22,7 @@ import { MzButtonModule, MzModalModule } from 'ngx-materialize';
     HomeComponent,
     LoginComponent,
     UserComponent,
-    ProfileComponent,
-    GenerateTokenComponent,
-    GroupClassComponent,
-    SignupComponent
+    ProfileComponent
   ],
   imports: [
     HttpClientModule,

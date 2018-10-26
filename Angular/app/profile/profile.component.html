@@ -95,7 +95,7 @@
                             <th class="full-box">Done</th>
                         </div>
                         <ng-container *ngFor="let user of dataservice.users">
-                            <div *ngIf="user.scrumgoal_set.length == 0 && show_zero" style="display: table-row;" dragula="mainTable" [attr.id]="'u' + user.id">
+                            <div *ngIf="user.scrumgoal_set.length == 0 && show_zero" style="display: table-row;" dragula="mainTable" [attr.id]="'u' + user.id" [style.background]="user.id == id_click ? 'rgba(0, 128, 128, 0.5)' : (user.id == id_hover ? 'rgba(0, 128, 128, 0.15)' : 'none')">
                                 <td class="full-box" id="author" colspan="6">
                                     {{user.user.nickname}} - NO TASKS ASSIGNED
                                     <!--
@@ -120,8 +120,10 @@
                                     <div class="div_lister" *ngFor="let goal of user.scrumgoal_set; let j = index; let k = count" [attr.id]="'g' + goal.id">
                                         <div class="list_div" *ngIf ="goal.status == arrItem && goal.name; let thisGoal" (dblclick)="goal.status == arrItem ? editGoal($event) : doNothing()" style="font-size: 0.8rem">
                                             {{goal.goal_project_id}}) {{ (goal.name.length>40) ? (thisGoal | slice:0:40)+'...':(thisGoal) }} {{(goal.hours != -1 && (goal.status == 3 || goal.status == 2) ? ' (' + goal.hours + ')' : '' )}}
-                                            <span class="tooltiptext">{{goal.name}}</span>                                              
-                                            <span class="tooltiptext2"><button class="delete_task" (click)="deleteTask(goal.name, goal.id)">X</button> </span>                                  
+                                            <span class="tooltiptext">{{goal.name}}</span>
+                                            <span class="tooltiptext2">
+                                                <button class="delete_task" (click)="dataservice.moveGoal('g' + goal.id, 4, -1)">X</button>
+                                            </span>
                                         </div>                                   
                                     </div>
                                 </div>
