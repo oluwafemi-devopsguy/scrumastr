@@ -3,4 +3,4 @@ from .models import *
 
 # Register your models here.
 
-admin.register(ScrumUser, ScrumGoal, ScrumProject, ScrumProjectRole, ScrumDemoProject, ScrumChatRoom, ScrumChatMessage)
+admin.register(ScrumUser, ScrumGoal, ScrumProject, ScrumProjectRole, ScrumDemoProject, ScrumChatRoom, ScrumChatMessage, ScrumSprint)

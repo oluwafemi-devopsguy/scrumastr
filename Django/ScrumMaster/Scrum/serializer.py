@@ -24,3 +24,8 @@ class ScrumProjectSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = ScrumProject
         fields = ('name', 'id', 'scrumprojectrole_set', 'project_count')
+
+class SprintSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = ScrumSprint
+        fields = ('id', 'created_on', 'ends_on')

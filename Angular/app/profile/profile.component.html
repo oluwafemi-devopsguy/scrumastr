@@ -1,4 +1,7 @@
 
+
+
+
 <div class="navbar-fixed">
   
     <nav>
@@ -29,7 +32,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col s2" style="height: calc(100vh - 65px); overflow: auto">
-            <div class="">
+            <div class="">                
                 <h5 style="text-align: center; padding-top: 10px">Members</h5>
                 <hr>
                 <ul *ngFor="let user of dataservice.users">
@@ -37,13 +40,11 @@
                         <table [attr.id]="'m' + user.id" (mouseover)="setSelectedUser(user.id)" (mouseleave)="setSelectedUser(-1)">
                             <tr>
                                 <th rowspan="2"><a [routerLink] fragment='{{user.id}}' (click)="scrollIntoView('u' + user.id)"><i class="material-icons" id="account_circle">account_circle</i></a></th>
-                                <th><a [routerLink] fragment='{{user.id}}' (click)="scrollIntoView('u' + user.id)">{{user.user.nickname}} ({{user.total_week_hours}} hours)</a></th>
-                            </tr>
-                            <tr>
-                                <th><div style="display:flex;">
-                                    <a mz-button (click)="dataservice.role.toLowerCase() == 'owner' ? manageUser($event) : doNothing()" class="btn-floating change-role"><i class="material-icons" id="settings">settings</i></a>
-                                    <a mz-button (click)="getClicked($event); basicModal.openModal()" class="btn-floating add-icon"><i class="material-icons" id="add">add</i></a>
-                                </div></th>
+                                <a [routerLink] fragment='{{user.id}}' (click)="scrollIntoView('u' + user.id)"  style="font-size: 0.8rem">{{user.user.nickname}} ({{user.total_week_hours}} hours)</a>
+                                    <div style="display:flex;">
+                                        <a mz-button (click)="dataservice.role.toLowerCase() == 'owner' ? manageUser($event) : doNothing()" class="btn-floating change-role"><i class="material-icons" id="settings">settings</i></a>
+                                        <a mz-button (click)="getClicked($event); basicModal.openModal()" class="btn-floating add-icon"><i class="material-icons" id="add">add</i></a>
+                                    </div>
                             </tr>
                         </table>
                     </li>
@@ -51,12 +52,38 @@
             </div>
         </div>
         <div class="col s6" style="height: calc(100vh - 65px); overflow: auto">
+            
+
             <div class="main_area">
-                <h3>{{dataservice.message}}</h3>
-                <label>
-                    <input type="checkbox" id="ourcheck" class="filled-in" [checked]="show_zero" (click)="swapState()">
-                    <span >Show Users With No Assigned Tasks</span>
-                </label>
+                <table>
+                    <tr>
+                        <td>
+                            <h3>{{dataservice.message}}</h3>
+                            <label>
+                            <input type="checkbox" id="ourcheck" class="filled-in" [checked]="show_zero" (click)="swapState()">
+                                <span >Show Users With No Assigned Tasks</span> 
+                            </label>
+                        </td>
+                        <td>
+                            <div style="float: right; display: flex;">
+                                <select [(ngModel)]= "sprint_start"   style="height: 30px; margin: 15px;" (ngModelChange)="changeSprint($event)" (ngModel)="dataservice.sprints">
+                                    <option *ngFor = "let sprint of dataservice.sprints"  [ngValue]="sprint" [selected] = "sprint.created_on == dataservice.sprint_start ? sprint : doNothing()" >
+                                      SPRINT {{sprint.id}}:  {{sprint.created_on | date}} - {{sprint.ends_on | date}}
+                                    </option>
+                           
+                                </select>
+                                
+                            </div>
+                        </td>
+                        <td>
+                            <button class="s_button" *ngIf="dataservice.role.toLowerCase() == 'owner'" (click)="createSprint()">Create New Sprint</button>
+                        </td>
+                    </tr>
+                </table>
+               
+
+
+
                 <style>
                     .full-box {
                         display: table-cell;
@@ -82,6 +109,9 @@
                         border: 1px solid gray;
                         padding: 10px;
                     }
+
+                        select{display: block !important;}
+                        input{display: block !important;}
                 </style>
                 <div class="board-area">
                     <div style="display: table; width: 100%; word-wrap: break-word; border-collapse: collapse; border: 2px solid black;">
@@ -117,11 +147,13 @@
                                 </td>
                                 -->
                                 <div *ngFor="let arrItem of arrCount" class="top-box" dragula="mainTable" [attr.id]="arrItem">
-                                    <div class="div_lister" *ngFor="let goal of user.scrumgoal_set; let j = index; let k = count" [attr.id]="'g' + goal.id">
-                                        <div class="list_div" *ngIf ="goal.status == arrItem && goal.name; let thisGoal" (dblclick)="goal.status == arrItem ? editGoal($event) : doNothing()" style="font-size: 0.8rem">
-                                            {{goal.goal_project_id}}) {{ (goal.name.length>40) ? (thisGoal | slice:0:40)+'...':(thisGoal) }} {{(goal.hours != -1 && (goal.status == 3 || goal.status == 2) ? ' (' + goal.hours + ')' : '' )}}
-                                            <span class="tooltiptext">{{goal.name}}</span>                                              
-                                            <span class="tooltiptext2"><button class="delete_task" (click)="deleteTask(goal.name, goal.id)">X</button> </span>                                  
+                                    <div class="div_lister" *ngFor="let goal of user.scrumgoal_set; let j = index; let k = count" [attr.id]="'g' + goal.id"> 
+                                        <div *ngIf ="dataservice.sprint_start < goal.time_created && dataservice.sprint_end > goal.time_created">
+                                            <div class="list_div" *ngIf ="goal.status == arrItem && goal.name; let thisGoal" (dblclick)="goal.status == arrItem ? editGoal($event) : doNothing()" style="font-size: 0.8rem">
+                                                {{goal.goal_project_id}}) {{ (goal.name.length>40) ? (thisGoal | slice:0:40)+'...':(thisGoal) }} {{(goal.hours != -1 && (goal.status == 3 || goal.status == 2) ? ' (' + goal.hours + ')' : '' )}}
+                                                <span class="tooltiptext">{{goal.name}}</span>                                              
+                                                <span class="tooltiptext2"><button class="delete_task" (click)="deleteTask(goal.name, goal.id)">X</button> </span>                                  
+                                            </div>
                                         </div>                                   
                                     </div>
                                 </div>

@@ -22,6 +22,8 @@ export class ProfileComponent implements OnInit {
   public at_bottom: boolean = true;
   public id_hover = -1;
   public id_click = -1;
+  sprint_start: Number;
+  sprint_end: Number;
     
   public modalOptions: Materialize.ModalOptions = {
     dismissible: false, // Modal can be dismissed by clicking outside of the modal
@@ -133,10 +135,51 @@ export class ProfileComponent implements OnInit {
     }
   }
   
+
   swapState()
   {
     this.show_zero = !this.show_zero;  
   }
+
+  createSprint() 
+  {
+    var myDate = new Date(new Date().getTime()+(7*24*60*60*1000));
+    this.http.post('http://' + this.dataservice.domain_name + '/scrum/api/scrumsprint/', JSON.stringify({'project_id': this.dataservice.project, 'ends_on': myDate}), this.dataservice.authOptions).subscribe(
+      data => {
+        this.dataservice.sprints = data['data'];
+        this.dataservice.message = data['message'];
+        this.dataservice.sprint_start = this.dataservice.sprints[this.dataservice.sprints.length - 1].created_on
+        this.dataservice.sprint_end = this.dataservice.sprints[this.dataservice.sprints.length - 1]. ends_on
+
+      },
+      err => {
+        console.error(err);
+          if(err['status'] == 401)
+            {
+              this.dataservice.message = 'Session Invalid or Expired. Please Login.';
+              this.dataservice.logout();
+          } else
+            {
+              this.dataservice.message = 'Unexpected Error!';    
+            }
+          }
+        );
+  } 
+
+  changeSprint(sprint) 
+  {
+    if(sprint.created_on && sprint.ends_on ) {
+      this.dataservice.sprint_start = sprint.created_on 
+      this.dataservice.sprint_end = sprint.ends_on
+    } else {
+      console.log('Error Loading Sprint')
+    }
+  }
+
+  // setNewUser(user: User): void {
+  //   console.log(user);
+  //   this.curUser = user;
+  //   }
   
   editGoal(event)
   {
@@ -256,8 +299,30 @@ export class ProfileComponent implements OnInit {
     this.chat_text = '';
   }
   
+ 
+
   ngOnInit() {
-  }
+       this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumsprint/', this.dataservice.authOptions).subscribe(
+            data => {
+                this.dataservice.sprints = data;
+                this.dataservice.message = data['message'];
+                this.dataservice.sprint_start = this.dataservice.sprints[this.dataservice.sprints.length - 1].created_on
+                this.dataservice.sprint_end = this.dataservice.sprints[this.dataservice.sprints.length - 1]. ends_on
+            },
+            err => {
+                console.error(err);
+
+                if(err['status'] == 401)
+                {
+                    this.dataservice.message = 'Session Invalid or Expired. Please Login.';
+                    this.dataservice.logout();
+                } else
+                {
+                    this.dataservice.message = 'Unexpected Error!';    
+                }
+            }
+        );
+    }
   
   getClicked(event)
   {

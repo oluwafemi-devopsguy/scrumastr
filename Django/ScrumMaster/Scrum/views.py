@@ -10,6 +10,7 @@ from .serializer import *
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.serializers import ValidationError
+from rest_framework.response import Response
 import random
 import datetime
 import re
@@ -204,6 +205,7 @@ class ScrumUserViewSet(viewsets.ModelViewSet):
             return JsonResponse({'message': 'User Created Successfully.'})
         else:
             return JsonResponse({'message': 'Error: User with that e-mail already exists.'})
+
             
 def filtered_users(project_id):
     project = ScrumProjectSerializer(ScrumProject.objects.get(id=project_id)).data
@@ -397,3 +399,37 @@ def jwt_response_payload_handler(token, user=None, request=None):
         'project_id': project.id
     }
     
+
+class SprintViewSet(viewsets.ModelViewSet):
+    queryset = ScrumSprint.objects.all()
+    serializer_class = SprintSerializer
+
+    def create(self, request):
+        queryset = self.get_queryset()
+        serializer = SprintSerializer(queryset, many = True)
+        user_id = request.user.id
+        scrum_project = ScrumProject.objects.get(id=request.data['project_id'])
+        scrum_project_role = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
+        
+        author = ScrumProjectRole.objects.get(id=user_id)
+
+
+            
+        if scrum_project_role.role == 'Developer' or scrum_project_role.role == 'Owner':
+            if datetime.datetime.strftime(ScrumSprint.objects.latest('ends_on').ends_on, "%Y-%m-%d") < datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d"):
+                sprint = ScrumSprint(goal_project_id=request.data['project_id'], ends_on=datetime.datetime.now() + datetime.timedelta(days=7))
+                sprint.save()
+                project = ScrumProjectSerializer(ScrumProject.objects.get(id=request.data['project_id'])).data
+                for user in project['scrumprojectrole_set']:
+                    for goal in user['scrumgoal_set']:
+                        if goal['status'] == 0:
+                            new_goal_id = ScrumGoal.objects.get(goal_project_id=goal['goal_project_id'])
+                            goal['time_created'] = datetime.datetime.now() + datetime.timedelta(days=1)
+                            new_goal_id.time_created = datetime.datetime.now() + datetime.timedelta(days=1) 
+                            new_goal_id.save()
+                return JsonResponse({'message': 'Sprint Created Successfully.', 'data': serializer.data})
+            else:
+                 return JsonResponse({'message': 'Cannot create new sprint, a sprint is running.', 'data': serializer.data})                
+
+        else:
+            return JsonResponse({'message': 'Permission Denied: Unauthorized Permission to Create New Sprint.', 'data': filtered_users(request.data['project_id'])})

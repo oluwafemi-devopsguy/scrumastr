@@ -27,6 +27,9 @@ export class DataService {
   public project;
   public project_name;
   public users;
+  public sprints;
+  public sprint_start;
+  public sprint_end;
   
   public httpOptions = {
     headers: new HttpHeaders({'Content-Type': 'application/json'})

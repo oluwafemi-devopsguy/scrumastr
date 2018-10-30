@@ -68,4 +68,11 @@ class ScrumChatMessage(models.Model):
     user = models.CharField(max_length=50)
     message = models.TextField()
     room = models.ForeignKey(ScrumChatRoom, on_delete=models.CASCADE)
+
+
+class ScrumSprint (models.Model):
+    created_on = models.DateTimeField(auto_now_add=True)
+    ends_on = models.DateTimeField()
+    goal_project_id = models.IntegerField(default=0)
+
     

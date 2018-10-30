@@ -211,11 +211,25 @@ h5 {
 
                     .delete_task { 
                         color: red; 
-                        border: 2px solid #008CBA;
-                        background: white;
+                        border: 0 solid #008CBA;
                     }
 
                     .delete_task:hover {
                         background-color: red;
                         color: black;
+                    }
+
+                    .s_button{
+                        background-color: #1f7a7a;
+                        color: white;
+                        border-radius: 20px;
+                        font-weight: Bold;
+                        border: 0 ;
+                        padding: 5px
+
+                    }
+
+                    .s_button:hover {
+                        background-color: #8c8c8c;
+                        color: white;
                     }
