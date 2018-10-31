@@ -148,9 +148,10 @@ export class ProfileComponent implements OnInit {
       data => {
         this.dataservice.sprints = data['data'];
         this.dataservice.message = data['message'];
-        this.dataservice.sprint_start = this.dataservice.sprints[this.dataservice.sprints.length - 1].created_on
-        this.dataservice.sprint_end = this.dataservice.sprints[this.dataservice.sprints.length - 1]. ends_on
-
+        if (this.dataservice.sprints.length) {
+         this.dataservice.sprint_start = this.dataservice.sprints[this.dataservice.sprints.length - 1].created_on
+         this.dataservice.sprint_end = this.dataservice.sprints[this.dataservice.sprints.length - 1]. ends_on
+        }
       },
       err => {
         console.error(err);
@@ -306,8 +307,10 @@ export class ProfileComponent implements OnInit {
             data => {
                 this.dataservice.sprints = data;
                 this.dataservice.message = data['message'];
-                this.dataservice.sprint_start = this.dataservice.sprints[this.dataservice.sprints.length - 1].created_on
-                this.dataservice.sprint_end = this.dataservice.sprints[this.dataservice.sprints.length - 1]. ends_on
+                if (this.dataservice.sprints.length) {
+                  this.dataservice.sprint_start = this.dataservice.sprints[this.dataservice.sprints.length - 1].created_on;
+                  this.dataservice.sprint_end = this.dataservice.sprints[this.dataservice.sprints.length - 1]. ends_on;
+                };
             },
             err => {
                 console.error(err);
