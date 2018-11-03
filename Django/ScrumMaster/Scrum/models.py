@@ -73,6 +73,7 @@ class ScrumChatMessage(models.Model):
 class ScrumSprint (models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     ends_on = models.DateTimeField()
-    goal_project_id = models.IntegerField(default=0)
+    goal_project_id = models.IntegerField(default=0)    
 
-    
+    def __str__(self):
+        return self.project, self.created_on

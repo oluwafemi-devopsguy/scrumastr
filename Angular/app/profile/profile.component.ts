@@ -100,6 +100,9 @@ export class ProfileComponent implements OnInit {
                 console.log(data);
                 this.msg_obs.observe(document.getElementById('chat_div_space'), { attributes: true, childList: true, subtree: true });
                 this.dataservice.project_name = data['project_name'];
+                // this.dataservice.sprints = data.project_sprint
+                // this.dataservice.sprints = Array.of(this.dataservice.sprints); 
+                // console.log(this.dataservice.sprints)
                 this.dataservice.users = data['data'];
                 this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '!join ' + this.dataservice.project_name}));
             },
@@ -146,7 +149,11 @@ export class ProfileComponent implements OnInit {
     var myDate = new Date(new Date().getTime()+(7*24*60*60*1000));
     this.http.post('http://' + this.dataservice.domain_name + '/scrum/api/scrumsprint/', JSON.stringify({'project_id': this.dataservice.project, 'ends_on': myDate}), this.dataservice.authOptions).subscribe(
       data => {
-        this.dataservice.sprints = data['data'];
+        console.log(data)
+        this.dataservice.sprints = data['data'].filter(
+          sprints => sprints.goal_project_id == this.dataservice.project );
+        console.log(this.dataservice.project)
+        console.log(this.dataservice.sprints)
         this.dataservice.message = data['message'];
         if (this.dataservice.sprints.length) {
          this.dataservice.sprint_start = this.dataservice.sprints[this.dataservice.sprints.length - 1].created_on
@@ -305,8 +312,10 @@ export class ProfileComponent implements OnInit {
   ngOnInit() {
        this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumsprint/', this.dataservice.authOptions).subscribe(
             data => {
-                this.dataservice.sprints = data;
+                  this.dataservice.sprints = data.filter(
+                    sprints => sprints.goal_project_id == this.dataservice.project );
                 this.dataservice.message = data['message'];
+                console.log(data['message'])
                 if (this.dataservice.sprints.length) {
                   this.dataservice.sprint_start = this.dataservice.sprints[this.dataservice.sprints.length - 1].created_on;
                   this.dataservice.sprint_end = this.dataservice.sprints[this.dataservice.sprints.length - 1]. ends_on;

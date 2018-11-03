@@ -26,6 +26,7 @@ export class DataService {
   public role;
   public project;
   public project_name;
+  public project_id;
   public users;
   public sprints;
   public sprint_start;

@@ -221,11 +221,9 @@ h5 {
 
                     .s_button{
                         background-color: #1f7a7a;
-                        color: white;
-                        border-radius: 20px;
-                        font-weight: Bold;
-                        border: 0 ;
-                        padding: 5px
+                        margin-right: 10PX;
+                        padding: 5PX 10PX;
+                        font: bolder;
 
                     }
 
