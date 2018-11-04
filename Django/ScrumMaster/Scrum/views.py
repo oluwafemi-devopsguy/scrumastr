@@ -430,7 +430,7 @@ class SprintViewSet(viewsets.ModelViewSet):
 
         if scrum_project_role.role == 'Admin' or scrum_project_role.role == 'Owner':
             if existence == True:                
-                if datetime.datetime.strftime(ScrumSprint.objects.latest('ends_on').ends_on, "%Y-%m-%d") < datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d"):
+                if datetime.datetime.strftime(ScrumSprint.objects.latest('ends_on').ends_on, "%Y-%m-%d") > datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d"):
                     sprint = ScrumSprint(goal_project_id=request.data['project_id'], ends_on=datetime.datetime.now() + datetime.timedelta(days=7))
                     sprint.save()
                     return JsonResponse({'message': 'Sprint Createddd Successfully.', 'data':serializer.data})

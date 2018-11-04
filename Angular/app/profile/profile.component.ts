@@ -312,10 +312,19 @@ export class ProfileComponent implements OnInit {
   ngOnInit() {
        this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumsprint/', this.dataservice.authOptions).subscribe(
             data => {
-                  this.dataservice.sprints = data.filter(
-                    sprints => sprints.goal_project_id == this.dataservice.project );
+              var project_sprint = [];
+
+              for (let i in data) {
+                console.log('GDDDDDDDDDDDDDDDDDDDDDDDDDD')
+                if (data[i].goal_project_id == sessionStorage.getItem('project_id')) project_sprint.push(data[i]);
+                console.log(i)
+                console.log(project_sprint)
+              }
+                  this.dataservice.sprints = project_sprint
+                  // this.dataservice.sprints = data.filter( function(sprint)
+                  // { return sprint.goal_project_id == sessionStorage.getItem('project_id')});
                 this.dataservice.message = data['message'];
-                console.log(data['message'])
+                console.log(this.dataservice.sprints)
                 if (this.dataservice.sprints.length) {
                   this.dataservice.sprint_start = this.dataservice.sprints[this.dataservice.sprints.length - 1].created_on;
                   this.dataservice.sprint_end = this.dataservice.sprints[this.dataservice.sprints.length - 1]. ends_on;
