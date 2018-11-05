@@ -24,6 +24,7 @@ export class ProfileComponent implements OnInit {
   public id_click = -1;
   sprint_start: Number;
   sprint_end: Number;
+  present_scrum;
     
   public modalOptions: Materialize.ModalOptions = {
     dismissible: false, // Modal can be dismissed by clicking outside of the modal
@@ -144,34 +145,63 @@ export class ProfileComponent implements OnInit {
     this.show_zero = !this.show_zero;  
   }
 
+  createSprintMethod(myDate) {
+          this.http.post('http://' + this.dataservice.domain_name + '/scrum/api/scrumsprint/', JSON.stringify({'project_id': this.dataservice.project, 'ends_on': myDate}), this.dataservice.authOptions).subscribe(
+           data => {
+              console.log(data)
+              this.dataservice.sprints = data['data'].filter(
+                sprints => sprints.goal_project_id == this.dataservice.project );
+              console.log(this.dataservice.project)
+              console.log(this.dataservice.sprints)
+              this.dataservice.message = data['message'];
+              if (this.dataservice.sprints.length) {
+               this.dataservice.sprint_start = this.dataservice.sprints[this.dataservice.sprints.length - 1].created_on
+               this.dataservice.sprint_end = this.dataservice.sprints[this.dataservice.sprints.length - 1]. ends_on
+              }
+            },
+            err => {
+              console.error(err);
+                if(err['status'] == 401)
+                  {
+                    this.dataservice.message = 'Session Invalid or Expired. Please Login.';
+                    this.dataservice.logout();
+                } else
+                  {
+                    this.dataservice.message = 'Unexpected Error!';    
+                  }
+                }
+              );
+  }
+
   createSprint() 
   {
-    var myDate = new Date(new Date().getTime()+(7*24*60*60*1000));
-    this.http.post('http://' + this.dataservice.domain_name + '/scrum/api/scrumsprint/', JSON.stringify({'project_id': this.dataservice.project, 'ends_on': myDate}), this.dataservice.authOptions).subscribe(
-      data => {
-        console.log(data)
-        this.dataservice.sprints = data['data'].filter(
-          sprints => sprints.goal_project_id == this.dataservice.project );
-        console.log(this.dataservice.project)
-        console.log(this.dataservice.sprints)
-        this.dataservice.message = data['message'];
-        if (this.dataservice.sprints.length) {
-         this.dataservice.sprint_start = this.dataservice.sprints[this.dataservice.sprints.length - 1].created_on
-         this.dataservice.sprint_end = this.dataservice.sprints[this.dataservice.sprints.length - 1]. ends_on
-        }
-      },
-      err => {
-        console.error(err);
-          if(err['status'] == 401)
-            {
-              this.dataservice.message = 'Session Invalid or Expired. Please Login.';
-              this.dataservice.logout();
-          } else
-            {
-              this.dataservice.message = 'Unexpected Error!';    
+      var present_scrum_id = this.dataservice.sprints[this.dataservice.sprints.length - 1].id
+      this.present_scrum = this.dataservice.sprints[this.dataservice.sprints.length - 1].ends_on
+      this.present_scrum =  new Date(this.present_scrum).valueOf()
+      var myDate = new Date(new Date().getTime()+(7*24*60*60*1000));
+      
+      //  Test if Today Date is greater than last scrum
+      if (this.present_scrum > new Date().valueOf()) {
+        console.log('great')
+        // Confirmation Pop up
+        if (confirm("Sprint #" + present_scrum_id + " is currently running. End this spring and start another one?  Click \"OK\" to continue Create New Sprint!!!")) {
+          this.dataservice.message == "Current Sprint ended";
+          
+          this.createSprintMethod(myDate)
             }
-          }
-        );
+        else {
+          this.dataservice.message = 'Last Sprint continued!!!';
+          console.log("Sprint Continue")
+          return;
+            
+        }
+      }
+
+      else {
+        this.createSprintMethod(myDate)
+      }
+
+    
   } 
 
   changeSprint(sprint) 
@@ -313,16 +343,10 @@ export class ProfileComponent implements OnInit {
        this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumsprint/', this.dataservice.authOptions).subscribe(
             data => {
               var project_sprint = [];
-
               for (let i in data) {
-                console.log('GDDDDDDDDDDDDDDDDDDDDDDDDDD')
                 if (data[i].goal_project_id == sessionStorage.getItem('project_id')) project_sprint.push(data[i]);
-                console.log(i)
-                console.log(project_sprint)
               }
-                  this.dataservice.sprints = project_sprint
-                  // this.dataservice.sprints = data.filter( function(sprint)
-                  // { return sprint.goal_project_id == sessionStorage.getItem('project_id')});
+                this.dataservice.sprints = project_sprint
                 this.dataservice.message = data['message'];
                 console.log(this.dataservice.sprints)
                 if (this.dataservice.sprints.length) {
