@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../data.service';
 import { DragulaService } from 'ng2-dragula';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
+import { forkJoin } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MzModalModule } from 'ngx-materialize';
 @Component({
@@ -25,6 +27,7 @@ export class ProfileComponent implements OnInit {
   sprint_start: Number;
   sprint_end: Number;
   present_scrum;
+  selected_sprint: any;
     
   public modalOptions: Materialize.ModalOptions = {
     dismissible: false, // Modal can be dismissed by clicking outside of the modal
@@ -96,22 +99,30 @@ export class ProfileComponent implements OnInit {
 
     this.websocket = new WebSocket('ws://' + this.dataservice.domain_name + '/scrum/');
     this.websocket.onopen = (evt) => {
-        this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumprojects/' + this.dataservice.project + '/', this.dataservice.httpOptions).subscribe(
-            data => {
-                console.log(data);
-                this.msg_obs.observe(document.getElementById('chat_div_space'), { attributes: true, childList: true, subtree: true });
-                this.dataservice.project_name = data['project_name'];
-                // this.dataservice.sprints = data.project_sprint
-                // this.dataservice.sprints = Array.of(this.dataservice.sprints); 
-                // console.log(this.dataservice.sprints)
-                this.dataservice.users = data['data'];
-                this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '!join ' + this.dataservice.project_name}));
-            },
-            err => {
+      forkJoin(
+          this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumprojects/' + this.dataservice.project + '/', this.dataservice.httpOptions),
+          this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumsprint/', this.dataservice.authOptions)
+        )
+         .subscribe(([res1, res2]) => {
+            this.msg_obs.observe(document.getElementById('chat_div_space'), { attributes: true, childList: true, subtree: true });
+            this.dataservice.users = res1['data'];
+            this.dataservice.project_name = res1['project_name'];
+            this.dataservice.sprints = res2;
+            this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '!join ' + this.dataservice.project_name}));
+            console.log(this.dataservice.users)
+            console.log(res2)
+
+            console.log(this.dataservice.sprints[this.dataservice.sprints.length - 1].ends_on)
+            console.log(this.dataservice.sprints[this.dataservice.sprints.length - 1].created_on)
+            
+            this.filterSprint()
+            console.log(this.dataservice.sprint_goals)
+        },
+        err => {
                 this.dataservice.message = 'Unexpected Error!';
                 console.log(err);
-            }
-        );
+            });
+
     }
 
     this.websocket.onmessage = (evt) => {
@@ -145,6 +156,22 @@ export class ProfileComponent implements OnInit {
     this.show_zero = !this.show_zero;  
   }
 
+            
+  filterSprint() {
+    this.dataservice.sprint_goals = [] 
+      for (var i = 0;  i < this.dataservice.users.length; i++)  {
+        for (var j = 0;  j < this.dataservice.users[i].scrumgoal_set.length; j++)  {
+          if (this.dataservice.users[i].scrumgoal_set[j].time_created > this.dataservice.sprints[this.dataservice.sprints.length - 1].created_on && 
+            this.dataservice.users[i].scrumgoal_set[j].time_created < this.dataservice.sprints[this.dataservice.sprints.length - 1].ends_on)
+            {                  
+             this.dataservice.users[i].scrumgoal_set[j].user_id = this.dataservice.users[i].id
+             this.dataservice.sprint_goals.push(this.dataservice.users[i].scrumgoal_set[j]);
+            }
+          }
+        }
+  }
+
+
   createSprintMethod(myDate) {
           this.http.post('http://' + this.dataservice.domain_name + '/scrum/api/scrumsprint/', JSON.stringify({'project_id': this.dataservice.project, 'ends_on': myDate}), this.dataservice.authOptions).subscribe(
            data => {
@@ -154,10 +181,9 @@ export class ProfileComponent implements OnInit {
               console.log(this.dataservice.project)
               console.log(this.dataservice.sprints)
               this.dataservice.message = data['message'];
-              if (this.dataservice.sprints.length) {
-               this.dataservice.sprint_start = this.dataservice.sprints[this.dataservice.sprints.length - 1].created_on
-               this.dataservice.sprint_end = this.dataservice.sprints[this.dataservice.sprints.length - 1]. ends_on
-              }
+
+              this.filterSprint()              
+
             },
             err => {
               console.error(err);
@@ -182,8 +208,6 @@ export class ProfileComponent implements OnInit {
       
       //  Test if Today Date is greater than last scrum
       if (this.present_scrum > new Date().valueOf()) {
-        console.log('great')
-        // Confirmation Pop up
         if (confirm("Sprint #" + present_scrum_id + " is currently running. End this spring and start another one?  Click \"OK\" to continue Create New Sprint!!!")) {
           this.dataservice.message == "Current Sprint ended";
           
@@ -204,20 +228,23 @@ export class ProfileComponent implements OnInit {
     
   } 
 
+
   changeSprint(sprint) 
   {
-    if(sprint.created_on && sprint.ends_on ) {
-      this.dataservice.sprint_start = sprint.created_on 
-      this.dataservice.sprint_end = sprint.ends_on
-    } else {
-      console.log('Error Loading Sprint')
-    }
+   
+    this.dataservice.sprint_goals = [] 
+      for (var i = 0;  i < this.dataservice.users.length; i++)  {
+        for (var j = 0;  j < this.dataservice.users[i].scrumgoal_set.length; j++)  {
+          if (this.dataservice.users[i].scrumgoal_set[j].time_created > this.selected_sprint.created_on && 
+            this.dataservice.users[i].scrumgoal_set[j].time_created < this.selected_sprint.ends_on)
+            {                
+             this.dataservice.users[i].scrumgoal_set[j].user_id = this.dataservice.users[i].id
+             this.dataservice.sprint_goals.push(this.dataservice.users[i].scrumgoal_set[j]);
+            }
+          } 
+        }
   }
 
-  // setNewUser(user: User): void {
-  //   console.log(user);
-  //   this.curUser = user;
-  //   }
   
   editGoal(event)
   {
@@ -250,6 +277,7 @@ export class ProfileComponent implements OnInit {
             data => {
                 this.dataservice.users = data['data'];
                 this.dataservice.message = data['message'];
+                this.filterSprint()
             },
             err => {
                 console.error(err);
@@ -273,6 +301,7 @@ export class ProfileComponent implements OnInit {
             data => {
                 this.dataservice.users = data['data'];
                 this.dataservice.message = data['message'];
+                this.filterSprint()
             },
             err => {
                 console.error(err);
@@ -339,35 +368,13 @@ export class ProfileComponent implements OnInit {
   
  
 
-  ngOnInit() {
-       this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumsprint/', this.dataservice.authOptions).subscribe(
-            data => {
-              var project_sprint = [];
-              for (let i in data) {
-                if (data[i].goal_project_id == sessionStorage.getItem('project_id')) project_sprint.push(data[i]);
-              }
-                this.dataservice.sprints = project_sprint
-                this.dataservice.message = data['message'];
-                console.log(this.dataservice.sprints)
-                if (this.dataservice.sprints.length) {
-                  this.dataservice.sprint_start = this.dataservice.sprints[this.dataservice.sprints.length - 1].created_on;
-                  this.dataservice.sprint_end = this.dataservice.sprints[this.dataservice.sprints.length - 1]. ends_on;
-                };
-            },
-            err => {
-                console.error(err);
 
-                if(err['status'] == 401)
-                {
-                    this.dataservice.message = 'Session Invalid or Expired. Please Login.';
-                    this.dataservice.logout();
-                } else
-                {
-                    this.dataservice.message = 'Unexpected Error!';    
-                }
-            }
-        );
+
+
+  ngOnInit() {
+
     }
+
   
   getClicked(event)
   {

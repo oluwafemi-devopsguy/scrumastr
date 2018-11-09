@@ -24,6 +24,7 @@ export class DataService {
   public username;
   public realname;
   public role;
+  public role_id;
   public project;
   public project_name;
   public project_id;
@@ -31,6 +32,8 @@ export class DataService {
   public sprints;
   public sprint_start;
   public sprint_end;
+  
+  public sprint_goals;
   
   public httpOptions = {
     headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -86,10 +89,12 @@ export class DataService {
             sessionStorage.setItem('username', this.login_username);
             sessionStorage.setItem('realname', data['name']);
             sessionStorage.setItem('role', data['role']);
+            sessionStorage.setItem('role_id', data['role_id']);
             sessionStorage.setItem('token', data['token']);
             sessionStorage.setItem('project_id', data['project_id']);
             this.username = this.login_username;
             this.role = data['role'];
+            this.role_id = data['role_id'];
             this.realname = data['name'];
             this.project = data['project_id'];
             this.message = 'Welcome!';
@@ -144,6 +149,7 @@ export class DataService {
   {
     this.username = '';
     this.role = '';
+    this.role_id = '';
     this.users = [];
     this.realname = '';
     this.project = 0;
@@ -152,6 +158,7 @@ export class DataService {
     this.authOptions = {};
     sessionStorage.removeItem('username');
     sessionStorage.removeItem('role');
+    sessionStorage.removeItem('role_id');
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('project_id');
     sessionStorage.removeItem('realname');

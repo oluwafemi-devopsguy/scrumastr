@@ -234,17 +234,6 @@ class ScrumProjectViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, pk=None):
         try:
             queryset = ScrumProject.objects.get(pk=pk)
-            # sprint = ScrumSprint.objects.filter(project_id=queryset.id)
-            # ser = SprintSerializer(sprint)
-            # for sprintt in ser:
-            #     print(sprintt.created_on)
-            # print('rrrrrrrrrrrrrrrrrrrtttttyy')
-            # print(queryset)
-            # ser = serializers.serialize("json", sprint)
-            # print('gfffffffffffffffffffffffffffffff')
-            # print(ser[3])
-            # ser = SprintSerializer(sprint)
-            # ser = serializers.serialize("json", ser)
             return JsonResponse({'project_name': queryset.name, 'data': filtered_users(pk)})
         except ScrumProject.DoesNotExist:
             return JsonResponse({'detail': 'Not found.'})
@@ -411,7 +400,8 @@ def jwt_response_payload_handler(token, user=None, request=None):
         'token': token,
         'name': user.scrumuser.nickname,
         'role': project.scrumprojectrole_set.get(user=user.scrumuser).role,
-        'project_id': project.id
+        'project_id': project.id,
+        'role_id': project.scrumprojectrole_set.get(user=user.scrumuser).id
     }
     
 
@@ -424,31 +414,54 @@ class SprintViewSet(viewsets.ModelViewSet):
         serializer = ScrumSprintSerializer(queryset, many = True)
         user_id = request.user.id
         scrum_project = ScrumProject.objects.get(id=request.data['project_id'])
+        # Get the owner of project, the first item.project_id... 
+        scrum_project_creator = scrum_project.scrumprojectrole_set.all()[0].project_id
+
         scrum_project_role = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
 
         author_role = ScrumUser.objects.get(id=user_id)
         author = author_role.scrumprojectrole_set .all()
 
+        sprint_goal_carry = ScrumGoal.objects.filter(user_id=request.data['project_id'])
+        
+
         existence = ScrumSprint.objects.filter(goal_project_id = request.data['project_id']).exists()
-        last_sprint = ScrumSprint.objects.latest('ends_on')
+     
+            
+
 
         if scrum_project_role.role == 'Admin' or scrum_project_role.role == 'Owner':
-            if existence == True:                
+            if existence == True:   
+                last_sprint = ScrumSprint.objects.latest('ends_on')             
                 if (datetime.datetime.strftime(last_sprint.ends_on, "%Y-%m-%d")) < datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d"):
                     sprint = ScrumSprint(goal_project_id=request.data['project_id'], ends_on=datetime.datetime.now() + datetime.timedelta(days=7))
                     sprint.save()
+                    change_goal_status(sprint_goal_carry)
                     return JsonResponse({'message': 'Sprint Created Successfully.', 'data':serializer.data})
                 else:
                     sprint = ScrumSprint(goal_project_id=request.data['project_id'], ends_on=datetime.datetime.now() + datetime.timedelta(days=7))
                     sprint.save()
                     last_sprint.ends_on = datetime.datetime.now()
                     last_sprint.save()
-                    print('SAVED')
+                    change_goal_status(sprint_goal_carry)
                     return JsonResponse({'message': 'Last Sprint Ended and New Sprint Created Successfully.', 'data':serializer.data})  
             else: 
                 sprint = ScrumSprint(goal_project_id=request.data['project_id'], ends_on=datetime.datetime.now() + datetime.timedelta(days=7))
                 sprint.save()
+                change_goal_status(sprint_goal_carry)
                 return JsonResponse({'message': 'Sprint Created Successfully.', 'data':serializer.data})            
 
         else:
             return JsonResponse({'message': 'Permission Denied: Unauthorized Permission to Create New Sprint.', 'data': filtered_users(request.data['project_id'])})
+
+
+def change_goal_status(sprint_goal_carry):
+    for each_goal in sprint_goal_carry:
+        print(each_goal.status)
+        if each_goal.status == 0:
+            each_goal.time_created = datetime.datetime.now()  + datetime.timedelta(days=1)
+            each_goal.save()  
+        else:
+            each_goal.time_created = datetime.datetime.now()  + datetime.timedelta(days=-1)
+            each_goal.save()
+    return

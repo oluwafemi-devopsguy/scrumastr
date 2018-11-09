@@ -14,13 +14,15 @@
               <div class="col m3" style="display: flex;">
                 <h3 id="project_title" style="text-align: right">{{dataservice.project_name}}</h3>
                 <div style="float: right; display: flex; margin-top: 5px">
-                                <select   style="height: 30px; width: auto; margin: 15px; color: #1f7a7a" (ngModelChange)="changeSprint($event)" (ngModel)="dataservice.sprints">
-                                    <option *ngFor = "let sprint of dataservice.sprints"  [ngValue]="sprint" [selected] = "sprint.created_on == dataservice.sprint_start ? sprint : doNothing()" >
-                                      SPRINT {{sprint.id}}:  {{sprint.created_on | date}} - {{sprint.ends_on | date}}
-                                    </option>
+                    <select  style="height: 30px; margin: 15px; color: #1f7a7a; width: auto;" [(ngModel)]="selected_sprint"  (change)="changeSprint($event.target)">
+                        <option *ngFor = "let sprint of dataservice.sprints"  [ngValue]="sprint" [selected] = "index == last ? sprint : doNothing()" >
+                            SPRINT {{sprint.id}}:  {{sprint.created_on | date}} - {{sprint.ends_on | date}}
+                        </option>
                            
-                                </select>                                
-                            </div>
+                    </select>
+
+
+                    </div>
              </div>
               
              <div class="col m6">
@@ -127,7 +129,7 @@
                             <th class="full-box">Verify</th>
                             <th class="full-box">Done</th>
                         </div>
-                        <ng-container *ngFor="let user of dataservice.users">
+                        <ng-container *ngFor="let user of dataservice.users; let user_index = index">
                             <div *ngIf="user.scrumgoal_set.length == 0 && show_zero" style="display: table-row;" dragula="mainTable" [attr.id]="'u' + user.id">
                                 <td class="full-box" id="author" colspan="6">
                                     {{user.user.nickname}} - NO TASKS ASSIGNED
@@ -150,13 +152,13 @@
                                 </td>
                                 -->
                                 <div *ngFor="let arrItem of arrCount" class="top-box" dragula="mainTable" [attr.id]="arrItem">
-                                    <div class="div_lister" *ngFor="let goal of user.scrumgoal_set; let j = index; let k = count" [attr.id]="'g' + goal.id"> 
-                                        <div *ngIf ="dataservice.sprint_start < goal.time_created && dataservice.sprint_end > goal.time_created">
-                                            <div class="list_div" *ngIf ="goal.status == arrItem && goal.name; let thisGoal" (dblclick)="goal.status == arrItem ? editGoal($event) : doNothing()" style="font-size: 0.8rem">
+                                    <div class="div_lister" *ngFor="let goal of dataservice.sprint_goals; let j = index; let k = count" [attr.id]="'g' + goal.id"> 
+                                        <!-- <div *ngIf ="dataservice.sprint_start < goal.time_created && dataservice.sprint_end > goal.time_created"> -->
+                                            <div class="list_div" *ngIf ="goal.status == arrItem && user.id == goal.user_id && goal.name; let thisGoal" (dblclick)="goal.status == arrItem ? editGoal($event) : doNothing()" style="font-size: 0.8rem">
                                                 {{goal.goal_project_id}}) {{ (goal.name.length>40) ? (thisGoal | slice:0:40)+'...':(thisGoal) }} {{(goal.hours != -1 && (goal.status == 3 || goal.status == 2) ? ' (' + goal.hours + ')' : '' )}}
                                                 <span class="tooltiptext">{{goal.name}}</span>                                              
                                                 <span class="tooltiptext2"><button class="delete_task" (click)="deleteTask(goal.name, goal.id)">X</button> </span>                                  
-                                            </div>
+                                            <!-- </div> -->
                                         </div>                                   
                                     </div>
                                 </div>
