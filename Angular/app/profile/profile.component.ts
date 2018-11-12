@@ -101,7 +101,7 @@ export class ProfileComponent implements OnInit {
     this.websocket.onopen = (evt) => {
       forkJoin(
           this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumprojects/' + this.dataservice.project + '/', this.dataservice.httpOptions),
-          this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumsprint/', this.dataservice.authOptions)
+          this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumsprint/?goal_project_id=' + this.dataservice.project, this.dataservice.authOptions)
         )
          .subscribe(([res1, res2]) => {
             this.msg_obs.observe(document.getElementById('chat_div_space'), { attributes: true, childList: true, subtree: true });
@@ -110,13 +110,9 @@ export class ProfileComponent implements OnInit {
             this.dataservice.sprints = res2;
             this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '!join ' + this.dataservice.project_name}));
             console.log(this.dataservice.users)
-            console.log(res2)
 
-            console.log(this.dataservice.sprints[this.dataservice.sprints.length - 1].ends_on)
-            console.log(this.dataservice.sprints[this.dataservice.sprints.length - 1].created_on)
-            
-            this.filterSprint()
-            console.log(this.dataservice.sprint_goals)
+
+            this.filterSprint(res2)
         },
         err => {
                 this.dataservice.message = 'Unexpected Error!';
@@ -157,34 +153,55 @@ export class ProfileComponent implements OnInit {
   }
 
             
-  filterSprint() {
-    this.dataservice.sprint_goals = [] 
-      for (var i = 0;  i < this.dataservice.users.length; i++)  {
-        for (var j = 0;  j < this.dataservice.users[i].scrumgoal_set.length; j++)  {
-          if (this.dataservice.users[i].scrumgoal_set[j].time_created > this.dataservice.sprints[this.dataservice.sprints.length - 1].created_on && 
-            this.dataservice.users[i].scrumgoal_set[j].time_created < this.dataservice.sprints[this.dataservice.sprints.length - 1].ends_on)
-            {                  
-             this.dataservice.users[i].scrumgoal_set[j].user_id = this.dataservice.users[i].id
-             this.dataservice.sprint_goals.push(this.dataservice.users[i].scrumgoal_set[j]);
+  filterSprint(uSprints) {
+    this.dataservice.sprints= uSprints
+    var filter_goal = []
+    console.log(filter_goal)
+        // this.dataservice.sprint_goals.length = 0 
+          for (var i = 0;  i < this.dataservice.users.length; i++)  {
+            for (var j = 0;  j < this.dataservice.users[i].scrumgoal_set.length; j++)  {
+              if (this.dataservice.sprints.length) {
+                if (this.dataservice.users[i].scrumgoal_set[j].time_created >= this.dataservice.sprints[this.dataservice.sprints.length - 1].created_on && 
+                  this.dataservice.users[i].scrumgoal_set[j].time_created <= this.dataservice.sprints[this.dataservice.sprints.length - 1].ends_on)
+                  {                  
+                  console.log(this.dataservice.users[i].scrumgoal_set[j].time_created)
+                  console.log(this.dataservice.users[i].scrumgoal_set[j].name)
+                   // this.dataservice.users[i].scrumgoal_set[j].user_id = this.dataservice.users[i].id
+                   filter_goal.push(this.dataservice.users[i].scrumgoal_set[j]);
+                  }
+              } else {
+                  this.dataservice.users[i].scrumgoal_set[j].user_id = this.dataservice.users[i].id
+                  filter_goal.push(this.dataservice.users[i].scrumgoal_set[j]); 
+              }
             }
           }
-        }
+          console.log(filter_goal)
+          this.dataservice.sprint_goals = filter_goal
+
   }
 
 
   createSprintMethod(myDate) {
-          this.http.post('http://' + this.dataservice.domain_name + '/scrum/api/scrumsprint/', JSON.stringify({'project_id': this.dataservice.project, 'ends_on': myDate}), this.dataservice.authOptions).subscribe(
-           data => {
-              console.log(data)
-              this.dataservice.sprints = data['data'].filter(
-                sprints => sprints.goal_project_id == this.dataservice.project );
-              console.log(this.dataservice.project)
-              console.log(this.dataservice.sprints)
-              this.dataservice.message = data['message'];
+          console.log(this.dataservice.users)
+          console.log(this.dataservice.sprints)
+          forkJoin(
+          this.http.post('http://' + this.dataservice.domain_name + '/scrum/api/scrumsprint/?goal_project_id=' + this.dataservice.project, JSON.stringify({'project_id': this.dataservice.project, 'ends_on': myDate}), this.dataservice.authOptions),
+          this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumprojects/' + this.dataservice.project + '/', this.dataservice.httpOptions)
+        )
+         .subscribe(([res2, res1]) => {
+            this.msg_obs.observe(document.getElementById('chat_div_space'), { attributes: true, childList: true, subtree: true });
+            this.dataservice.users = res2['users'];
+            this.dataservice.project_name = res1['project_name'];
+            this.dataservice.sprints = res2['data']
+            this.dataservice.message = res2['message']
+            
+            console.log(this.dataservice.sprints)
+            console.log(this.dataservice.users)
+            console.log(this.dataservice.sprint_goals)
+            this.filterSprint(res2['data'])
+            console.log(this.dataservice.sprint_goals)
+        },
 
-              this.filterSprint()              
-
-            },
             err => {
               console.error(err);
                 if(err['status'] == 401)
@@ -201,17 +218,19 @@ export class ProfileComponent implements OnInit {
 
   createSprint() 
   {
+    var myDate = new Date(new Date().getTime()+(7*24*60*60*1000));
+    if (this.dataservice.sprints.length) {
       var present_scrum_id = this.dataservice.sprints[this.dataservice.sprints.length - 1].id
       this.present_scrum = this.dataservice.sprints[this.dataservice.sprints.length - 1].ends_on
       this.present_scrum =  new Date(this.present_scrum).valueOf()
-      var myDate = new Date(new Date().getTime()+(7*24*60*60*1000));
+      
       
       //  Test if Today Date is greater than last scrum
       if (this.present_scrum > new Date().valueOf()) {
         if (confirm("Sprint #" + present_scrum_id + " is currently running. End this spring and start another one?  Click \"OK\" to continue Create New Sprint!!!")) {
-          this.dataservice.message == "Current Sprint ended";
-          
+          this.dataservice.message == "Current Sprint ended";          
           this.createSprintMethod(myDate)
+          return;
             }
         else {
           this.dataservice.message = 'Last Sprint continued!!!';
@@ -220,12 +239,10 @@ export class ProfileComponent implements OnInit {
             
         }
       }
-
-      else {
+    } else {
         this.createSprintMethod(myDate)
-      }
-
-    
+        return;
+    }    
   } 
 
 
@@ -277,7 +294,7 @@ export class ProfileComponent implements OnInit {
             data => {
                 this.dataservice.users = data['data'];
                 this.dataservice.message = data['message'];
-                this.filterSprint()
+                this.filterSprint(this.dataservice.sprints)
             },
             err => {
                 console.error(err);
@@ -301,7 +318,7 @@ export class ProfileComponent implements OnInit {
             data => {
                 this.dataservice.users = data['data'];
                 this.dataservice.message = data['message'];
-                this.filterSprint()
+                this.filterSprint(this.dataservice.sprints)
             },
             err => {
                 console.error(err);
@@ -391,6 +408,7 @@ export class ProfileComponent implements OnInit {
 
   addGoal()
   {
+    console.log(this.on_user);
     this.dataservice.addGoal(this.on_user);
   }
   

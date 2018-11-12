@@ -154,7 +154,7 @@
                                 <div *ngFor="let arrItem of arrCount" class="top-box" dragula="mainTable" [attr.id]="arrItem">
                                     <div class="div_lister" *ngFor="let goal of dataservice.sprint_goals; let j = index; let k = count" [attr.id]="'g' + goal.id"> 
                                         <!-- <div *ngIf ="dataservice.sprint_start < goal.time_created && dataservice.sprint_end > goal.time_created"> -->
-                                            <div class="list_div" *ngIf ="goal.status == arrItem && user.id == goal.user_id && goal.name; let thisGoal" (dblclick)="goal.status == arrItem ? editGoal($event) : doNothing()" style="font-size: 0.8rem">
+                                            <div class="list_div" *ngIf ="goal.status == arrItem && user.id == goal.user && goal.name; let thisGoal" (dblclick)="goal.status == arrItem ? editGoal($event) : doNothing()" style="font-size: 0.8rem">
                                                 {{goal.goal_project_id}}) {{ (goal.name.length>40) ? (thisGoal | slice:0:40)+'...':(thisGoal) }} {{(goal.hours != -1 && (goal.status == 3 || goal.status == 2) ? ' (' + goal.hours + ')' : '' )}}
                                                 <span class="tooltiptext">{{goal.name}}</span>                                              
                                                 <span class="tooltiptext2"><button class="delete_task" (click)="deleteTask(goal.name, goal.id)">X</button> </span>                                  

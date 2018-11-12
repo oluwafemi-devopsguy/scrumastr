@@ -129,6 +129,7 @@ export class DataService {
             this.users = data['data'];
             this.message = data['message'];
             this.goal_name = '';
+            this.filterSprint(this.sprints);
         },
         err => {
             console.error(err);
@@ -143,6 +144,34 @@ export class DataService {
             this.goal_name = '';
         }
     );  
+  }
+
+             
+  filterSprint(uSprints) {
+    this.sprints= uSprints
+    var filter_goal = []
+    console.log(filter_goal)
+        // this.sprint_goals.length = 0 
+          for (var i = 0;  i < this.users.length; i++)  {
+            for (var j = 0;  j < this.users[i].scrumgoal_set.length; j++)  {
+              if (this.sprints.length) {
+                if (this.users[i].scrumgoal_set[j].time_created >= this.sprints[this.sprints.length - 1].created_on && 
+                  this.users[i].scrumgoal_set[j].time_created <= this.sprints[this.sprints.length - 1].ends_on)
+                  {                  
+                  console.log(this.users[i].scrumgoal_set[j].time_created)
+                  console.log(this.users[i].scrumgoal_set[j].name)
+                   // this.users[i].scrumgoal_set[j].user_id = this.users[i].id
+                   filter_goal.push(this.users[i].scrumgoal_set[j]);
+                  }
+              } else {
+                  this.users[i].scrumgoal_set[j].user_id = this.users[i].id
+                  filter_goal.push(this.users[i].scrumgoal_set[j]); 
+              }
+            }
+          }
+          console.log(filter_goal)
+          this.sprint_goals = filter_goal
+
   }
   
   logout()
@@ -170,6 +199,7 @@ export class DataService {
         data => {
             this.users = data['data'];
             this.message = data['message'];
+            this.filterSprint(this.sprints)
         },
         err => {
             console.error(err);
@@ -192,6 +222,7 @@ export class DataService {
         data => {
             this.users = data['data'];
             this.message = data['message'];
+            this.filterSprint(this.sprints)
         },
         err => {
             console.error(err);

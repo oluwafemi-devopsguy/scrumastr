@@ -32,7 +32,7 @@ class ScrumProjectRole(models.Model):
         return self.role
 
 class ScrumDemoProject(models.Model):
-    # project = models.ForeignKey(ScrumProject, on_delete=models.CASCADE)
+    project = models.ForeignKey(ScrumProject, on_delete=models.CASCADE)
     expiration_date = models.DateTimeField()
     
     def __str__(self):
@@ -44,8 +44,9 @@ class ScrumGoal(models.Model):
     status = models.IntegerField(default=-1)
     goal_project_id = models.IntegerField(default=0)
     user = models.ForeignKey(ScrumProjectRole, on_delete=models.CASCADE)
+    project = models.ForeignKey(ScrumProject, on_delete=models.CASCADE)
     hours = models.IntegerField(default=-1)
-    time_created = models.DateTimeField(auto_now_add=True)
+    time_created = models.DateTimeField()
     
     '''
     0 = Weekly Goal
@@ -71,7 +72,7 @@ class ScrumChatMessage(models.Model):
 
 
 class ScrumSprint (models.Model):
-    created_on = models.DateTimeField(auto_now_add=True)
+    created_on = models.DateTimeField()
     ends_on = models.DateTimeField()
     goal_project_id = models.IntegerField(default=0)    
 
