@@ -40,6 +40,7 @@ class ScrumDemoProject(models.Model):
         
 class ScrumGoal(models.Model):
     visible = models.BooleanField(default=True)
+    moveable = models.BooleanField(default=True)
     name = models.TextField()
     status = models.IntegerField(default=-1)
     goal_project_id = models.IntegerField(default=0)

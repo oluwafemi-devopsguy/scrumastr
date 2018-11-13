@@ -416,6 +416,8 @@ class SprintViewSet(viewsets.ModelViewSet):
     def create(self, request):     
         user_id = request.user.id
         scrum_project = ScrumProject.objects.get(id=request.data['project_id'])
+        scrum_project.project_count = scrum_project.project_count + 1
+        scrum_project.save()
         # Get the owner of project, the first item.project_id... 
         scrum_project_creator = scrum_project.scrumprojectrole_set.all()[0]
 
@@ -438,7 +440,7 @@ class SprintViewSet(viewsets.ModelViewSet):
                 if (datetime.datetime.strftime(last_sprint.ends_on, "%Y-%m-%d")) < datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d"):
                     sprint = ScrumSprint(goal_project_id=request.data['project_id'], created_on = now_time, ends_on=datetime.datetime.now() + datetime.timedelta(days=7))
                     sprint.save()
-                    self.change_goal_status(sprint_goal_carry)
+                    self.change_goal_moveability(sprint_goal_carry, scrum_project, scrum_project_role)
                     queryset = self.get_project_sprint()
                     return JsonResponse({'message': 'Sprint Created Successfully.', 'data':queryset,  'users': filtered_users(request.data['project_id'])})
                 else:
@@ -446,14 +448,14 @@ class SprintViewSet(viewsets.ModelViewSet):
                     last_sprint.save()
                     sprint = ScrumSprint(goal_project_id=request.data['project_id'], created_on = now_time, ends_on=datetime.datetime.now() + datetime.timedelta(days=7))
                     sprint.save()                    
-                    self.change_goal_status(sprint_goal_carry)
+                    self.change_goal_moveability(sprint_goal_carry, scrum_project, scrum_project_role)
                     queryset = self.get_project_sprint()
                     return JsonResponse({'message': 'Last Sprint Ended and New Sprint Created Successfully.', 'data':queryset, 'users': filtered_users(request.data['project_id'])})  
             else: 
                 sprint = ScrumSprint(goal_project_id=request.data['project_id'], created_on = now_time, ends_on=datetime.datetime.now() + datetime.timedelta(days=7))
                 sprint.save()
-                self.change_goal_status(sprint_goal_carry)
-                queryset = self.get_project_sprint()
+                self.change_goal_moveability(sprint_goal_carry, scrum_project, scrum_project_role)
+                print(self.get_project_sprint())
                 return JsonResponse({'message': 'Sprint Created Successfully.', 'data':queryset, 'users': filtered_users(request.data['project_id'])})            
 
         else:
@@ -474,3 +476,30 @@ class SprintViewSet(viewsets.ModelViewSet):
             serializer = ScrumSprintSerializer(proj_sprint, many = True)
             queryset = serializer.data
         return queryset
+
+    def change_goal_moveability(self, sprint_goal_carry, scrum_project, scrum_project_role):
+       
+        if sprint_goal_carry :
+            scrum_project.project_count = scrum_project.project_count - 1
+            for each_goal in sprint_goal_carry:
+                if each_goal.moveable != False:
+                    each_goal.moveable = False
+                    each_goal.save()
+                    if each_goal.status == 0:
+                        goal = ScrumGoal(
+                        name=each_goal.name,
+                        status= 0,
+                        time_created = datetime.datetime.now() + datetime.timedelta(minutes=1), 
+                        goal_project_id=scrum_project.project_count, 
+                        user=each_goal.user, 
+                        project_id=self.request.data['project_id'])
+                        scrum_project.project_count = scrum_project.project_count + 1                        
+                        goal.save()
+                
+            # # Save Total number of project goals
+            scrum_project.save()
+
+        else:
+            pass  
+                 
+        return
