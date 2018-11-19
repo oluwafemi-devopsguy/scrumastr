@@ -260,12 +260,11 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
     queryset = ScrumGoal.objects.all()
     serializer_class = ScrumGoalSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
-    
+
     def create(self, request):
         user_id = request.data['user'][1:]
         scrum_project = ScrumProject.objects.get(id=request.data['project_id'])
         scrum_project_role = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
-        print(user_id)
         
         author = ScrumProjectRole.objects.get(id=user_id)
             
@@ -501,5 +500,5 @@ class SprintViewSet(viewsets.ModelViewSet):
 
         else:
             pass  
-                 
+
         return
