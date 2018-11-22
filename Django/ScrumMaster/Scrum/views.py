@@ -265,8 +265,11 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
         user_id = request.data['user'][1:]
         scrum_project = ScrumProject.objects.get(id=request.data['project_id'])
         scrum_project_role = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
-        
+        print('gfgfgffgfg')
+        print(user_id)
         author = ScrumProjectRole.objects.get(id=user_id)
+        print(author)
+        print(scrum_project_role)
             
         if scrum_project_role != author and scrum_project_role.role != 'Owner': 
             return JsonResponse({'message': 'Permission Denied: Unauthorized Addition of a Goal.', 'data': filtered_users(request.data['project_id'])})
@@ -365,7 +368,8 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             return JsonResponse({'message': 'Goal Reassigned Successfully!', 'data': filtered_users(request.data['project_id'])})
         elif request.data['mode'] == 2:
             goal = ScrumGoal.objects.get(id=request.data['goal_id'])
-            if request.user.id == goal.user_id:
+            if request.user == scrum_project_b.user.user:
+                
                 goal.visible = 0
                 goal.save()
                 print(request.user.id)
@@ -455,6 +459,7 @@ class SprintViewSet(viewsets.ModelViewSet):
                 sprint.save()
                 self.change_goal_moveability(sprint_goal_carry, scrum_project, scrum_project_role)
                 print(self.get_project_sprint())
+                queryset = self.get_project_sprint()
                 return JsonResponse({'message': 'Sprint Created Successfully.', 'data':queryset, 'users': filtered_users(request.data['project_id'])})            
 
         else:
