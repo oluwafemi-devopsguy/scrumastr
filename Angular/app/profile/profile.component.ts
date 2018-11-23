@@ -164,8 +164,8 @@ export class ProfileComponent implements OnInit {
                 if (this.dataservice.users[i].scrumgoal_set[j].time_created >= this.dataservice.sprints[this.dataservice.sprints.length - 1].created_on && 
                   this.dataservice.users[i].scrumgoal_set[j].time_created <= this.dataservice.sprints[this.dataservice.sprints.length - 1].ends_on)
                   {                  
-                  console.log(this.dataservice.users[i].scrumgoal_set[j].time_created)
-                  console.log(this.dataservice.users[i].scrumgoal_set[j].name)
+                  // console.log(this.dataservice.users[i].scrumgoal_set[j].time_created)
+                  // console.log(this.dataservice.users[i].scrumgoal_set[j].name)
                    // this.dataservice.users[i].scrumgoal_set[j].user_id = this.dataservice.users[i].id
                    filter_goal.push(this.dataservice.users[i].scrumgoal_set[j]);
                   }
@@ -175,7 +175,7 @@ export class ProfileComponent implements OnInit {
               }
             }
           }
-          console.log(filter_goal)
+          // console.log(filter_goal)
           this.dataservice.sprint_goals = filter_goal
 
   }
@@ -220,12 +220,15 @@ export class ProfileComponent implements OnInit {
   {
     var myDate = new Date(new Date().getTime()+(7*24*60*60*1000));
     if (this.dataservice.sprints.length) {
+      console.log('if works')
       var present_scrum_id = this.dataservice.sprints[this.dataservice.sprints.length - 1].id
       this.present_scrum = this.dataservice.sprints[this.dataservice.sprints.length - 1].ends_on
       this.present_scrum =  new Date(this.present_scrum).valueOf()
       
       
       //  Test if Today Date is greater than last scrum
+      console.log(this.present_scrum)
+      console.log(new Date().valueOf())
       if (this.present_scrum > new Date().valueOf()) {
         if (confirm("Sprint #" + present_scrum_id + " is currently running. End this spring and start another one?  Click \"OK\" to continue Create New Sprint!!!")) {
           this.dataservice.message == "Current Sprint ended";          
@@ -238,9 +241,16 @@ export class ProfileComponent implements OnInit {
           return;
             
         }
+      } else  {
+          this.createSprintMethod(myDate)
+        
+          return;
+    }    
       }
     } else {
+        console.log('else works')
         this.createSprintMethod(myDate)
+        
         return;
     }    
   } 
@@ -392,23 +402,24 @@ export class ProfileComponent implements OnInit {
 
     }
 
-  
   getClicked(event)
-  {
-    console.log(event);
-    this.on_user = event.target.parentElement.parentElement.parentElement.parentElement.parentElement.id;
-    if(this.on_user == '')
-    {
-        console.log('user empty')
-        this.on_user = event.target.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.id;
-    }
-    console.log(this.on_user);
-    console.log('user is AVAILABLE')
+  { 
+    console.log()
+    if(event.target.parentElement.parentElement.parentElement.parentElement.id) {
+        this.on_user = event.target.parentElement.parentElement.parentElement.parentElement.id;
+      console.log(this.on_user)
+    } else {
+    this.on_user = event.target.parentElement.parentElement.parentElement.parentElement.parentElement.id 
+    console.log(this.on_user)
   }
+  }
+
+
 
   addGoal()
   {
     console.log(this.on_user);
+
     this.dataservice.addGoal(this.on_user);
   }
   

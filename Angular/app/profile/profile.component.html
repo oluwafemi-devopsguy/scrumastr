@@ -14,7 +14,7 @@
               <div class="col m3" style="display: flex;">
                 <h3 id="project_title" style="text-align: right">{{dataservice.project_name}}</h3>
                 <div style="float: right; display: flex; margin-top: 5px">
-                    <select  style="height: 30px; margin: 15px; color: #1f7a7a; width: auto;" [(ngModel)]="selected_sprint"  (change)="changeSprint($event.target)">
+                    <select  name="change_sprint" style="height: 30px; margin: 15px; color: #1f7a7a; width: auto;" [(ngModel)]="selected_sprint"  (change)="changeSprint($event.target)">
                         <option *ngFor = "let sprint of dataservice.sprints"  [ngValue]="sprint" [selected] = "index == last ? sprint : doNothing()" >
                             SPRINT {{sprint.id}}:  {{sprint.created_on | date}} - {{sprint.ends_on | date}}
                         </option>
@@ -51,7 +51,7 @@
                 <ul *ngFor="let user of dataservice.users">
                     <li>
                         <table [attr.id]="'m' + user.id" (mouseover)="setSelectedUser(user.id)" (mouseleave)="setSelectedUser(-1)">
-                            <tr>
+                            <tr id="author">
                                 <th rowspan="2"><a [routerLink] fragment='{{user.id}}' (click)="scrollIntoView('u' + user.id)"><i class="material-icons" id="account_circle">account_circle</i></a></th>
                                 <a [routerLink] fragment='{{user.id}}' (click)="scrollIntoView('u' + user.id)"  style="font-size: 0.8rem">{{user.user.nickname}} ({{user.total_week_hours}} hours)</a>
                                     <div style="display:flex;">

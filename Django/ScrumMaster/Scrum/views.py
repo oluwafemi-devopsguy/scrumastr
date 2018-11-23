@@ -202,6 +202,7 @@ class ScrumUserViewSet(viewsets.ModelViewSet):
                 scrum_project.save()
                 scrum_project_role = ScrumProjectRole(role="Owner", user=scrum_user, project=scrum_project)
                 scrum_project_role.save()
+
             user.set_password(request.data['password'])
             user.save()
             return JsonResponse({'message': 'User Created Successfully.'})
@@ -353,6 +354,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
     def put(self, request):
         scrum_project = ScrumProject.objects.get(id=request.data['project_id'])
         scrum_project_role = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
+        scrum_project_b = ScrumGoal.objects.get(id=request.data['goal_id']).user
         if request.data['mode'] == 0:
             from_id = request.data['from_id'][1:]
             to_id = request.data['to_id'][1:]
@@ -369,7 +371,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
         elif request.data['mode'] == 2:
             goal = ScrumGoal.objects.get(id=request.data['goal_id'])
             if request.user == scrum_project_b.user.user:
-                
+
                 goal.visible = 0
                 goal.save()
                 print(request.user.id)
@@ -398,6 +400,7 @@ def jwt_response_payload_handler(token, user=None, request=None):
     if project.scrumprojectrole_set.filter(user=user.scrumuser).count() == 0:
         scrum_project_role = ScrumProjectRole(role="Developer", user=user.scrumuser, project=project)
         scrum_project_role.save()
+
         
     return {
         'token': token,
@@ -426,7 +429,10 @@ class SprintViewSet(viewsets.ModelViewSet):
 
         scrum_project_role = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
 
-        author_role = ScrumUser.objects.get(id=user_id)
+        # if request.user == scrum_project_b.user.user:
+        print(user_id)
+
+        author_role = ScrumUser.objects.get(user_id=user_id)
         author = author_role.scrumprojectrole_set .all()
 
         # sprint_goal_carry = ScrumGoal.objects.filter(user_id=request.data['project_id'])
@@ -434,7 +440,7 @@ class SprintViewSet(viewsets.ModelViewSet):
         
 
         existence = ScrumSprint.objects.filter(goal_project_id = request.data['project_id']).exists()
-        now_time = datetime.datetime.now()  + datetime.timedelta(minutes=1)   
+        now_time = datetime.datetime.now()  + datetime.timedelta(seconds=10)   
             
 
         if scrum_project_role.role == 'Admin' or scrum_project_role.role == 'Owner':
@@ -469,7 +475,7 @@ class SprintViewSet(viewsets.ModelViewSet):
     def change_goal_status(self,sprint_goal_carry):
         for each_goal in sprint_goal_carry:
             if each_goal.status == 0:
-                each_goal.time_created = datetime.datetime.now()  + datetime.timedelta(minutes=2)
+                each_goal.time_created = datetime.datetime.now()  + datetime.timedelta(second=12)
                 each_goal.save()         
         return
 
@@ -493,7 +499,7 @@ class SprintViewSet(viewsets.ModelViewSet):
                         goal = ScrumGoal(
                         name=each_goal.name,
                         status= 0,
-                        time_created = datetime.datetime.now() + datetime.timedelta(minutes=1), 
+                        time_created = datetime.datetime.now() + datetime.timedelta(seconds=10), 
                         goal_project_id=scrum_project.project_count, 
                         user=each_goal.user, 
                         project_id=self.request.data['project_id'])
