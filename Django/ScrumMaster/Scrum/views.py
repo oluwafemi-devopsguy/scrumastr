@@ -339,15 +339,17 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
                     return JsonResponse({'message': 'Permission Denied: Unauthorized Movement of Goal.', 'data': filtered_users(request.data['project_id'])})
             else:
                 return JsonResponse({'message': 'Permission Denied: Unauthorized Movement of Goal.', 'data': filtered_users(request.data['project_id'])})
-            
-            message = 'Goal Moved Successfully!'
-            if state_prev == 1 and to_id == 2:
-                goal_item.hours = request.data['hours']
-                message = 'Goal Moved Successfully! Hours Applied!'
-            elif to_id == 2:
-                message = 'Goal Moved Successfully! Hours Not Applied!'
-                
-            goal_item.save()
+            if goal_item.moveable == True:
+                message = 'Goal Moved Successfully!'
+                if state_prev == 1 and to_id == 2:
+                    goal_item.hours = request.data['hours']
+                    message = 'Goal Moved Successfully! Hours Applied!'
+                elif to_id == 2:
+                    message = 'Goal Moved Successfully! Hours Not Applied!'
+           
+                goal_item.save()
+            else:
+                message = "Sprint Period Elapsed, Cannot Move Goal!!!"
             
             return JsonResponse({'message': message, 'data': filtered_users(request.data['project_id'])})
             
@@ -495,7 +497,7 @@ class SprintViewSet(viewsets.ModelViewSet):
                 if each_goal.moveable != False:
                     each_goal.moveable = False
                     each_goal.save()
-                    if each_goal.status == 0:
+                    if each_goal.status == 0 and each_goal.visible == 1 :
                         goal = ScrumGoal(
                         name=each_goal.name,
                         status= 0,
