@@ -124,110 +124,106 @@ h5 {
 
 /*=======================================================BOLU====================================================================*/
 
-                        .list_div {
-                        font-size: 7px;
-                        font-family: arial;
-                        border:1px solid grey;
-                        border-top: 6px solid lightblue;
-                        border-radius: px;
-                        width: 75px;
-                        height: 100px;
-                        padding:3px;
-                        margin: 5px;
-                        text-align: center;
-                        position: relative;
-                        display: inline-block;
-                        border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
-                    }
+.list_div {
+    font-size: 7px;
+    font-family: arial;
+    border:1px solid grey;
+    border-top: 6px solid lightblue;
+    border-radius: px;
+    width: 75px;
+    height: 100px;
+    padding:3px;
+    margin: 5px;
+    text-align: center;
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+}
 
                     /* Tooltip container */
-                    .list_div {
-                        position: relative;
-                        display: inline-block;
-                        border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
-                        margin: 15px 0;
+.list_div {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+    margin: 15px 0;
                     }
 
                     /* Tooltip text */
-                    .list_div .tooltiptext {
-                        visibility: hidden;
-                        width: 120px;
-                        background-color: lightblue;
-                        color: white;
-                        text-align: center;
-                        padding: 5px;
-                        border-radius: 6px;
-                     
+.list_div .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: lightblue;
+    color: white;
+    text-align: center;
+    padding: 5px;
+    border-radius: 6px;                 
                         /* Position the tooltip text - see examples below! */
-                        position: absolute;
-                        z-index: 1;
-                        top: -15px ;                       
-                        left: 110%;
-                    }
+    position: absolute;
+    z-index: 1;
+    top: -15px ;                       
+    left: 110%;
+}
 
                     /* Show the tooltip text when you mouse over the tooltip container */
-                    .list_div:hover .tooltiptext {
-                        visibility: visible;
-                    }
+.list_div:hover .tooltiptext {
+    visibility: visible;
+}
 
                                         /* Tooltip text */
-                    .list_div .tooltiptext2 {
-                        visibility: hidden;
-                        background-color: red;
-                        color: black;
-                        border: 1px dotted black;
-                        opacity: 0.6;
-                        filter: alpha(opacity=60);
-                        font-size: 12px;
-                        font-weight: bold;
-                        padding: 0;
-                                         
-                        /* Position the tooltip text - see examples below! */
-                        position: absolute;
-                        z-index: 1; 
-                        left: -3px;
-                        top: -27px;  
-                    }
+.list_div .tooltiptext2 {
+    visibility: hidden;
+    background-color: red;
+    color: black;
+    border: 1px dotted black;
+    opacity: 0.6;
+    filter: alpha(opacity=60);
+    font-size: 12px;
+    font-weight: bold;
+    padding: 0;
+              /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1; 
+    left: -3px;
+    top: -27px;  
+}
 
                     /* Show the tooltip text when you mouse over the tooltip container */
-                    .list_div:hover .tooltiptext2 {
-                        visibility: visible;
-                    }
+.list_div:hover .tooltiptext2 {
+    visibility: visible;
+}
 
-                    a:link, a:visited{
-                        background-color: #white;
-                        color: grey;
-                        padding: 3px 5px;
-                        text-align: center; 
-                        text-decoration: none;
-                        display: inline-block;
-                    }
+a:link, a:visited{
+    background-color: #white;
+    color: grey;
+    padding: 3px 5px;
+    text-align: center; 
+    text-decoration: none;
+    display: inline-block;
+}
 
-                    a:hover, a:active {
-                        color: white;
-                        background-color: grey;
+a:hover, a:active {
+    color: white;
+    background-color: grey;
+}
 
-                    }
+.delete_task { 
+    color: red; 
+    border: 0 solid #008CBA;
+}
 
-                    .delete_task { 
-                        color: red; 
-                        border: 0 solid #008CBA;
-                    }
+.delete_task:hover {
+    background-color: red;
+    color: black;
+}
 
-                    .delete_task:hover {
-                        background-color: red;
-                        color: black;
-                    }
+.s_button{
+    background-color: #1f7a7a;
+    margin-right: 10PX;
+    padding: 5PX 10PX;
+    font: bolder;
+}
 
-                    .s_button{
-                        background-color: #1f7a7a;
-                        margin-right: 10PX;
-                        padding: 5PX 10PX;
-                        font: bolder;
-
-                    }
-
-                    .s_button:hover {
-                        background-color: #8c8c8c;
-                        color: white;
-                    }
+.s_button:hover {
+    background-color: #8c8c8c;
+    color: white;
+}

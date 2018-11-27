@@ -1,9 +1,4 @@
-
-
-
-
 <div class="navbar-fixed">
-  
     <nav>
     <div class="container-fluid">
       <div class="nav-wrapper">
@@ -17,14 +12,10 @@
                     <select  name="change_sprint" style="height: 30px; margin: 15px; color: #1f7a7a; width: auto;" [(ngModel)]="selected_sprint"  (change)="changeSprint($event.target)">
                         <option *ngFor = "let sprint of dataservice.sprints"  [ngValue]="sprint" [selected] = "index == last ? sprint : doNothing()" >
                             SPRINT {{sprint.id}}:  {{sprint.created_on | date}} - {{sprint.ends_on | date}}
-                        </option>
-                           
+                        </option>                           
                     </select>
-
-
                     </div>
-             </div>
-              
+             </div>              
              <div class="col m6">
                 <ul class="right hide-on-med-and-down">
                     <li>
@@ -36,12 +27,8 @@
           </div>
       </div>
     </div>
-    </nav>
-   
+    </nav>   
 </div>
-
-
-
 <div class="container-fluid">
     <div class="row">
         <div class="col s2" style="height: calc(100vh - 65px); overflow: auto">
@@ -65,8 +52,6 @@
             </div>
         </div>
         <div class="col s6" style="height: calc(100vh - 65px); overflow: auto">
-            
-
             <div class="main_area">
                 <table>
                     <tr>
@@ -85,10 +70,6 @@
                         </td>
                     </tr>
                 </table>
-               
-
-
-
                 <style>
                     .full-box {
                         display: table-cell;
@@ -130,34 +111,20 @@
                             <th class="full-box">Done</th>
                         </div>
                         <ng-container *ngFor="let user of dataservice.users; let user_index = index">
-                            <div *ngIf="user.scrumgoal_set.length == 0 && show_zero" style="display: table-row;" dragula="mainTable" [attr.id]="'u' + user.id">
+                            <div *ngIf="user.scrumgoal_set.length == 0 && show_zero" style="display: table-row;" dragula="mainTable" [attr.id]="'u' + user.id" [style.background]="user.id == id_click ? 'rgba(0, 128, 128, 0.5)' : (user.id == id_hover ? 'rgba(0, 128, 128, 0.15)' : 'none')">
                                 <td class="full-box" id="author" colspan="6">
                                     {{user.user.nickname}} - NO TASKS ASSIGNED
-                                    <!--
-                                    <div style="display:flex;">
-                                        <a mz-button (click)="dataservice.role.toLowerCase() == 'owner' ? manageUser($event) : doNothing()" class="btn-floating change-role"><i class="material-icons" id="settings">settings</i></a>
-                                        <a mz-button (click)="getClicked($event); basicModal.openModal()" class="btn-floating add-icon"><i class="material-icons" id="add">add</i></a>
-                                    </div>
-                                    -->
                                 </td>
                             </div>
                             <div style="display: table-row" *ngIf="user.scrumgoal_set.length != 0" [attr.id]="'u' + user.id" [style.background]="user.id == id_click ? 'rgba(0, 128, 128, 0.5)' : (user.id == id_hover ? 'rgba(0, 128, 128, 0.15)' : 'none')" tabindex="-1">
-                                <!--
-                                <td class="full-box" id="author">
-                                    {{user.user.nickname}}
-                                    <div style="display:flex;">
-                                        <a mz-button (click)="dataservice.role.toLowerCase() == 'owner' ? manageUser($event) : doNothing()" class="btn-floating change-role"><i class="material-icons" id="settings">settings</i></a>
-                                        <a mz-button (click)="getClicked($event); basicModal.openModal()" class="btn-floating add-icon"><i class="material-icons" id="add">add</i></a>
-                                    </div>
-                                </td>
-                                -->
                                 <div *ngFor="let arrItem of arrCount" class="top-box" dragula="mainTable" [attr.id]="arrItem">
                                     <div class="div_lister" *ngFor="let goal of dataservice.sprint_goals; let j = index; let k = count" [attr.id]="'g' + goal.id"> 
-                                        <!-- <div *ngIf ="dataservice.sprint_start < goal.time_created && dataservice.sprint_end > goal.time_created"> -->
                                             <div class="list_div" *ngIf ="goal.status == arrItem && user.id == goal.user && goal.name; let thisGoal" (dblclick)="goal.status == arrItem ? editGoal($event) : doNothing()" style="font-size: 0.8rem">
                                                 {{goal.goal_project_id}}) {{ (goal.name.length>40) ? (thisGoal | slice:0:40)+'...':(thisGoal) }} {{(goal.hours != -1 && (goal.status == 3 || goal.status == 2) ? ' (' + goal.hours + ')' : '' )}}
-                                                <span class="tooltiptext">{{goal.name}}</span>                                              
-                                                <span class="tooltiptext2"><button class="delete_task" (click)="deleteTask(goal.name, goal.id)">X</button> </span>                                  
+                                                <span class="tooltiptext">{{goal.name}}</span>
+                                                <span class="tooltiptext2">
+                                                    <button class="delete_task" (click)="dataservice.moveGoal('g' + goal.id, 4, -1)">X</button>
+                                                </span>                                 
                                             <!-- </div> -->
                                         </div>                                   
                                     </div>

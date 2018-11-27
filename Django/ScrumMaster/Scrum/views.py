@@ -331,9 +331,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             elif group == 'Quality Analyst' and goal_item.status == 2 and to_id == 0:
                 goal_item.status = to_id
             elif request.user == scrum_project_b.user.user:
-                if goal_item.status == 1 and to_id == 0:
-                    goal_item.status = to_id
-                elif goal_item.status == 0 and to_id == 1:
+                if (goal_item.status in [0, 1, 2]) and (to_id in [0, 1, 2]):
                     goal_item.status = to_id
                 else:
                     return JsonResponse({'message': 'Permission Denied: Unauthorized Movement of Goal.', 'data': filtered_users(request.data['project_id'])})
@@ -344,10 +342,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
                 if state_prev == 1 and to_id == 2:
                     goal_item.hours = request.data['hours']
                     message = 'Goal Moved Successfully! Hours Applied!'
-                elif to_id == 2:
-                    message = 'Goal Moved Successfully! Hours Not Applied!'
-           
-                goal_item.save()
+                    goal_item.save()
             else:
                 message = "Sprint Period Elapsed, Cannot Move Goal!!!"
             
@@ -369,18 +364,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             author = ScrumProjectRole.objects.get(id=to_id)
             goal.user = author
             goal.save()
-            return JsonResponse({'message': 'Goal Reassigned Successfully!', 'data': filtered_users(request.data['project_id'])})
-        elif request.data['mode'] == 2:
-            goal = ScrumGoal.objects.get(id=request.data['goal_id'])
-            if request.user == scrum_project_b.user.user and goal.moveable == True:
-
-                goal.visible = 0
-                goal.save()
-                print(request.user.id)
-                return JsonResponse({'message': 'Goal Deleted Successfully!', 'data': filtered_users(request.data['project_id'])})
-            else:
-                return JsonResponse({'message': 'Permission Denied: Unauthorized Deletion of Goal.', 'data': filtered_users(request.data['project_id'])})
-            
+            return JsonResponse({'message': 'Goal Reassigned Successfully!', 'data': filtered_users(request.data['project_id'])})   
         else:
             scrum_project_b = ScrumGoal.objects.get(id=request.data['goal_id'][1:]).user
             if scrum_project_role.role != 'Owner' and request.user != scrum_project_b.user.user:
