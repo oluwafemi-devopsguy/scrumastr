@@ -341,15 +341,19 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
                 return JsonResponse({'message': 'Permission Denied: Unauthorized Movement of Goal.', 'data': filtered_users(request.data['project_id'])})
             if goal_item.moveable == True:
                 message = 'Goal Moved Successfully!'
-                if state_prev == 1 and to_id == 2:
+                if request.data['hours'] > 8:
+                    goal_item.status = state_prev
+                    message = 'Error: Task Exceeds 8 hours of completion.'
+                elif request.data['hours'] == -1 and goal_item.hours == -1 and to_id > 1:
+                     goal_item.status = state_prev
+                     message = 'Error: A Task must have hours assigned.'
+                elif to_id == 2 :
                     goal_item.hours = request.data['hours']
                     message = 'Goal Moved Successfully! Hours Applied!'
-                elif to_id == 2:
-                    message = 'Goal Moved Successfully! Hours Not Applied!'
            
                 goal_item.save()
             else:
-                message = "Sprint Period Elapsed, Cannot Move Goal!!!"
+                message = "Sprint Period Elapsed, The Goal Cannot be Moved!"
             
             return JsonResponse({'message': message, 'data': filtered_users(request.data['project_id'])})
             
