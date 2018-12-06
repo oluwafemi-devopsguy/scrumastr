@@ -124,13 +124,26 @@ h5 {
 
 /*=======================================================BOLU====================================================================*/
 
+.add-file {
+    width: 30%!important;
+    padding: 0px;
+    box-shadow: none; 
+}
+
+.div-add-file{    
+    position: absolute;
+    z-index: 1; 
+    left: -1px;
+    bottom: -7px;
+}
+
 .list_div {
     font-size: 7px;
     font-family: arial;
     border:1px solid grey;
     border-top: 6px solid lightblue;
     border-radius: px;
-    width: 75px;
+    width: 100px;
     height: 100px;
     padding:3px;
     margin: 5px;

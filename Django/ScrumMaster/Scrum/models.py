@@ -1,7 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.files.storage import FileSystemStorage
+
 
 # Create your models here.
+
+fs = FileSystemStorage(location='/media')
 
 class ScrumProject(models.Model):
     name = models.CharField(max_length=50)
@@ -48,6 +52,7 @@ class ScrumGoal(models.Model):
     project = models.ForeignKey(ScrumProject, on_delete=models.CASCADE)
     hours = models.IntegerField(default=-1)
     time_created = models.DateTimeField()
+    file = models.ImageField(blank=True, null=True, storage=fs)
     
     '''
     0 = Weekly Goal
@@ -79,3 +84,23 @@ class ScrumSprint (models.Model):
 
     def __str__(self):
         return self.goal_project_id, self.created_on
+
+
+class ScrumGoalHistory(models.Model):
+    name = models.TextField()
+    status = models.IntegerField(default=-1)
+    goal_project_id = models.IntegerField(default=0)
+    user = models.ForeignKey(ScrumProjectRole, on_delete=models.CASCADE)
+    project = models.ForeignKey(ScrumProject, on_delete=models.CASCADE)
+    hours = models.IntegerField(default=-1)
+    time_created = models.DateTimeField()
+    file = models.ImageField(blank=True, null=True)
+    goal = models.ForeignKey(ScrumGoal, on_delete=models.CASCADE)
+    done_by = models.TextField(blank=True, null=True)
+    message = models.TextField(blank=True, null=True)
+    
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        ordering = ['-id']

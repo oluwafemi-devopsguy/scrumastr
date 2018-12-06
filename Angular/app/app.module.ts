@@ -15,7 +15,6 @@ import { ProfileComponent } from './profile/profile.component';
 
 import { DragulaModule } from 'ng2-dragula';
 import { MzButtonModule, MzModalModule } from 'ngx-materialize';
-
 @NgModule({
   declarations: [
     AppComponent,

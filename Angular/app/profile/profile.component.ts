@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Injectable  } from '@angular/core';
 import { DataService } from '../data.service';
 import { DragulaService } from 'ng2-dragula';
 import { Subscription, Observable } from 'rxjs';
 import { forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpEvent} from '@angular/common/http';
 import { MzModalModule } from 'ngx-materialize';
 @Component({
   selector: 'app-profile',
@@ -16,6 +16,7 @@ export class ProfileComponent implements OnInit {
   public arrCount = [0, 1, 2, 3];
   subs = new Subscription();
   public show_zero: boolean = true;
+  public show_history: boolean = false;
   public chat_text: string = "";
   public messages = [];
   public websocket;
@@ -26,8 +27,13 @@ export class ProfileComponent implements OnInit {
   public id_click = -1;
   sprint_start: Number;
   sprint_end: Number;
+  goal_id: Number;
   present_scrum;
-  selected_sprint: any;
+  public selected_sprint: any;
+  public task_history: any;
+  public iData: any;
+  public image_upload: File = null;
+  public scrum_image: File = null;
     
   public modalOptions: Materialize.ModalOptions = {
     dismissible: false, // Modal can be dismissed by clicking outside of the modal
@@ -86,6 +92,9 @@ export class ProfileComponent implements OnInit {
 
     this.dataservice.authOptions = {
         headers: new HttpHeaders({'Content-Type': 'application/json', 'Authorization': 'JWT ' + sessionStorage.getItem('token')})
+    };
+    this.dataservice.imageAuthOptions = {
+        headers: new HttpHeaders({'Authorization': 'JWT ' + sessionStorage.getItem('token')})
     };
 
     this.msg_obs = new MutationObserver((mutations) => {
@@ -254,7 +263,6 @@ export class ProfileComponent implements OnInit {
     }    
   } 
 
-
   changeSprint(sprint) 
   {
    
@@ -366,11 +374,6 @@ export class ProfileComponent implements OnInit {
     this.chat_text = '';
   }
   
- 
-
-
-
-
   ngOnInit() {
 
     }
@@ -387,7 +390,52 @@ export class ProfileComponent implements OnInit {
   }
   }
 
+  imageClicked(clicked_goal_id, imageClicked) { 
+      console.log(clicked_goal_id);
+      console.log(imageClicked);
+      this.goal_id = clicked_goal_id;
+    }
 
+  onFileChanged(event) {
+        this.image_upload = event.target.files[0]
+        this.imageUpload()
+        console.log(this.image_upload)
+        console.log(event.target)
+      }
+
+  imageUpload()  {
+    console.log(this.dataservice.authOptions)
+    console.log(this.image_upload.name)
+    let details = {
+        'mode': 1,
+        'goal_id': this.goal_id, 
+        'project_id': this.dataservice.project,
+        // 'file':this.image_upload
+      };
+    this.iData =  new FormData();
+    
+    this.iData.append('image', this.image_upload, this.image_upload.name);
+    console.log(this.iData)
+    this.http.put('http://' + this.dataservice.domain_name + '/scrum/api/scrumgoals/', this.iData,
+      this.dataservice.authOptions).subscribe(
+        data => {
+          this.dataservice.users = data['data'];
+          this.dataservice.message = data['message'];
+          this.filterSprint(this.dataservice.sprints)
+        },
+        err => {
+          console.error(err);
+          if(err['status'] == 401)
+           {
+            this.dataservice.message = 'Session Invalid or Expired. Please Login.';
+            this.dataservice.logout();
+           } else
+           {
+              this.dataservice.message = 'Unexpected Error!';    
+            }
+          }
+        );
+  }
 
   addGoal()
   {
@@ -432,4 +480,67 @@ export class ProfileComponent implements OnInit {
 //         $('.modal-trigger').leanModal();
 //       });
 //   }
+
+
+  selectFile(event) {
+    this.uploadFile(event.target.files);
+  }
+
+  uploadFile(files: FileList) {
+    if (files.length == 0) {
+      console.log("No file selected!");
+      return
+    }
+    let details = {
+        'mode': 1,
+        'goal_id': this.goal_id, 
+        'project_id': this.dataservice.project,
+        // 'file':this.image_upload
+      };
+    let file: File = files[0];
+    console.log(this.dataservice.imageAuthOptions)
+    console.log(file)
+
+    this.iData =  new FormData();
+    
+    this.iData.append('image', file, file.name);
+    this.iData.append('mode', 1);
+    this.iData.append('goal_id', this.goal_id);
+    this.iData.append('project_id', this.dataservice.project);
+    console.log(file)
+    console.log(this.iData)
+    this.http.put('http://' + this.dataservice.domain_name + '/scrum/api/scrumgoals/', this.iData,
+      this.dataservice.imageAuthOptions)
+      .subscribe(
+        data => {
+          this.dataservice.users = data['data'];
+          this.dataservice.message = data['message'];
+          this.filterSprint(this.dataservice.sprints)
+        },
+        err => {
+          console.error(err);
+          if(err['status'] == 401)
+           {
+            this.dataservice.message = 'Session Invalid or Expired. Please Login.';
+            this.dataservice.logout();
+           } else
+           {
+              this.dataservice.message = 'Unexpected Error!';    
+            }
+          }
+        );
+  }
+
+  ResizeImage(iName) {
+    console.log(iName)
+    this.scrum_image = iName
+  }
+
+    CheckHistory(task) {
+      this.task_history = task
+      this.show_history = !this.show_history; 
+  }
+
+
+
 }

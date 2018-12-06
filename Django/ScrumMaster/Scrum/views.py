@@ -12,6 +12,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.serializers import ValidationError
 from rest_framework.response import Response
 from django.core import serializers
+from django.core.files.storage import FileSystemStorage
 import random
 import datetime
 import re
@@ -266,11 +267,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
         user_id = request.data['user'][1:]
         scrum_project = ScrumProject.objects.get(id=request.data['project_id'])
         scrum_project_role = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
-        print('gfgfgffgfg')
-        print(user_id)
         author = ScrumProjectRole.objects.get(id=user_id)
-        print(author)
-        print(scrum_project_role)
             
         if scrum_project_role != author and scrum_project_role.role != 'Owner': 
             return JsonResponse({'message': 'Permission Denied: Unauthorized Addition of a Goal.', 'data': filtered_users(request.data['project_id'])})
@@ -301,6 +298,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             del_goal = ScrumGoal.objects.get(id=goal_id)
             del_goal.visible = False
             del_goal.save()
+            self.createHistory(goal_item.name, goal_item.status, goal_item.goal_project_id, goal_item.hours, goal_item.time_created, goal_item.user, goal_item.project, goal_item.file, goal_item.id, 'Goal Removed Successfully!')
             return JsonResponse({'message': 'Goal Removed Successfully!', 'data': filtered_users(request.data['project_id'])})
         else:
             goal_item = ScrumGoal.objects.get(id=goal_id)
@@ -333,6 +331,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             elif request.user == scrum_project_b.user.user:
                 if (goal_item.status in [0, 1, 2]) and (to_id in [0, 1, 2]):
                     goal_item.status = to_id
+                    goal_item.save()
                 else:
                     return JsonResponse({'message': 'Permission Denied: Unauthorized Movement of Goal.', 'data': filtered_users(request.data['project_id'])})
             else:
@@ -342,7 +341,9 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
                 if state_prev == 1 and to_id == 2:
                     goal_item.hours = request.data['hours']
                     message = 'Goal Moved Successfully! Hours Applied!'
-                    goal_item.save()
+                self.createHistory(goal_item.name, goal_item.status, goal_item.goal_project_id, goal_item.hours, goal_item.time_created, goal_item.user, goal_item.project, goal_item.file, goal_item.id, message)
+            
+                goal_item.save()
             else:
                 message = "Sprint Period Elapsed, Cannot Move Goal!!!"
             
@@ -351,7 +352,6 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
     def put(self, request):
         scrum_project = ScrumProject.objects.get(id=request.data['project_id'])
         scrum_project_role = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
-        scrum_project_b = ScrumGoal.objects.get(id=request.data['goal_id']).user
         if request.data['mode'] == 0:
             from_id = request.data['from_id'][1:]
             to_id = request.data['to_id'][1:]
@@ -363,8 +363,23 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             
             author = ScrumProjectRole.objects.get(id=to_id)
             goal.user = author
+            self.createHistory(goal.name, goal.status, goal.goal_project_id, goal.hours, goal.time_created, goal.user, goal.project, goal.file, goal.id, 'Goal Reassigned Successfully!')
             goal.save()
-            return JsonResponse({'message': 'Goal Reassigned Successfully!', 'data': filtered_users(request.data['project_id'])})   
+            return JsonResponse({'message': 'Goal Reassigned Successfully!', 'data': filtered_users(request.data['project_id'])}) 
+        elif request.data['mode'] == '1':
+            goal = ScrumGoal.objects.get(goal_project_id=request.data['goal_id'])
+            # goal.file = request.FILES['image']
+            
+
+            myfile = request.FILES['image']
+            fs = FileSystemStorage()
+        
+            filename = fs.save(myfile.name, myfile)
+            goal.file = filename
+            self.createHistory(goal.name, goal.status, goal.goal_project_id, goal.hours, goal.time_created, goal.user, goal.project, goal.file, goal.id, 'Image Added Successfully')
+            goal.save()
+            
+            return JsonResponse({'message': 'Image Added Successfully', 'data': filtered_users(request.data['project_id'])})
         else:
             scrum_project_b = ScrumGoal.objects.get(id=request.data['goal_id'][1:]).user
             if scrum_project_role.role != 'Owner' and request.user != scrum_project_b.user.user:
@@ -373,8 +388,14 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             goal = ScrumGoal.objects.get(id=request.data['goal_id'][1:])
             
             goal.name = request.data['new_name']
+            self.createHistory(goal.name, goal.status, goal.goal_project_id, goal.hours, goal.time_created, goal.user, goal.project, goal.file, goal.id,  'Goal Name Changed!')
             goal.save()
             return JsonResponse({'message': 'Goal Name Changed!', 'data': filtered_users(request.data['project_id'])})
+    def createHistory(self, name, status, goal_project_id, hours, time_created, user, project, file, goal, message):
+        goal = ScrumGoalHistory (name=name, status=status, time_created = time_created, goal_project_id=goal_project_id, user=user, project=project, file=file, goal_id=goal, done_by=self.request.user, message=message)
+        goal.save()
+        print('hhh')
+        return
             
 def jwt_response_payload_handler(token, user=None, request=None):
     project = None
@@ -479,7 +500,7 @@ class SprintViewSet(viewsets.ModelViewSet):
     def change_goal_moveability(self, sprint_goal_carry, scrum_project, scrum_project_role):
        
         if sprint_goal_carry :
-            scrum_project.project_count = scrum_project.project_count - 1
+            scrum_project.project_count = scrum_project.project_count
             for each_goal in sprint_goal_carry:
                 if each_goal.moveable != False:
                     each_goal.moveable = False

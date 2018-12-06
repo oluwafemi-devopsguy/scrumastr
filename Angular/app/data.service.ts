@@ -40,6 +40,7 @@ export class DataService {
   };
   
   public authOptions;
+  public imageAuthOptions;
   
   constructor(private http: HttpClient, private router: Router) { }
   
@@ -106,6 +107,9 @@ export class DataService {
             
             this.authOptions = {
                 headers: new HttpHeaders({'Content-Type': 'application/json', 'Authorization': 'JWT ' + data['token']})
+            };
+            this.imageAuthOptions = {
+                headers: new HttpHeaders({ 'Authorization': 'JWT ' + data['token']})
             };
         },
         err => {
