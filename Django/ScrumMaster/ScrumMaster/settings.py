@@ -98,6 +98,25 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ScrumMaster.wsgi.application'
 
+<<<<<<< HEAD
+=======
+# Database
+# https://docs.djangoproject.com/en/2.0/ref/settings/#databases
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'mysql.connector.django',
+        'NAME': 'scrum',
+        'USER': 'root',
+        'PASSWORD': '8iu7*IU&',
+        'OPTIONS': {
+            'raise_on_warnings': False,
+            'use_pure': True
+        }
+    }
+}
+'''
+>>>>>>> 759eb552193a3ac75632b7c953dad86f66cc998a
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -110,6 +129,10 @@ DATABASES = {
     }
 
 }
+<<<<<<< HEAD
+=======
+'''
+>>>>>>> 759eb552193a3ac75632b7c953dad86f66cc998a
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
