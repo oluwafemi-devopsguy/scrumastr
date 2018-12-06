@@ -11,6 +11,7 @@ def_router.register('scrumusers', views.ScrumUserViewSet)
 def_router.register('scrumgoals', views.ScrumGoalViewSet)
 def_router.register('scrumprojects', views.ScrumProjectViewSet)
 def_router.register('scrumprojectroles', views.ScrumProjectRoleViewSet)
+def_router.register(r'scrumsprint', views.SprintViewSet, base_name='scrumsprint')
 
 '''
     path('create-user/', views.create_user, name="create_user"),

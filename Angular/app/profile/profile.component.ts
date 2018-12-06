@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../data.service';
 import { DragulaService } from 'ng2-dragula';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
+import { forkJoin } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MzModalModule } from 'ngx-materialize';
 @Component({
@@ -13,12 +15,20 @@ export class ProfileComponent implements OnInit {
 
   public arrCount = [0, 1, 2, 3];
   subs = new Subscription();
-  public show_zero: boolean = false;
+  public show_zero: boolean = true;
   public chat_text: string = "";
   public messages = [];
   public websocket;
+  public msg_obs;
   public on_user;
-
+  public at_bottom: boolean = true;
+  public id_hover = -1;
+  public id_click = -1;
+  sprint_start: Number;
+  sprint_end: Number;
+  present_scrum;
+  selected_sprint: any;
+    
   public modalOptions: Materialize.ModalOptions = {
     dismissible: false, // Modal can be dismissed by clicking outside of the modal
     opacity: .5, // Opacity of modal background
@@ -52,82 +62,249 @@ export class ProfileComponent implements OnInit {
                 var target = value['target'];
                 var source = value['source'];
                 
-                if(target['id'] == source['id'])
-                {
-                    var offset = 0;
-                    
-                    for(var i = 0; i < target['children'].length; i++)
+                if (target['parentElement'] == source['parentElement']) {
+                    var hours = -1;
+                    if(target['id'] == '2' && source['id'] == '1')
                     {
-                        if(i == 0 && target['children'][i]['id'] == 'author')
-                        {
-                            offset = 1;
-                            continue;
-                        }
-                        
-                        if(target['children'][i]['id'] == el['id'])
-                        {
-                            console.log(i - offset);
-                            this.dataservice.moveGoal(source['id'], i - offset);
-                            break;
-                        }
+                        var hours_in = window.prompt('How many hours did you spend on this task?');
+                        hours = parseInt(hours_in, 10);
+                        if(hours + '' == 'NaN')
+                            hours = -1;
                     }
-                } else
-                {
-                    this.dataservice.changeOwner(source['id'], target['id']);
-                }
+                    this.dataservice.moveGoal(el['id'], target['id'], hours);
+                } else {
+                    this.dataservice.changeOwner(el['id'], target['parentElement']['id']);
+                } 
             }
         )
     );
     
     this.dataservice.realname = sessionStorage.getItem('realname');
-    this.websocket = new WebSocket('ws://127.0.0.1:8000');
-    this.websocket.onopen = (evt) => {
-        this.websocket.send(JSON.stringify({'message': this.dataservice.realname + ' has joined the room.'}))
-    }
-    this.websocket.onmessage = (evt) => {
-        this.messages.push(JSON.parse(evt.data)['message']);
-        console.log(this.messages);
-    }
-    
     this.dataservice.username = sessionStorage.getItem('username');
     this.dataservice.role = sessionStorage.getItem('role');
     this.dataservice.project = sessionStorage.getItem('project_id');
-    
+
     this.dataservice.authOptions = {
         headers: new HttpHeaders({'Content-Type': 'application/json', 'Authorization': 'JWT ' + sessionStorage.getItem('token')})
     };
-    this.http.get('http://127.0.0.1:8000/scrum/api/scrumprojects/' + this.dataservice.project , this.dataservice.httpOptions).subscribe(
-        data => {
-            console.log(data);
-            this.dataservice.project_name = data['project_name'];
-            this.dataservice.users = data['data'];
+
+    this.msg_obs = new MutationObserver((mutations) => {
+        var chat_scroll = document.getElementById('chat_div_space');
+        console.log(chat_scroll.scrollHeight - chat_scroll.clientHeight);
+        console.log(chat_scroll.scrollTop);
+        if(this.at_bottom)
+            chat_scroll.scrollTop = chat_scroll.scrollHeight - chat_scroll.clientHeight;
+        console.log(this.messages);
+    });
+
+    this.websocket = new WebSocket('ws://' + this.dataservice.domain_name + '/scrum/');
+    this.websocket.onopen = (evt) => {
+      forkJoin(
+          this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumprojects/' + this.dataservice.project + '/', this.dataservice.httpOptions),
+          this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumsprint/?goal_project_id=' + this.dataservice.project, this.dataservice.authOptions)
+        )
+         .subscribe(([res1, res2]) => {
+            this.msg_obs.observe(document.getElementById('chat_div_space'), { attributes: true, childList: true, subtree: true });
+            this.dataservice.users = res1['data'];
+            this.dataservice.project_name = res1['project_name'];
+            this.dataservice.sprints = res2;
+            this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '!join ' + this.dataservice.project_name}));
+            console.log(this.dataservice.users)
+
+
+            this.filterSprint(res2)
         },
         err => {
-            this.dataservice.message = 'Unexpected Error!';
-            console.log(err);
+                this.dataservice.message = 'Unexpected Error!';
+                console.log(err);
+            });
+
+    }
+
+    this.websocket.onmessage = (evt) => {
+        var data = JSON.parse(evt.data);
+        if(data['messages'] !== undefined)
+        {
+            this.messages = []
+            for(var i = 0; i < data['messages']['length']; i++)
+            {
+                this.messages.push(data['messages'][i]['user'] + ': ' + data['messages'][i]['message']);
+            }
+        } else
+        {
+            this.messages.push(data['user'] + ': ' + data['message']);
         }
-    );
+        this.at_bottom = false;
+        var chat_scroll = document.getElementById('chat_div_space');
+        if(chat_scroll.scrollTop == chat_scroll.scrollHeight - chat_scroll.clientHeight)
+            this.at_bottom = true;
+    }
+
+    this.websocket.onclose = (evt) => {
+        console.log('Disconnected!');
+        this.msg_obs.disconnect();
+    }
   }
   
+
   swapState()
   {
     this.show_zero = !this.show_zero;  
   }
+
+            
+  filterSprint(uSprints) {
+    this.dataservice.sprints= uSprints
+    var filter_goal = []
+    console.log(filter_goal)
+        // this.dataservice.sprint_goals.length = 0 
+          for (var i = 0;  i < this.dataservice.users.length; i++)  {
+            for (var j = 0;  j < this.dataservice.users[i].scrumgoal_set.length; j++)  {
+              if (this.dataservice.sprints.length) {
+                if (this.dataservice.users[i].scrumgoal_set[j].time_created >= this.dataservice.sprints[this.dataservice.sprints.length - 1].created_on && 
+                  this.dataservice.users[i].scrumgoal_set[j].time_created <= this.dataservice.sprints[this.dataservice.sprints.length - 1].ends_on)
+                  {                  
+                  // console.log(this.dataservice.users[i].scrumgoal_set[j].time_created)
+                  // console.log(this.dataservice.users[i].scrumgoal_set[j].name)
+                   // this.dataservice.users[i].scrumgoal_set[j].user_id = this.dataservice.users[i].id
+                   filter_goal.push(this.dataservice.users[i].scrumgoal_set[j]);
+                  }
+              } else {
+                  this.dataservice.users[i].scrumgoal_set[j].user_id = this.dataservice.users[i].id
+                  filter_goal.push(this.dataservice.users[i].scrumgoal_set[j]); 
+              }
+            }
+          }
+          // console.log(filter_goal)
+          this.dataservice.sprint_goals = filter_goal
+
+  }
+
+
+  createSprintMethod(myDate) {
+          console.log(this.dataservice.users)
+          console.log(this.dataservice.sprints)
+          forkJoin(
+          this.http.post('http://' + this.dataservice.domain_name + '/scrum/api/scrumsprint/?goal_project_id=' + this.dataservice.project, JSON.stringify({'project_id': this.dataservice.project, 'ends_on': myDate}), this.dataservice.authOptions),
+          this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumprojects/' + this.dataservice.project + '/', this.dataservice.httpOptions)
+        )
+         .subscribe(([res2, res1]) => {
+            this.msg_obs.observe(document.getElementById('chat_div_space'), { attributes: true, childList: true, subtree: true });
+            this.dataservice.users = res2['users'];
+            this.dataservice.project_name = res1['project_name'];
+            this.dataservice.sprints = res2['data']
+            this.dataservice.message = res2['message']
+            
+            console.log(this.dataservice.sprints)
+            console.log(this.dataservice.users)
+            console.log(this.dataservice.sprint_goals)
+            this.filterSprint(res2['data'])
+            console.log(this.dataservice.sprint_goals)
+        },
+
+            err => {
+              console.error(err);
+                if(err['status'] == 401)
+                  {
+                    this.dataservice.message = 'Session Invalid or Expired. Please Login.';
+                    this.dataservice.logout();
+                } else
+                  {
+                    this.dataservice.message = 'Unexpected Error!';    
+                  }
+                }
+              );
+  }
+
+  createSprint() 
+  {
+    var myDate = new Date(new Date().getTime()+(7*24*60*60*1000));
+    if (this.dataservice.sprints.length) {
+      console.log('if works');
+      var present_scrum_id = this.dataservice.sprints[this.dataservice.sprints.length - 1].id;
+      this.present_scrum = this.dataservice.sprints[this.dataservice.sprints.length - 1].ends_on;
+      this.present_scrum =  new Date(this.present_scrum).valueOf();
+      
+      
+      //  Test if Today Date is greater than last scrum
+      console.log(this.present_scrum);
+      console.log(new Date().valueOf());
+      if (this.present_scrum > new Date().valueOf()) {
+        if (confirm("Sprint #" + present_scrum_id + " is currently running. End this spring and start another one?  Click \"OK\" to continue Create New Sprint!!!")) {
+          this.dataservice.message == "Current Sprint ended";          
+          this.createSprintMethod(myDate)
+          return;
+            }
+        else {
+          this.dataservice.message = 'Last Sprint continued!!!';
+          console.log("Sprint Continue");
+          return;
+            
+        }
+      } else  {
+          this.createSprintMethod(myDate);
+        
+          return;
+      }    
+      
+    } else {
+        console.log('else works');
+        this.createSprintMethod(myDate);
+        
+        return;
+    }    
+  } 
+
+
+  changeSprint(sprint) 
+  {
+   
+    this.dataservice.sprint_goals = [];
+      for (var i = 0;  i < this.dataservice.users.length; i++)  {
+        for (var j = 0;  j < this.dataservice.users[i].scrumgoal_set.length; j++)  {
+          if (this.dataservice.users[i].scrumgoal_set[j].time_created > this.selected_sprint.created_on && 
+            this.dataservice.users[i].scrumgoal_set[j].time_created < this.selected_sprint.ends_on)
+            {                
+             this.dataservice.users[i].scrumgoal_set[j].user_id = this.dataservice.users[i].id;
+             this.dataservice.sprint_goals.push(this.dataservice.users[i].scrumgoal_set[j]);
+            }
+          } 
+        }
+  }
+
   
   editGoal(event)
   {
-    console.log(event); 
-    var items = event.target.innerText.split(/\)\s(.+)/);
-    var goal_name = window.prompt('Editing Task ID #' + items[0] + ':', items[1]);
+    console.log(event);
+    console.log(this.dataservice.users);
+    var taskID = event.target.parentElement.id.substring(1);
+    var message = null;
+    for(var i = 0; i < this.dataservice.users.length; i++)
+    {
+        if(this.dataservice.users[i].id == event.target.parentElement.parentElement.parentElement.id.substring(1))
+        {
+            for(var j = 0; j < this.dataservice.users[i].scrumgoal_set.length; j++)
+            {
+                if(this.dataservice.users[i].scrumgoal_set[j].id == taskID)
+                {
+                    message = this.dataservice.users[i].scrumgoal_set[j].name;
+                    break;
+                }
+            }
+            break;
+        }
+    }
+    var goal_name = window.prompt('Editing Task ID #' + taskID + ':', message);
     if(goal_name == null || goal_name == '')
     {
         this.dataservice.message = 'Edit Canceled.';
     } else
     {
-        this.http.put('http://127.0.0.1:8000/scrum/api/scrumgoals/', JSON.stringify({'mode': 1, 'goal_id': event.path[1].id, 'new_name': goal_name, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
+        this.http.put('http://' + this.dataservice.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'mode': 1, 'goal_id': event.target.parentElement.id, 'new_name': goal_name, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
             data => {
                 this.dataservice.users = data['data'];
                 this.dataservice.message = data['message'];
+                this.filterSprint(this.dataservice.sprints)
             },
             err => {
                 console.error(err);
@@ -143,17 +320,46 @@ export class ProfileComponent implements OnInit {
         );
     }
   }
+
+  deleteTask(goal_name, goal_id) {
+      var pop_event = window.confirm('Delete " ' + goal_name + '"?');
+      if (pop_event) {
+          this.http.put('http://' + this.dataservice.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'mode': 2, 'goal_id':goal_id, 'new_name': goal_name, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
+            data => {
+                this.dataservice.users = data['data'];
+                this.dataservice.message = data['message'];
+                this.filterSprint(this.dataservice.sprints)
+            },
+            err => {
+                console.error(err);
+                if(err['status'] == 401)
+                {
+                    this.dataservice.message = 'Session Invalid or Expired. Please Login.';
+                    this.dataservice.logout();
+                } else
+                {
+                    this.dataservice.message = 'Unexpected Error!';    
+                }
+            }
+        );
+      } else {
+          console.log('cancel');
+      };
+    }
   
   manageUser(event)
   {
-    console.log(event);
+    this.getClicked(event);
     var role_name = window.prompt('Change User Role:\nSelect Between: Developer, Admin, Quality Analyst, or Owner:', '');
     if(role_name == null || role_name == '')
     {
         this.dataservice.message = 'Edit Canceled.';
-    } else if(role_name == 'Developer' || role_name == 'Quality Analyst' || role_name == 'Admin' || role_name == 'Owner')
+        return;
+    }
+    role_name = role_name.toLowerCase();
+    if(role_name == 'developer' || role_name == 'quality analyst' || role_name == 'admin' || role_name == 'owner')
     {
-        this.http.patch('http://127.0.0.1:8000/scrum/api/scrumprojectroles/', JSON.stringify({'role': role_name, 'id': event.path[4].id, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
+        this.http.patch('http://' + this.dataservice.domain_name + '/scrum/api/scrumprojectroles/', JSON.stringify({'role': role_name, 'id': this.on_user, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
             data => {
                 this.dataservice.users = data['data'];
                 this.dataservice.message = data['message'];
@@ -181,34 +387,50 @@ export class ProfileComponent implements OnInit {
      
   }
   
-  sendMessage(message)
+  sendMessage()
   {
-    this.websocket.send(JSON.stringify({'message': this.dataservice.realname + ': ' + this.chat_text}))
+    this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': this.chat_text}))
     this.chat_text = '';
   }
   
+ 
+
+
+
+
   ngOnInit() {
-  }
-  
+
+    }
+
   getClicked(event)
-  {
-    console.log(event);
-    if(event.path[2].id == "author")
-        this.on_user = event.path[3].id;
-    else
-        this.on_user = event.path[4].id;
-    console.log(this.on_user);
+  { 
+    console.log()
+    if(event.target.parentElement.parentElement.parentElement.parentElement.id) {
+        this.on_user = event.target.parentElement.parentElement.parentElement.parentElement.id;
+      console.log(this.on_user)
+    } else {
+    this.on_user = event.target.parentElement.parentElement.parentElement.parentElement.parentElement.id 
+    console.log(this.on_user)
   }
+  }
+
+
 
   addGoal()
   {
+    console.log(this.on_user);
+
     this.dataservice.addGoal(this.on_user);
+  }
+  
+  setSelectedUser(id)
+  {
+    this.id_hover = id;    
   }
   
   logout()
   {
     this.dataservice.message = 'Thank you for using Scrum!';
-    this.websocket.send(JSON.stringify({'message': this.dataservice.realname + ' has left the room.'}))
     this.websocket.close();
     this.dataservice.logout();
   }
@@ -218,6 +440,18 @@ export class ProfileComponent implements OnInit {
     this.subs.unsubscribe();  
     this.dragula.destroy('mainTable');
   }
+
+  scrollIntoView(anchorHash) {
+    this.id_click = parseInt(anchorHash.substring(1), 10);
+    setTimeout(() => {
+        const anchor = document.getElementById(anchorHash);
+        console.log(anchorHash);
+        if (anchor) {
+            anchor.focus();
+            anchor.scrollIntoView();
+        }
+    });
+}
 
 //   addGoalModal(){
 //     $(document).ready(function(){

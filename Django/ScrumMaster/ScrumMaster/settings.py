@@ -32,7 +32,6 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'channels',
-    'channels_redis',
     'Scrum.apps.ScrumConfig',
     'rest_framework',
     'corsheaders',
@@ -114,6 +113,21 @@ DATABASES = {
         }
     }
 }
+'''
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'scrumastrNew',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': ''
+
+    }
+
+
+}
+'''
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
@@ -165,6 +179,7 @@ LOGIN_REDIRECT_URL = '/home'
 ASGI_APPLICATION = "ScrumMaster.routing.application"
 
 '''
+#Uncomment if you have redis.
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',

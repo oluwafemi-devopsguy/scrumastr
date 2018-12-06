@@ -24,9 +24,9 @@ Angular
 Use npm to install these:
 
 * ng2-dragula
-* ngx-materialize
+* materialize-css
 
-Follow further instructions for ngx-materialize here:
-https://github.com/sherweb/ngx-materialize
+Follow further instructions for materialize-css here:
+https://materializecss.com/getting-started.html
 
 

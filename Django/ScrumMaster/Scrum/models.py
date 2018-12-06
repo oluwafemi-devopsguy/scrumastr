@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 class ScrumProject(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=50)
     project_count = models.IntegerField(default=0)
     
     def __str__(self):
@@ -40,10 +40,14 @@ class ScrumDemoProject(models.Model):
         
 class ScrumGoal(models.Model):
     visible = models.BooleanField(default=True)
-    name = models.CharField(max_length=140)
+    moveable = models.BooleanField(default=True)
+    name = models.TextField()
     status = models.IntegerField(default=-1)
     goal_project_id = models.IntegerField(default=0)
     user = models.ForeignKey(ScrumProjectRole, on_delete=models.CASCADE)
+    project = models.ForeignKey(ScrumProject, on_delete=models.CASCADE)
+    hours = models.IntegerField(default=-1)
+    time_created = models.DateTimeField()
     
     '''
     0 = Weekly Goal
@@ -57,3 +61,21 @@ class ScrumGoal(models.Model):
     
     class Meta:
         ordering = ['-id']
+        
+class ScrumChatRoom(models.Model):
+    name = models.TextField()
+    hash = models.CharField(max_length=64)
+    
+class ScrumChatMessage(models.Model):
+    user = models.CharField(max_length=50)
+    message = models.TextField()
+    room = models.ForeignKey(ScrumChatRoom, on_delete=models.CASCADE)
+
+
+class ScrumSprint (models.Model):
+    created_on = models.DateTimeField()
+    ends_on = models.DateTimeField()
+    goal_project_id = models.IntegerField(default=0)    
+
+    def __str__(self):
+        return self.goal_project_id, self.created_on
