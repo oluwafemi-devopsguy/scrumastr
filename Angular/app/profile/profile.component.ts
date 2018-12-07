@@ -229,15 +229,15 @@ export class ProfileComponent implements OnInit {
   {
     var myDate = new Date(new Date().getTime()+(7*24*60*60*1000));
     if (this.dataservice.sprints.length) {
-      console.log('if works');
-      var present_scrum_id = this.dataservice.sprints[this.dataservice.sprints.length - 1].id;
-      this.present_scrum = this.dataservice.sprints[this.dataservice.sprints.length - 1].ends_on;
-      this.present_scrum =  new Date(this.present_scrum).valueOf();
+      console.log('if works')
+      var present_scrum_id = this.dataservice.sprints[this.dataservice.sprints.length - 1].id
+      this.present_scrum = this.dataservice.sprints[this.dataservice.sprints.length - 1].ends_on
+      this.present_scrum =  new Date(this.present_scrum).valueOf()
       
       
       //  Test if Today Date is greater than last scrum
-      console.log(this.present_scrum);
-      console.log(new Date().valueOf());
+      console.log(this.present_scrum)
+      console.log(new Date().valueOf())
       if (this.present_scrum > new Date().valueOf()) {
         if (confirm("Sprint #" + present_scrum_id + " is currently running. End this spring and start another one?  Click \"OK\" to continue Create New Sprint!!!")) {
           this.dataservice.message == "Current Sprint ended";          
@@ -246,23 +246,18 @@ export class ProfileComponent implements OnInit {
             }
         else {
           this.dataservice.message = 'Last Sprint continued!!!';
-          console.log("Sprint Continue");
+          console.log("Sprint Continue")
           return;
             
         }
       } else  {
-          this.createSprintMethod(myDate);
+          this.createSprintMethod(myDate)
         
           return;
-<<<<<<< HEAD
     }    
-=======
-      }    
-      
->>>>>>> 759eb552193a3ac75632b7c953dad86f66cc998a
     } else {
-        console.log('else works');
-        this.createSprintMethod(myDate);
+        console.log('else works')
+        this.createSprintMethod(myDate)
         
         return;
     }    
@@ -271,13 +266,13 @@ export class ProfileComponent implements OnInit {
   changeSprint(sprint) 
   {
    
-    this.dataservice.sprint_goals = [];
+    this.dataservice.sprint_goals = [] 
       for (var i = 0;  i < this.dataservice.users.length; i++)  {
         for (var j = 0;  j < this.dataservice.users[i].scrumgoal_set.length; j++)  {
           if (this.dataservice.users[i].scrumgoal_set[j].time_created > this.selected_sprint.created_on && 
             this.dataservice.users[i].scrumgoal_set[j].time_created < this.selected_sprint.ends_on)
             {                
-             this.dataservice.users[i].scrumgoal_set[j].user_id = this.dataservice.users[i].id;
+             this.dataservice.users[i].scrumgoal_set[j].user_id = this.dataservice.users[i].id
              this.dataservice.sprint_goals.push(this.dataservice.users[i].scrumgoal_set[j]);
             }
           } 
