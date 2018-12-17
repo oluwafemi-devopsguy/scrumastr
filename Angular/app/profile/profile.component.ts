@@ -34,6 +34,7 @@ export class ProfileComponent implements OnInit {
   public iData: any;
   public image_upload: File = null;
   public scrum_image: File = null;
+  public selected_history:any = [];
     
   public modalOptions: Materialize.ModalOptions = {
     dismissible: false, // Modal can be dismissed by clicking outside of the modal
@@ -390,52 +391,45 @@ export class ProfileComponent implements OnInit {
   }
   }
 
-  imageClicked(clicked_goal_id, imageClicked) { 
+  imageClicked(clicked_goal_id) { 
       console.log(clicked_goal_id);
-      console.log(imageClicked);
       this.goal_id = clicked_goal_id;
     }
 
-  onFileChanged(event) {
-        this.image_upload = event.target.files[0]
-        this.imageUpload()
-        console.log(this.image_upload)
-        console.log(event.target)
-      }
 
-  imageUpload()  {
-    console.log(this.dataservice.authOptions)
-    console.log(this.image_upload.name)
-    let details = {
-        'mode': 1,
-        'goal_id': this.goal_id, 
-        'project_id': this.dataservice.project,
-        // 'file':this.image_upload
-      };
-    this.iData =  new FormData();
+  // imageUpload()  {
+  //   console.log(this.dataservice.authOptions)
+  //   console.log(this.image_upload)
+  //   let details = {
+  //       'mode': 1,
+  //       'goal_id': this.goal_id, 
+  //       'project_id': this.dataservice.project,
+  //       // 'file':this.image_upload
+  //     };
+  //   this.iData =  new FormData();
     
-    this.iData.append('image', this.image_upload, this.image_upload.name);
-    console.log(this.iData)
-    this.http.put('http://' + this.dataservice.domain_name + '/scrum/api/scrumgoals/', this.iData,
-      this.dataservice.authOptions).subscribe(
-        data => {
-          this.dataservice.users = data['data'];
-          this.dataservice.message = data['message'];
-          this.filterSprint(this.dataservice.sprints)
-        },
-        err => {
-          console.error(err);
-          if(err['status'] == 401)
-           {
-            this.dataservice.message = 'Session Invalid or Expired. Please Login.';
-            this.dataservice.logout();
-           } else
-           {
-              this.dataservice.message = 'Unexpected Error!';    
-            }
-          }
-        );
-  }
+  //   this.iData.append('image', this.image_upload, this.image_upload.name);
+  //   console.log(this.iData)
+  //   this.http.put('http://' + this.dataservice.domain_name + '/scrum/api/scrumgoals/', this.iData,
+  //     this.dataservice.authOptions).subscribe(
+  //       data => {
+  //         this.dataservice.users = data['data'];
+  //         this.dataservice.message = data['message'];
+  //         this.filterSprint(this.dataservice.sprints)
+  //       },
+  //       err => {
+  //         console.error(err);
+  //         if(err['status'] == 401)
+  //          {
+  //           this.dataservice.message = 'Session Invalid or Expired. Please Login.';
+  //           this.dataservice.logout();
+  //          } else
+  //          {
+  //             this.dataservice.message = 'Unexpected Error!';    
+  //           }
+  //         }
+  //       );
+  // }
 
   addGoal()
   {
@@ -483,11 +477,13 @@ export class ProfileComponent implements OnInit {
 
 
   selectFile(event) {
-    this.uploadFile(event.target.files);
+    console.log(event)
+    this.image_upload =event.target.files;
   }
 
-  uploadFile(files: FileList) {
-    if (files.length == 0) {
+  imageUpload() {
+    if (this.image_upload == null) {
+      this.dataservice.message = "No file selected!!!"
       console.log("No file selected!");
       return
     }
@@ -495,9 +491,9 @@ export class ProfileComponent implements OnInit {
         'mode': 1,
         'goal_id': this.goal_id, 
         'project_id': this.dataservice.project,
-        // 'file':this.image_upload
+        
       };
-    let file: File = files[0];
+    let file: File = this.image_upload[0];
     console.log(this.dataservice.imageAuthOptions)
     console.log(file)
 
@@ -537,6 +533,7 @@ export class ProfileComponent implements OnInit {
   }
 
     CheckHistory(task) {
+      console.log(task)
       this.task_history = task
       this.show_history = !this.show_history; 
   }
