@@ -279,7 +279,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             status_start = 2
         scrum_project.project_count = scrum_project.project_count + 1
         scrum_project.save()
-        goal = ScrumGoal(name=request.data['name'], status=status_start, time_created = datetime.datetime.now(), goal_project_id=scrum_project.project_count, user=author, project_id=request.data['project_id'])
+        goal = ScrumGoal(name=request.data['name'], status=status_start, time_created = datetime.datetime.now(), goal_project_id=scrum_project.project_count, user=author, project_id=request.data['project_id'], moveable = True)
         goal.save()
         return JsonResponse({'message': 'Goal Added!', 'data': filtered_users(request.data['project_id'])})
             
@@ -289,7 +289,8 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
         scrum_project_b = ScrumGoal.objects.get(id=request.data['goal_id'][1:]).user
         goal_id = request.data['goal_id'][1:]
         to_id = int(request.data['to_id'])
-        
+        # goal_item = ScrumGoal.objects.get(id=goal_id)
+
         if to_id == 4:
             if scrum_project_a.role == 'Developer':
                 if request.user != scrum_project_b.user.user:
@@ -298,10 +299,11 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             del_goal = ScrumGoal.objects.get(id=goal_id)
             del_goal.visible = False
             del_goal.save()
+            print("saveing history")
             self.createHistory(goal_item.name, goal_item.status, goal_item.goal_project_id, goal_item.hours, goal_item.time_created, goal_item.user, goal_item.project, goal_item.file, goal_item.id, 'Goal Removed Successfully!')
             return JsonResponse({'message': 'Goal Removed Successfully!', 'data': filtered_users(request.data['project_id'])})
         else:
-            goal_item = ScrumGoal.objects.get(id=goal_id)
+           
             group = scrum_project_a.role
             from_allowed = []
             to_allowed = []
@@ -367,7 +369,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             goal.save()
             return JsonResponse({'message': 'Goal Reassigned Successfully!', 'data': filtered_users(request.data['project_id'])}) 
         elif request.data['mode'] == '1':
-            goal = ScrumGoal.objects.get(goal_project_id=request.data['goal_id'])
+            goal = scrum_project.scrumgoal_set.get(goal_project_id=request.data['goal_id'])
             # goal.file = request.FILES['image']
             
 
@@ -512,7 +514,8 @@ class SprintViewSet(viewsets.ModelViewSet):
                         time_created = datetime.datetime.now() + datetime.timedelta(seconds=10), 
                         goal_project_id=scrum_project.project_count, 
                         user=each_goal.user, 
-                        project_id=self.request.data['project_id'])
+                        project_id=self.request.data['project_id'],
+                        moveable = True)
                         scrum_project.project_count = scrum_project.project_count + 1                        
                         goal.save()
                 
