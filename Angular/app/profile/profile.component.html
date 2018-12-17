@@ -120,7 +120,7 @@
                                 <div *ngFor="let arrItem of arrCount" class="top-box" dragula="mainTable" [attr.id]="arrItem">
                                     <div class="div_lister" *ngFor="let goal of dataservice.sprint_goals; let j = index; let k = count" [attr.id]="'g' + goal.id"> 
                                             <div class="list_div" *ngIf ="goal.status == arrItem && user.id == goal.user && goal.name; let thisGoal" (dblclick)="goal.status == arrItem ? editGoal($event) : doNothing()" style="font-size: 0.8rem">
-                                                {{goal.goal_project_id}}) {{ (goal.name.length>40) ? (thisGoal | slice:0:40)+'...':(thisGoal) }} {{(goal.hours != -1 && (goal.status == 3 || goal.status == 2) ? ' (' + goal.hours + ')' : '' )}}
+                                                {{goal.goal_project_id}}) {{ (goal.name.length>40) ? (thisGoal | slice:0:30)+'...':(thisGoal) }} {{(goal.hours != -1 && (goal.status == 3 || goal.status == 2) ? ' (' + goal.hours + ')' : '' )}}
         
                                                 <a (click)="ResizeImage(goal.file); showImage.openModal()">
                                                     <img src="http://{{dataservice.domain_name}}{{goal.file}}" style="width: 15px; height: 15px" alt="{{goal.file}}">
@@ -131,8 +131,8 @@
                                                     <i class="Tiny material-icons" id="add_a_photo">add_a_photo</i>
                                                 </a>     
                                               
-                                                <select #rate1 name="taskHistory" style="height: 15px; margin: 5px; color: #1f7a7a; font-size: 10px;padding: 0; width: 60px;" [(ngModel)]="taskHistory" (change)= "CheckHistory(taskHistory); showHistory.openModal();" >
-                                                    <option [ngValue]="history1" selected>History</option>
+                                                <select name= "option{{goal.goal_project_id}}" style="height: 15px; margin: 5px; color: #1f7a7a; font-size: 10px;padding: 0; width: 60px;" [(ngModel)]="selected_history[j]" (change)= "CheckHistory(selected_history[j]); showHistory.openModal();" >
+                                                    <option [ngValue]="history1" disabled selected>History</option>
                                                     <option *ngFor = "let history of goal.scrumgoalhistory_set" [ngValue]=history>
                                                         {{history.message}}
                                                     </option>                                                                          
@@ -171,11 +171,11 @@
                     </mz-modal-header>
                     <mz-modal-content>
                         <h6>Click outside this dialog to cancel.</h6><br>
-                        <form  (ngSubmit)="imageUpload()">
+                        <form>
                             <label for="file">Choose File</label>
                             <input  #Image accept="image/*" type="file" (change)="selectFile($event)">
                             <br>
-                            <input class="modal-close waves-effect btn btn-default" type="submit" value="Add Task">
+                            <button type="button" class="modal-close waves-effect btn btn-default" (click)="imageUpload()">Upload</button>
 
                         </form>
                     </mz-modal-content>
@@ -186,9 +186,7 @@
                         <h4>Image</h4>
                     </mz-modal-header>
                     <mz-modal-content>
-                        <h6>Click outside this dialog to cancel.</h6><br>
-
-                        <img src="http://{{dataservice.domain_name}}{{scrum_image}}" style="width: 450px; height: 220px" alt="hhh">
+                        <img src="http://{{dataservice.domain_name}}{{scrum_image}}" style="width: 450px; height: 220px" alt="image">
                     </mz-modal-content>
                 </mz-modal>
                 
@@ -200,34 +198,34 @@
                             <div *ngIf="task_history">
                                 <table>
                                     <tr  style="margin: 0; padding: 0">
-                                        <td style="font-weight: Bold; text-align: Center">
+                                        <td style="font-weight: Bold; text-align: left">
                                            Name:
                                         </td>
                                         <td>
                                             {{task_history.name}}
                                         </td>
                                         <td rowspan="7">
-                                            <img src="http://{{dataservice.domain_name}}{{task_history.file}}" style="width: 250px; height: 220px" alt="hhh">
+                                            <img src="http://{{dataservice.domain_name}}{{task_history.file}}" style="width: 250px; height: 220px" alt="image">
                                         </td>
                                     </tr>
                                     <tr style="margin: 0; padding: 0">
-                                        <td style="font-weight: Bold; text-align: Center"> Status: </td>
+                                        <td style="font-weight: Bold; text-align: left"> Status: </td>
                                         <td>{{task_history.status}}</td>
                                     </tr>
                                     <tr style="margin: 0; padding: 0">
-                                        <td style="font-weight: Bold; text-align: Center">Hours: </td>
+                                        <td style="font-weight: Bold; text-align: left">Hours: </td>
                                         <td>{{task_history.hours}}</td>
                                     </tr>
                                     <tr style="margin: 0; padding: 0">
-                                        <td style="font-weight: Bold; text-align: Center"> Date: </td>
+                                        <td style="font-weight: Bold; text-align: left"> Date: </td>
                                         <td>{{task_history.time_created  | date}}</td>
                                     </tr>
                                     <tr style="margin: 0; padding: 0">
-                                        <td style="font-weight: Bold; text-align: Center"> Changed By: </td>
+                                        <td style="font-weight: Bold; text-align: left"> Changed By: </td>
                                         <td>{{task_history.done_by}}</td>
                                     </tr>
                                     <tr style="margin: 0; padding: 0">
-                                        <td style="font-weight: Bold; text-align: Center"> Result: </td>
+                                        <td style="font-weight: Bold; text-align: left"> Result: </td>
                                         <td>{{task_history.message}}</td>
                                     </tr>
                                 </table>

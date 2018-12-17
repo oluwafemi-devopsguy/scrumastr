@@ -34,6 +34,7 @@ export class ProfileComponent implements OnInit {
   public iData: any;
   public image_upload: File = null;
   public scrum_image: File = null;
+  public selected_history:any = [];
     
   public modalOptions: Materialize.ModalOptions = {
     dismissible: false, // Modal can be dismissed by clicking outside of the modal
@@ -229,15 +230,15 @@ export class ProfileComponent implements OnInit {
   {
     var myDate = new Date(new Date().getTime()+(7*24*60*60*1000));
     if (this.dataservice.sprints.length) {
-      console.log('if works');
-      var present_scrum_id = this.dataservice.sprints[this.dataservice.sprints.length - 1].id;
-      this.present_scrum = this.dataservice.sprints[this.dataservice.sprints.length - 1].ends_on;
-      this.present_scrum =  new Date(this.present_scrum).valueOf();
+      console.log('if works')
+      var present_scrum_id = this.dataservice.sprints[this.dataservice.sprints.length - 1].id
+      this.present_scrum = this.dataservice.sprints[this.dataservice.sprints.length - 1].ends_on
+      this.present_scrum =  new Date(this.present_scrum).valueOf()
       
       
       //  Test if Today Date is greater than last scrum
-      console.log(this.present_scrum);
-      console.log(new Date().valueOf());
+      console.log(this.present_scrum)
+      console.log(new Date().valueOf())
       if (this.present_scrum > new Date().valueOf()) {
         if (confirm("Sprint #" + present_scrum_id + " is currently running. End this spring and start another one?  Click \"OK\" to continue Create New Sprint!!!")) {
           this.dataservice.message == "Current Sprint ended";          
@@ -246,23 +247,18 @@ export class ProfileComponent implements OnInit {
             }
         else {
           this.dataservice.message = 'Last Sprint continued!!!';
-          console.log("Sprint Continue");
+          console.log("Sprint Continue")
           return;
             
         }
       } else  {
-          this.createSprintMethod(myDate);
+          this.createSprintMethod(myDate)
         
           return;
-<<<<<<< HEAD
     }    
-=======
-      }    
-      
->>>>>>> 759eb552193a3ac75632b7c953dad86f66cc998a
     } else {
-        console.log('else works');
-        this.createSprintMethod(myDate);
+        console.log('else works')
+        this.createSprintMethod(myDate)
         
         return;
     }    
@@ -271,13 +267,13 @@ export class ProfileComponent implements OnInit {
   changeSprint(sprint) 
   {
    
-    this.dataservice.sprint_goals = [];
+    this.dataservice.sprint_goals = [] 
       for (var i = 0;  i < this.dataservice.users.length; i++)  {
         for (var j = 0;  j < this.dataservice.users[i].scrumgoal_set.length; j++)  {
           if (this.dataservice.users[i].scrumgoal_set[j].time_created > this.selected_sprint.created_on && 
             this.dataservice.users[i].scrumgoal_set[j].time_created < this.selected_sprint.ends_on)
             {                
-             this.dataservice.users[i].scrumgoal_set[j].user_id = this.dataservice.users[i].id;
+             this.dataservice.users[i].scrumgoal_set[j].user_id = this.dataservice.users[i].id
              this.dataservice.sprint_goals.push(this.dataservice.users[i].scrumgoal_set[j]);
             }
           } 
@@ -395,52 +391,45 @@ export class ProfileComponent implements OnInit {
   }
   }
 
-  imageClicked(clicked_goal_id, imageClicked) { 
+  imageClicked(clicked_goal_id) { 
       console.log(clicked_goal_id);
-      console.log(imageClicked);
       this.goal_id = clicked_goal_id;
     }
 
-  onFileChanged(event) {
-        this.image_upload = event.target.files[0]
-        this.imageUpload()
-        console.log(this.image_upload)
-        console.log(event.target)
-      }
 
-  imageUpload()  {
-    console.log(this.dataservice.authOptions)
-    console.log(this.image_upload.name)
-    let details = {
-        'mode': 1,
-        'goal_id': this.goal_id, 
-        'project_id': this.dataservice.project,
-        // 'file':this.image_upload
-      };
-    this.iData =  new FormData();
+  // imageUpload()  {
+  //   console.log(this.dataservice.authOptions)
+  //   console.log(this.image_upload)
+  //   let details = {
+  //       'mode': 1,
+  //       'goal_id': this.goal_id, 
+  //       'project_id': this.dataservice.project,
+  //       // 'file':this.image_upload
+  //     };
+  //   this.iData =  new FormData();
     
-    this.iData.append('image', this.image_upload, this.image_upload.name);
-    console.log(this.iData)
-    this.http.put('http://' + this.dataservice.domain_name + '/scrum/api/scrumgoals/', this.iData,
-      this.dataservice.authOptions).subscribe(
-        data => {
-          this.dataservice.users = data['data'];
-          this.dataservice.message = data['message'];
-          this.filterSprint(this.dataservice.sprints)
-        },
-        err => {
-          console.error(err);
-          if(err['status'] == 401)
-           {
-            this.dataservice.message = 'Session Invalid or Expired. Please Login.';
-            this.dataservice.logout();
-           } else
-           {
-              this.dataservice.message = 'Unexpected Error!';    
-            }
-          }
-        );
-  }
+  //   this.iData.append('image', this.image_upload, this.image_upload.name);
+  //   console.log(this.iData)
+  //   this.http.put('http://' + this.dataservice.domain_name + '/scrum/api/scrumgoals/', this.iData,
+  //     this.dataservice.authOptions).subscribe(
+  //       data => {
+  //         this.dataservice.users = data['data'];
+  //         this.dataservice.message = data['message'];
+  //         this.filterSprint(this.dataservice.sprints)
+  //       },
+  //       err => {
+  //         console.error(err);
+  //         if(err['status'] == 401)
+  //          {
+  //           this.dataservice.message = 'Session Invalid or Expired. Please Login.';
+  //           this.dataservice.logout();
+  //          } else
+  //          {
+  //             this.dataservice.message = 'Unexpected Error!';    
+  //           }
+  //         }
+  //       );
+  // }
 
   addGoal()
   {
@@ -488,11 +477,13 @@ export class ProfileComponent implements OnInit {
 
 
   selectFile(event) {
-    this.uploadFile(event.target.files);
+    console.log(event)
+    this.image_upload =event.target.files;
   }
 
-  uploadFile(files: FileList) {
-    if (files.length == 0) {
+  imageUpload() {
+    if (this.image_upload == null) {
+      this.dataservice.message = "No file selected!!!"
       console.log("No file selected!");
       return
     }
@@ -500,9 +491,9 @@ export class ProfileComponent implements OnInit {
         'mode': 1,
         'goal_id': this.goal_id, 
         'project_id': this.dataservice.project,
-        // 'file':this.image_upload
+        
       };
-    let file: File = files[0];
+    let file: File = this.image_upload[0];
     console.log(this.dataservice.imageAuthOptions)
     console.log(file)
 
@@ -542,6 +533,7 @@ export class ProfileComponent implements OnInit {
   }
 
     CheckHistory(task) {
+      console.log(task)
       this.task_history = task
       this.show_history = !this.show_history; 
   }
