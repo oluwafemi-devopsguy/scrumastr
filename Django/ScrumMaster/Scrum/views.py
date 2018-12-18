@@ -289,7 +289,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
         scrum_project_b = ScrumGoal.objects.get(id=request.data['goal_id'][1:]).user
         goal_id = request.data['goal_id'][1:]
         to_id = int(request.data['to_id'])
-        
+        goal_item = ScrumGoal.objects.get(id=goal_id)
 
         if to_id == 4:
             if scrum_project_a.role == 'Developer':
@@ -298,8 +298,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
                     
             del_goal = ScrumGoal.objects.get(id=goal_id)
             del_goal.visible = False
-            del_goal.save()
-         
+            del_goal.save()         
             self.createHistory(goal_item.name, goal_item.status, goal_item.goal_project_id, goal_item.hours, goal_item.time_created, goal_item.user, goal_item.project, goal_item.file, goal_item.id, 'Goal Removed Successfully!')
             return JsonResponse({'message': 'Goal Removed Successfully!', 'data': filtered_users(request.data['project_id'])})
         else:
