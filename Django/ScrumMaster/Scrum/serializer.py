@@ -6,7 +6,6 @@ class ScrumGoalHistorySerializer(serializers.ModelSerializer):
         model = ScrumGoalHistory
         fields = ('id', 'name', 'status', 'goal_project_id', 'hours', 'time_created', 'user', 'project', 'file', 'goal', 'done_by', 'message')
         
-        
 class ScrumGoalSerializer(serializers.ModelSerializer):
     scrumgoalhistory_set = ScrumGoalHistorySerializer(many=True)
     class Meta:

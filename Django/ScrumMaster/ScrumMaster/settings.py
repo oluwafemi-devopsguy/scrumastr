@@ -98,6 +98,22 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ScrumMaster.wsgi.application'
 
+# Database
+# https://docs.djangoproject.com/en/2.0/ref/settings/#databases
+'''
+DATABASES = {
+    'default': {
+        'ENGINE': 'mysql.connector.django',
+        'NAME': 'scrum',
+        'USER': 'root',
+        'PASSWORD': '8iu7*IU&',
+        'OPTIONS': {
+            'raise_on_warnings': False,
+            'use_pure': True
+        }
+    }
+}
+'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -108,6 +124,7 @@ DATABASES = {
         'PORT': ''
 
     }
+
 
 }
 
@@ -152,13 +169,12 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'asset'),
     )
-
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-# MEDIA_URL = '/media/'
-LOGIN_REDIRECT_URL = '/home'
 '''
-MEDIA_URL = '/media/'
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+LOGIN_REDIRECT_URL = '/home'
+
 
 ASGI_APPLICATION = "ScrumMaster.routing.application"
 

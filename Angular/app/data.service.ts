@@ -108,9 +108,6 @@ export class DataService {
             this.authOptions = {
                 headers: new HttpHeaders({'Content-Type': 'application/json', 'Authorization': 'JWT ' + data['token']})
             };
-            this.imageAuthOptions = {
-                headers: new HttpHeaders({ 'Authorization': 'JWT ' + data['token']})
-            };
         },
         err => {
             if(err['status'] == 400)

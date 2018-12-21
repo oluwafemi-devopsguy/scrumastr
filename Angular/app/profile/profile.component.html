@@ -1,20 +1,20 @@
-<div class="navbar-fixed">
+<div class="navbar-fixed">  
     <nav>
     <div class="container-fluid">
       <div class="nav-wrapper">
           <div class="row">
               <div class="col m3">
-                <img src="/assets/image/Converted-PNG.png" alt="nav-logo" class="logo">
+                <img src="/src/assets/image/Converted-PNG.png" alt="nav-logo" class="logo">
               </div>
               <div class="col m3" style="display: flex;">
                 <h3 id="project_title" style="text-align: right">{{dataservice.project_name}}</h3>
-                <div style="float: right; display: flex; margin-top: 5px">
+                <div style="float: right; display: flex; margin-top: 5px" [style.display] = "show_sprint_option ? 'block' : 'none'" >
                     <select  name="change_sprint" style="height: 30px; margin: 15px; color: #1f7a7a; width: auto;" [(ngModel)]="selected_sprint"  (change)="changeSprint($event.target)">
                         <option *ngFor = "let sprint of dataservice.sprints"  [ngValue]="sprint" [selected] = "index == last ? sprint : doNothing()" >
                             SPRINT {{sprint.id}}:  {{sprint.created_on | date}} - {{sprint.ends_on | date}}
                         </option>                           
                     </select>
-                    </div>
+                </div>
              </div>              
              <div class="col m6">
                 <ul class="right hide-on-med-and-down">
@@ -51,7 +51,7 @@
                 </ul>
             </div>
         </div>
-        <div class="col s6" style="height: calc(100vh - 65px); overflow: auto">
+        <div class="col s6" style="height: calc(100vh - 65px); overflow: auto">          
             <div class="main_area">
                 <table>
                     <tr>
@@ -62,14 +62,12 @@
                                 <span >Show Users With No Assigned Tasks</span> 
                             </label>
                         </td>
-                        <td>
-                           
+                        <td>                           
                         </td>
-                        <td>
-                            
+                        <td>                            
                         </td>
                     </tr>
-                </table>
+                </table>         
                 <style>
                     .full-box {
                         display: table-cell;
@@ -111,17 +109,16 @@
                             <th class="full-box">Done</th>
                         </div>
                         <ng-container *ngFor="let user of dataservice.users; let user_index = index">
-                            <div *ngIf="user.scrumgoal_set.length == 0 && show_zero" style="display: table-row;" dragula="mainTable" [attr.id]="'u' + user.id" [style.background]="user.id == id_click ? 'rgba(0, 128, 128, 0.5)' : (user.id == id_hover ? 'rgba(0, 128, 128, 0.15)' : 'none')">
+                            <div *ngIf="user.scrumgoal_set.length == 0 && show_zero" style="display: table-row;" dragula="mainTable" [attr.id]="'u' + user.id">
                                 <td class="full-box" id="author" colspan="6">
                                     {{user.user.nickname}} - NO TASKS ASSIGNED
                                 </td>
                             </div>
                             <div style="display: table-row" *ngIf="user.scrumgoal_set.length != 0" [attr.id]="'u' + user.id" [style.background]="user.id == id_click ? 'rgba(0, 128, 128, 0.5)' : (user.id == id_hover ? 'rgba(0, 128, 128, 0.15)' : 'none')" tabindex="-1">
                                 <div *ngFor="let arrItem of arrCount" class="top-box" dragula="mainTable" [attr.id]="arrItem">
-                                    <div class="div_lister" *ngFor="let goal of dataservice.sprint_goals; let j = index; let k = count" [attr.id]="'g' + goal.id"> 
+                                    <div class="div_lister" *ngFor="let goal of dataservice.sprint_goals; let j = index; let k = count" [attr.id]="'g' + goal.goal_project_id"> 
                                             <div class="list_div" *ngIf ="goal.status == arrItem && user.id == goal.user && goal.name; let thisGoal" (dblclick)="goal.status == arrItem ? editGoal($event) : doNothing()" style="font-size: 0.8rem">
-                                                {{goal.goal_project_id}}) {{ (goal.name.length>40) ? (thisGoal | slice:0:30)+'...':(thisGoal) }} {{(goal.hours != -1 && (goal.status == 3 || goal.status == 2) ? ' (' + goal.hours + ')' : '' )}}
-        
+                                                {{goal.goal_project_id}}) {{ (goal.name.length>40) ? (thisGoal | slice:0:40)+'...':(thisGoal) }} {{(goal.hours != -1 && (goal.status == 3 || goal.status == 2) ? ' (' + goal.hours + ')' : '' )}}
                                                 <a (click)="ResizeImage(goal.file); showImage.openModal()">
                                                     <img src="http://{{dataservice.domain_name}}{{goal.file}}" style="width: 15px; height: 15px" alt="{{goal.file}}">
                                                 </a> 
@@ -138,10 +135,10 @@
                                                     </option>                                                                          
                                                 </select> 
                                             </div>
-                                                <span class="tooltiptext">{{goal.name}}</span>
+                                                <span class="tooltiptext">{{goal.name}}</span>                                              
                                                 <span class="tooltiptext2">
-                                                    <button class="delete_task" (click)="dataservice.moveGoal('g' + goal.id, 4, -1)">X</button>
-                                                </span>                                 
+                                                    <button class="delete_task" (click)="deleteTask(goal.name, goal.id)">X</button>
+                                                </span>                                  
                                             <!-- </div> -->
                                         </div>                                   
                                     </div>
@@ -176,11 +173,9 @@
                             <input  #Image accept="image/*" type="file" (change)="selectFile($event)">
                             <br>
                             <button type="button" class="modal-close waves-effect btn btn-default" (click)="imageUpload()">Upload</button>
-
                         </form>
                     </mz-modal-content>
                 </mz-modal>
-
                 <mz-modal #showImage>
                     <mz-modal-header>
                         <h4>Image</h4>
@@ -188,8 +183,7 @@
                     <mz-modal-content>
                         <img src="http://{{dataservice.domain_name}}{{scrum_image}}" style="width: 450px; height: 220px" alt="image">
                     </mz-modal-content>
-                </mz-modal>
-                
+                </mz-modal>                
                     <mz-modal #showHistory >
                         <mz-modal-header>
                             <h4>Task History Details</h4>
@@ -205,7 +199,7 @@
                                             {{task_history.name}}
                                         </td>
                                         <td rowspan="7">
-                                            <img src="http://{{dataservice.domain_name}}{{task_history.file}}" style="width: 250px; height: 220px" alt="image">
+                                            <img src="http://{{dataservice.domain_name}}/media{{task_history.file}}" style="width: 250px; height: 220px" alt="http://{{dataservice.domain_name}}{{task_history.file}}">
                                         </td>
                                     </tr>
                                     <tr style="margin: 0; padding: 0">
@@ -230,11 +224,8 @@
                                     </tr>
                                 </table>
                              </div>
-
                         </mz-modal-content>
                     </mz-modal>
-               
-
             </div>
         </div>
         

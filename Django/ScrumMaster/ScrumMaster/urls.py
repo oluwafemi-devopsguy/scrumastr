@@ -24,6 +24,13 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls'))
 ]
 
+'''
+#Uncomment this on deployment.
+urlpatterns += [
+    path('courses/', include('Courses.urls')),
+    path('', include('home.urls'))
+]
+'''
 
 
 if settings.DEBUG:
