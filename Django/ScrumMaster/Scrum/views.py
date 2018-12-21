@@ -291,17 +291,17 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
     def patch(self, request):
         scrum_project = ScrumProject.objects.get(id=request.data['project_id'])
         scrum_project_a = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
-        scrum_project_b = ScrumGoal.objects.get(goal_project_id=request.data['goal_id'][1:]).user
+        scrum_project_b = scrum_project.scrumgoal_set.get(goal_project_id=request.data['goal_id'][1:]).user
         goal_id = request.data['goal_id'][1:]
         to_id = int(request.data['to_id'])
-        goal_item = ScrumGoal.objects.get(goal_project_id=goal_id)
+        goal_item = scrum_project.scrumgoal_set.get(goal_project_id=goal_id)
         
         if to_id == 4:
             if scrum_project_a.role == 'Developer':
                 if request.user != scrum_project_b.user.user:
                     return JsonResponse({'message': 'Permission Denied: Unauthorized Deletion of Goal.', 'data': filtered_users(request.data['project_id'])})
                     
-            del_goal = ScrumGoal.objects.get(goal_project_id=goal_id)
+            del_goal = scrum_project.scrumgoal_set.get(goal_project_id=goal_id)
             del_goal.visible = False
             del_goal.save()         
             self.createHistory(goal_item.name, goal_item.status, goal_item.goal_project_id, goal_item.hours, goal_item.time_created, goal_item.user, goal_item.project, goal_item.file, goal_item.id, 'Goal Removed Successfully!')
@@ -362,7 +362,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
     def put(self, request):
         scrum_project = ScrumProject.objects.get(id=request.data['project_id'])
         scrum_project_role = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
-        scrum_project_b = ScrumGoal.objects.get(goal_project_id=request.data['goal_id'][1:]).user
+        scrum_project_b = scrum_project.scrumgoal_set.get(goal_project_id=request.data['goal_id'][1:]).user
         if request.data['mode'] == 0:
             from_id = request.data['from_id'][1:]
             to_id = request.data['to_id'][1:]
@@ -370,7 +370,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             if scrum_project_role.role == 'Developer' or scrum_project_role.role == 'Quality Analyst':
                 return JsonResponse({'message': 'Permission Denied: Unauthorized Reassignment of Goal.', 'data': filtered_users(request.data['project_id'])})
                 
-            goal = ScrumGoal.objects.get(goal_project_id=from_id)
+            goal = scrum_project.scrumgoal_set.get(goal_project_id=from_id)
             
             author = ScrumProjectRole.objects.get(id=to_id)
             goal.user = author
@@ -394,7 +394,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             
             return JsonResponse({'message': 'Image Added Successfully', 'data': filtered_users(request.data['project_id'])})
         elif request.data['mode'] == 2:
-            goal = ScrumGoal.objects.get(goal_project_id=request.data['goal_id'])
+            goal = scrum_project.scrumgoal_set.get(goal_project_id=request.data['goal_id'])
             if request.user == scrum_project_b.user.user and goal.moveable == True:
 
                 goal.visible = 0
@@ -405,11 +405,11 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
                 return JsonResponse({'message': 'Permission Denied: Unauthorized Deletion of Goal.', 'data': filtered_users(request.data['project_id'])})
             
         else:
-            scrum_project_b = ScrumGoal.objects.get(goal_project_id=request.data['goal_id'][1:]).user
+            scrum_project_b = scrum_project.scrumgoal_set.get(goal_project_id=request.data['goal_id'][1:]).user
             if scrum_project_role.role != 'Owner' and request.user != scrum_project_b.user.user:
                 return JsonResponse({'message': 'Permission Denied: Unauthorized Name Change of Goal.', 'data': filtered_users(request.data['project_id'])})
             
-            goal = ScrumGoal.objects.get(goal_project_id=request.data['goal_id'][1:])
+            goal = scrum_project.scrumgoal_set.get(goal_project_id=request.data['goal_id'][1:])
             
             goal.name = request.data['new_name']
             self.createHistory(goal.name, goal.status, goal.goal_project_id, goal.hours, goal.time_created, goal.user, goal.project, goal.file, goal.id,  'Goal Name Changed!')
