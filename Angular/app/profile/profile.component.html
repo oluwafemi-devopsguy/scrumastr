@@ -9,7 +9,7 @@
               <div class="col m3" style="display: flex;">
                 <h3 id="project_title" style="text-align: right">{{dataservice.project_name}}</h3>
                 <div style="float: right; display: flex; margin-top: 5px" [style.display] = "show_sprint_option ? 'block' : 'none'" >
-                    <select  name="change_sprint" style="height: 30px; margin: 15px; color: #1f7a7a; width: auto;" [(ngModel)]="selected_sprint"  (change)="changeSprint($event.target)">
+                    <select  name="change_sprint" style="height: 30px; margin: 15px; color: #1f7a7a; width: auto;" [(ngModel)]="dataservice.selected_sprint"  (change)="changeSprint()">
                         <option *ngFor = "let sprint of dataservice.sprints"  [ngValue]="sprint" [selected] = "index == last ? sprint : doNothing()" >
                             SPRINT {{sprint.id}}:  {{sprint.created_on | date}} - {{sprint.ends_on | date}}
                         </option>                           

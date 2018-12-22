@@ -278,10 +278,6 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
              return JsonResponse({'message': 'Permission Denied: Sprint not yet started.', 'data': filtered_users(request.data['project_id'])})
 
         status_start = 0
-        if author.role == 'Admin':
-            status_start = 1
-        elif author.role == 'Quality Analyst':
-            status_start = 2
         scrum_project.project_count = scrum_project.project_count + 1
         scrum_project.save()
         goal = ScrumGoal(name=request.data['name'], status=status_start, time_created = datetime.datetime.now(), goal_project_id=scrum_project.project_count, user=author, project_id=request.data['project_id'], moveable = True)
@@ -318,14 +314,14 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
                 from_allowed = [0, 1, 2, 3]
                 to_allowed = [0, 1, 2, 3]
             elif group == 'Admin':
-                from_allowed = [0, 1]
-                to_allowed = [0, 1]
+                from_allowed = [0, 1, 2]
+                to_allowed = [0, 1, 2]
             elif group == 'Developer':
                 from_allowed = [0, 1, 2]
                 to_allowed = [0, 1, 2]
             elif group == 'Quality Analyst':
-                from_allowed = [2, 3]
-                to_allowed = [2, 3]
+                from_allowed = [0, 1, 2, 3]
+                to_allowed = [0, 1, 2, 3]
             
             state_prev = goal_item.status
             
@@ -365,19 +361,22 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
         scrum_project_role = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
         scrum_project_b = scrum_project.scrumgoal_set.get(goal_project_id=request.data['goal_id'][1:]).user
         if request.data['mode'] == 0:
-            from_id = request.data['from_id'][1:]
+            from_id = request.data['goal_id'][1:]
             to_id = request.data['to_id'][1:]
             
             if scrum_project_role.role == 'Developer' or scrum_project_role.role == 'Quality Analyst':
                 return JsonResponse({'message': 'Permission Denied: Unauthorized Reassignment of Goal.', 'data': filtered_users(request.data['project_id'])})
                 
             goal = scrum_project.scrumgoal_set.get(goal_project_id=from_id)
+            if goal.moveable == True:
             
-            author = ScrumProjectRole.objects.get(id=to_id)
-            goal.user = author
-            self.createHistory(goal.name, goal.status, goal.goal_project_id, goal.hours, goal.time_created, goal.user, goal.project, goal.file, goal.id, 'Goal Reassigned Successfully by')
-            goal.save()
-            return JsonResponse({'message': 'Goal Reassigned Successfully!', 'data': filtered_users(request.data['project_id'])})
+                author = ScrumProjectRole.objects.get(id=to_id)
+                goal.user = author
+                self.createHistory(goal.name, goal.status, goal.goal_project_id, goal.hours, goal.time_created, goal.user, goal.project, goal.file, goal.id, 'Goal Reassigned Successfully by')
+                goal.save()
+                return JsonResponse({'message': 'Goal Reassigned Successfully!', 'data': filtered_users(request.data['project_id'])})
+            else:
+                return JsonResponse({'message': 'Permission Denied: Sprint Period Elapsed!!!', 'data': filtered_users(request.data['project_id'])})
         elif request.data['mode'] == '1':
             goal = scrum_project.scrumgoal_set.get(goal_project_id=request.data['goal_id'][1:])
             # goal.file = request.FILES['image']
@@ -411,11 +410,13 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
                 return JsonResponse({'message': 'Permission Denied: Unauthorized Name Change of Goal.', 'data': filtered_users(request.data['project_id'])})
             
             goal = scrum_project.scrumgoal_set.get(goal_project_id=request.data['goal_id'][1:])
-            
-            goal.name = request.data['new_name']
-            self.createHistory(goal.name, goal.status, goal.goal_project_id, goal.hours, goal.time_created, goal.user, goal.project, goal.file, goal.id,  'Goal Name Changed by')
-            goal.save()
-            return JsonResponse({'message': 'Goal Name Changed!', 'data': filtered_users(request.data['project_id'])})
+            if goal.moveable == True:            
+                goal.name = request.data['new_name']
+                self.createHistory(goal.name, goal.status, goal.goal_project_id, goal.hours, goal.time_created, goal.user, goal.project, goal.file, goal.id,  'Goal Name Changed by')
+                goal.save()
+                return JsonResponse({'message': 'Goal Name Changed!', 'data': filtered_users(request.data['project_id'])})
+            else:
+                 return JsonResponse({'message': 'Permission Denied: Sprint Period Elapsed!!!', 'data': filtered_users(request.data['project_id'])})
     def createHistory(self, name, status, goal_project_id, hours, time_created, user, project, file, goal, message):
         concat_message = message + self.request.user.username
         print(concat_message)
