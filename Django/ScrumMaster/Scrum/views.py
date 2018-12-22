@@ -304,7 +304,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             del_goal = scrum_project.scrumgoal_set.get(goal_project_id=goal_id)
             del_goal.visible = False
             del_goal.save()         
-            self.createHistory(goal_item.name, goal_item.status, goal_item.goal_project_id, goal_item.hours, goal_item.time_created, goal_item.user, goal_item.project, goal_item.file, goal_item.id, 'Goal Removed Successfully!')
+            self.createHistory(goal_item.name, goal_item.status, goal_item.goal_project_id, goal_item.hours, goal_item.time_created, goal_item.user, goal_item.project, goal_item.file, goal_item.id, 'Goal Removed Successfully by')
             return JsonResponse({'message': 'Goal Removed Successfully!', 'data': filtered_users(request.data['project_id'])})
         else:           
             group = scrum_project_a.role
@@ -352,7 +352,8 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
                      message = 'Error: A Task must have hours assigned.'
                 elif to_id == 2 :
                     goal_item.hours = request.data['hours']
-                    message = 'Goal Moved Successfully! Hours Applied!'           
+                    message = 'Goal Moved Successfully! Hours Applied!' 
+                self.createHistory(goal_item.name, goal_item.status, goal_item.goal_project_id, goal_item.hours, goal_item.time_created, goal_item.user, goal_item.project, goal_item.file, goal_item.id, 'Goal Moved Successfully by')          
                 goal_item.save()
             else:
                 message = "Sprint Period Elapsed, The Goal Cannot be Moved!"
@@ -374,7 +375,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             
             author = ScrumProjectRole.objects.get(id=to_id)
             goal.user = author
-            self.createHistory(goal.name, goal.status, goal.goal_project_id, goal.hours, goal.time_created, goal.user, goal.project, goal.file, goal.id, 'Goal Reassigned Successfully!')
+            self.createHistory(goal.name, goal.status, goal.goal_project_id, goal.hours, goal.time_created, goal.user, goal.project, goal.file, goal.id, 'Goal Reassigned Successfully by')
             goal.save()
             return JsonResponse({'message': 'Goal Reassigned Successfully!', 'data': filtered_users(request.data['project_id'])})
         elif request.data['mode'] == '1':
@@ -389,12 +390,12 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
         
             filename = fs.save(myfile.name, myfile)
             goal.file = filename
-            self.createHistory(goal.name, goal.status, goal.goal_project_id, goal.hours, goal.time_created, goal.user, goal.project, goal.file, goal.id, 'Image Added Successfully')
+            self.createHistory(goal.name, goal.status, goal.goal_project_id, goal.hours, goal.time_created, goal.user, goal.project, goal.file, goal.id, 'Image Added Successfully by')
             goal.save()
             
             return JsonResponse({'message': 'Image Added Successfully', 'data': filtered_users(request.data['project_id'])})
         elif request.data['mode'] == 2:
-            goal = scrum_project.scrumgoal_set.get(goal_project_id=request.data['goal_id'])
+            goal = scrum_project.scrumgoal_set.get(goal_project_id=request.data['goal_id'][1:])
             if request.user == scrum_project_b.user.user and goal.moveable == True:
 
                 goal.visible = 0
@@ -412,11 +413,13 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             goal = scrum_project.scrumgoal_set.get(goal_project_id=request.data['goal_id'][1:])
             
             goal.name = request.data['new_name']
-            self.createHistory(goal.name, goal.status, goal.goal_project_id, goal.hours, goal.time_created, goal.user, goal.project, goal.file, goal.id,  'Goal Name Changed!')
+            self.createHistory(goal.name, goal.status, goal.goal_project_id, goal.hours, goal.time_created, goal.user, goal.project, goal.file, goal.id,  'Goal Name Changed by')
             goal.save()
             return JsonResponse({'message': 'Goal Name Changed!', 'data': filtered_users(request.data['project_id'])})
     def createHistory(self, name, status, goal_project_id, hours, time_created, user, project, file, goal, message):
-        goal = ScrumGoalHistory (name=name, status=status, time_created = time_created, goal_project_id=goal_project_id, user=user, project=project, file=file, goal_id=goal, done_by=self.request.user, message=message)
+        concat_message = message + self.request.user.username
+        print(concat_message)
+        goal = ScrumGoalHistory (name=name, status=status, time_created = time_created, goal_project_id=goal_project_id, user=user, project=project, file=file, goal_id=goal, done_by=self.request.user, message=concat_message)
         goal.save()
         return
             

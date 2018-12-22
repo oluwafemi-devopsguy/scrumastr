@@ -127,7 +127,7 @@
                                                 <a (click)="imageClicked(goal.goal_project_id); upload.openModal()" class="add-file">
                                                     <i class="Tiny material-icons" id="add_a_photo">add_a_photo</i>
                                                 </a>     
-                                              
+                                                
                                                 <select name= "option{{goal.goal_project_id}}" style="height: 15px; margin: 5px; color: #1f7a7a; font-size: 10px;padding: 0; width: 60px;" [(ngModel)]="selected_history[j]" (change)= "CheckHistory(selected_history[j]); showHistory.openModal();" >
                                                     <option [ngValue]="history1" disabled selected>History</option>
                                                     <option *ngFor = "let history of goal.scrumgoalhistory_set" [ngValue]=history>
@@ -137,7 +137,7 @@
                                             </div>
                                                 <span class="tooltiptext">{{goal.name}}</span>                                              
                                                 <span class="tooltiptext2">
-                                                    <button class="delete_task" (click)="deleteTask(goal.name, goal.id)">X</button>
+                                                    <button class="delete_task" (click)="deleteTask(goal.name, goal.goal_project_id)">X</button>
                                                 </span>                                  
                                             <!-- </div> -->
                                         </div>                                   
@@ -199,7 +199,7 @@
                                             {{task_history.name}}
                                         </td>
                                         <td rowspan="7">
-                                            <img src="http://{{dataservice.domain_name}}/media{{task_history.file}}" style="width: 250px; height: 220px" alt="http://{{dataservice.domain_name}}{{task_history.file}}">
+                                            <img src="http://{{dataservice.domain_name}}{{task_history.file}}" style="width: 250px; height: 220px" alt="http://{{dataservice.domain_name}}{{task_history.file}}">
                                         </td>
                                     </tr>
                                     <tr style="margin: 0; padding: 0">

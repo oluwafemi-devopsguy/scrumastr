@@ -333,8 +333,9 @@ export class ProfileComponent implements OnInit {
 
   deleteTask(goal_name, goal_id) {
       var pop_event = window.confirm('Delete " ' + goal_name + '"?');
+      console.log(goal_id)
       if (pop_event) {
-          this.http.put('http://' + this.dataservice.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'mode': 2, 'goal_id':goal_id, 'new_name': goal_name, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
+          this.http.put('http://' + this.dataservice.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'mode': 2, 'goal_id':'g' + goal_id, 'new_name': goal_name, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
             data => {
                 this.dataservice.users = data['data'];
                 this.dataservice.message = data['message'];

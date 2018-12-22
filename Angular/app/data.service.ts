@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 })
 export class DataService {
     
-  public domain_name = '127.0.0.1:8000';
+  public domain_name = '18.216.46.81:8000';
   
   public message;
   public goal_name;
