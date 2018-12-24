@@ -16,6 +16,8 @@ export class ProfileComponent implements OnInit {
   public arrCount = [0, 1, 2, 3];
   subs = new Subscription();
   public show_zero: boolean = true;
+  public show_history: boolean = false;
+  public show_sprint_option: boolean = false;
   public chat_text: string = "";
   public messages = [];
   public websocket;
@@ -26,8 +28,13 @@ export class ProfileComponent implements OnInit {
   public id_click = -1;
   sprint_start: Number;
   sprint_end: Number;
+  goal_id: string;
   present_scrum;
-  selected_sprint: any;
+   public task_history: any;
+  public iData: any;
+  public image_upload: File = null;
+  public scrum_image: File = null;
+  public selected_history:any = [];
     
   public modalOptions: Materialize.ModalOptions = {
     dismissible: false, // Modal can be dismissed by clicking outside of the modal
@@ -72,6 +79,12 @@ export class ProfileComponent implements OnInit {
                             hours = -1;
                     }
                     this.dataservice.moveGoal(el['id'], target['id'], hours);
+                if (this.dataservice.selected_sprint) {
+                  this.changeSprint()
+                }
+                else{
+                  this.filterSprint(this.dataservice.sprints)
+                }
                 } else {
                     this.dataservice.changeOwner(el['id'], target['parentElement']['id']);
                 } 
@@ -87,7 +100,9 @@ export class ProfileComponent implements OnInit {
     this.dataservice.authOptions = {
         headers: new HttpHeaders({'Content-Type': 'application/json', 'Authorization': 'JWT ' + sessionStorage.getItem('token')})
     };
-
+    this.dataservice.imageAuthOptions = {
+        headers: new HttpHeaders({'Authorization': 'JWT ' + sessionStorage.getItem('token')})
+    };
     this.msg_obs = new MutationObserver((mutations) => {
         var chat_scroll = document.getElementById('chat_div_space');
         console.log(chat_scroll.scrollHeight - chat_scroll.clientHeight);
@@ -152,6 +167,22 @@ export class ProfileComponent implements OnInit {
     this.show_zero = !this.show_zero;  
   }
 
+
+  changeSprint() 
+  {   
+    this.dataservice.sprint_goals = [];
+      for (var i = 0;  i < this.dataservice.users.length; i++)  {
+        for (var j = 0;  j < this.dataservice.users[i].scrumgoal_set.length; j++)  {
+          if (this.dataservice.users[i].scrumgoal_set[j].time_created > this.dataservice.selected_sprint.created_on && 
+            this.dataservice.users[i].scrumgoal_set[j].time_created < this.dataservice.selected_sprint.ends_on)
+            {                
+             this.dataservice.users[i].scrumgoal_set[j].user_id = this.dataservice.users[i].id;
+             this.dataservice.sprint_goals.push(this.dataservice.users[i].scrumgoal_set[j]);
+            }
+          } 
+        }
+  }
+
             
   filterSprint(uSprints) {
     this.dataservice.sprints= uSprints
@@ -168,10 +199,12 @@ export class ProfileComponent implements OnInit {
                   // console.log(this.dataservice.users[i].scrumgoal_set[j].name)
                    // this.dataservice.users[i].scrumgoal_set[j].user_id = this.dataservice.users[i].id
                    filter_goal.push(this.dataservice.users[i].scrumgoal_set[j]);
+                   this.show_sprint_option = true;
                   }
               } else {
                   this.dataservice.users[i].scrumgoal_set[j].user_id = this.dataservice.users[i].id
                   filter_goal.push(this.dataservice.users[i].scrumgoal_set[j]); 
+                  
               }
             }
           }
@@ -245,8 +278,7 @@ export class ProfileComponent implements OnInit {
           this.createSprintMethod(myDate);
         
           return;
-      }    
-      
+      }   
     } else {
         console.log('else works');
         this.createSprintMethod(myDate);
@@ -255,27 +287,10 @@ export class ProfileComponent implements OnInit {
     }    
   } 
 
-
-  changeSprint(sprint) 
-  {
-   
-    this.dataservice.sprint_goals = [];
-      for (var i = 0;  i < this.dataservice.users.length; i++)  {
-        for (var j = 0;  j < this.dataservice.users[i].scrumgoal_set.length; j++)  {
-          if (this.dataservice.users[i].scrumgoal_set[j].time_created > this.selected_sprint.created_on && 
-            this.dataservice.users[i].scrumgoal_set[j].time_created < this.selected_sprint.ends_on)
-            {                
-             this.dataservice.users[i].scrumgoal_set[j].user_id = this.dataservice.users[i].id;
-             this.dataservice.sprint_goals.push(this.dataservice.users[i].scrumgoal_set[j]);
-            }
-          } 
-        }
-  }
-
   
   editGoal(event)
   {
-    console.log(event);
+    console.log(this.dataservice.selected_sprint);
     console.log(this.dataservice.users);
     var taskID = event.target.parentElement.id.substring(1);
     var message = null;
@@ -285,7 +300,7 @@ export class ProfileComponent implements OnInit {
         {
             for(var j = 0; j < this.dataservice.users[i].scrumgoal_set.length; j++)
             {
-                if(this.dataservice.users[i].scrumgoal_set[j].id == taskID)
+                if(this.dataservice.users[i].scrumgoal_set[j].goal_project_id == taskID)
                 {
                     message = this.dataservice.users[i].scrumgoal_set[j].name;
                     break;
@@ -303,8 +318,13 @@ export class ProfileComponent implements OnInit {
         this.http.put('http://' + this.dataservice.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'mode': 1, 'goal_id': event.target.parentElement.id, 'new_name': goal_name, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
             data => {
                 this.dataservice.users = data['data'];
-                this.dataservice.message = data['message'];
-                this.filterSprint(this.dataservice.sprints)
+                this.dataservice.message = data['message'];                
+                if (this.dataservice.selected_sprint) {
+                  this.changeSprint()
+                }
+                else{
+                  this.filterSprint(this.dataservice.sprints)
+                }
             },
             err => {
                 console.error(err);
@@ -323,12 +343,20 @@ export class ProfileComponent implements OnInit {
 
   deleteTask(goal_name, goal_id) {
       var pop_event = window.confirm('Delete " ' + goal_name + '"?');
+      console.log(goal_id)
       if (pop_event) {
-          this.http.put('http://' + this.dataservice.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'mode': 2, 'goal_id':goal_id, 'new_name': goal_name, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
+          this.http.put('http://' + this.dataservice.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'mode': 2, 'goal_id':'g' + goal_id, 'new_name': goal_name, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
             data => {
                 this.dataservice.users = data['data'];
                 this.dataservice.message = data['message'];
-                this.filterSprint(this.dataservice.sprints)
+                if (this.dataservice.selected_sprint) {
+                  this.changeSprint()
+                }
+                else{
+                  this.filterSprint(this.dataservice.sprints)
+                }
+                
+                
             },
             err => {
                 console.error(err);
@@ -392,11 +420,6 @@ export class ProfileComponent implements OnInit {
     this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': this.chat_text}))
     this.chat_text = '';
   }
-  
- 
-
-
-
 
   ngOnInit() {
 
@@ -414,7 +437,45 @@ export class ProfileComponent implements OnInit {
   }
   }
 
+  imageClicked(clicked_goal_id) { 
+      console.log(clicked_goal_id);
+      this.goal_id = "g" + clicked_goal_id;
+    }
 
+
+  // imageUpload()  {
+  //   console.log(this.dataservice.authOptions)
+  //   console.log(this.image_upload)
+  //   let details = {
+  //       'mode': 1,
+  //       'goal_id': this.goal_id, 
+  //       'project_id': this.dataservice.project,
+  //       // 'file':this.image_upload
+  //     };
+  //   this.iData =  new FormData();
+    
+  //   this.iData.append('image', this.image_upload, this.image_upload.name);
+  //   console.log(this.iData)
+  //   this.http.put('http://' + this.dataservice.domain_name + '/scrum/api/scrumgoals/', this.iData,
+  //     this.dataservice.authOptions).subscribe(
+  //       data => {
+  //         this.dataservice.users = data['data'];
+  //         this.dataservice.message = data['message'];
+  //         this.filterSprint(this.dataservice.sprints)
+  //       },
+  //       err => {
+  //         console.error(err);
+  //         if(err['status'] == 401)
+  //          {
+  //           this.dataservice.message = 'Session Invalid or Expired. Please Login.';
+  //           this.dataservice.logout();
+  //          } else
+  //          {
+  //             this.dataservice.message = 'Unexpected Error!';    
+  //           }
+  //         }
+  //       );
+  // }
 
   addGoal()
   {
@@ -459,4 +520,69 @@ export class ProfileComponent implements OnInit {
 //         $('.modal-trigger').leanModal();
 //       });
 //   }
+
+
+  selectFile(event) {
+    console.log(event)
+    this.image_upload =event.target.files;
+  }
+
+  imageUpload() {
+    if (this.image_upload == null) {
+      this.dataservice.message = "No file selected!!!"
+      console.log("No file selected!");
+      return
+    }
+    let details = {
+        'mode': 1,
+        'goal_id': this.goal_id, 
+        'project_id': this.dataservice.project,
+        
+      };
+    let file: File = this.image_upload[0];
+    console.log(this.dataservice.imageAuthOptions)
+    console.log(file)
+
+    this.iData =  new FormData();
+    
+    this.iData.append('image', file, file.name);
+    this.iData.append('mode', 1);
+    this.iData.append('goal_id', this.goal_id);
+    this.iData.append('project_id', this.dataservice.project);
+    console.log(file)
+    console.log(this.iData)
+    this.http.put('http://' + this.dataservice.domain_name + '/scrum/api/scrumgoals/', this.iData,
+      this.dataservice.imageAuthOptions)
+      .subscribe(
+        data => {
+          this.dataservice.users = data['data'];
+          this.dataservice.message = data['message'];
+          this.filterSprint(this.dataservice.sprints)
+        },
+        err => {
+          console.error(err);
+          if(err['status'] == 401)
+           {
+            this.dataservice.message = 'Session Invalid or Expired. Please Login.';
+            this.dataservice.logout();
+           } else
+           {
+              this.dataservice.message = 'Unexpected Error!';    
+            }
+          }
+        );
+  }
+
+  ResizeImage(iName) {
+    console.log(iName)
+    this.scrum_image = iName
+  }
+
+    CheckHistory(task) {
+      console.log(task)
+      this.task_history = task
+      this.show_history = !this.show_history; 
+  }
+
+
 }

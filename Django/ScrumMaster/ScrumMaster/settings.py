@@ -100,7 +100,7 @@ WSGI_APPLICATION = 'ScrumMaster.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
-
+'''
 DATABASES = {
     'default': {
         'ENGINE': 'mysql.connector.django',
@@ -127,7 +127,6 @@ DATABASES = {
 
 
 }
-'''
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
@@ -170,11 +169,12 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'asset'),
     )
+'''
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 LOGIN_REDIRECT_URL = '/home'
-'''
+
 
 ASGI_APPLICATION = "ScrumMaster.routing.application"
 
