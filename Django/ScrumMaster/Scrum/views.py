@@ -278,7 +278,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
         if len(sprint) < 1:
              return JsonResponse({'message': 'Permission Denied: Sprint not yet started.', 'data': filtered_users(request.data['project_id'])})
 
-        if (datetime.datetime.strftime(ScrumSprint.objects.latest('ends_on').ends_on, "%Y-%m-%d")) > datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d"):
+        if (datetime.datetime.strftime(ScrumSprint.objects.latest('ends_on').ends_on, "%Y-%m-%d")) < datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d"):
             return JsonResponse({'message': 'Permission Denied: Last Sprint Period Elapsed.', 'data': filtered_users(request.data['project_id'])})
 
         status_start = 0
