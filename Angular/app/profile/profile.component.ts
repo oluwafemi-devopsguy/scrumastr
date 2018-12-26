@@ -1,10 +1,10 @@
-import { Component, OnInit, Injectable  } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DataService } from '../data.service';
 import { DragulaService } from 'ng2-dragula';
 import { Subscription, Observable } from 'rxjs';
 import { forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpEvent} from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MzModalModule } from 'ngx-materialize';
 @Component({
   selector: 'app-profile',
@@ -17,6 +17,7 @@ export class ProfileComponent implements OnInit {
   subs = new Subscription();
   public show_zero: boolean = true;
   public show_history: boolean = false;
+  public show_sprint_option: boolean = false;
   public chat_text: string = "";
   public messages = [];
   public websocket;
@@ -27,10 +28,9 @@ export class ProfileComponent implements OnInit {
   public id_click = -1;
   sprint_start: Number;
   sprint_end: Number;
-  goal_id: Number;
+  goal_id: string;
   present_scrum;
-  public selected_sprint: any;
-  public task_history: any;
+   public task_history: any;
   public iData: any;
   public image_upload: File = null;
   public scrum_image: File = null;
@@ -79,6 +79,12 @@ export class ProfileComponent implements OnInit {
                             hours = -1;
                     }
                     this.dataservice.moveGoal(el['id'], target['id'], hours);
+                if (this.dataservice.selected_sprint) {
+                  this.changeSprint()
+                }
+                else{
+                  this.filterSprint(this.dataservice.sprints)
+                }
                 } else {
                     this.dataservice.changeOwner(el['id'], target['parentElement']['id']);
                 } 
@@ -97,7 +103,6 @@ export class ProfileComponent implements OnInit {
     this.dataservice.imageAuthOptions = {
         headers: new HttpHeaders({'Authorization': 'JWT ' + sessionStorage.getItem('token')})
     };
-
     this.msg_obs = new MutationObserver((mutations) => {
         var chat_scroll = document.getElementById('chat_div_space');
         console.log(chat_scroll.scrollHeight - chat_scroll.clientHeight);
@@ -162,6 +167,22 @@ export class ProfileComponent implements OnInit {
     this.show_zero = !this.show_zero;  
   }
 
+
+  changeSprint() 
+  {   
+    this.dataservice.sprint_goals = [];
+      for (var i = 0;  i < this.dataservice.users.length; i++)  {
+        for (var j = 0;  j < this.dataservice.users[i].scrumgoal_set.length; j++)  {
+          if (this.dataservice.users[i].scrumgoal_set[j].time_created > this.dataservice.selected_sprint.created_on && 
+            this.dataservice.users[i].scrumgoal_set[j].time_created < this.dataservice.selected_sprint.ends_on)
+            {                
+             this.dataservice.users[i].scrumgoal_set[j].user_id = this.dataservice.users[i].id;
+             this.dataservice.sprint_goals.push(this.dataservice.users[i].scrumgoal_set[j]);
+            }
+          } 
+        }
+  }
+
             
   filterSprint(uSprints) {
     this.dataservice.sprints= uSprints
@@ -178,10 +199,12 @@ export class ProfileComponent implements OnInit {
                   // console.log(this.dataservice.users[i].scrumgoal_set[j].name)
                    // this.dataservice.users[i].scrumgoal_set[j].user_id = this.dataservice.users[i].id
                    filter_goal.push(this.dataservice.users[i].scrumgoal_set[j]);
+                   this.show_sprint_option = true;
                   }
               } else {
                   this.dataservice.users[i].scrumgoal_set[j].user_id = this.dataservice.users[i].id
                   filter_goal.push(this.dataservice.users[i].scrumgoal_set[j]); 
+                  
               }
             }
           }
@@ -230,15 +253,15 @@ export class ProfileComponent implements OnInit {
   {
     var myDate = new Date(new Date().getTime()+(7*24*60*60*1000));
     if (this.dataservice.sprints.length) {
-      console.log('if works')
-      var present_scrum_id = this.dataservice.sprints[this.dataservice.sprints.length - 1].id
-      this.present_scrum = this.dataservice.sprints[this.dataservice.sprints.length - 1].ends_on
-      this.present_scrum =  new Date(this.present_scrum).valueOf()
+      console.log('if works');
+      var present_scrum_id = this.dataservice.sprints[this.dataservice.sprints.length - 1].id;
+      this.present_scrum = this.dataservice.sprints[this.dataservice.sprints.length - 1].ends_on;
+      this.present_scrum =  new Date(this.present_scrum).valueOf();
       
       
       //  Test if Today Date is greater than last scrum
-      console.log(this.present_scrum)
-      console.log(new Date().valueOf())
+      console.log(this.present_scrum);
+      console.log(new Date().valueOf());
       if (this.present_scrum > new Date().valueOf()) {
         if (confirm("Sprint #" + present_scrum_id + " is currently running. End this spring and start another one?  Click \"OK\" to continue Create New Sprint!!!")) {
           this.dataservice.message == "Current Sprint ended";          
@@ -247,43 +270,27 @@ export class ProfileComponent implements OnInit {
             }
         else {
           this.dataservice.message = 'Last Sprint continued!!!';
-          console.log("Sprint Continue")
+          console.log("Sprint Continue");
           return;
             
         }
       } else  {
-          this.createSprintMethod(myDate)
+          this.createSprintMethod(myDate);
         
           return;
-    }    
+      }   
     } else {
-        console.log('else works')
-        this.createSprintMethod(myDate)
+        console.log('else works');
+        this.createSprintMethod(myDate);
         
         return;
     }    
   } 
 
-  changeSprint(sprint) 
-  {
-   
-    this.dataservice.sprint_goals = [] 
-      for (var i = 0;  i < this.dataservice.users.length; i++)  {
-        for (var j = 0;  j < this.dataservice.users[i].scrumgoal_set.length; j++)  {
-          if (this.dataservice.users[i].scrumgoal_set[j].time_created > this.selected_sprint.created_on && 
-            this.dataservice.users[i].scrumgoal_set[j].time_created < this.selected_sprint.ends_on)
-            {                
-             this.dataservice.users[i].scrumgoal_set[j].user_id = this.dataservice.users[i].id
-             this.dataservice.sprint_goals.push(this.dataservice.users[i].scrumgoal_set[j]);
-            }
-          } 
-        }
-  }
-
   
   editGoal(event)
   {
-    console.log(event);
+    console.log(this.dataservice.selected_sprint);
     console.log(this.dataservice.users);
     var taskID = event.target.parentElement.id.substring(1);
     var message = null;
@@ -293,7 +300,7 @@ export class ProfileComponent implements OnInit {
         {
             for(var j = 0; j < this.dataservice.users[i].scrumgoal_set.length; j++)
             {
-                if(this.dataservice.users[i].scrumgoal_set[j].id == taskID)
+                if(this.dataservice.users[i].scrumgoal_set[j].goal_project_id == taskID)
                 {
                     message = this.dataservice.users[i].scrumgoal_set[j].name;
                     break;
@@ -311,8 +318,13 @@ export class ProfileComponent implements OnInit {
         this.http.put('http://' + this.dataservice.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'mode': 1, 'goal_id': event.target.parentElement.id, 'new_name': goal_name, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
             data => {
                 this.dataservice.users = data['data'];
-                this.dataservice.message = data['message'];
-                this.filterSprint(this.dataservice.sprints)
+                this.dataservice.message = data['message'];                
+                if (this.dataservice.selected_sprint) {
+                  this.changeSprint()
+                }
+                else{
+                  this.filterSprint(this.dataservice.sprints)
+                }
             },
             err => {
                 console.error(err);
@@ -329,6 +341,40 @@ export class ProfileComponent implements OnInit {
     }
   }
 
+  deleteTask(goal_name, goal_id) {
+      var pop_event = window.confirm('Delete " ' + goal_name + '"?');
+      console.log(goal_id)
+      if (pop_event) {
+          this.http.put('http://' + this.dataservice.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'mode': 2, 'goal_id':'g' + goal_id, 'new_name': goal_name, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
+            data => {
+                this.dataservice.users = data['data'];
+                this.dataservice.message = data['message'];
+                if (this.dataservice.selected_sprint) {
+                  this.changeSprint()
+                }
+                else{
+                  this.filterSprint(this.dataservice.sprints)
+                }
+                
+                
+            },
+            err => {
+                console.error(err);
+                if(err['status'] == 401)
+                {
+                    this.dataservice.message = 'Session Invalid or Expired. Please Login.';
+                    this.dataservice.logout();
+                } else
+                {
+                    this.dataservice.message = 'Unexpected Error!';    
+                }
+            }
+        );
+      } else {
+          console.log('cancel');
+      };
+    }
+  
   manageUser(event)
   {
     this.getClicked(event);
@@ -374,7 +420,7 @@ export class ProfileComponent implements OnInit {
     this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': this.chat_text}))
     this.chat_text = '';
   }
-  
+
   ngOnInit() {
 
     }
@@ -393,7 +439,7 @@ export class ProfileComponent implements OnInit {
 
   imageClicked(clicked_goal_id) { 
       console.log(clicked_goal_id);
-      this.goal_id = clicked_goal_id;
+      this.goal_id = "g" + clicked_goal_id;
     }
 
 
@@ -537,7 +583,6 @@ export class ProfileComponent implements OnInit {
       this.task_history = task
       this.show_history = !this.show_history; 
   }
-
 
 
 }

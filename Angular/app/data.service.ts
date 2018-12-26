@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 })
 export class DataService {
     
-  public domain_name = '127.0.0.1:8000';
+  public domain_name = '18.216.46.81:8000';
   
   public message;
   public goal_name;
@@ -32,6 +32,7 @@ export class DataService {
   public sprints;
   public sprint_start;
   public sprint_end;
+  selected_sprint: any;
   
   public sprint_goals;
   
@@ -108,9 +109,6 @@ export class DataService {
             this.authOptions = {
                 headers: new HttpHeaders({'Content-Type': 'application/json', 'Authorization': 'JWT ' + data['token']})
             };
-            this.imageAuthOptions = {
-                headers: new HttpHeaders({ 'Authorization': 'JWT ' + data['token']})
-            };
         },
         err => {
             if(err['status'] == 400)
@@ -177,6 +175,21 @@ export class DataService {
           this.sprint_goals = filter_goal
 
   }
+
+  changeSprint() 
+  {   
+    this.sprint_goals = [];
+      for (var i = 0;  i < this.users.length; i++)  {
+        for (var j = 0;  j < this.users[i].scrumgoal_set.length; j++)  {
+          if (this.users[i].scrumgoal_set[j].time_created > this.selected_sprint.created_on && 
+            this.users[i].scrumgoal_set[j].time_created < this.selected_sprint.ends_on)
+            {                
+             this.users[i].scrumgoal_set[j].user_id = this.users[i].id;
+             this.sprint_goals.push(this.users[i].scrumgoal_set[j]);
+            }
+          } 
+        }
+  }
   
   logout()
   {
@@ -204,6 +217,12 @@ export class DataService {
             this.users = data['data'];
             this.message = data['message'];
             this.filterSprint(this.sprints)
+              if (this.selected_sprint) {
+                  this.changeSprint()
+                }
+                else{
+                  this.filterSprint(this.sprints)
+                }
         },
         err => {
             console.error(err);
@@ -222,7 +241,7 @@ export class DataService {
   
   changeOwner(from_id, to_id)
   {
-    this.http.put('http://' + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'mode': 0, 'from_id': from_id, 'to_id': to_id, 'project_id': this.project}), this.authOptions).subscribe(
+    this.http.put('http://' + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'mode': 0, 'goal_id': from_id, 'to_id': to_id, 'project_id': this.project}), this.authOptions).subscribe(
         data => {
             this.users = data['data'];
             this.message = data['message'];

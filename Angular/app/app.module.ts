@@ -10,11 +10,16 @@ import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { UserComponent } from './user/user.component';
 
+import { GenerateTokenComponent } from './generate-token/generate-token.component';
+import { GroupClassComponent } from './group-class/group-class.component';
+import { SignupComponent } from './signup/signup.component';
+
 import { HttpClientModule } from '@angular/common/http';
 import { ProfileComponent } from './profile/profile.component';
 
 import { DragulaModule } from 'ng2-dragula';
 import { MzButtonModule, MzModalModule } from 'ngx-materialize';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -22,6 +27,9 @@ import { MzButtonModule, MzModalModule } from 'ngx-materialize';
     LoginComponent,
     UserComponent,
     ProfileComponent,
+    GenerateTokenComponent,
+    GroupClassComponent,
+    SignupComponent
   ],
   imports: [
     HttpClientModule,
