@@ -125,10 +125,10 @@
 
                                             <div class="div-add-file" style="display: inline-flex;">
                                                 <a (click)="goalClicked(goal.goal_project_id); upload.openModal()" class="add-file">
-                                                    <i class="Tiny material-icons" id="add_a_photo">add_a_photo</i>
+                                                    <i class="tiny material-icons" id="add_a_photo">add_a_photo</i>
                                                 </a>
-                                                <a (click)="goalClicked(goal.goal_project_id); initGoalChat()" class="add-file">
-                                                    <i class="Tiny material-icons" id="add_a_photo">Chat</i>
+                                                <a (click)="goalClicked(goal.goal_project_id); initGoalChat()">
+                                                    <i class="tiny material-icons" id="chat">chat</i>
                                                 </a>     
                                                 
                                                 <select name= "option{{goal.goal_project_id}}" style="height: 15px; margin: 5px; color: #1f7a7a; font-size: 10px;padding: 0; width: 60px;" [(ngModel)]="selected_history[j]" (change)= "CheckHistory(selected_history[j]); showHistory.openModal();" >
