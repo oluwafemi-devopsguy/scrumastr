@@ -124,8 +124,11 @@
                                                 </a> 
 
                                             <div class="div-add-file" style="display: inline-flex;">
-                                                <a (click)="imageClicked(goal.goal_project_id); upload.openModal()" class="add-file">
+                                                <a (click)="goalClicked(goal.goal_project_id); upload.openModal()" class="add-file">
                                                     <i class="Tiny material-icons" id="add_a_photo">add_a_photo</i>
+                                                </a>
+                                                <a (click)="goalClicked(goal.goal_project_id); initGoalChat()" class="add-file">
+                                                    <i class="Tiny material-icons" id="add_a_photo">Chat</i>
                                                 </a>     
                                                 
                                                 <select name= "option{{goal.goal_project_id}}" style="height: 15px; margin: 5px; color: #1f7a7a; font-size: 10px;padding: 0; width: 60px;" [(ngModel)]="selected_history[j]" (change)= "CheckHistory(selected_history[j]); showHistory.openModal();" >
@@ -184,7 +187,7 @@
                         <img src="http://{{dataservice.domain_name}}{{scrum_image}}" style="width: 450px; height: 220px" alt="image">
                     </mz-modal-content>
                 </mz-modal>                
-                    <mz-modal #showHistory >
+                <mz-modal #showHistory >
                         <mz-modal-header>
                             <h4>Task History Details</h4>
                         </mz-modal-header>
@@ -225,14 +228,44 @@
                                 </table>
                              </div>
                         </mz-modal-content>
-                    </mz-modal>
+                </mz-modal>
+                <!-- <mz-modal #chat>
+                    <mz-modal-header>
+                        <h4>Goal Chat</h4>
+                    </mz-modal-header>
+                    <mz-modal-content>
+                        <div class="card">
+                                    <h5 style="text-align: center; padding-top: 10px">Goal Chat</h5>
+                                    <hr>
+                                    <div style="overflow: auto; height: calc(100vh - 345px); padding-left: 10px; padding-right: 10px" id="chat_div_space">
+                                        <div *ngFor="let message of messages" style="font-size: 0.85rem">
+                                            <li [innerText]="message" style="list-style-type: none; padding-top: 5px; padding-bottom: 5px"></li>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row" style="padding-left: 10px; padding-right: 10px">
+                                        <div style="height: 190px; overflow: auto">
+                                            <div class="input-field col s12">
+                                                <textarea id="chat_text" class="materialize-textarea" [(ngModel)]="chat_text" (keyup.enter)="sendMessage('goal_id')" style="font-size: 0.85rem"></textarea>
+                                                <label for="chat_text">Send a message</label>
+                                            </div>
+                                        <div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </mz-modal-content>
+                </mz-modal> -->
             </div>
         </div>
         
         <div class="col s4" style="position: fixed; right: 0px; top: 0 px;">
             <div class="card">
-                <h5 style="text-align: center; padding-top: 10px">Group Chat</h5>
+                <h5 style="text-align: center; padding-top: 10px"> {{chat_div_title}} </h5>
+                
                 <hr>
+                <div style="text-align: right"><a style="text-align: right" (click)="initMainChat()" *ngIf=" show_project_chat"> switch to Project Chat>>> </a></div>
+                
                 <div style="overflow: auto; height: calc(100vh - 345px); padding-left: 10px; padding-right: 10px" id="chat_div_space">
                     <div *ngFor="let message of messages" style="font-size: 0.85rem">
                         <li [innerText]="message" style="list-style-type: none; padding-top: 5px; padding-bottom: 5px"></li>
@@ -242,9 +275,10 @@
                 <div class="row" style="padding-left: 10px; padding-right: 10px">
                     <div style="height: 190px; overflow: auto">
                         <div class="input-field col s12">
-                            <textarea id="chat_text" class="materialize-textarea" [(ngModel)]="chat_text" (keyup.enter)="sendMessage()" style="font-size: 0.85rem"></textarea>
+                            <textarea id="chat_text" class="materialize-textarea" [(ngModel)]="chat_text" (keyup.enter)="sendMessage('main_chat')" style="font-size: 0.85rem"></textarea>
                             <label for="chat_text">Send a message</label>
                         </div>
+
                     <div>
                 </div>
             </div>

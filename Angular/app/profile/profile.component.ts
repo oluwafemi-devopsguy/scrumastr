@@ -17,6 +17,7 @@ export class ProfileComponent implements OnInit {
   subs = new Subscription();
   public show_zero: boolean = true;
   public show_history: boolean = false;
+  public show_project_chat: boolean = false;
   public show_sprint_option: boolean = false;
   public chat_text: string = "";
   public messages = [];
@@ -29,6 +30,7 @@ export class ProfileComponent implements OnInit {
   sprint_start: Number;
   sprint_end: Number;
   goal_id: string;
+  public chat_div_title: string = "Project Chat"
   present_scrum;
    public task_history: any;
   public iData: any;
@@ -123,7 +125,7 @@ export class ProfileComponent implements OnInit {
             this.dataservice.users = res1['data'];
             this.dataservice.project_name = res1['project_name'];
             this.dataservice.sprints = res2;
-            this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '!join ' + this.dataservice.project_name}));
+            this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '!join ' + this.dataservice.project_name, 'goal_id': 'main_chat_' + this.dataservice.project_name }));
             console.log(this.dataservice.users)
 
 
@@ -199,8 +201,8 @@ export class ProfileComponent implements OnInit {
                   // console.log(this.dataservice.users[i].scrumgoal_set[j].name)
                    // this.dataservice.users[i].scrumgoal_set[j].user_id = this.dataservice.users[i].id
                    filter_goal.push(this.dataservice.users[i].scrumgoal_set[j]);
-                   this.show_sprint_option = true;
-                  }
+                   
+                  }this.show_sprint_option = true;
               } else {
                   this.dataservice.users[i].scrumgoal_set[j].user_id = this.dataservice.users[i].id
                   filter_goal.push(this.dataservice.users[i].scrumgoal_set[j]); 
@@ -415,9 +417,14 @@ export class ProfileComponent implements OnInit {
      
   }
   
-  sendMessage()
+  sendMessage(identity)
   {
-    this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': this.chat_text}))
+    if (this.chat_div_title == "Project Chat") {
+      
+      this.goal_id = "main_chat_" + this.dataservice.project_name 
+      console.log(this.goal_id)
+    }
+    this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': this.chat_text, 'goal_id': this.goal_id }))
     this.chat_text = '';
   }
 
@@ -437,10 +444,21 @@ export class ProfileComponent implements OnInit {
   }
   }
 
-  imageClicked(clicked_goal_id) { 
+  goalClicked(clicked_goal_id) { 
       console.log(clicked_goal_id);
-      this.goal_id = "g" + clicked_goal_id;
+      this.goal_id = "G" + clicked_goal_id;
     }
+
+  initGoalChat(){
+    this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '!goal_chat' + this.goal_id, 'goal_id': this.goal_id }))
+    this.show_project_chat = true;
+    this.chat_div_title = this.goal_id + " Chat"
+  }
+
+  initMainChat(){
+    this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '!join ' + this.dataservice.project_name, 'goal_id': 'main_chat_' + this.dataservice.project_name }));
+    this.chat_div_title = "Project Chat"
+  }
 
 
   // imageUpload()  {
@@ -479,7 +497,8 @@ export class ProfileComponent implements OnInit {
 
   addGoal()
   {
-    console.log(this.on_user);
+    console.log("inside addgoal" + this.on_user);
+
 
     this.dataservice.addGoal(this.on_user);
   }
