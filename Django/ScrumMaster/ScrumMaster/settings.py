@@ -117,9 +117,9 @@ DATABASES = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'scrumastrNew',
-        'USER': 'root',
-        'PASSWORD': '',
+        'NAME': 'scrumastr',
+        'USER': 'scrumastr',
+        'PASSWORD': 'BOLEX_005fash',
         'HOST': 'localhost',
         'PORT': ''
 
@@ -178,7 +178,7 @@ LOGIN_REDIRECT_URL = '/home'
 
 ASGI_APPLICATION = "ScrumMaster.routing.application"
 
-'''
+
 #Uncomment if you have redis.
 CHANNEL_LAYERS = {
     'default': {
@@ -188,4 +188,4 @@ CHANNEL_LAYERS = {
         }
     }
 }
-'''
+

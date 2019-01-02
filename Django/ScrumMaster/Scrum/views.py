@@ -269,8 +269,8 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
         scrum_project_role = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
         author = ScrumProjectRole.objects.get(id=user_id)
         sprint = ScrumSprint.objects.filter(goal_project_id = request.data['project_id'])
-        print(ScrumSprint.objects.latest('ends_on').ends_on)
-        print(datetime.datetime.now().replace(tzinfo=None))
+        print("Last sprint end time: " + (datetime.datetime.strftime(ScrumSprint.objects.latest('ends_on').ends_on, "%Y-%m-%d %H:%M:%S")))
+        print("Present date: " + str(datetime.datetime.now().replace(tzinfo=None)))
             
         if scrum_project_role != author and scrum_project_role.role != 'Owner': 
             return JsonResponse({'message': 'Permission Denied: Unauthorized Addition of a Goal.', 'data': filtered_users(request.data['project_id'])})
@@ -278,7 +278,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
         if len(sprint) < 1:
              return JsonResponse({'message': 'Permission Denied: Sprint not yet started.', 'data': filtered_users(request.data['project_id'])})
 
-        if (datetime.datetime.strftime(ScrumSprint.objects.latest('ends_on').ends_on, "%Y-%m-%d")) < datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d"):
+        if (datetime.datetime.strftime(ScrumSprint.objects.latest('ends_on').ends_on, "%Y-%m-%d %H:%M:%S")) < datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H:%M:%S"):
             return JsonResponse({'message': 'Permission Denied: Last Sprint Period Elapsed.', 'data': filtered_users(request.data['project_id'])})
 
         status_start = 0
