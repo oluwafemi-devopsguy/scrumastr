@@ -4,7 +4,7 @@
       <div class="nav-wrapper">
           <div class="row">
               <div class="col m3">
-                <img src="/src/assets/image/Converted-PNG.png" alt="nav-logo" class="logo">
+                <img src="/assets/image/Converted-PNG.png" alt="nav-logo" class="logo">
               </div>
               <div class="col m3" style="display: flex;">
                 <h3 id="project_title" style="text-align: right">{{dataservice.project_name}}</h3>
@@ -21,6 +21,7 @@
                     <li>
                         <button type="button" class="btn btn-link s_button"  *ngIf="dataservice.role.toLowerCase() == 'owner'" (click)="createSprint()">New Sprint</button> </li>   
                     <li id="username"> {{dataservice.username}} - {{dataservice.role}} </li>
+                    <li><a *ngIf="dataservice.role.toLowerCase() == 'owner', 'admin'" (click)="admin()" id="logout">Admin Panel</a></li>  
                     <li><a (click)="logout()" id="logout">LOGOUT</a></li>
                 </ul>
             </div>
@@ -40,10 +41,10 @@
                         <table [attr.id]="'m' + user.id" (mouseover)="setSelectedUser(user.id)" (mouseleave)="setSelectedUser(-1)">
                             <tr id="author">
                                 <th rowspan="2"><a [routerLink] fragment='{{user.id}}' (click)="scrollIntoView('u' + user.id)"><i class="material-icons" id="account_circle">account_circle</i></a></th>
-                                <a [routerLink] fragment='{{user.id}}' (click)="scrollIntoView('u' + user.id)"  style="font-size: 0.8rem">{{user.user.nickname}} ({{user.total_week_hours}} hours)</a>
+                                <a [routerLink] fragment='{{user.id}}' (click)="scrollIntoView('u' + user.id)"  style="padding-top: 20px; font-size: 0.8rem">{{user.user.nickname}} ({{user.total_week_hours}} hrs)</a>
+                                <a style="margin-top: 30px; font-size: 30px;" (click)="getClicked($event); basicModal.openModal()">+</a>
                                     <div style="display:flex;">
-                                        <a mz-button (click)="dataservice.role.toLowerCase() == 'owner' ? manageUser($event) : doNothing()" class="btn-floating change-role"><i class="material-icons" id="settings">settings</i></a>
-                                        <a mz-button (click)="getClicked($event); basicModal.openModal()" class="btn-floating add-icon"><i class="material-icons" id="add">add</i></a>
+                                        
                                     </div>
                             </tr>
                         </table>

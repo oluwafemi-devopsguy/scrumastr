@@ -84,6 +84,16 @@ export class DataService {
     );
   }
   
+  admin()
+  {
+    this.router.navigate(['admin']);
+  }
+
+  profile()
+  {
+    this.router.navigate(['profile']);
+  }
+
   login()
   {
     this.http.post('http://' + this.domain_name + '/scrum/api-token-auth/', JSON.stringify({'username': this.login_username, 'password': this.login_password, 'project': this.login_project}), this.httpOptions).subscribe(
@@ -209,7 +219,7 @@ export class DataService {
     sessionStorage.removeItem('project_id');
     sessionStorage.removeItem('realname');
   }
-  
+
   moveGoal(goal_id, to_id, hours)
   {
     this.http.patch('http://' + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'goal_id': goal_id, 'to_id': to_id, 'hours': hours, 'project_id': this.project}), this.authOptions).subscribe(
