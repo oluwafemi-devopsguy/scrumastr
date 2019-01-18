@@ -19,6 +19,7 @@ import { ProfileComponent } from './profile/profile.component';
 
 import { DragulaModule } from 'ng2-dragula';
 import { MzButtonModule, MzModalModule } from 'ngx-materialize';
+import { AdminComponent } from './admin/admin.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { MzButtonModule, MzModalModule } from 'ngx-materialize';
     ProfileComponent,
     GenerateTokenComponent,
     GroupClassComponent,
-    SignupComponent
+    SignupComponent,
+    AdminComponent
   ],
   imports: [
     HttpClientModule,
@@ -39,8 +41,13 @@ import { MzButtonModule, MzModalModule } from 'ngx-materialize';
     MzButtonModule,
     MzModalModule,
     DragulaModule.forRoot()
+
   ],
-  providers: [DataService],
+  providers: [
+    DataService
+  ],
+
   bootstrap: [AppComponent]
+
 })
 export class AppModule { }
