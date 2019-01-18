@@ -105,11 +105,10 @@ h5 {
 }
 
 .add-icon {
-    vertical-align: middle;
-    width: 12%!important;
+    width: 20%!important;
     padding: 0px;
     box-shadow: none;
-	height: 18px;
+	height: 25px!important;
 }
 
 .change-role {

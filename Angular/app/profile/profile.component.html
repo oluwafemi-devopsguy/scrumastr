@@ -41,10 +41,9 @@
                         <table [attr.id]="'m' + user.id" (mouseover)="setSelectedUser(user.id)" (mouseleave)="setSelectedUser(-1)">
                             <tr id="author">
                                 <th rowspan="2"><a [routerLink] fragment='{{user.id}}' (click)="scrollIntoView('u' + user.id)"><i class="material-icons" id="account_circle">account_circle</i></a></th>
-                                <a [routerLink] fragment='{{user.id}}' (click)="scrollIntoView('u' + user.id)"  style="padding-top: 20px; font-size: 0.8rem">{{user.user.nickname}} ({{user.total_week_hours}} hrs)</a>
-                                <a style="margin-top: 30px; font-size: 30px;" (click)="getClicked($event); basicModal.openModal()">+</a>
-                                    <div style="display:flex;">
-                                        
+                                <a [routerLink] fragment='{{user.id}}' (click)="scrollIntoView('u' + user.id)"  style="font-size: 0.8rem">{{user.user.nickname}} ({{user.total_week_hours}} hrs)</a>
+                                    <div style="display:inline; padding-left: 50px;">
+                                       <a mz-button (click)="getClicked($event); basicModal.openModal()" class="btn-floating add-icon"><i class="material-icons" id="add">add</i></a> 
                                     </div>
                             </tr>
                         </table>
