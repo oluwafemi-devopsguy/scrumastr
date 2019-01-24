@@ -54,7 +54,7 @@ export class AdminComponent implements OnInit {
     complete: () => { alert('Closed'); } // Callback for Modal close
   };
 
-  constructor(public dataservice: DataService, private dragula: DragulaService, private http: HttpClient, private modalModule: MzModalModule) { 
+  constructor(public dataservice: DataService, private dragula: DragulaService, private http: HttpClient, private modalModule: MzModalModule) {
 
   this.dataservice.realname = sessionStorage.getItem('realname');
   this.dataservice.username = sessionStorage.getItem('username');
@@ -87,6 +87,7 @@ export class AdminComponent implements OnInit {
             });
 
     }
+
   }
 
   ngOnInit() {
@@ -154,6 +155,11 @@ export class AdminComponent implements OnInit {
   doNothing()
   {
      
+  }
+
+  setSelectedUser(id)
+  {
+    this.id_hover = id;    
   }
 
   createUser()
