@@ -11,15 +11,22 @@
                 <div style="float: right; display: flex; margin-top: 5px" [style.display] = "show_sprint_option ? 'block' : 'none'" >
                     <select  name="change_sprint" style="height: 30px; margin: 15px; color: #1f7a7a; width: auto;" [(ngModel)]="dataservice.selected_sprint"  (change)="changeSprint()">
                         <option *ngFor = "let sprint of dataservice.sprints"  [ngValue]="sprint" [selected] = "index == last ? sprint : doNothing()" >
-                            SPRINT {{sprint.id}}:  {{sprint.created_on | date}} - {{sprint.ends_on | date}}
+                         {{sprint.id}}:  {{sprint.created_on | date}} - {{sprint.ends_on | date}}
                         </option>                           
                     </select>
                 </div>
              </div>              
              <div class="col m6">
                 <ul class="right hide-on-med-and-down">
-                    <li>
-                        <button type="button" class="btn btn-link s_button"  *ngIf="dataservice.role.toLowerCase() == 'owner'" (click)="createSprint()">New Sprint</button> </li>   
+                    <li *ngIf="dataservice.role.toLowerCase() == 'owner'">
+                        <a class = "btn dropdown-button "  data-hover="false" data-coverTrigger="true" data-constrainWidth="true" data-activates = "dropdown3">New Sprint
+                            <i class="material-icons right">arrow_drop_down</i></a> 
+                    </li>  
+                    <li *ngIf="dataservice.role.toLowerCase() != 'owner'">
+                        <div><a href="https://slack.com/oauth/authorize?client_id=516134588580.520839787655&state=main_chat_{{dataservice.project_name}}&scope=identity.basic identity.team identity.avatar identity.email"><img alt="Sign in with Slack" height="40" width="139" src="https://platform.slack-edge.com/img/sign_in_with_slack.png" srcset="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x" /></a></div>
+                    </li>
+                    
+                    
                     <li id="username"> {{dataservice.username}} - {{dataservice.role}} </li>
                     <li><a (click)="logout()" id="logout">LOGOUT</a></li>
                 </ul>
@@ -285,3 +292,18 @@
         </div>
     </div>
 </div>
+
+
+
+<ul  id = "dropdown3" class = "dropdown-content" style="margin-top: 50px">             
+                <li>
+                    <a class = "btn"  (click)="createSprint()" style="color: white">New Sprint
+                            </a> 
+
+                               
+                </li>
+                <li>
+                    <div><a href="https://slack.com/oauth/authorize?client_id=516134588580.520839787655&state=main_chat_{{dataservice.project_name}}&scope=incoming-webhook,channels:read,channels:history,groups:history,mpim:history,emoji:read,files:read,groups:read,im:read,im:history,reactions:read,stars:read,users:read,team:read,chat:write:user,chat:write:bot,channels:write,bot"><img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a></div> 
+                    <div><a href="https://slack.com/oauth/authorize?client_id=516134588580.520839787655&state=main_chat_{{dataservice.project_name}}&scope=identity.basic identity.team identity.avatar identity.email"><img alt="Sign in with Slack" height="40" width="139" src="https://platform.slack-edge.com/img/sign_in_with_slack.png" srcset="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x" /></a></div>
+                </li>
+              </ul>

@@ -117,9 +117,9 @@ DATABASES = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'scrumastr',
-        'USER': 'scrumastr',
-        'PASSWORD': 'BOLEX_005fash',
+        'NAME': 'scrumastrNew',
+        'USER': 'root',
+        'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': ''
 
@@ -189,3 +189,4 @@ CHANNEL_LAYERS = {
     }
 }
 
+FRONTEND = 'http://localhost:4200/profile/'

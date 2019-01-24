@@ -1,6 +1,16 @@
 from rest_framework import serializers
 from .models import *
 
+class ScrumSlackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ScrumSlack
+        fields = ('id','bot_access_token', 'access_token')
+
+# class ScrumProjectSlackSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = ScrumProjectSlack
+#         fields = ('slack_client_id', 'slack_client_secret', 'slack_verification_token', 'slack_bot_user_token')
+
 class ScrumGoalHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = ScrumGoalHistory
@@ -24,15 +34,16 @@ class ScrumSprintSerializer(serializers.HyperlinkedModelSerializer):
         
 class ScrumProjectRoleSerializer(serializers.ModelSerializer):
     user = ScrumUserSerializer()
-    scrumgoal_set = ScrumGoalSerializer(many=True)
-    
+    scrumgoal_set = ScrumGoalSerializer(many=True)    
     class Meta:
         model = ScrumProjectRole
         fields = ('role', 'user', 'id', 'scrumgoal_set')        
         
 class ScrumProjectSerializer(serializers.HyperlinkedModelSerializer):
     scrumprojectrole_set = ScrumProjectRoleSerializer(many=True)
+    scrumslack_set = ScrumSlackSerializer(many=True)
     class Meta:
         model = ScrumProject
-        fields = ('name', 'id', 'scrumprojectrole_set', 'project_count')
+        fields = ('name', 'id', 'scrumprojectrole_set','scrumslack_set', 'project_count')
+
 

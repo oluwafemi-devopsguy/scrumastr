@@ -119,7 +119,7 @@ export class ProfileComponent implements OnInit {
       forkJoin(
           this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumprojects/' + this.dataservice.project + '/', this.dataservice.httpOptions),
           this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumsprint/?goal_project_id=' + this.dataservice.project, this.dataservice.authOptions)
-        )
+          )
          .subscribe(([res1, res2]) => {
             this.msg_obs.observe(document.getElementById('chat_div_space'), { attributes: true, childList: true, subtree: true });
             this.dataservice.users = res1['data'];
@@ -192,11 +192,16 @@ export class ProfileComponent implements OnInit {
     console.log(filter_goal)
         // this.dataservice.sprint_goals.length = 0 
           for (var i = 0;  i < this.dataservice.users.length; i++)  {
+            console.log(filter_goal)
+            console.log(this.dataservice.users.length)
             for (var j = 0;  j < this.dataservice.users[i].scrumgoal_set.length; j++)  {
+              console.log(filter_goal)
               if (this.dataservice.sprints.length) {
+                console.log(filter_goal)
                 if (this.dataservice.users[i].scrumgoal_set[j].time_created >= this.dataservice.sprints[this.dataservice.sprints.length - 1].created_on && 
                   this.dataservice.users[i].scrumgoal_set[j].time_created <= this.dataservice.sprints[this.dataservice.sprints.length - 1].ends_on)
-                  {                  
+                  {         
+                  console.log(filter_goal)         
                   // console.log(this.dataservice.users[i].scrumgoal_set[j].time_created)
                   // console.log(this.dataservice.users[i].scrumgoal_set[j].name)
                    // this.dataservice.users[i].scrumgoal_set[j].user_id = this.dataservice.users[i].id
@@ -458,6 +463,7 @@ export class ProfileComponent implements OnInit {
   initMainChat(){
     this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '!join ' + this.dataservice.project_name, 'goal_id': 'main_chat_' + this.dataservice.project_name }));
     this.chat_div_title = "Project Chat"
+    this.show_project_chat = false;
   }
 
 

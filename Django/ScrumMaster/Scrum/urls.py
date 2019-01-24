@@ -27,5 +27,6 @@ def_router.register(r'scrumsprint', views.SprintViewSet, base_name='scrumsprint'
 urlpatterns = [
     url(r'api/', include(def_router.urls)),
     url(r'^api-token-auth/', obtain_jwt_token),
-    path(r'create-demo/', views.createDemoUser)
+    path(r'create-demo/', views.createDemoUser),
+    url(r'^events/', views.Events.as_view()), 
 ]

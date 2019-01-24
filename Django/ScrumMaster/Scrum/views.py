@@ -1,22 +1,33 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User, Group
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse, HttpRequest
 from django.urls import reverse
 from django.contrib import messages
 from django.utils.dateparse import parse_datetime
 from .models import *
 from .serializer import *
-from rest_framework import viewsets
+from rest_framework import viewsets, status
+from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.serializers import ValidationError
 from rest_framework.response import Response
 from django.core import serializers
 from django.core.files.storage import FileSystemStorage
+from django.conf import settings
+from slackclient import SlackClient
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 import random
 import datetime
 import re
 import json
+import hashlib
+
+from Scrum.initials import *
+
+
+from time import sleep
 
 # Create your views here.
 
@@ -427,11 +438,23 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
         goal = ScrumGoalHistory (name=name, status=status, time_created = time_created, goal_project_id=goal_project_id, user=user, project=project, file=file, goal_id=goal, done_by=self.request.user, message=concat_message)
         goal.save()
         return
+
+# def slack_details(project):
+#     slack = project.scrumprojectslack_set.get(project=project)
+#     channelObject = dict()
+#     channelObject["slack_client_id"] = slack.slack_client_id
+#     channelObject["slack_client_secret"] = slack.slack_client_secret
+#     channelObject["slack_verification_token"] = slack.slack_verification_token
+#     channelObject["slack_bot_user_token"] = slack.slack_bot_user_token
+#     print(channelObject)
+#     print("========================PROJECT======================")
+#     return channelObject
             
 def jwt_response_payload_handler(token, user=None, request=None):
     project = None
     try:
         project = ScrumProject.objects.get(name__iexact=request.data['project'])
+        
     except ScrumProject.DoesNotExist:
         raise ValidationError('The selected project does not exist.');
     
@@ -555,3 +578,151 @@ class SprintViewSet(viewsets.ModelViewSet):
             pass  
 
         return
+
+
+ 
+
+
+class Events(APIView):
+    print("======================print=====================")
+    channel_layer = get_channel_layer()
+    slack_app = ChatscrumSlackApp.objects.get(id = 1)
+    def get(self, request, *args, **kwargs):
+        # Return code in Url parameter or empty string if no code
+        sc = SlackClient("")
+        auth_code = request.GET.get('code', '') 
+        project_id = request.GET.get('state', '')
+        post_data = request.data
+
+
+# =================================Get Auth code response from slack==============================================
+        print("====================================auth code=================" + auth_code)
+        if auth_code:
+            auth_response = sc.api_call(
+                "oauth.access",
+                client_id=self.slack_app.CLIENT_ID,
+                client_secret=self.slack_app.CLIENT_SECRET,
+                code=auth_code
+              )
+            if auth_response["ok"] == True:
+                print("====================Get usermail etc==========================")
+                print(auth_response)
+                print(auth_response["access_token"])
+                user_sc = SlackClient(auth_response["access_token"])
+                user_response = user_sc.api_call(
+                    "users.identity"                  )
+                print("=============USER DETAILS============" + user_response["user"]["email"])
+                try:
+                    user= ScrumUser.objects.get(user__username=user_response["user"]["email"])
+                except:
+                    html = "<html><body>Slack email not recognised</body></html>" 
+                    return HttpResponse(html)
+
+                
+                print(user)
+                print(user_response)
+                pass
+
+# =========================================Get Room and project=====================================================================
+        chat_room,created = ScrumChatRoom.objects.get_or_create(name=project_id, hash=hashlib.sha256(project_id.encode('UTF-8')).hexdigest())
+        scrum_project = ScrumProject.objects.get(name = project_id[10:])  
+        try:
+            project_token, created = ScrumSlack.objects.get_or_create(
+            scrumproject = scrum_project,
+            room = chat_room, 
+            user_id=auth_response["user_id"],
+            team_name=auth_response["team_name"],
+            team_id=auth_response["team_id"], 
+            channel_id=auth_response["incoming_webhook"]["channel_id"], 
+            bot_user_id=auth_response["bot"]["bot_user_id"],  
+            access_token=auth_response["access_token"], 
+            bot_access_token=auth_response["bot"]["bot_access_token"]
+            )
+            #===============================Update Scrumy user details for Add to slack======================================================================
+            user.slack_user_id = user_response["user"]["id"]
+            user.slack_email = user_response["user"]["email"]
+            user.save()
+            print("===================================================user channel add=========================")
+        except KeyError as error:
+            print(user.slack_user_id)
+            # scrumproject = scrum_project,
+            # room = chat_room, 
+            # user_id = user_response["user"]["id"],
+            # team_name=user_response["team_name"],
+            # team_id=user_response["team"]["id"], 
+            # channel_id=auth_response["incoming_webhook"]["channel_id"], 
+            # bot_user_id=auth_response["bot"]["bot_user_id"],  
+            # access_token=auth_response["access_token"], 
+            # bot_access_token=auth_response["bot"]["bot_access_token"]
+#===============================Update Scrumy user details for sign in to slack======================================================================
+            user.slack_user_id = user_response["user"]["id"]
+            user.slack_email = user_response["user"]["email"]
+            user.save()            
+            print("===================================================user add=========================")
+
+# =========================================Test if Slack Token Exist=======================================================================
+
+
+        # try:
+        #     print("=========================TRY==========================================")
+        #     print(auth_response)
+        #     print(auth_response["ok"])
+        #     project_token = ScrumSlack.objects.get(room=chat_room)
+        # except ScrumSlack.DoesNotExist:
+        #     print("=========================ADD SLACK DETAILS TO DB================================")
+        #     slack_token = ScrumSlack(
+        #            scrumproject = scrum_project,
+        #            room = chat_room, 
+        #            user_id=auth_response["user_id"],
+        #            team_name=auth_response["team_name"],
+        #            team_id=auth_response["team_id"], 
+        #            channel_id=auth_response["incoming_webhook"]["channel_id"], 
+        #            bot_user_id=auth_response["bot"]["bot_user_id"],  
+        #            access_token=auth_response["access_token"], 
+        #            bot_access_token=auth_response["bot"]["bot_access_token"])
+        #     slack_token.save()         
+        return redirect(settings.FRONTEND)
+
+
+ 
+    def post(self, request):            
+        print("=========================REQUEST DATA==================================")    
+        post_data = request.data 
+        print(post_data)
+        print("========================================================================")
+
+
+# =========================================URL verification challenge===============================================================
+        if post_data.get('type') == 'url_verification':
+            print("===================================url_verification===========================================================")
+            print(post_data["challenge"])
+            return Response(data=post_data,
+                            status=status.HTTP_200_OK)
+
+        if post_data.get('event')["type"] == "message":
+            try:
+                print("=================CHAT======================")
+                print(post_data.get('event')["client_msg_id"] )        
+                print(post_data["event"]["channel"])   
+                chat_room= ScrumSlack.objects.get(channel_id=post_data["event"]["channel"])
+                new_message = ScrumChatMessage(room=chat_room.room, user=post_data["event"]["user"], message=post_data["event"]["text"])
+                new_message.save()
+
+                chatRoom = ScrumChatRoom.objects.get(id = chat_room.room_id).hash
+                print("==========================chatRoom==================")
+                print(chatRoom)                
+            
+                async_to_sync(self.channel_layer.group_send)(
+                    chatRoom,
+                    {"type": "chat_message", 'user': post_data["event"]["user"], 'message': post_data["event"]["text"]},
+                )
+                return Response(data=post_data,
+                                status=status.HTTP_200_OK)
+            except KeyError as error:
+                # ===========Response for when no client message id
+                return Response(data=post_data,
+                                status=status.HTTP_200_OK)
+
+        return Response(status=status.HTTP_200_OK)
+
+            
