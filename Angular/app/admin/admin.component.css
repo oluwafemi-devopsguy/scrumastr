@@ -112,10 +112,12 @@ h5 {
 }
 
 .change-role {
-    width: 7%!important;
+    position: absolute;
+    padding-left: 50px;
+    width: 5%!important;
     padding: 0px;
     box-shadow: none;
-	height: 30px;
+    height: 30px;
 }
 #edit {
     align-content: center;
@@ -217,8 +219,7 @@ a:link, a:visited{
 }
 
 a:hover, a:active {
-    color: white;
-    background-color: grey;
+    
 }
 
 .s_button{

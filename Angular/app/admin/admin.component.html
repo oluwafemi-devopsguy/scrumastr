@@ -21,22 +21,22 @@
     </div>
     </nav>   
 </div>
-
+<h3 style="text-align: center;">{{dataservice.message}}</h3>
 <div class="container-fluid">
 	<div>
 	<p style="font-size: 1.4rem; text-align: left; padding-left: 30px; color: rgba(0, 0, 0, 0.74); font-weight: bolder; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">Create a New User<a mz-button (click)="getClicked($event); basicModal.openModal()" class="btn-floating add-icon"><i class="material-icons" id="add">add</i></a></p>
     <br>
-    <div class="">
+    <div ng-controller = "userslist" class="">
                 <h5 style="font-size: 1.4rem; text-align: left; padding-left: 100px; padding-top: 10px color: rgba(0, 0, 0, 0.74); font-weight: bolder; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">Users</h5>
                 <ul *ngFor="let user of dataservice.users">
                     <li>
-                        <table>
+                        <table style="width:20%">
                             <tr id="author">
-                                <a [routerLink] fragment='{{user.id}}'><i class="material-icons" id="account_circle">account_circle</i></a>
-                                <a [routerLink] fragment='{{user.id}}' style="font-size: 1.2rem;">{{user.user.nickname}}</a>
-                                    <div style="display:flex; padding-left: 90px;">
+                                <th style="width: 20%"><a [routerLink] fragment='{{user.id}}'><i class="material-icons" id="account_circle">account_circle</i></a><th></th>
+                                <a ng-model="users" [routerLink] fragment='{{user.id}}' style="font-size: 1.2rem; display: flex; text-align: center;">{{user.user.nickname}}<div style="display:inline; width: 50%">
                                         <a mz-button (click)="dataservice.role.toLowerCase() == 'owner' ? manageUser($event) : doNothing()" class="btn-floating change-role"><i class="material-icons" id="settings">settings</i></a>
-                                    </div>
+                                    </div></a>
+                                    
                             </tr>
                         </table>
                     </li>

@@ -16,6 +16,29 @@ import { MzModalModule } from 'ngx-materialize';
 export class AdminComponent implements OnInit {
   public arrCount = [0, 1, 2, 3];
   public on_user;
+  public domain_name = '127.0.0.1:8000';
+  subs = new Subscription();
+  public show_zero: boolean = true;
+  public show_history: boolean = false;
+  public show_project_chat: boolean = false;
+  public show_sprint_option: boolean = false;
+  public chat_text: string = "";
+  public messages = [];
+  public websocket;
+  public msg_obs;
+  public at_bottom: boolean = true;
+  public id_hover = -1;
+  public id_click = -1;
+  sprint_start: Number;
+  sprint_end: Number;
+  goal_id: string;
+  public chat_div_title: string = "Project Chat"
+  present_scrum;
+   public task_history: any;
+  public iData: any;
+  public image_upload: File = null;
+  public scrum_image: File = null;
+  public selected_history:any = [];
 
   public modalOptions: Materialize.ModalOptions = {
     dismissible: false, // Modal can be dismissed by clicking outside of the modal
@@ -31,7 +54,40 @@ export class AdminComponent implements OnInit {
     complete: () => { alert('Closed'); } // Callback for Modal close
   };
 
-  constructor(public dataservice: DataService, private dragula: DragulaService, private http: HttpClient, private modalModule: MzModalModule) { }
+  constructor(public dataservice: DataService, private dragula: DragulaService, private http: HttpClient, private modalModule: MzModalModule) { 
+
+  this.dataservice.realname = sessionStorage.getItem('realname');
+  this.dataservice.username = sessionStorage.getItem('username');
+  this.dataservice.role = sessionStorage.getItem('role');
+  this.dataservice.project = sessionStorage.getItem('project_id');
+
+  this.dataservice.authOptions = {
+        headers: new HttpHeaders({'Content-Type': 'application/json', 'Authorization': 'JWT ' + sessionStorage.getItem('token')})
+    };
+    this.dataservice.imageAuthOptions = {
+        headers: new HttpHeaders({'Authorization': 'JWT ' + sessionStorage.getItem('token')})
+    };
+
+    this.websocket = new WebSocket('ws://' + this.dataservice.domain_name + '/scrum/');
+    this.websocket.onopen = (evt) => {
+      forkJoin(
+          this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumprojects/' + this.dataservice.project + '/', this.dataservice.httpOptions),
+          this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumsprint/?goal_project_id=' + this.dataservice.project, this.dataservice.authOptions)
+        )
+         .subscribe(([res1, res2]) => {
+            this.dataservice.users = res1['data'];
+            this.dataservice.project_name = res1['project_name'];
+            this.dataservice.sprints = res2;
+            this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '!join ' + this.dataservice.project_name, 'goal_id': 'main_chat_' + this.dataservice.project_name }));
+            console.log(this.dataservice.users)
+        },
+        err => {
+                this.dataservice.message = 'Unexpected Error!';
+                console.log(err);
+            });
+
+    }
+  }
 
   ngOnInit() {
   
