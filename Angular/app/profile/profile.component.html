@@ -18,12 +18,17 @@
              </div>              
              <div class="col m6">
                 <ul class="right hide-on-med-and-down">
-                    <li *ngIf="dataservice.role.toLowerCase() == 'owner'">
-                        <a class = "btn dropdown-button "  data-hover="false" data-coverTrigger="true" data-constrainWidth="true" data-activates = "dropdown3">New Sprint
+                    <span *ngIf="dataservice.role.toLowerCase() == 'owner'">
+                        <li *ngIf="dataservice.project_slack=='True';">
+                            <button type="button" class="btn btn-link s_button" (click)="createSprint()">New Sprint</button> 
+                        </li>                        
+                        <li *ngIf="dataservice.project_slack=='False';">
+                            <a class = "btn dropdown-button "  data-hover="false" data-coverTrigger="true" data-constrainWidth="true" data-activates = "dropdown3">New Sprint
                             <i class="material-icons right">arrow_drop_down</i></a> 
-                    </li>  
+                        </li>                                                                       
+                    </span>
                     <li *ngIf="dataservice.role.toLowerCase() != 'owner'">
-                        <div><a href="https://slack.com/oauth/authorize?client_id=516134588580.520839787655&state=main_chat_{{dataservice.project_name}}&scope=identity.basic identity.team identity.avatar identity.email"><img alt="Sign in with Slack" height="40" width="139" src="https://platform.slack-edge.com/img/sign_in_with_slack.png" srcset="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x" /></a></div>
+                        <div *ngIf="dataservice.project_slack=='False';"><a href="https://slack.com/oauth/authorize?client_id=516134588580.520839787655&state=main_chat_{{dataservice.project_name}}&scope=identity.basic identity.team identity.avatar identity.email"><img alt="Sign in with Slack" height="40" width="139" src="https://platform.slack-edge.com/img/sign_in_with_slack.png" srcset="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x" /></a></div>
                     </li>
                     
                     

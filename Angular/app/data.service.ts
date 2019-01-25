@@ -22,7 +22,8 @@ export class DataService {
   public createuser_projname;
   
   public username;
-  public slack;
+  public user_slack: boolean = false;
+  public project_slack: boolean = false;
   public realname;
   public role;
   public role_id;
@@ -95,13 +96,16 @@ export class DataService {
             sessionStorage.setItem('role_id', data['role_id']);
             sessionStorage.setItem('token', data['token']);
             sessionStorage.setItem('project_id', data['project_id']);
-            sessionStorage.setItem('slack', data['slack']);
+            sessionStorage.setItem('user_slack', data['user_slack']);
+            sessionStorage.setItem('project_slack', data['project_slack']);
             this.username = this.login_username;
             this.role = data['role'];
             this.role_id = data['role_id'];
             this.realname = data['name'];
             this.project = data['project_id'];
-            this.slack = data['slack'];
+            this.user_slack = data['user_slack'];
+            this.project_slack = data['project_slack'];
+            console.log(this.project_slack)
             this.message = 'Welcome!';
             this.router.navigate(['profile']);
             this.login_username = '';
@@ -203,6 +207,8 @@ export class DataService {
     this.realname = '';
     this.project = 0;
     this.project_name = '';
+    this.user_slack = '';
+    this.project_slack = '';
     this.router.navigate(['home']);
     this.authOptions = {};
     sessionStorage.removeItem('username');
@@ -211,6 +217,8 @@ export class DataService {
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('project_id');
     sessionStorage.removeItem('realname');
+    sessionStorage.removeItem('user_slack');
+    sessionStorage.removeItem('project_slack');
   }
   
   moveGoal(goal_id, to_id, hours)

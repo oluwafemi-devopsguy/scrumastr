@@ -453,8 +453,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
 def jwt_response_payload_handler(token, user=None, request=None):
     project = None
     try:
-        project = ScrumProject.objects.get(name__iexact=request.data['project'])
-        
+        project = ScrumProject.objects.get(name__iexact=request.data['project'])        
     except ScrumProject.DoesNotExist:
         raise ValidationError('The selected project does not exist.');
     
@@ -462,13 +461,20 @@ def jwt_response_payload_handler(token, user=None, request=None):
         scrum_project_role = ScrumProjectRole(role="Developer", user=user.scrumuser, project=project)
         scrum_project_role.save()
 
+    user_slack = bool(user.scrumuser.slack_email)
+    if project.scrumslack_set.all().exists():
+        project_slack = "True"
+    else:
+        project_slack = "False"
         
     return {
         'token': token,
         'name': user.scrumuser.nickname,
         'role': project.scrumprojectrole_set.get(user=user.scrumuser).role,
         'project_id': project.id,
-        'role_id': project.scrumprojectrole_set.get(user=user.scrumuser).id
+        'role_id': project.scrumprojectrole_set.get(user=user.scrumuser).id,
+        'user_slack' : user_slack,
+        'project_slack' : project_slack
     }
     
 
@@ -584,9 +590,12 @@ class SprintViewSet(viewsets.ModelViewSet):
 
 
 class Events(APIView):
-    print("======================print=====================")
     channel_layer = get_channel_layer()
-    slack_app = ChatscrumSlackApp.objects.get(id = 1)
+    try:
+        slack_app = ChatscrumSlackApp.objects.get(id = 1)
+    except:
+        pass
+    
     def get(self, request, *args, **kwargs):
         # Return code in Url parameter or empty string if no code
         sc = SlackClient("")
@@ -597,6 +606,8 @@ class Events(APIView):
 
 # =================================Get Auth code response from slack==============================================
         print("====================================auth code=================" + auth_code)
+        print(self.slack_app)
+        print("====================================auth code=================" + self.slack_app.CLIENT_ID)
         if auth_code:
             auth_response = sc.api_call(
                 "oauth.access",
