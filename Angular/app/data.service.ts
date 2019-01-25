@@ -22,8 +22,8 @@ export class DataService {
   public createuser_projname;
   
   public username;
-  public user_slack: boolean = false;
-  public project_slack: boolean = false;
+  public user_slack;
+  public project_slack;
   public realname;
   public role;
   public role_id;
