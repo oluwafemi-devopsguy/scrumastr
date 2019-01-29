@@ -1,3 +1,6 @@
+from django.core.mail import send_mail
+from ScrumMaster import settings
+from smtplib import SMTPException
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User, Group
@@ -155,6 +158,21 @@ def move_goal(request, goal_id, to_id):
         messages.error(request, 'Error: Please login first.')
         return HttpResponseRedirect(reverse('login'))
 '''
+
+class ScrumEmailViewSet(viewsets.ModelViewSet):
+    queryset = ScrumEmail.objects.all()
+    serializer_class = ScrumEmailSerializer
+
+    def create(self, request):
+
+        messageTo = request.data['messagebody']
+        emailTo = request.data['email']
+        sent = send_mail('Invitation Email', 'You are invited to join chatscrum at 127.0.0.1:4200/createuser. You are required to type ' + messageTo + ' in the project area when logging in.', 'nathanoluwaseyi@gmail.com', [emailTo])      
+        if sent:
+            return JsonResponse({'message': 'Email sent Successfully.'})
+        else:
+            return JsonResponse({'message': 'Error: Email not sent.'})
+
 
 def createDemoUser(request):
     demo_user = User.objects.create(username='demouser' + str(random.random())[2:])

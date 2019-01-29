@@ -17,6 +17,11 @@ class ScrumUserSerializer(serializers.ModelSerializer):
         model = ScrumUser
         fields = ('nickname', 'id')
 
+class ScrumEmailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ScrumEmail
+        fields = ('email', 'id')        
+
 class ScrumSprintSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = ScrumSprint
