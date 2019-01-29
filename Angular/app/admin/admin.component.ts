@@ -167,6 +167,11 @@ export class AdminComponent implements OnInit {
     this.dataservice.createUser();  
   }
 
+  sendEmail()
+  {
+    this.dataservice.sendEmail();  
+  }
+
   home()
   {
   	this.dataservice.profile();

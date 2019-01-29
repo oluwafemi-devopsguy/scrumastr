@@ -21,6 +21,9 @@ export class DataService {
   public createuser_usertype = "User";
   public createuser_projname;
   
+  public inviteuser_email;
+  public message_body;
+
   public username;
   public realname;
   public role;
@@ -60,6 +63,23 @@ export class DataService {
         }
     );
   }
+
+  sendEmail()
+  {
+    this.http.post('http://' + this.domain_name + '/scrum/api/scrumemail/', JSON.stringify({'email': this.inviteuser_email, 'messagebody':this.message_body}), this.authOptions).subscribe(
+        data => {
+            this.message = 'Invtation Email has been sent'
+            this.message_body = '';
+            this.inviteuser_email = '';
+        },
+        err => {
+            this.message = 'Email Not sent! Error!';
+            console.error(err);
+            this.message_body = '';
+            this.inviteuser_email = '';
+        }
+    );
+  }
   
   createUser()
   {
@@ -83,6 +103,7 @@ export class DataService {
         }
     );
   }
+
   
   admin()
   {
