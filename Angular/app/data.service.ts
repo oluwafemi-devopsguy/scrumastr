@@ -68,7 +68,7 @@ export class DataService {
   {
     this.http.post('http://' + this.domain_name + '/scrum/api/scrumemail/', JSON.stringify({'email': this.inviteuser_email, 'messagebody':this.message_body}), this.authOptions).subscribe(
         data => {
-            this.message = 'Invtation Email has been sent'
+            this.message = 'Invitation Email has been sent'
             this.message_body = '';
             this.inviteuser_email = '';
         },
@@ -107,6 +107,7 @@ export class DataService {
   
   admin()
   {
+    this.message = 'Welcome to the Admin Panel'
     this.router.navigate(['admin']);
   }
 

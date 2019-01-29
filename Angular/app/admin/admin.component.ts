@@ -100,7 +100,7 @@ export class AdminComponent implements OnInit {
   	this.dataservice.logout();
   }
 
-  manageUser(event)
+   manageUser(event)
   {
     this.getClicked(event);
     var role_name = window.prompt('Change User Role:\nSelect Between: Developer, Admin, Quality Analyst, or Owner:', '');
@@ -112,6 +112,7 @@ export class AdminComponent implements OnInit {
     role_name = role_name.toLowerCase();
     if(role_name == 'developer' || role_name == 'quality analyst' || role_name == 'admin' || role_name == 'owner')
     {
+        console.log(this.on_user)
         this.http.patch('http://' + this.dataservice.domain_name + '/scrum/api/scrumprojectroles/', JSON.stringify({'role': role_name, 'id': this.on_user, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
             data => {
                 this.dataservice.users = data['data'];

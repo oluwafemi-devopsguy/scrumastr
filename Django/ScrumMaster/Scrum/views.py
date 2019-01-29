@@ -268,6 +268,10 @@ class ScrumProjectRoleViewSet(viewsets.ModelViewSet):
         scrum_project_role = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
         to_id = request.data['id'][1:]
         
+        print(request.data['role'])
+        print(request.data['id'][1:])
+        print(request.data['id'])
+        
         author = ScrumProjectRole.objects.get(id=to_id)
         author.role = request.data['role'].capitalize()
         if request.data['role'] == 'quality analyst':
