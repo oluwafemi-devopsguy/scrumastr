@@ -31,7 +31,7 @@
             <div class="">
                 <ul *ngFor="let user of dataservice.users">
                     <li>
-                        <table [attr.id]="'m' + user.id" (mouseover)="setSelectedUser(user.id)" (mouseleave)="setSelectedUser(-1)">
+                        <table style="border-collapse: separate;" [attr.id]="'m' + user.id" (mouseover)="setSelectedUser(user.id)" (mouseleave)="setSelectedUser(-1)">
                             <tr id="author">
                                 <th style="width: 1%"><a [routerLink] fragment='{{user.id}}' (click)="scrollIntoView('u' + user.id)"><i class="material-icons" id="account_circle">account_circle</i></a></th>
                                 <a [routerLink] fragment='{{user.id}}' (click)="scrollIntoView('u' + user.id)"  style="margin-right: 0;font-size: 1.2rem">{{user.user.nickname}}</a>

@@ -113,6 +113,7 @@ export class DataService {
 
   profile()
   {
+    this.message = 'Welcome'
     this.router.navigate(['profile']);
   }
 

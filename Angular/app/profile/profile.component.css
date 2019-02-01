@@ -52,7 +52,9 @@ nav ul button:hover {
   color: black;
 } 
 
-
+#adminpanel {
+  color: black;
+}
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;

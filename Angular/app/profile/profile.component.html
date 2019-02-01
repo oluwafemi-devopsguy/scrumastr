@@ -21,7 +21,7 @@
                     <li>
                         <button type="button" class="btn btn-link s_button"  *ngIf="dataservice.role.toLowerCase() == 'owner'" (click)="createSprint()">New Sprint</button> </li>   
                     <li id="username"> {{dataservice.username}} - {{dataservice.role}} </li>
-                    <li><a *ngIf="dataservice.role.toLowerCase() == 'owner', 'admin'" (click)="admin()" id="logout">Admin Panel</a></li>  
+                    <li><a *ngIf="dataservice.role.toLowerCase() == 'owner', 'admin'" (click)="admin()" id="adminpanel">Admin Panel</a></li>  
                     <li><a (click)="logout()" id="logout">LOGOUT</a></li>
                 </ul>
             </div>
