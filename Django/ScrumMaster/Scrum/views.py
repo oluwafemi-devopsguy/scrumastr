@@ -656,42 +656,11 @@ class Events(APIView):
             print("===================================================user channel add=========================")
         except KeyError as error:
             print(user.slack_user_id)
-            # scrumproject = scrum_project,
-            # room = chat_room, 
-            # user_id = user_response["user"]["id"],
-            # team_name=user_response["team_name"],
-            # team_id=user_response["team"]["id"], 
-            # channel_id=auth_response["incoming_webhook"]["channel_id"], 
-            # bot_user_id=auth_response["bot"]["bot_user_id"],  
-            # access_token=auth_response["access_token"], 
-            # bot_access_token=auth_response["bot"]["bot_access_token"]
-#===============================Update Scrumy user details for sign in to slack======================================================================
             user.slack_user_id = user_response["user"]["id"]
             user.slack_email = user_response["user"]["email"]
             user.save()            
             print("===================================================user add=========================")
-
-# =========================================Test if Slack Token Exist=======================================================================
-
-
-        # try:
-        #     print("=========================TRY==========================================")
-        #     print(auth_response)
-        #     print(auth_response["ok"])
-        #     project_token = ScrumSlack.objects.get(room=chat_room)
-        # except ScrumSlack.DoesNotExist:
-        #     print("=========================ADD SLACK DETAILS TO DB================================")
-        #     slack_token = ScrumSlack(
-        #            scrumproject = scrum_project,
-        #            room = chat_room, 
-        #            user_id=auth_response["user_id"],
-        #            team_name=auth_response["team_name"],
-        #            team_id=auth_response["team_id"], 
-        #            channel_id=auth_response["incoming_webhook"]["channel_id"], 
-        #            bot_user_id=auth_response["bot"]["bot_user_id"],  
-        #            access_token=auth_response["access_token"], 
-        #            bot_access_token=auth_response["bot"]["bot_access_token"])
-        #     slack_token.save()         
+       
         return redirect(settings.FRONTEND)
 
 
@@ -715,7 +684,7 @@ class Events(APIView):
                 print("=================CHAT======================")
                 print(post_data.get('event')["client_msg_id"] )        
                 print(post_data["event"]["channel"])   
-                chat_room= ScrumSlack.objects.get(channel_id=post_data["event"]["channel"])
+                chat_room= ScrumSlack.objects.filter(channel_id=post_data["event"]["channel"]).first()
                 new_message = ScrumChatMessage(room=chat_room.room, user=post_data["event"]["user"], message=post_data["event"]["text"])
                 new_message.save()
 
