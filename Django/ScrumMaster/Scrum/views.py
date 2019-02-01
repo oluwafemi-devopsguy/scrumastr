@@ -167,7 +167,7 @@ class ScrumEmailViewSet(viewsets.ModelViewSet):
 
         messageTo = request.data['messagebody']
         emailTo = request.data['email']
-        sent = send_mail('Invitation Email', 'You are invited to join chatscrum at 127.0.0.1:4200/createuser. You are required to type ' + messageTo + ' in the project area when logging in.', 'nathanoluwaseyi@gmail.com', [emailTo])      
+        sent = send_mail('Invitation Email', 'Hello, You are invited to join chatscrum by folowing this link. http://127.0.0.1:4200/createuser. You are required to type ' + messageTo + ' in the project area when logging in. Thanks and regards.', 'admin@linuxjobber.com', [emailTo])      
         if sent:
             return JsonResponse({'message': 'Email sent Successfully.'})
         else:
@@ -271,7 +271,7 @@ class ScrumProjectRoleViewSet(viewsets.ModelViewSet):
         print(request.data['role'])
         print(request.data['id'][1:])
         print(request.data['id'])
-        
+
         author = ScrumProjectRole.objects.get(id=to_id)
         author.role = request.data['role'].capitalize()
         if request.data['role'] == 'quality analyst':
