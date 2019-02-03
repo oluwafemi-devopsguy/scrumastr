@@ -28,8 +28,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
         print("+++++++++++++++++++++++ room grouup name++++++++++++++++"  + self.room_group_name)
         room = ScrumChatRoom.objects.get(hash=self.room_group_name)
         print("+++++++++++++++++++++++room send to slack++++++++++++++++")
-        print(room)
-        access_token = room.scrumslack_set.get(room=room).bot_access_token
+        print(room)        
+        try:
+            access_token = room.scrumslack_set.get(room=room).bot_access_token       
+        except ScrumSlack.DoesNotExist:
+            return
         print("+++++++++++++++++++++++ACCESS TOKEN++++++++++++++++")
         print(access_token)
         sc = SlackClient(access_token)

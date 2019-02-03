@@ -247,7 +247,10 @@ class ScrumProjectViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, pk=None):
         try:
             queryset = ScrumProject.objects.get(pk=pk)
-            return JsonResponse({'project_name': queryset.name, 'data': filtered_users(pk)})
+            slack_installed = queryset.scrumslack_set.all().exists()
+            print("======================Slack exists=======================" )
+            print(slack_installed)
+            return JsonResponse({'project_name': queryset.name, "slack_installed":slack_installed, 'data': filtered_users(pk)})
         except ScrumProject.DoesNotExist:
             return JsonResponse({'detail': 'Not found.'})
     
@@ -592,7 +595,7 @@ class SprintViewSet(viewsets.ModelViewSet):
 class Events(APIView):
     channel_layer = get_channel_layer()
     try:
-        slack_app = ChatscrumSlackApp.objects.get(id = 1)
+        slack_app = ChatscrumSlackApp.objects.all().first()
     except:
         pass
     
@@ -606,7 +609,7 @@ class Events(APIView):
 
 # =================================Get Auth code response from slack==============================================
         print("====================================auth code=================" + auth_code)
-        print(self.slack_app)
+        
         print("====================================auth code=================" + self.slack_app.CLIENT_ID)
         if auth_code:
             auth_response = sc.api_call(
@@ -622,7 +625,9 @@ class Events(APIView):
                 user_sc = SlackClient(auth_response["access_token"])
                 user_response = user_sc.api_call(
                     "users.identity"                  )
-                print("=============USER DETAILS============" + user_response["user"]["email"])
+                print("=============USER DETAILS============" )
+                print( user_response["user"]["email"])
+                print(user_response)
                 try:
                     user= ScrumUser.objects.get(user__username=user_response["user"]["email"])
                 except:
