@@ -616,7 +616,8 @@ class Events(APIView):
                 "oauth.access",
                 client_id=self.slack_app.CLIENT_ID,
                 client_secret=self.slack_app.CLIENT_SECRET,
-                code=auth_code
+                code=auth_code,
+                Scopes="identity.basic"
               )
             if auth_response["ok"] == True:
                 print("====================Get usermail etc==========================")
@@ -624,15 +625,22 @@ class Events(APIView):
                 print(auth_response["access_token"])
                 user_sc = SlackClient(auth_response["access_token"])
                 user_response = user_sc.api_call(
-                    "users.identity"                  )
+                    "users.identity" ,
+                                 )
                 print("=============USER DETAILS============" )
-                print( user_response["user"]["email"])
+                
                 print(user_response)
+                # print( user_response["user"]["email"])
                 try:
                     user= ScrumUser.objects.get(user__username=user_response["user"]["email"])
                 except:
+                    print(user_response)
                     html = "<html><body>Slack email not recognised</body></html>" 
                     return HttpResponse(html)
+                    try:
+                        pass
+                    except Exception as e:
+                        raise e
 
                 
                 print(user)
@@ -665,6 +673,7 @@ class Events(APIView):
             user.slack_email = user_response["user"]["email"]
             user.save()            
             print("===================================================user add=========================")
+            print(user)
        
         return redirect(settings.FRONTEND)
 
@@ -685,28 +694,43 @@ class Events(APIView):
                             status=status.HTTP_200_OK)
 
         if post_data.get('event')["type"] == "message":
-            try:
-                print("=================CHAT======================")
-                print(post_data.get('event')["client_msg_id"] )        
-                print(post_data["event"]["channel"])   
-                chat_room= ScrumSlack.objects.filter(channel_id=post_data["event"]["channel"]).first()
-                new_message = ScrumChatMessage(room=chat_room.room, user=post_data["event"]["user"], message=post_data["event"]["text"])
-                new_message.save()
 
-                chatRoom = ScrumChatRoom.objects.get(id = chat_room.room_id).hash
-                print("==========================chatRoom==================")
-                print(chatRoom)                
-            
-                async_to_sync(self.channel_layer.group_send)(
-                    chatRoom,
-                    {"type": "chat_message", 'user': post_data["event"]["user"], 'message': post_data["event"]["text"]},
-                )
+            try:
+                slack_user = ScrumUser.objects.filter(slack_user_id=post_data["event"]["user"]).first()
+                if slack_user is not None: 
+                    print("==========================Slack user=================" + slack_user.nickname)
+                    slack_user_nick = slack_user.nickname
+                else:
+                    slack_user_nick = post_data["event"]["user"]                
+            except ScrumUser.DoesNotExist as error:
+                print("User Not matched: failed")
+                slack_user_nick = post_data["event"]["user"]
+            except KeyError as error:
+                slack_user = ScrumUser.objects.filter(slack_user_id=post_data["event"]["username"]).first()
                 return Response(data=post_data,
                                 status=status.HTTP_200_OK)
+
+            try:
+                slack_details= ScrumSlack.objects.filter(channel_id=post_data["event"]["channel"]).first() 
+                print("========================================Slack details================================") 
+                print(post_data["event"]["channel"])
+                print(slack_details)  
+                if slack_details is not None:           
+                    chatRoom = ScrumChatRoom.objects.get(id = slack_details.room_id).hash
+                    new_message = ScrumChatMessage(room=slack_details.room, user=slack_user_nick, message=post_data["event"]["text"])
+                    new_message.save()
+                    async_to_sync(self.channel_layer.group_send)(
+                        chatRoom,
+                            {"type": "chat_message", 'user': slack_user_nick, 'message': post_data["event"]["text"]},
+                        )
+
             except KeyError as error:
                 # ===========Response for when no client message id
                 return Response(data=post_data,
                                 status=status.HTTP_200_OK)
+            
+            
+            
 
         return Response(status=status.HTTP_200_OK)
 

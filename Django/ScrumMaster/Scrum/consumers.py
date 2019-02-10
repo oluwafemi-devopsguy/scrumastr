@@ -30,12 +30,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
         print("+++++++++++++++++++++++room send to slack++++++++++++++++")
         print(room)        
         try:
-            access_token = room.scrumslack_set.get(room=room).bot_access_token       
+            slack = room.scrumslack_set.get(room=room)      
         except ScrumSlack.DoesNotExist:
             return
         print("+++++++++++++++++++++++ACCESS TOKEN++++++++++++++++")
-        print(access_token)
-        sc = SlackClient(access_token)
+        print(slack)
+        print(slack.channel_id)
+        sc = SlackClient(slack.bot_access_token )
         print("=====================USERNAME====================" + self.user)
         if user == 'SERVER INFO':
             as_user = True
@@ -43,7 +44,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             as_user = False
         sc.api_call(
           "chat.postMessage",
-          channel="CF6ETUG13",
+          channel=slack.channel_id,
           text=message,
           username=user,
           as_user = as_user

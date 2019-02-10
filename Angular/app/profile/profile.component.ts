@@ -128,8 +128,11 @@ export class ProfileComponent implements OnInit {
             this.dataservice.users = res1['data'];
             this.dataservice.project_name = res1['project_name'];
             this.dataservice.sprints = res2;
+            this.dataservice.project_slack = res1['slack_installed'];
             this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '!join ' + this.dataservice.project_name, 'goal_id': 'main_chat_' + this.dataservice.project_name }));
             console.log(this.dataservice.users)
+            console.log(this.dataservice.project_slack)
+            console.log(this.dataservice.user_slack)
 
 
             this.filterSprint(res2)

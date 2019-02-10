@@ -189,4 +189,4 @@ CHANNEL_LAYERS = {
     }
 }
 
-FRONTEND = 'http://localhost:4200/profile/'
+FRONTEND = 'http://localhost:4200/home/'

@@ -105,7 +105,7 @@ export class DataService {
             this.project = data['project_id'];
             this.user_slack = data['user_slack'];
             this.project_slack = data['project_slack'];
-            console.log(this.project_slack)
+            console.log(this.user_slack)
             this.message = 'Welcome!';
             this.router.navigate(['profile']);
             this.login_username = '';
