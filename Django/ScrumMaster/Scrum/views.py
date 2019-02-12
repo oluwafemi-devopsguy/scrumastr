@@ -617,8 +617,9 @@ class Events(APIView):
                 client_id=self.slack_app.CLIENT_ID,
                 client_secret=self.slack_app.CLIENT_SECRET,
                 code=auth_code,
-                Scopes="identity.basic"
               )
+
+
             if auth_response["ok"] == True:
                 print("====================Get usermail etc==========================")
                 print(auth_response)
@@ -626,6 +627,7 @@ class Events(APIView):
                 user_sc = SlackClient(auth_response["access_token"])
                 user_response = user_sc.api_call(
                     "users.identity" ,
+                    scope="identity.basic"
                                  )
                 print("=============USER DETAILS============" )
                 
@@ -637,15 +639,9 @@ class Events(APIView):
                     print(user_response)
                     html = "<html><body>Slack email not recognised</body></html>" 
                     return HttpResponse(html)
-                    try:
-                        pass
-                    except Exception as e:
-                        raise e
-
                 
-                print(user)
-                print(user_response)
-                pass
+                
+                
 
 # =========================================Get Room and project=====================================================================
         chat_room,created = ScrumChatRoom.objects.get_or_create(name=project_id, hash=hashlib.sha256(project_id.encode('UTF-8')).hexdigest())
