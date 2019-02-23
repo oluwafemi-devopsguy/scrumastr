@@ -24,6 +24,7 @@ export class DataService {
   public username;
   public user_slack;
   public project_slack;
+  public slack_app_id;
   public realname;
   public role;
   public role_id;

@@ -248,11 +248,14 @@ class ScrumProjectViewSet(viewsets.ModelViewSet):
         try:
             queryset = ScrumProject.objects.get(pk=pk)
             slack_installed = queryset.scrumslack_set.all().exists()
+            slack_app_id = ChatscrumSlackApp.objects.all().first()
             print("======================Slack exists=======================" )
             print(slack_installed)
-            return JsonResponse({'project_name': queryset.name, "slack_installed":slack_installed, 'data': filtered_users(pk)})
+            return JsonResponse({'project_name': queryset.name,"slack_app_id":slack_app_id.CLIENT_ID, "slack_installed":slack_installed, 'data': filtered_users(pk)})
         except ScrumProject.DoesNotExist:
             return JsonResponse({'detail': 'Not found.'})
+        except ChatscrumSlackApp.DoesNotExist:
+            return JsonResponse({'project_name': queryset.name, "slack_installed":slack_installed, 'data': filtered_users(pk)})
     
 class ScrumProjectRoleViewSet(viewsets.ModelViewSet):
     queryset = ScrumProjectRole.objects.all()
@@ -602,14 +605,19 @@ class Events(APIView):
     def get(self, request, *args, **kwargs):
         # Return code in Url parameter or empty string if no code
         sc = SlackClient("")
-        auth_code = request.GET.get('code', '') 
-        project_id = request.GET.get('state', '')
+        auth_code = request.GET.get('code', '')
+        the_state = request.GET.get('state', '')
+        splitter = the_state.find(">>>") 
+        project_id = the_state[:splitter] 
+        user_email = the_state[(splitter+3):]
         post_data = request.data
 
 
 # =================================Get Auth code response from slack==============================================
         print("====================================auth code=================" + auth_code)
-        
+        print(project_id)
+        print(user_email)
+        print(ScrumUser.objects.get(user__username=user_email).slack_user_id)
         print("====================================auth code=================" + self.slack_app.CLIENT_ID)
         if auth_code:
             auth_response = sc.api_call(
@@ -617,6 +625,7 @@ class Events(APIView):
                 client_id=self.slack_app.CLIENT_ID,
                 client_secret=self.slack_app.CLIENT_SECRET,
                 code=auth_code,
+                scope="identity.email"
               )
 
 
@@ -626,18 +635,17 @@ class Events(APIView):
                 print(auth_response["access_token"])
                 user_sc = SlackClient(auth_response["access_token"])
                 user_response = user_sc.api_call(
-                    "users.identity" ,
-                    scope="identity.basic"
+                    "users.identity" 
                                  )
                 print("=============USER DETAILS============" )
                 
                 print(user_response)
                 # print( user_response["user"]["email"])
                 try:
-                    user= ScrumUser.objects.get(user__username=user_response["user"]["email"])
+                    user= ScrumUser.objects.get(user__username=user_email)
                 except:
                     print(user_response)
-                    html = "<html><body>Slack email not recognised</body></html>" 
+                    html = "<html><body>An error occured!!!</body></html>" 
                     return HttpResponse(html)
                 
                 
