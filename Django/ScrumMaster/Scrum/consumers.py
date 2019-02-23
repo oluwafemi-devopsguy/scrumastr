@@ -30,7 +30,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
         print("+++++++++++++++++++++++room send to slack++++++++++++++++")
         print(room)        
         try:
-            slack = room.scrumslack_set.get(room=room)      
+            slack = room.scrumslack_set.filter(room=room).first() 
+            if slack is not None:  
+                username = user.scrumuser.slack_username 
+                print(username)  
+            else:
+                print("scrum slack is none")
+                return 
         except ScrumSlack.DoesNotExist:
             return
         print("+++++++++++++++++++++++ACCESS TOKEN++++++++++++++++")
@@ -46,7 +52,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
           "chat.postMessage",
           channel=slack.channel_id,
           text=message,
-          username=user,
+          username=username,
           as_user = as_user
         )
         print("After call")

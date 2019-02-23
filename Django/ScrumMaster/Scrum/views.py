@@ -617,7 +617,6 @@ class Events(APIView):
         print("====================================auth code=================" + auth_code)
         print(project_id)
         print(user_email)
-        print(ScrumUser.objects.get(user__username=user_email).slack_user_id)
         print("====================================auth code=================" + self.slack_app.CLIENT_ID)
         if auth_code:
             auth_response = sc.api_call(
@@ -669,12 +668,14 @@ class Events(APIView):
             #===============================Update Scrumy user details for Add to slack======================================================================
             user.slack_user_id = user_response["user"]["id"]
             user.slack_email = user_response["user"]["email"]
+            user.slack_username = user_response["user"]["name"]
             user.save()
             print("===================================================user channel add=========================")
         except KeyError as error:
             print(user.slack_user_id)
             user.slack_user_id = user_response["user"]["id"]
             user.slack_email = user_response["user"]["email"]
+            user.slack_username = user_response["user"]["name"]
             user.save()            
             print("===================================================user add=========================")
             print(user)

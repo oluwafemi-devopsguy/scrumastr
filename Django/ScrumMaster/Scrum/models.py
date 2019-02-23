@@ -33,6 +33,7 @@ class ScrumUser(models.Model):
     nickname = models.CharField(max_length=50)
     slack_user_id = models.CharField(blank=True, null=True, max_length=50)
     slack_email = models.CharField(blank=True, null=True, max_length=50)
+    slack_username = models.CharField(blank=True, null=True, max_length=50)
 
     
     def __str__(self):
