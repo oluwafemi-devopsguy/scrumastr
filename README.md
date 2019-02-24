@@ -1,4 +1,4 @@
-After pulling from this project from the remote repository, you should see two folders (Angular, Django) and this README file.
+After pulling this project from the remote repository, you should see two folders (Angular, Django) and this README file.
 
 Django contains the full source.
 To get the slack.com to redirect to the Angular front end. open settings.py and edit "FRONTEND" variable on the last line to the appropriate frontend URL
