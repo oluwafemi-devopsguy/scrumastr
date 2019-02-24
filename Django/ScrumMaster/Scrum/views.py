@@ -470,8 +470,11 @@ def jwt_response_payload_handler(token, user=None, request=None):
     user_slack = bool(user.scrumuser.slack_email)
     if project.scrumslack_set.all().exists():
         project_slack = "True"
+        slack_username = user.scrumuser.slack_username
     else:
         project_slack = "False"
+        slack_username = "empty"
+
         
     return {
         'token': token,
@@ -480,7 +483,8 @@ def jwt_response_payload_handler(token, user=None, request=None):
         'project_id': project.id,
         'role_id': project.scrumprojectrole_set.get(user=user.scrumuser).id,
         'user_slack' : user_slack,
-        'project_slack' : project_slack
+        'project_slack' : project_slack,
+        "slack_username": slack_username
     }
     
 

@@ -30,20 +30,20 @@ class ChatConsumer(AsyncWebsocketConsumer):
         print("+++++++++++++++++++++++room send to slack++++++++++++++++")
         print(room)        
         try:
-            slack = room.scrumslack_set.filter(room=room).first() 
-            if slack is not None:  
-                username = user.scrumuser.slack_username 
-                print(username)  
-            else:
-                print("scrum slack is none")
-                return 
+            slack = room.scrumslack_set.filter(room=room).first()  
+            if slack is not None and self.slack_username != "empty":
+                user = self.slack_username 
+            elif slack is None:
+                print("=======================No slack installed yet========================")
+                return
         except ScrumSlack.DoesNotExist:
             return
         print("+++++++++++++++++++++++ACCESS TOKEN++++++++++++++++")
         print(slack)
+        print(self.slack_username)
         print(slack.channel_id)
         sc = SlackClient(slack.bot_access_token )
-        print("=====================USERNAME====================" + self.user)
+        print("=====================USERNAME====================" + self.slack_username)
         if user == 'SERVER INFO':
             as_user = True
         else:
@@ -52,7 +52,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
           "chat.postMessage",
           channel=slack.channel_id,
           text=message,
-          username=username,
+          username=user,
           as_user = as_user
         )
         print("After call")
@@ -105,6 +105,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         self.user = text_data_json['user']
+        self.slack_username = text_data_json['slack_username']
         message = text_data_json['message']
         print("Received Goal ID " + text_data_json['goal_id'])
         
