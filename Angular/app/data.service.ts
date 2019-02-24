@@ -24,6 +24,7 @@ export class DataService {
   public username;
   public user_slack;
   public project_slack;
+  public slack_username
   public slack_app_id;
   public realname;
   public role;
@@ -99,6 +100,7 @@ export class DataService {
             sessionStorage.setItem('project_id', data['project_id']);
             sessionStorage.setItem('user_slack', data['user_slack']);
             sessionStorage.setItem('project_slack', data['project_slack']);
+            sessionStorage.setItem('slack_username', data['slack_username']);
             this.username = this.login_username;
             this.role = data['role'];
             this.role_id = data['role_id'];
@@ -106,7 +108,8 @@ export class DataService {
             this.project = data['project_id'];
             this.user_slack = data['user_slack'];
             this.project_slack = data['project_slack'];
-            console.log(this.user_slack)
+            this.slack_username = data['slack_username'];
+            console.log(data['slack_username'])
             this.message = 'Welcome!';
             this.router.navigate(['profile']);
             this.login_username = '';
