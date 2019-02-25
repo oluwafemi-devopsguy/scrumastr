@@ -121,8 +121,8 @@ export class ProfileComponent implements OnInit {
     this.websocket = new WebSocket('ws://' + this.dataservice.domain_name + '/scrum/');
     this.websocket.onopen = (evt) => {
       forkJoin(
-          this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumprojects/' + this.dataservice.project + '/', this.dataservice.httpOptions),
-          this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumsprint/?goal_project_id=' + this.dataservice.project, this.dataservice.authOptions)
+          this.http.get('https://' + this.dataservice.domain_name + '/scrum/api/scrumprojects/' + this.dataservice.project + '/', this.dataservice.httpOptions),
+          this.http.get('https://' + this.dataservice.domain_name + '/scrum/api/scrumsprint/?goal_project_id=' + this.dataservice.project, this.dataservice.authOptions)
           )
          .subscribe(([res1, res2]) => {
             this.msg_obs.observe(document.getElementById('chat_div_space'), { attributes: true, childList: true, subtree: true });
@@ -234,8 +234,8 @@ export class ProfileComponent implements OnInit {
           console.log(this.dataservice.users)
           console.log(this.dataservice.sprints)
           forkJoin(
-          this.http.post('http://' + this.dataservice.domain_name + '/scrum/api/scrumsprint/?goal_project_id=' + this.dataservice.project, JSON.stringify({'project_id': this.dataservice.project, 'ends_on': myDate}), this.dataservice.authOptions),
-          this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumprojects/' + this.dataservice.project + '/', this.dataservice.httpOptions)
+          this.http.post('https://' + this.dataservice.domain_name + '/scrum/api/scrumsprint/?goal_project_id=' + this.dataservice.project, JSON.stringify({'project_id': this.dataservice.project, 'ends_on': myDate}), this.dataservice.authOptions),
+          this.http.get('https://' + this.dataservice.domain_name + '/scrum/api/scrumprojects/' + this.dataservice.project + '/', this.dataservice.httpOptions)
         )
          .subscribe(([res2, res1]) => {
             this.msg_obs.observe(document.getElementById('chat_div_space'), { attributes: true, childList: true, subtree: true });
@@ -331,7 +331,7 @@ export class ProfileComponent implements OnInit {
         this.dataservice.message = 'Edit Canceled.';
     } else
     {
-        this.http.put('http://' + this.dataservice.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'mode': 1, 'goal_id': event.target.parentElement.id, 'new_name': goal_name, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
+        this.http.put('https://' + this.dataservice.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'mode': 1, 'goal_id': event.target.parentElement.id, 'new_name': goal_name, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
             data => {
                 this.dataservice.users = data['data'];
                 this.dataservice.message = data['message'];                
@@ -361,7 +361,7 @@ export class ProfileComponent implements OnInit {
       var pop_event = window.confirm('Delete " ' + goal_name + '"?');
       console.log(goal_id)
       if (pop_event) {
-          this.http.put('http://' + this.dataservice.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'mode': 2, 'goal_id':'g' + goal_id, 'new_name': goal_name, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
+          this.http.put('https://' + this.dataservice.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'mode': 2, 'goal_id':'g' + goal_id, 'new_name': goal_name, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
             data => {
                 this.dataservice.users = data['data'];
                 this.dataservice.message = data['message'];
@@ -403,7 +403,7 @@ export class ProfileComponent implements OnInit {
     role_name = role_name.toLowerCase();
     if(role_name == 'developer' || role_name == 'quality analyst' || role_name == 'admin' || role_name == 'owner')
     {
-        this.http.patch('http://' + this.dataservice.domain_name + '/scrum/api/scrumprojectroles/', JSON.stringify({'role': role_name, 'id': this.on_user, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
+        this.http.patch('https://' + this.dataservice.domain_name + '/scrum/api/scrumprojectroles/', JSON.stringify({'role': role_name, 'id': this.on_user, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
             data => {
                 this.dataservice.users = data['data'];
                 this.dataservice.message = data['message'];
@@ -493,7 +493,7 @@ export class ProfileComponent implements OnInit {
     
   //   this.iData.append('image', this.image_upload, this.image_upload.name);
   //   console.log(this.iData)
-  //   this.http.put('http://' + this.dataservice.domain_name + '/scrum/api/scrumgoals/', this.iData,
+  //   this.http.put('https://' + this.dataservice.domain_name + '/scrum/api/scrumgoals/', this.iData,
   //     this.dataservice.authOptions).subscribe(
   //       data => {
   //         this.dataservice.users = data['data'];
@@ -589,7 +589,7 @@ export class ProfileComponent implements OnInit {
     this.iData.append('project_id', this.dataservice.project);
     console.log(file)
     console.log(this.iData)
-    this.http.put('http://' + this.dataservice.domain_name + '/scrum/api/scrumgoals/', this.iData,
+    this.http.put('https://' + this.dataservice.domain_name + '/scrum/api/scrumgoals/', this.iData,
       this.dataservice.imageAuthOptions)
       .subscribe(
         data => {

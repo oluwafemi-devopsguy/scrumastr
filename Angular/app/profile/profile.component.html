@@ -121,7 +121,7 @@
                                             <div class="list_div" *ngIf ="goal.status == arrItem && user.id == goal.user && goal.name; let thisGoal" (dblclick)="goal.status == arrItem ? editGoal($event) : doNothing()" style="font-size: 0.8rem">
                                                 {{goal.goal_project_id}}) {{ (goal.name.length>40) ? (thisGoal | slice:0:40)+'...':(thisGoal) }} {{(goal.hours != -1 && (goal.status == 3 || goal.status == 2) ? ' (' + goal.hours + ')' : '' )}}
                                                 <a (click)="ResizeImage(goal.file); showImage.openModal()">
-                                                    <img src="http://{{dataservice.domain_name}}{{goal.file}}" style="width: 15px; height: 15px" alt="{{goal.file}}">
+                                                    <img src="https://{{dataservice.domain_name}}{{goal.file}}" style="width: 15px; height: 15px" alt="{{goal.file}}">
                                                 </a> 
 
                                             <div class="div-add-file" style="display: inline-flex;">
@@ -185,7 +185,7 @@
                         <h4>Image</h4>
                     </mz-modal-header>
                     <mz-modal-content>
-                        <img src="http://{{dataservice.domain_name}}{{scrum_image}}" style="width: 450px; height: 220px" alt="image">
+                        <img src="https://{{dataservice.domain_name}}{{scrum_image}}" style="width: 450px; height: 220px" alt="image">
                     </mz-modal-content>
                 </mz-modal>                
                 <mz-modal #showHistory >
@@ -203,7 +203,7 @@
                                             {{task_history.name}}
                                         </td>
                                         <td rowspan="7">
-                                            <img src="http://{{dataservice.domain_name}}{{task_history.file}}" style="width: 250px; height: 220px" alt="http://{{dataservice.domain_name}}{{task_history.file}}">
+                                            <img src="https://{{dataservice.domain_name}}{{task_history.file}}" style="width: 250px; height: 220px" alt="https://{{dataservice.domain_name}}{{task_history.file}}">
                                         </td>
                                     </tr>
                                     <tr style="margin: 0; padding: 0">
