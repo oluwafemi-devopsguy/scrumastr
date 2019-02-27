@@ -1,4 +1,4 @@
-After pulling this project from the remote repository, you should see two folders (Angular, Django) and this README file.
+After pulling this full project from the remote repository, you should see two folders (Angular, Django) and this README file.
 
  Django contains the full source.
 
