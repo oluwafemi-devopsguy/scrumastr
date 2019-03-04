@@ -628,7 +628,7 @@ class Events(APIView):
                 client_id=self.slack_app.CLIENT_ID,
                 client_secret=self.slack_app.CLIENT_SECRET,
                 code=auth_code,
-                scope="identity.email"
+                scope="identity.basic identity.email"
               )
 
 

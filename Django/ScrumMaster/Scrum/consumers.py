@@ -31,11 +31,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
         print(room)        
         try:
             slack = room.scrumslack_set.filter(room=room).first()  
-            if slack is not None and self.slack_username != "empty":
+            if slack is not None and str(self.slack_username) != "null" and self.slack_username != "empty":
+                print("===============SLACK NOT NULL AND USERNAME")
                 user = self.slack_username 
             elif slack is None:
                 print("=======================No slack installed yet========================")
                 return
+            elif str(self.slack_username) == "null" or self.slack_username == "empty":
+                print("NOT SELF.USERNAME")
+                user = "Chatscrum ==> " + self.user
         except ScrumSlack.DoesNotExist:
             return
         print("+++++++++++++++++++++++ACCESS TOKEN++++++++++++++++")
