@@ -596,8 +596,7 @@ export class ProfileComponent implements OnInit {
             data => {
                 this.dataservice.users = data['data'];
                 this.dataservice.message = data['message'];
-                this.note = '';
-                this.priority = '';       
+                this.note = '';   
             },
             err => {
                 console.error(err);
