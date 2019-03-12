@@ -174,10 +174,9 @@
                     <mz-modal-content>
                         <h6>Click outside this dialog to cancel.</h6>
                         <form (ngSubmit)="add_a_note()">
-                            <textarea id="goal" [(ngModel)]="note" name="goal" required></textarea>
+                            <textarea id="goal" [(ngModel)]="note" name="goal"></textarea>
                             <select  name="note_priority" style="height: 30px; margin: 15px; color: #1f7a7a; width: auto;" [(ngModel)]="note_priority">
-                                <option [ngValue]="history1" disabled selected required>Select Priority</option>
-                                <option Value="High">High Priority</option>
+                                <option Value="High" selected>High Priority</option>
                                 <option Value="Medium">Medium Priority</option>
                                 <option Value="Low">Low Priority</option>                           
                             </select>
