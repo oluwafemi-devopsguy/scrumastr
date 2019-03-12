@@ -40,11 +40,12 @@
                     <li>
                         <table [attr.id]="'m' + user.id" (mouseover)="setSelectedUser(user.id)" (mouseleave)="setSelectedUser(-1)">
                             <tr id="author">
-                                <th rowspan="2"><a [routerLink] fragment='{{user.id}}' (click)="scrollIntoView('u' + user.id)"><i class="material-icons" id="account_circle">account_circle</i></a></th>
-                                <a [routerLink] fragment='{{user.id}}' (click)="scrollIntoView('u' + user.id)"  style="font-size: 0.8rem">{{user.user.nickname}} ({{user.total_week_hours}} hours)</a>
+                                <th rowspan="2"><a [routerLink] fragment='{{user.id}}' (click)="scrollIntoView('u' + user.id)" (dblclick)="getClicked($event); UserGoalHistory(user.user.nickname);  userAdvance.openModal()"><i class="material-icons" id="account_circle">account_circle</i></a></th>
+                                <a [routerLink] fragment='{{user.id}}' (click)="scrollIntoView('u' + user.id)"  (dblclick)="getClicked($event); UserGoalHistory(user.user.nickname);  userAdvance.openModal()" style="font-size: 0.8rem">{{user.user.nickname}} ({{user.total_week_hours}} hours)</a>
                                     <div style="display:flex;">
                                         <a mz-button (click)="dataservice.role.toLowerCase() == 'owner' ? manageUser($event) : doNothing()" class="btn-floating change-role"><i class="material-icons" id="settings">settings</i></a>
                                         <a mz-button (click)="getClicked($event); basicModal.openModal()" class="btn-floating add-icon"><i class="material-icons" id="add">add</i></a>
+                                        <a mz-button (click)="getClicked($event); addNote.openModal(); show_notes()" class="btn-floating add-icon"><i class="material-icons" id="add">notes</i></a>
                                     </div>
                             </tr>
                         </table>
@@ -166,6 +167,47 @@
                         </form>
                     </mz-modal-content>
                 </mz-modal>
+                <mz-modal #addNote>
+                    <mz-modal-header>
+                        <h4>Add a Notes</h4>
+                    </mz-modal-header>
+                    <mz-modal-content>
+                        <h6>Click outside this dialog to cancel.</h6>
+                        <form (ngSubmit)="add_a_note()">
+                            <textarea id="goal" [(ngModel)]="note" name="goal" required></textarea>
+                            <select  name="note_priority" style="height: 30px; margin: 15px; color: #1f7a7a; width: auto;" [(ngModel)]="note_priority">
+                                <option [ngValue]="history1" disabled selected required>Select Priority</option>
+                                <option Value="High">High Priority</option>
+                                <option Value="Medium">Medium Priority</option>
+                                <option Value="Low">Low Priority</option>                           
+                            </select>
+                            <input class="modal-close waves-effect btn btn-default" type="submit" value="Add Note">
+                        </form>
+                        <div style="display: table; width: 100%; word-wrap: break-word; border-collapse: collapse; border: 2px solid black;">
+                            <div style="display: table-row">
+                                    <!--
+                                    <th class="full-box">Created By</th>
+                                    -->
+                                    <th class="full-box">ID</th>
+                                    <th class="full-box">NOTES</th>
+                                    <th class="full-box">ACTION</th>
+                            </div>
+
+                            <div style="display: table-row" *ngFor="let note of dataservice.user_notes; let j = index; let k = count">
+                                <td class="top-box">{{note.id}}</td>
+                                <td class="top-box">
+                                    <span style="font-weight: bolder;" [style.color]="note.priority == 'High' ? 'rgb(255,0,0)' : (note.priority == 'Medium' ? 'rgb(0,0,255)' : 'rgb(0,255,0)')">
+                                        {{note.note}} 
+                                    </span>  
+                                </td>
+                                <td class="top-box">
+                                    <button type="button" class="btn btn-link s_button"  *ngIf="dataservice.role.toLowerCase() == 'owner'" (click)="note_to_goal(note.id, note.note, note.priority)">Add to Board</button>
+                                    <!-- <span style="font-size: 20px; font-weight: bolder;">+</span> -->
+                                </td>
+                            </div>                                
+                        </div>
+                    </mz-modal-content>
+                </mz-modal>
                 <mz-modal #upload>
                     <mz-modal-header>
                         <h4>Add A File</h4>
@@ -187,7 +229,39 @@
                     <mz-modal-content>
                         <img src="https://{{dataservice.domain_name}}{{scrum_image}}" style="width: 450px; height: 220px" alt="image">
                     </mz-modal-content>
-                </mz-modal>                
+                </mz-modal>   
+                <mz-modal #userAdvance>
+                    <mz-modal-header>
+                        <h4>{{clicked_user}}</h4>
+                    </mz-modal-header>
+                    <mz-modal-content>
+                        <div style="display: table; width: 100%; word-wrap: break-word; border-collapse: collapse; border: 2px solid black;">
+                            <div style="display: table-row">
+                                    <!--
+                                    <th class="full-box">Created By</th>
+                                    -->
+                                    <th class="full-box">Sprint No</th>
+                                    <th class="full-box">SPRINTS</th>
+                                    <th class="full-box">GOALS</th>
+                            </div>
+
+                            <div style="display: table-row" *ngFor="let sprint of dataservice.sprints; let j = index; let k = count">
+                                <td class="top-box">{{sprint.id}}</td>
+                                <td class="top-box">  {{sprint.created_on | date}} - {{sprint.ends_on | date}}</td>
+                                <td class="top-box">
+                                    <span *ngFor="let user_goal of dataservice.user_goal_history">
+                                        <div *ngIf ="user_goal.time_created > sprint.created_on && user_goal.time_created < sprint.ends_on" >
+                                            {{user_goal.name}} --
+                                            <span style="font-weight: bolder;" [innerText]="user_goal.status == 3 ? 'completed' : 'Not Completed'" [style.color]="user_goal.status == 3 ? 'green' : 'red'">
+                                                
+                                            </span>
+                                        </div>
+                                    </span>
+                                </td>
+                            </div>                                
+                        </div>
+                    </mz-modal-content>
+                </mz-modal>             
                 <mz-modal #showHistory >
                         <mz-modal-header>
                             <h4>Task History Details</h4>

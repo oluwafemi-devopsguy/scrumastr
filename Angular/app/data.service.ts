@@ -7,6 +7,8 @@ import { Router } from '@angular/router';
 export class DataService {
     
   public domain_name = '127.0.0.1:8000';
+  public domain_protocol = 'http://';
+  public websocket = 'ws://';
   
   public message;
   public goal_name;
@@ -39,6 +41,9 @@ export class DataService {
   selected_sprint: any;
   
   public sprint_goals;
+  public _user_sprint_goals;
+  public user_goal_history;
+  public user_notes;
   
   public httpOptions = {
     headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -52,7 +57,7 @@ export class DataService {
   createDemo()
   {
     this.message = "Creating the Demo, please wait...";
-    this.http.get('https://' + this.domain_name + '/scrum/create-demo/', this.httpOptions).subscribe(
+    this.http.get(this.domain_protocol + this.domain_name + '/scrum/create-demo/', this.httpOptions).subscribe(
         data => {
             this.login_username = data['username'];
             this.login_password = data['password'];
@@ -67,7 +72,7 @@ export class DataService {
   
   createUser()
   {
-    this.http.post('https://' + this.domain_name + '/scrum/api/scrumusers/', JSON.stringify({'email': this.createuser_email, 'password': this.createuser_password, 'full_name': this.createuser_fullname, 'usertype': this.createuser_usertype, 'projname': this.createuser_projname}), this.httpOptions).subscribe(
+    this.http.post(this.domain_protocol + this.domain_name + '/scrum/api/scrumusers/', JSON.stringify({'email': this.createuser_email, 'password': this.createuser_password, 'full_name': this.createuser_fullname, 'usertype': this.createuser_usertype, 'projname': this.createuser_projname}), this.httpOptions).subscribe(
         data => {
             this.message = data['message'];
             this.createuser_email = '';
@@ -90,7 +95,7 @@ export class DataService {
   
   login()
   {
-    this.http.post('https://' + this.domain_name + '/scrum/api-token-auth/', JSON.stringify({'username': this.login_username, 'password': this.login_password, 'project': this.login_project}), this.httpOptions).subscribe(
+    this.http.post(this.domain_protocol + this.domain_name + '/scrum/api-token-auth/', JSON.stringify({'username': this.login_username, 'password': this.login_password, 'project': this.login_project}), this.httpOptions).subscribe(
         data => {
             sessionStorage.setItem('username', this.login_username);
             sessionStorage.setItem('realname', data['name']);
@@ -136,7 +141,7 @@ export class DataService {
   
   addGoal(on_user)
   {
-    this.http.post('https://' + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'name': this.goal_name, 'user': on_user, 'project_id': this.project}), this.authOptions).subscribe(
+    this.http.post(this.domain_protocol + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'name': this.goal_name, 'user': on_user, 'project_id': this.project}), this.authOptions).subscribe(
         data => {
             console.log(data);
             this.users = data['data'];
@@ -227,7 +232,7 @@ export class DataService {
   
   moveGoal(goal_id, to_id, hours)
   {
-    this.http.patch('https://' + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'goal_id': goal_id, 'to_id': to_id, 'hours': hours, 'project_id': this.project}), this.authOptions).subscribe(
+    this.http.patch(this.domain_protocol + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'goal_id': goal_id, 'to_id': to_id, 'hours': hours, 'project_id': this.project}), this.authOptions).subscribe(
         data => {
             this.users = data['data'];
             this.message = data['message'];
@@ -256,7 +261,7 @@ export class DataService {
   
   changeOwner(from_id, to_id)
   {
-    this.http.put('https://' + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'mode': 0, 'goal_id': from_id, 'to_id': to_id, 'project_id': this.project}), this.authOptions).subscribe(
+    this.http.put(this.domain_protocol + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'mode': 0, 'goal_id': from_id, 'to_id': to_id, 'project_id': this.project}), this.authOptions).subscribe(
         data => {
             this.users = data['data'];
             this.message = data['message'];
