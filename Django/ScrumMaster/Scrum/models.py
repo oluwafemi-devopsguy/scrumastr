@@ -149,5 +149,19 @@ class ScrumSlack(models.Model):
     
     class Meta:
         ordering = ['-id']
+
+
+class ScrumNote(models.Model):
+    user = models.ForeignKey(ScrumProjectRole, on_delete=models.CASCADE)
+    project = models.ForeignKey(ScrumProject, on_delete=models.CASCADE)
+    note = models.TextField(blank=True, null=True)
+    priority  = models.CharField(max_length=500)    
+    time_created = models.DateTimeField()
+    
+    def __str__(self):
+        return self.note
+    
+    class Meta:
+        ordering = ['-id']
         
         

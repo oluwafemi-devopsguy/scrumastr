@@ -71,7 +71,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     def getOrCreateRoom(self):
         room = ScrumChatRoom.objects.filter(hash=self.room_group_name)
-        print(room)
         room_count = self.getCount(room)
         if room_count == 0:
             new_room = self.generate_room(self.identity, self.room_group_name)

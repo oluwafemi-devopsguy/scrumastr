@@ -234,8 +234,7 @@ def filtered_users(project_id):
                 if goal['hours'] != -1 and goal['status'] == 3:
                     total_hours += goal['hours']
         
-        user['total_week_hours'] = total_hours
-            
+        user['total_week_hours'] = total_hours            
         
     return project['scrumprojectrole_set']
 
@@ -743,4 +742,28 @@ class Events(APIView):
 
         return Response(status=status.HTTP_200_OK)
 
+            
+
+class ScrumNoteViewSet(viewsets.ModelViewSet):
+    queryset = ScrumNote.objects.all()
+    serializer_class = ScrumNoteSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    now_time = datetime.datetime.now().replace(tzinfo=None)
+    
+    def create(self, request):
+        user_id = request.data['user'][1:]
+        author = ScrumProjectRole.objects.get(id=user_id)
+        print(author.role)
+        print(request.data['project_id'])
+        try:
+            note = ScrumNote(user=author, note=request.data['note'], priority=request.data['priority'], time_created=self.now_time, project_id=request.data['project_id'])
+            note.save()
+            return JsonResponse({'message': 'Note Created Successfully!', 'data': filtered_users(request.data['project_id'])})
+        except KeyError as error:
+             return JsonResponse({'message': 'Priority or notes cannot be empty', 'data': filtered_users(request.data['project_id'])})
+    def put(self, request):
+        print("This is note deleting")
+        note = ScrumNote.objects.get(id=request.data['id'])
+        note.delete()
+        return JsonResponse({'message': 'Goal Added and note deleted Successfully!', 'data': filtered_users(request.data['project_id'])})
             

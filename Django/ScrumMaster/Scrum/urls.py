@@ -9,6 +9,7 @@ app_name = "Scrum"
 def_router = DefaultRouter()
 def_router.register('scrumusers', views.ScrumUserViewSet)
 def_router.register('scrumgoals', views.ScrumGoalViewSet)
+def_router.register('scrumnotes', views.ScrumNoteViewSet)
 def_router.register('scrumprojects', views.ScrumProjectViewSet)
 def_router.register('scrumprojectroles', views.ScrumProjectRoleViewSet)
 def_router.register(r'scrumsprint', views.SprintViewSet, base_name='scrumsprint')
