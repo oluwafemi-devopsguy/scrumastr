@@ -51,7 +51,7 @@ RUN git config --global user.email "joseph.showunmi@linuxjobber.com"
 RUN git config --global user.name "joseph.showunmi"
 RUN cd /web && . $HOME/.nvm/nvm.sh && ng new Chatscrum-Angular --routing
 RUN pip3.6 install Pillow
-RUN pip3.6 install slackclient
+RUN pip3.6 install slackclient pymysql
 
 RUN . $HOME/.nvm/nvm.sh && yes | cp -r /web/www/Angular/* /web/Chatscrum-Angular/src
 RUN cd /web/Chatscrum-Angular/ && sed -i '26s/.*/"src\/styles.css","node_modules\/materialize-css\/dist\/css\/materialize.min.css"/' angular.json; 
