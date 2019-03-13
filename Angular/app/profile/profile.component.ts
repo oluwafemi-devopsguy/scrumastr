@@ -579,6 +579,7 @@ export class ProfileComponent implements OnInit {
             this.dataservice.user_goal_history = this.dataservice.users[i].scrumgoal_set
             }
          }
+         console.log(this.dataservice.user_goal_history)
         
   }
 
