@@ -567,19 +567,19 @@ export class ProfileComponent implements OnInit {
 //           } 
 
 
-  UserGoalHistory(nickname){
+  UserGoalHistory(nickname,nickname_id){
     console.log("UserGoalHistory")
+    console.log(nickname_id)
     this.clicked_user = nickname
       for (var i = 0;  i < this.dataservice.users.length; i++)  {
        
-          if (this.dataservice.users[i].id == this.on_user.slice(1))
+          if (this.dataservice.users[i].id == nickname_id)
             {     
             console.log(this.dataservice.users[i].scrumgoal_set) 
             console.log(nickname)
             this.dataservice.user_goal_history = this.dataservice.users[i].scrumgoal_set
             }
          }
-         console.log(this.dataservice.user_goal_history)
         
   }
 
