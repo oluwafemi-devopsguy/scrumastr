@@ -17,6 +17,8 @@ export class AdminComponent implements OnInit {
   public arrCount = [0, 1, 2, 3];
   public on_user;
   public domain_name = '127.0.0.1:8000';
+  public domain_protocol = 'http://';
+  public websocket = 'ws://';
   subs = new Subscription();
   public show_zero: boolean = true;
   public show_history: boolean = false;
@@ -68,11 +70,11 @@ export class AdminComponent implements OnInit {
         headers: new HttpHeaders({'Authorization': 'JWT ' + sessionStorage.getItem('token')})
     };
 
-    this.websocket = new WebSocket('ws://' + this.dataservice.domain_name + '/scrum/');
+    this.websocket = new WebSocket(this.dataservice.websocket + this.dataservice.domain_name + '/scrum/');
     this.websocket.onopen = (evt) => {
       forkJoin(
-          this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumprojects/' + this.dataservice.project + '/', this.dataservice.httpOptions),
-          this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumsprint/?goal_project_id=' + this.dataservice.project, this.dataservice.authOptions)
+          this.http.get(this.dataservice.domain_protocol + this.dataservice.domain_name + '/scrum/api/scrumprojects/' + this.dataservice.project + '/', this.dataservice.httpOptions),
+          this.http.get(this.dataservice.domain_protocol + this.dataservice.domain_name + '/scrum/api/scrumsprint/?goal_project_id=' + this.dataservice.project, this.dataservice.authOptions)
         )
          .subscribe(([res1, res2]) => {
             this.dataservice.users = res1['data'];
@@ -113,7 +115,7 @@ export class AdminComponent implements OnInit {
     if(role_name == 'developer' || role_name == 'quality analyst' || role_name == 'admin' || role_name == 'owner')
     {
         console.log(this.on_user)
-        this.http.patch('http://' + this.dataservice.domain_name + '/scrum/api/scrumprojectroles/', JSON.stringify({'role': role_name, 'id': this.on_user, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
+        this.http.patch(this.dataservice.domain_protocol + this.dataservice.domain_name + '/scrum/api/scrumprojectroles/', JSON.stringify({'role': role_name, 'id': this.on_user, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
             data => {
                 this.dataservice.users = data['data'];
                 this.dataservice.message = data['message'];
