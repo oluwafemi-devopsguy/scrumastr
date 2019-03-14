@@ -178,7 +178,7 @@ class ScrumEmailViewSet(viewsets.ModelViewSet):
 
         messageTo = request.data['messagebody']
         emailTo = request.data['email']
-        sent = send_mail('Invitation Email', 'Hello, You are invited to join chatscrum by clicking this link http://100.24.96.113:5100/createuser . You are required to type ' + messageTo + ' in the project area when logging in. Thanks and regards.', 'admin@linuxjobber.com', [emailTo])      
+        sent = send_mail('Invitation Email', 'Hello, You are invited to join chatscrum by clicking this link https://chatscrum.com/createuser . You are required to type ' + messageTo + ' in the project area when logging in. Thanks and regards.', 'admin@linuxjobber.com', [emailTo])      
         if sent:
             return JsonResponse({'message': 'Email sent Successfully.'})
         else:
