@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'channels',
+    'channels_redis',
     'Scrum.apps.ScrumConfig',
     'rest_framework',
     'corsheaders',
@@ -100,32 +101,20 @@ WSGI_APPLICATION = 'ScrumMaster.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
-'''
+
 DATABASES = {
     'default': {
         'ENGINE': 'mysql.connector.django',
-        'NAME': 'scrum',
-        'USER': 'root',
+        'NAME': 'linuxjobber',
+        'USER': 'linuxjobber',
         'PASSWORD': '8iu7*IU&',
+        'HOST': 'lj_db',
+        'PORT': '3306',
         'OPTIONS': {
             'raise_on_warnings': False,
             'use_pure': True
         }
     }
-}
-'''
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'scrumastrNew',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': ''
-
-    }
-
-
 }
 
 # Password validation
@@ -164,12 +153,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-'''
+
 #Uncomment this on deployment.
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'asset'),
     )
-'''
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
@@ -184,9 +172,8 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            'hosts': [('localhost', 6379)]
+            'hosts': [('xenodochial_jones', 6379)]
         }
     }
 }
 
-FRONTEND = 'http://localhost:4200/home/'

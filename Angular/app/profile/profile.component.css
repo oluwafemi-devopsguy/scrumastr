@@ -108,14 +108,12 @@ h5 {
     width: 50%!important;
     padding: 0px;
     box-shadow: none;
-	height: 30px;
 }
 
 .change-role {
     width: 50%!important;
     padding: 0px;
     box-shadow: none;
-	height: 30px;  
 }
 #edit {
     align-content: center;
@@ -123,7 +121,6 @@ h5 {
 #add {
     align-content: center;
 }
-#
 
 /*=======================================================BOLU====================================================================*/
 
@@ -242,4 +239,7 @@ a:hover, a:active {
 .s_button:hover {
     background-color: #8c8c8c;
     color: white;
+}
+.btn_hover:hover {
+    background-color: red;
 }

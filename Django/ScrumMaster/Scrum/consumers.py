@@ -3,6 +3,7 @@ from channels.db import database_sync_to_async
 from .models import *
 import json
 import hashlib
+from slackclient import SlackClient
 
 #For when you don't have redis; You can only see your own chat.
 # class ChatConsumer(AsyncWebsocketConsumer):
@@ -23,6 +24,44 @@ import hashlib
    
 #For when you do have redis; You can see everyone's chat.
 class ChatConsumer(AsyncWebsocketConsumer):
+    def send_to_slack(self, user, message):
+        print("+++++++++++++++++++++++ room grouup name++++++++++++++++"  + self.room_group_name)
+        room = ScrumChatRoom.objects.get(hash=self.room_group_name)
+        print("+++++++++++++++++++++++room send to slack++++++++++++++++")
+        print(room)        
+        try:
+            slack = room.scrumslack_set.filter(room=room).first()  
+            if slack is not None and str(self.slack_username) != "null" and self.slack_username != "empty":
+                print("===============SLACK NOT NULL AND USERNAME")
+                user = self.slack_username 
+            elif slack is None:
+                print("=======================No slack installed yet========================")
+                return
+            elif str(self.slack_username) == "null" or self.slack_username == "empty":
+                print("NOT SELF.USERNAME")
+                user = "Chatscrum ==> " + self.user
+        except ScrumSlack.DoesNotExist:
+            return
+        print("+++++++++++++++++++++++ACCESS TOKEN++++++++++++++++")
+        print(slack)
+        print(self.slack_username)
+        print(slack.channel_id)
+        sc = SlackClient(slack.bot_access_token )
+        print("=====================USERNAME====================" + self.slack_username)
+        if user == 'SERVER INFO':
+            as_user = True
+        else:
+            as_user = False
+        sc.api_call(
+          "chat.postMessage",
+          channel=slack.channel_id,
+          text=message,
+          username=user,
+          as_user = as_user
+        )
+        print("After call")
+        return
+
     def getRecentMessages(self):
         messages = []
         for message in self.room_object.scrumchatmessage_set.filter(room_id=self.room_object.id).order_by('-pk')[:30]:
@@ -69,17 +108,23 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         self.user = text_data_json['user']
+        self.slack_username = text_data_json['slack_username']
         message = text_data_json['message']
+        print("Received Goal ID " + text_data_json['goal_id'])
+        
         self.identity = text_data_json['goal_id']
         
         if message[:6] == '!join ':
+            print("IDENTITY =============================" + self.identity)
             await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
             self.room_group_name = hashlib.sha256(self.identity.encode('UTF-8')).hexdigest() 
+            print("========ROOM GROUP NAME=========" + self.room_group_name)
             self.getOrCreateRoom()
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)
             await self.channel_layer.group_send(self.room_group_name, {'type': 'chat_message', 'user': 'SERVER INFO', 'message': self.user + ' has joined.'})
             # await database_sync_to_async(self.generate_message)(self.room_object, 'SERVER INFO', str(self.user + ' has joined.'))
             messages = await database_sync_to_async(self.getRecentMessages)()
+
                 
             await self.send(text_data=json.dumps({'messages': messages}))
            
@@ -107,14 +152,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.send(text_data=json.dumps({'messages': messages}))
 
         else:
-            print(message)
+            if self.identity[:9] == 'main_chat':
+                self.send_to_slack(self.user,message)
             await self.channel_layer.group_send(self.room_group_name, {'type': 'chat_message', 'user': self.user, 'message': message})
             await database_sync_to_async(self.generate_message)(self.room_object, self.user, message)
 
     async def chat_message(self, event):
         user = event['user']
         message = event['message']
-        await self.send(text_data=json.dumps({'user': user, 'message': message}))        
+        await self.send(text_data=json.dumps({'user': user, 'message': message}))  
+
+
+
 
 
 
