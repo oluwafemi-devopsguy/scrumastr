@@ -7,6 +7,8 @@ import { Router } from '@angular/router';
 export class DataService {
     
   public domain_name = '127.0.0.1:8000';
+  public domain_protocol = 'http://';
+  public websocket = 'ws://';
   
   public message;
   public goal_name;
@@ -25,6 +27,10 @@ export class DataService {
   public message_body;
 
   public username;
+  public user_slack;
+  public project_slack;
+  public slack_username
+  public slack_app_id;
   public realname;
   public role;
   public role_id;
@@ -38,6 +44,9 @@ export class DataService {
   selected_sprint: any;
   
   public sprint_goals;
+  public _user_sprint_goals;
+  public user_goal_history;
+  public user_notes;
   
   public httpOptions = {
     headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -51,7 +60,7 @@ export class DataService {
   createDemo()
   {
     this.message = "Creating the Demo, please wait...";
-    this.http.get('http://' + this.domain_name + '/scrum/create-demo/', this.httpOptions).subscribe(
+    this.http.get(this.domain_protocol + this.domain_name + '/scrum/create-demo/', this.httpOptions).subscribe(
         data => {
             this.login_username = data['username'];
             this.login_password = data['password'];
@@ -83,7 +92,7 @@ export class DataService {
   
   createUser()
   {
-    this.http.post('http://' + this.domain_name + '/scrum/api/scrumusers/', JSON.stringify({'email': this.createuser_email, 'password': this.createuser_password, 'full_name': this.createuser_fullname, 'usertype': this.createuser_usertype, 'projname': this.createuser_projname}), this.httpOptions).subscribe(
+    this.http.post(this.domain_protocol + this.domain_name + '/scrum/api/scrumusers/', JSON.stringify({'email': this.createuser_email, 'password': this.createuser_password, 'full_name': this.createuser_fullname, 'usertype': this.createuser_usertype, 'projname': this.createuser_projname}), this.httpOptions).subscribe(
         data => {
             this.message = data['message'];
             this.createuser_email = '';
@@ -119,7 +128,7 @@ export class DataService {
 
   login()
   {
-    this.http.post('http://' + this.domain_name + '/scrum/api-token-auth/', JSON.stringify({'username': this.login_username, 'password': this.login_password, 'project': this.login_project}), this.httpOptions).subscribe(
+    this.http.post(this.domain_protocol + this.domain_name + '/scrum/api-token-auth/', JSON.stringify({'username': this.login_username, 'password': this.login_password, 'project': this.login_project}), this.httpOptions).subscribe(
         data => {
             sessionStorage.setItem('username', this.login_username);
             sessionStorage.setItem('realname', data['name']);
@@ -127,11 +136,18 @@ export class DataService {
             sessionStorage.setItem('role_id', data['role_id']);
             sessionStorage.setItem('token', data['token']);
             sessionStorage.setItem('project_id', data['project_id']);
+            sessionStorage.setItem('user_slack', data['user_slack']);
+            sessionStorage.setItem('project_slack', data['project_slack']);
+            sessionStorage.setItem('slack_username', data['slack_username']);
             this.username = this.login_username;
             this.role = data['role'];
             this.role_id = data['role_id'];
             this.realname = data['name'];
             this.project = data['project_id'];
+            this.user_slack = data['user_slack'];
+            this.project_slack = data['project_slack'];
+            this.slack_username = data['slack_username'];
+            console.log(data['slack_username'])
             this.message = 'Welcome!';
             this.router.navigate(['profile']);
             this.login_username = '';
@@ -158,7 +174,7 @@ export class DataService {
   
   addGoal(on_user)
   {
-    this.http.post('http://' + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'name': this.goal_name, 'user': on_user, 'project_id': this.project}), this.authOptions).subscribe(
+    this.http.post(this.domain_protocol + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'name': this.goal_name, 'user': on_user, 'project_id': this.project}), this.authOptions).subscribe(
         data => {
             console.log(data);
             this.users = data['data'];
@@ -233,6 +249,8 @@ export class DataService {
     this.realname = '';
     this.project = 0;
     this.project_name = '';
+    this.user_slack = '';
+    this.project_slack = '';
     this.router.navigate(['home']);
     this.authOptions = {};
     sessionStorage.removeItem('username');
@@ -241,11 +259,13 @@ export class DataService {
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('project_id');
     sessionStorage.removeItem('realname');
+    sessionStorage.removeItem('user_slack');
+    sessionStorage.removeItem('project_slack');
   }
 
   moveGoal(goal_id, to_id, hours)
   {
-    this.http.patch('http://' + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'goal_id': goal_id, 'to_id': to_id, 'hours': hours, 'project_id': this.project}), this.authOptions).subscribe(
+    this.http.patch(this.domain_protocol + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'goal_id': goal_id, 'to_id': to_id, 'hours': hours, 'project_id': this.project}), this.authOptions).subscribe(
         data => {
             this.users = data['data'];
             this.message = data['message'];
@@ -274,7 +294,7 @@ export class DataService {
   
   changeOwner(from_id, to_id)
   {
-    this.http.put('http://' + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'mode': 0, 'goal_id': from_id, 'to_id': to_id, 'project_id': this.project}), this.authOptions).subscribe(
+    this.http.put(this.domain_protocol + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'mode': 0, 'goal_id': from_id, 'to_id': to_id, 'project_id': this.project}), this.authOptions).subscribe(
         data => {
             this.users = data['data'];
             this.message = data['message'];
