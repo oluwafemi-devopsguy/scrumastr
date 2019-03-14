@@ -88,7 +88,7 @@ export class AdminComponent implements OnInit {
             console.log(res1)
 
 
-            this.filterSprint(res2)
+            
         },
         err => {
                 this.dataservice.message = 'Unexpected Error!';
