@@ -23,6 +23,9 @@ export class DataService {
   public createuser_usertype = "User";
   public createuser_projname;
   
+  public inviteuser_email;
+  public message_body;
+
   public username;
   public user_slack;
   public project_slack;
@@ -69,6 +72,23 @@ export class DataService {
         }
     );
   }
+
+  sendEmail()
+  {
+    this.http.post('http://' + this.domain_name + '/scrum/api/scrumemail/', JSON.stringify({'email': this.inviteuser_email, 'messagebody':this.message_body}), this.authOptions).subscribe(
+        data => {
+            this.message = 'Invitation Email has been sent'
+            this.message_body = '';
+            this.inviteuser_email = '';
+        },
+        err => {
+            this.message = 'Email Not sent! Error!';
+            console.error(err);
+            this.message_body = '';
+            this.inviteuser_email = '';
+        }
+    );
+  }
   
   createUser()
   {
@@ -92,7 +112,20 @@ export class DataService {
         }
     );
   }
+
   
+  admin()
+  {
+    this.message = 'Welcome to the Admin Panel'
+    this.router.navigate(['admin']);
+  }
+
+  profile()
+  {
+    this.message = 'Welcome'
+    this.router.navigate(['profile']);
+  }
+
   login()
   {
     this.http.post(this.domain_protocol + this.domain_name + '/scrum/api-token-auth/', JSON.stringify({'username': this.login_username, 'password': this.login_password, 'project': this.login_project}), this.httpOptions).subscribe(
@@ -229,7 +262,7 @@ export class DataService {
     sessionStorage.removeItem('user_slack');
     sessionStorage.removeItem('project_slack');
   }
-  
+
   moveGoal(goal_id, to_id, hours)
   {
     this.http.patch(this.domain_protocol + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'goal_id': goal_id, 'to_id': to_id, 'hours': hours, 'project_id': this.project}), this.authOptions).subscribe(

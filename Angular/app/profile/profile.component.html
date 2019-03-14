@@ -4,7 +4,7 @@
       <div class="nav-wrapper">
           <div class="row">
               <div class="col m3">
-                <img src="/src/assets/image/Converted-PNG.png" alt="nav-logo" class="logo">
+                <img src="/assets/image/Converted-PNG.png" alt="nav-logo" class="logo">
               </div>
               <div class="col m3" style="display: flex;">
                 <h3 id="project_title" style="text-align: right">{{dataservice.project_name}}</h3>
@@ -22,6 +22,7 @@
                         <button type="button" class="btn btn-link s_button"  *ngIf="dataservice.role.toLowerCase() == 'owner'" (click)="createSprint()">New Sprint</button>
                     </li>  
                     <li id="username"> {{dataservice.username}} - {{dataservice.role}} </li>
+                    <li><a *ngIf="dataservice.role.toLowerCase() == 'owner', 'admin'" (click)="admin()" id="adminpanel">Admin Panel</a></li>  
                     <li><a (click)="logout()" id="logout">LOGOUT</a></li>
                 </ul>
             </div>
@@ -47,6 +48,7 @@
                                         <a mz-button (click)="getClicked($event); basicModal.openModal()" class="btn-floating add-icon"><i class="material-icons" id="add">add</i></a>
                                         <a mz-button (click)="getClicked($event); addNote.openModal(); show_notes()" class="btn-floating add-icon"><i class="material-icons" id="add">notes</i></a>
                                     </div>
+                                    
                             </tr>
                         </table>
                     </li>

@@ -1,0 +1,181 @@
+import { Component, OnInit } from '@angular/core';
+import { DataService } from '../data.service';
+import { DragulaService } from 'ng2-dragula';
+import { Subscription, Observable } from 'rxjs';
+import { forkJoin } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { MzModalModule } from 'ngx-materialize';
+
+
+@Component({
+  selector: 'app-admin',
+  templateUrl: './admin.component.html',
+  styleUrls: ['./admin.component.css']
+})
+export class AdminComponent implements OnInit {
+  public arrCount = [0, 1, 2, 3];
+  public on_user;
+  public domain_name = '127.0.0.1:8000';
+  subs = new Subscription();
+  public show_zero: boolean = true;
+  public show_history: boolean = false;
+  public show_project_chat: boolean = false;
+  public show_sprint_option: boolean = false;
+  public chat_text: string = "";
+  public messages = [];
+  public websocket;
+  public msg_obs;
+  public at_bottom: boolean = true;
+  public id_hover = -1;
+  public id_click = -1;
+  sprint_start: Number;
+  sprint_end: Number;
+  goal_id: string;
+  public chat_div_title: string = "Project Chat"
+  present_scrum;
+   public task_history: any;
+  public iData: any;
+  public image_upload: File = null;
+  public scrum_image: File = null;
+  public selected_history:any = [];
+
+  public modalOptions: Materialize.ModalOptions = {
+    dismissible: false, // Modal can be dismissed by clicking outside of the modal
+    opacity: .5, // Opacity of modal background
+    inDuration: 300, // Transition in duration
+    outDuration: 200, // Transition out duration
+    startingTop: '100%', // Starting top style attribute
+    endingTop: '10%', // Ending top style attribute
+    ready: (modal, trigger) => { // Callback for Modal open. Modal and trigger parameters available.
+      alert('Ready');
+      console.log(modal, trigger);
+    },
+    complete: () => { alert('Closed'); } // Callback for Modal close
+  };
+
+  constructor(public dataservice: DataService, private dragula: DragulaService, private http: HttpClient, private modalModule: MzModalModule) {
+
+  this.dataservice.realname = sessionStorage.getItem('realname');
+  this.dataservice.username = sessionStorage.getItem('username');
+  this.dataservice.role = sessionStorage.getItem('role');
+  this.dataservice.project = sessionStorage.getItem('project_id');
+
+  this.dataservice.authOptions = {
+        headers: new HttpHeaders({'Content-Type': 'application/json', 'Authorization': 'JWT ' + sessionStorage.getItem('token')})
+    };
+    this.dataservice.imageAuthOptions = {
+        headers: new HttpHeaders({'Authorization': 'JWT ' + sessionStorage.getItem('token')})
+    };
+
+    this.websocket = new WebSocket('ws://' + this.dataservice.domain_name + '/scrum/');
+    this.websocket.onopen = (evt) => {
+      forkJoin(
+          this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumprojects/' + this.dataservice.project + '/', this.dataservice.httpOptions),
+          this.http.get('http://' + this.dataservice.domain_name + '/scrum/api/scrumsprint/?goal_project_id=' + this.dataservice.project, this.dataservice.authOptions)
+        )
+         .subscribe(([res1, res2]) => {
+            this.dataservice.users = res1['data'];
+            this.dataservice.project_name = res1['project_name'];
+            this.dataservice.sprints = res2;
+            this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '!join ' + this.dataservice.project_name, 'goal_id': 'main_chat_' + this.dataservice.project_name }));
+            console.log(this.dataservice.users)
+        },
+        err => {
+                this.dataservice.message = 'Unexpected Error!';
+                console.log(err);
+            });
+
+    }
+
+  }
+
+  ngOnInit() {
+  
+  }
+
+  logout()
+  {
+  	this.dataservice.message = 'Thank you for using scrum!';
+  	this.dataservice.logout();
+  }
+
+   manageUser(event)
+  {
+    this.getClicked(event);
+    var role_name = window.prompt('Change User Role:\nSelect Between: Developer, Admin, Quality Analyst, or Owner:', '');
+    if(role_name == null || role_name == '')
+    {
+        this.dataservice.message = 'Edit Canceled.';
+        return;
+    }
+    role_name = role_name.toLowerCase();
+    if(role_name == 'developer' || role_name == 'quality analyst' || role_name == 'admin' || role_name == 'owner')
+    {
+        console.log(this.on_user)
+        this.http.patch('http://' + this.dataservice.domain_name + '/scrum/api/scrumprojectroles/', JSON.stringify({'role': role_name, 'id': this.on_user, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
+            data => {
+                this.dataservice.users = data['data'];
+                this.dataservice.message = data['message'];
+            },
+            err => {
+                console.error(err);
+                if(err['status'] == 401)
+                {
+                    this.dataservice.message = 'Session Invalid or Expired. Please Login.';
+                    this.dataservice.logout();
+                } else
+                {
+                    this.dataservice.message = 'Unexpected Error!';    
+                }
+            }
+        );
+    } else
+    {
+        this.dataservice.message = 'Invalid Input.';
+    }
+  }
+
+  getClicked(event)
+  { 
+    console.log()
+    if(event.target.parentElement.parentElement.parentElement.parentElement.id) {
+        this.on_user = event.target.parentElement.parentElement.parentElement.parentElement.id;
+      console.log(this.on_user)
+    } else {
+    this.on_user = event.target.parentElement.parentElement.parentElement.parentElement.parentElement.id 
+    console.log(this.on_user)
+  }
+  }
+
+  toLogin()
+  {
+    this.dataservice.message = 'User successfully added!';
+  }
+
+  doNothing()
+  {
+     
+  }
+
+  setSelectedUser(id)
+  {
+    this.id_hover = id;    
+  }
+
+  createUser()
+  {
+    this.dataservice.createUser();  
+  }
+
+  sendEmail()
+  {
+    this.dataservice.sendEmail();  
+  }
+
+  home()
+  {
+  	this.dataservice.profile();
+  }
+
+}

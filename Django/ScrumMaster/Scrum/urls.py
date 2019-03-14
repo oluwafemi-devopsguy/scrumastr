@@ -7,6 +7,7 @@ from rest_framework_jwt.views import obtain_jwt_token
 app_name = "Scrum"
 
 def_router = DefaultRouter()
+def_router.register('scrumemail', views.ScrumEmailViewSet)
 def_router.register('scrumusers', views.ScrumUserViewSet)
 def_router.register('scrumgoals', views.ScrumGoalViewSet)
 def_router.register('scrumnotes', views.ScrumNoteViewSet)

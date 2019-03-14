@@ -27,6 +27,15 @@ class ScrumProject(models.Model):
     
     class Meta:
         ordering = ['name']
+
+class ScrumEmail(models.Model):
+    email = models.CharField(max_length=50)  
+
+    def __str__(self):
+        return self.email
+    
+    class Meta:
+        ordering = ['email']      
         
 class ScrumUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

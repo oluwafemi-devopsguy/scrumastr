@@ -1,3 +1,6 @@
+from django.core.mail import send_mail
+from ScrumMaster import settings
+from smtplib import SMTPException
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User, Group
@@ -167,6 +170,21 @@ def move_goal(request, goal_id, to_id):
         return HttpResponseRedirect(reverse('login'))
 '''
 
+class ScrumEmailViewSet(viewsets.ModelViewSet):
+    queryset = ScrumEmail.objects.all()
+    serializer_class = ScrumEmailSerializer
+
+    def create(self, request):
+
+        messageTo = request.data['messagebody']
+        emailTo = request.data['email']
+        sent = send_mail('Invitation Email', 'Hello, You are invited to join chatscrum by clicking this link http://100.24.96.113:5100/createuser . You are required to type ' + messageTo + ' in the project area when logging in. Thanks and regards.', 'admin@linuxjobber.com', [emailTo])      
+        if sent:
+            return JsonResponse({'message': 'Email sent Successfully.'})
+        else:
+            return JsonResponse({'message': 'Error: Email not sent.'})
+
+
 def createDemoUser(request):
     demo_user = User.objects.create(username='demouser' + str(random.random())[2:])
     demo_user_password = 'demopassword' + str(random.random())[2:]
@@ -266,6 +284,10 @@ class ScrumProjectRoleViewSet(viewsets.ModelViewSet):
         scrum_project_role = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
         to_id = request.data['id'][1:]
         
+        print(request.data['role'])
+        print(request.data['id'][1:])
+        print(request.data['id'])
+
         author = ScrumProjectRole.objects.get(id=to_id)
         author.role = request.data['role'].capitalize()
         if request.data['role'] == 'quality analyst':

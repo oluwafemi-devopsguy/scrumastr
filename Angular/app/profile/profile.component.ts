@@ -536,7 +536,18 @@ export class ProfileComponent implements OnInit {
     this.websocket.close();
     this.dataservice.logout();
   }
+
+  admin()
+  {
+    this.websocket.close();
+    this.dataservice.admin();
+  }
   
+  home()
+  {
+    this.dataservice.profile();
+  }
+
   ngOnDestroy()
   {
     this.subs.unsubscribe();  
