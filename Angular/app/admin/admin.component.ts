@@ -16,9 +16,6 @@ import { MzModalModule } from 'ngx-materialize';
 export class AdminComponent implements OnInit {
   public arrCount = [0, 1, 2, 3];
   public on_user;
-  public domain_name = '127.0.0.1:8000';
-  public domain_protocol = 'http://';
-  public websocket = 'ws://';
   subs = new Subscription();
   public show_zero: boolean = true;
   public show_history: boolean = false;
@@ -77,11 +74,21 @@ export class AdminComponent implements OnInit {
           this.http.get(this.dataservice.domain_protocol + this.dataservice.domain_name + '/scrum/api/scrumsprint/?goal_project_id=' + this.dataservice.project, this.dataservice.authOptions)
         )
          .subscribe(([res1, res2]) => {
+            this.msg_obs.observe(document.getElementById('chat_div_space'), { attributes: true, childList: true, subtree: true });
             this.dataservice.users = res1['data'];
             this.dataservice.project_name = res1['project_name'];
             this.dataservice.sprints = res2;
-            this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '!join ' + this.dataservice.project_name, 'goal_id': 'main_chat_' + this.dataservice.project_name }));
+            this.dataservice.project_slack = res1['slack_installed'];
+            this.dataservice.slack_app_id = res1['slack_app_id'];
+            this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '!join ' + this.dataservice.project_name, 'goal_id': 'main_chat_' + this.dataservice.project_name, 'slack_username': this.dataservice.slack_username }));
             console.log(this.dataservice.users)
+            console.log(this.dataservice.project_slack)
+            console.log(this.dataservice.user_slack)
+            console.log(this.dataservice.slack_app_id)
+            console.log(res1)
+
+
+            this.filterSprint(res2)
         },
         err => {
                 this.dataservice.message = 'Unexpected Error!';
@@ -89,7 +96,30 @@ export class AdminComponent implements OnInit {
             });
 
     }
+    
+    this.websocket.onmessage = (evt) => {
+        var data = JSON.parse(evt.data);
+        if(data['messages'] !== undefined)
+        {
+            this.messages = []
+            for(var i = 0; i < data['messages']['length']; i++)
+            {
+                this.messages.push(data['messages'][i]['user'] + ': ' + data['messages'][i]['message']);
+            }
+        } else
+        {
+            this.messages.push(data['user'] + ': ' + data['message']);
+        }
+        this.at_bottom = false;
+        var chat_scroll = document.getElementById('chat_div_space');
+        if(chat_scroll.scrollTop == chat_scroll.scrollHeight - chat_scroll.clientHeight)
+            this.at_bottom = true;
+    }
 
+    this.websocket.onclose = (evt) => {
+        console.log('Disconnected!');
+        this.msg_obs.disconnect();
+    }
   }
 
   ngOnInit() {
