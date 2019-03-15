@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'channels',
+    'channels_redis',
     'Scrum.apps.ScrumConfig',
     'rest_framework',
     'corsheaders',
@@ -100,41 +101,21 @@ WSGI_APPLICATION = 'ScrumMaster.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
-'''
+
 DATABASES = {
     'default': {
         'ENGINE': 'mysql.connector.django',
-        'NAME': 'scrum',
-        'USER': 'root',
+        'NAME': 'linuxjobber',
+        'USER': 'linuxjobber',
         'PASSWORD': '8iu7*IU&',
+        'HOST': 'lj_db',
+        'PORT': '3306',
         'OPTIONS': {
             'raise_on_warnings': False,
             'use_pure': True
         }
     }
 }
-'''
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'scrumastrNew',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': ''
-
-    }
-}
-
-# Email backend
-
-EMAIL_USE_TLS = True
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_PASSWORD = 'anjolaoluwa'
-EMAIL_HOST_USER = 'nathanoluwaseyi@gmail.com'
-EMAIL_PORT = 587
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
@@ -172,12 +153,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-'''
+
 #Uncomment this on deployment.
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'asset'),
     )
-'''
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
@@ -188,14 +168,12 @@ ASGI_APPLICATION = "ScrumMaster.routing.application"
 
 
 #Uncomment if you have redis.
-
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            'hosts': [('localhost', 6379)]
+            'hosts': [('xenodochial_jones', 6379)]
         }
     }
 }
 
-FRONTEND = 'http://localhost:4200/home/'

@@ -4,14 +4,14 @@
       <div class="nav-wrapper">
           <div class="row">
               <div class="col m3">
-                <img src="/src/assets/image/Converted-PNG.png" alt="nav-logo" class="logo">
+                <img src="/assets/image/Converted-PNG.png" alt="nav-logo" class="logo">
               </div>
               <div class="col m3" style="display: flex;">
                 <h3 id="project_title" style="text-align: right">{{dataservice.project_name}}</h3>
                 <div style="float: right; display: flex; margin-top: 5px" [style.display] = "show_sprint_option ? 'block' : 'none'" >
                     <select  name="change_sprint" style="height: 30px; margin: 15px; color: #1f7a7a; width: auto;" [(ngModel)]="dataservice.selected_sprint"  (change)="changeSprint()">
                         <option *ngFor = "let sprint of dataservice.sprints"  [ngValue]="sprint" [selected] = "index == last ? sprint : doNothing()" >
-                            SPRINT {{sprint.id}}:  {{sprint.created_on | date}} - {{sprint.ends_on | date}}
+                         {{sprint.id}}:  {{sprint.created_on | date}} - {{sprint.ends_on | date}}
                         </option>                           
                     </select>
                 </div>
@@ -19,8 +19,10 @@
              <div class="col m6">
                 <ul class="right hide-on-med-and-down">
                     <li>
-                        <button type="button" class="btn btn-link s_button"  *ngIf="dataservice.role.toLowerCase() == 'owner'" (click)="createSprint()">New Sprint</button> </li>   
+                        <button type="button" class="btn btn-link s_button"  *ngIf="dataservice.role.toLowerCase() == 'owner'" (click)="createSprint()">New Sprint</button>
+                    </li>  
                     <li id="username"> {{dataservice.username}} - {{dataservice.role}} </li>
+                    <li><a *ngIf="dataservice.role.toLowerCase() == 'owner', 'admin'" (click)="admin()" id="adminpanel">Admin Panel</a></li>  
                     <li><a (click)="logout()" id="logout">LOGOUT</a></li>
                 </ul>
             </div>
@@ -39,12 +41,14 @@
                     <li>
                         <table [attr.id]="'m' + user.id" (mouseover)="setSelectedUser(user.id)" (mouseleave)="setSelectedUser(-1)">
                             <tr id="author">
-                                <th rowspan="2"><a [routerLink] fragment='{{user.id}}' (click)="scrollIntoView('u' + user.id)"><i class="material-icons" id="account_circle">account_circle</i></a></th>
-                                <a [routerLink] fragment='{{user.id}}' (click)="scrollIntoView('u' + user.id)"  style="font-size: 0.8rem">{{user.user.nickname}} ({{user.total_week_hours}} hours)</a>
+                                <th rowspan="2"><a [routerLink] fragment='{{user.id}}' (click)="scrollIntoView('u' + user.id)" (dblclick)="getClicked($event); UserGoalHistory(user.user.nickname, user.id);  userAdvance.openModal()"><i class="material-icons" id="account_circle">account_circle</i></a></th>
+                                <a [routerLink] fragment='{{user.id}}' (click)="scrollIntoView('u' + user.id)"  (dblclick)="getClicked($event); UserGoalHistory(user.user.nickname, user.id);  userAdvance.openModal()" style="font-size: 0.8rem">{{user.user.nickname}} ({{user.total_week_hours}} hours)</a>
                                     <div style="display:flex;">
-                                        <a mz-button (click)="dataservice.role.toLowerCase() == 'owner' ? manageUser($event) : doNothing()" class="btn-floating change-role"><i class="material-icons" id="settings">settings</i></a>
+                                     <!--   <a mz-button (click)="dataservice.role.toLowerCase() == 'owner' ? manageUser($event) : doNothing()" class="btn-floating change-role"><i class="material-icons" id="settings">settings</i></a> -->
                                         <a mz-button (click)="getClicked($event); basicModal.openModal()" class="btn-floating add-icon"><i class="material-icons" id="add">add</i></a>
+                                        <a mz-button (click)="getClicked($event); addNote.openModal(); show_notes()" class="btn-floating add-icon"><i class="material-icons" id="add">notes</i></a>
                                     </div>
+                                    
                             </tr>
                         </table>
                     </li>
@@ -120,7 +124,7 @@
                                             <div class="list_div" *ngIf ="goal.status == arrItem && user.id == goal.user && goal.name; let thisGoal" (dblclick)="goal.status == arrItem ? editGoal($event) : doNothing()" style="font-size: 0.8rem">
                                                 {{goal.goal_project_id}}) {{ (goal.name.length>40) ? (thisGoal | slice:0:40)+'...':(thisGoal) }} {{(goal.hours != -1 && (goal.status == 3 || goal.status == 2) ? ' (' + goal.hours + ')' : '' )}}
                                                 <a (click)="ResizeImage(goal.file); showImage.openModal()">
-                                                    <img src="http://{{dataservice.domain_name}}{{goal.file}}" style="width: 15px; height: 15px" alt="{{goal.file}}">
+                                                    <img src="https://{{dataservice.domain_name}}{{goal.file}}" style="width: 15px; height: 15px" alt="{{goal.file}}">
                                                 </a> 
 
                                             <div class="div-add-file" style="display: inline-flex;">
@@ -165,6 +169,49 @@
                         </form>
                     </mz-modal-content>
                 </mz-modal>
+                <mz-modal #addNote>
+                    <mz-modal-header>
+                        <h4>Add a Notes</h4>
+                    </mz-modal-header>
+                    <mz-modal-content>
+                        <h6>Click outside this dialog to cancel.</h6>
+                        <form (ngSubmit)="add_a_note()">
+                            <textarea id="goal" [(ngModel)]="note" name="goal"></textarea>
+                            <select  name="note_priority" style="height: 30px; margin: 15px; color: #1f7a7a; width: auto;" [(ngModel)]="note_priority">
+                                <option Value="High" selected>High Priority</option>
+                                <option Value="Medium">Medium Priority</option>
+                                <option Value="Low">Low Priority</option>                           
+                            </select>
+                            <input class="modal-close waves-effect btn btn-default" type="submit" value="Add Note">
+                        </form><br>
+                        
+
+                        <br>
+                        <div style="display: table; width: 100%; word-wrap: break-word; border-collapse: collapse; border: 2px solid black;">
+                            <div style="display: table-row">
+                                    <!--
+                                    <th class="full-box">Created By</th>
+                                    -->
+                                    <th class="full-box">ID</th>
+                                    <th class="full-box">NOTES</th>
+                                    <th class="full-box">ACTION</th>
+                            </div>
+
+                            <div style="display: table-row" *ngFor="let note of dataservice.user_notes; let j = index; let k = count">
+                                <td class="top-box">{{note.id}}</td>
+                                <td class="top-box">
+                                    <span style="font-weight: bolder;" [style.color]="note.priority == 'High' ? 'rgb(255,0,0)' : (note.priority == 'Medium' ? 'rgb(0,0,255)' : 'rgb(0,255,0)')">
+                                        {{note.note}} 
+                                    </span>  
+                                </td>
+                                <td class="top-box">
+                                    <button type="button" class="btn btn-link s_button"  *ngIf="dataservice.role.toLowerCase() == 'owner'" (click)="note_to_goal(note.id, note.note, note.priority)">Add to Board</button>
+                                    <!-- <span style="font-size: 20px; font-weight: bolder;">+</span> -->
+                                </td>
+                            </div>                                
+                        </div>
+                    </mz-modal-content>
+                </mz-modal>
                 <mz-modal #upload>
                     <mz-modal-header>
                         <h4>Add A File</h4>
@@ -184,9 +231,41 @@
                         <h4>Image</h4>
                     </mz-modal-header>
                     <mz-modal-content>
-                        <img src="http://{{dataservice.domain_name}}{{scrum_image}}" style="width: 450px; height: 220px" alt="image">
+                        <img src="https://{{dataservice.domain_name}}{{scrum_image}}" style="width: 450px; height: 220px" alt="image">
                     </mz-modal-content>
-                </mz-modal>                
+                </mz-modal>   
+                <mz-modal #userAdvance>
+                    <mz-modal-header>
+                        <h4>{{clicked_user}}</h4>
+                    </mz-modal-header>
+                    <mz-modal-content>
+                        <div style="display: table; width: 100%; word-wrap: break-word; border-collapse: collapse; border: 2px solid black;">
+                            <div style="display: table-row">
+                                    <!--
+                                    <th class="full-box">Created By</th>
+                                    -->
+                                    <th class="full-box">Sprint No</th>
+                                    <th class="full-box">SPRINTS</th>
+                                    <th class="full-box">GOALS</th>
+                            </div>
+
+                            <div style="display: table-row" *ngFor="let sprint of dataservice.sprints; let j = index; let k = count">
+                                <td class="top-box">{{sprint.id}}</td>
+                                <td class="top-box">  {{sprint.created_on | date}} - {{sprint.ends_on | date}}</td>
+                                <td class="top-box">
+                                    <span *ngFor="let user_goal of dataservice.user_goal_history">
+                                        <div *ngIf ="user_goal.time_created > sprint.created_on && user_goal.time_created < sprint.ends_on" >
+                                            {{user_goal.name}} --
+                                            <span style="font-weight: bolder;" [innerText]="user_goal.status == 3 ? 'completed' : 'Not Completed'" [style.color]="user_goal.status == 3 ? 'green' : 'red'">
+                                                
+                                            </span>
+                                        </div>
+                                    </span>
+                                </td>
+                            </div>                                
+                        </div>
+                    </mz-modal-content>
+                </mz-modal>             
                 <mz-modal #showHistory >
                         <mz-modal-header>
                             <h4>Task History Details</h4>
@@ -202,7 +281,7 @@
                                             {{task_history.name}}
                                         </td>
                                         <td rowspan="7">
-                                            <img src="http://{{dataservice.domain_name}}{{task_history.file}}" style="width: 250px; height: 220px" alt="http://{{dataservice.domain_name}}{{task_history.file}}">
+                                            <img src="https://{{dataservice.domain_name}}{{task_history.file}}" style="width: 250px; height: 220px" alt="https://{{dataservice.domain_name}}{{task_history.file}}">
                                         </td>
                                     </tr>
                                     <tr style="margin: 0; padding: 0">
@@ -229,33 +308,7 @@
                              </div>
                         </mz-modal-content>
                 </mz-modal>
-                <!-- <mz-modal #chat>
-                    <mz-modal-header>
-                        <h4>Goal Chat</h4>
-                    </mz-modal-header>
-                    <mz-modal-content>
-                        <div class="card">
-                                    <h5 style="text-align: center; padding-top: 10px">Goal Chat</h5>
-                                    <hr>
-                                    <div style="overflow: auto; height: calc(100vh - 345px); padding-left: 10px; padding-right: 10px" id="chat_div_space">
-                                        <div *ngFor="let message of messages" style="font-size: 0.85rem">
-                                            <li [innerText]="message" style="list-style-type: none; padding-top: 5px; padding-bottom: 5px"></li>
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <div class="row" style="padding-left: 10px; padding-right: 10px">
-                                        <div style="height: 190px; overflow: auto">
-                                            <div class="input-field col s12">
-                                                <textarea id="chat_text" class="materialize-textarea" [(ngModel)]="chat_text" (keyup.enter)="sendMessage('goal_id')" style="font-size: 0.85rem"></textarea>
-                                                <label for="chat_text">Send a message</label>
-                                            </div>
-                                        <div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </mz-modal-content>
-                </mz-modal> -->
+
             </div>
         </div>
         
@@ -278,6 +331,19 @@
                             <textarea id="chat_text" class="materialize-textarea" [(ngModel)]="chat_text" (keyup.enter)="sendMessage('main_chat')" style="font-size: 0.85rem"></textarea>
                             <label for="chat_text">Send a message</label>
                         </div>
+                        <span>
+                            <li *ngIf="dataservice.role.toLowerCase() != 'owner'">
+                                <div *ngIf="dataservice.project_slack == true && dataservice.user_slack == 'false'" style="font-weight: bold; color: #1f7a7a ">
+                                    Connect Chatscrum app to Slack?<br/>
+                                    <a href="https://slack.com/oauth/authorize?client_id={{this.dataservice.slack_app_id}}&state=main_chat_{{dataservice.project_name}}>>>{{dataservice.username}}&scope=identity.basic identity.team identity.avatar identity.email"><img alt="Sign in with Slack" height="40" width="139" src="https://platform.slack-edge.com/img/sign_in_with_slack.png" srcset="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x" /></a></div>
+                            </li>
+                        </span>
+                        <span *ngIf="dataservice.role.toLowerCase() == 'owner'">                                              
+                            <li *ngIf="dataservice.project_slack == false" style="font-weight: bold; color: #1f7a7a ">
+                                Install Chatscrum App to Slack? <br/>
+                                <a href="https://slack.com/oauth/authorize?client_id={{this.dataservice.slack_app_id}}&state=main_chat_{{dataservice.project_name}}>>>{{dataservice.username}}&scope=incoming-webhook,channels:read,channels:history,groups:history,mpim:history,emoji:read,files:read,groups:read,im:read,im:history,reactions:read,stars:read,users:read,team:read,chat:write:user,chat:write:bot,channels:write,bot"><img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a> 
+                            </li>                                                                       
+                    </span>
 
                     <div>
                 </div>

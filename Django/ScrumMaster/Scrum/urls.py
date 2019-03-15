@@ -7,8 +7,10 @@ from rest_framework_jwt.views import obtain_jwt_token
 app_name = "Scrum"
 
 def_router = DefaultRouter()
+def_router.register('scrumemail', views.ScrumEmailViewSet)
 def_router.register('scrumusers', views.ScrumUserViewSet)
 def_router.register('scrumgoals', views.ScrumGoalViewSet)
+def_router.register('scrumnotes', views.ScrumNoteViewSet)
 def_router.register('scrumprojects', views.ScrumProjectViewSet)
 def_router.register('scrumprojectroles', views.ScrumProjectRoleViewSet)
 def_router.register(r'scrumsprint', views.SprintViewSet, base_name='scrumsprint')
@@ -27,5 +29,6 @@ def_router.register(r'scrumsprint', views.SprintViewSet, base_name='scrumsprint'
 urlpatterns = [
     url(r'api/', include(def_router.urls)),
     url(r'^api-token-auth/', obtain_jwt_token),
-    path(r'create-demo/', views.createDemoUser)
+    path(r'create-demo/', views.createDemoUser),
+    url(r'^events/', views.Events.as_view()), 
 ]
