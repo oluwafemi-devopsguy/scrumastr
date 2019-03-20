@@ -3,6 +3,7 @@ stages:
     - deploy
 test:
    stage: test
+   tags: integration
    only:
      - integration
    script:
