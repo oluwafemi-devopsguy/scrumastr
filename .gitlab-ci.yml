@@ -2,8 +2,9 @@ stages:
     - test
     - deploy
 test:
+windows job:
+    tag: integration
    stage: test
-   tags: integration
    only:
      - integration
    script:
