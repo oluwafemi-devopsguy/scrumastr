@@ -9,7 +9,10 @@ test job:
    only:
      - integration
    script:
-     - cd /web/www && sudo git checkout integration && sudo git pull origin integration
+     - cd /web/www && sudo git checkout integration
+     - sudo git config --global user.name "eniayomi"
+     - sudo git config --global user.email "oluwaseyieniayomi@gmail.com"
+     - sudo git pull origin integration
      - sudo docker stop cs1_instance || true && sudo docker rm cs1_instance || true
      - cd /web && sudo docker build -t chatscrum .
      - sudo docker start jovial_jang && sudo docker start lj_db
@@ -20,7 +23,10 @@ deploy:
    only:
      - master
    script:
-     - cd /web/www && sudo git checkout master && sudo git pull origin master
+     - cd /web/www && sudo git checkout master
+     - sudo git pull origin master
+     - sudo git config --global user.name "eniayomi"
+     - sudo git config --global user.email "oluwaseyieniayomi@gmail.com"
      - sudo docker stop cs1_instance || true && sudo docker rm cs1_instance || true
      - cd /web && sudo docker build -t chatscrum .
      - sudo docker start tender_sinoussi && sudo docker start lj_db
