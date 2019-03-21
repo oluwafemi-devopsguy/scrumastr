@@ -9,6 +9,8 @@ test job:
    only:
      - integration
    script:
+     - sudo su -
+     - su - noobaidmail
      - cd /web/www && sudo git checkout integration
      - sudo git pull origin integration
      - sudo docker stop cs1_instance || true && sudo docker rm cs1_instance || true
