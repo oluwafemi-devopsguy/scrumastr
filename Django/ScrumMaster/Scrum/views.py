@@ -225,7 +225,7 @@ class ScrumUserViewSet(viewsets.ModelViewSet):
         
         user, created = User.objects.get_or_create(username=request.data['email'], email=request.data['email'])
         if created:
-            scrum_user = ScrumUser(user=user, nickname=request.data['full_name'])
+            scrum_user = ScrumUser(user=user, nickname=request.data['full_name'], color = userBgColor())
             scrum_user.save()
             if request.data['usertype'] == 'Owner':
                 scrum_project = ScrumProject(name=request.data['projname'])
@@ -239,7 +239,12 @@ class ScrumUserViewSet(viewsets.ModelViewSet):
         else:
             return JsonResponse({'message': 'Error: User with that e-mail already exists.'})
 
-            
+def userBgColor():
+    list = ["#ff8080", "#4d4dff","#ffffff", "#66ffb3", "#99ddff","#ffffff", "#ffcc80", "#ff99ff","#ffffff", "#b3ffff", "#ffff80","#ffffff","#1a8cff", "#e085c2","#ffffff","#739900"]
+    color = random.choice(list)
+    return color
+
+
 def filtered_users(project_id):
     project = ScrumProjectSerializer(ScrumProject.objects.get(id=project_id)).data
     time_check = datetime.datetime.utcnow().replace(tzinfo=None)
@@ -485,8 +490,14 @@ def jwt_response_payload_handler(token, user=None, request=None):
         raise ValidationError('The selected project does not exist.');
     
     if project.scrumprojectrole_set.filter(user=user.scrumuser).count() == 0:
-        scrum_project_role = ScrumProjectRole(role="Developer", user=user.scrumuser, project=project)
+        scrum_project_role = ScrumProjectRole(role="Developer", user=user.scrumuser, project=project, color=userBgColor())
         scrum_project_role.save()
+    if project.scrumprojectrole_set.get(user=user.scrumuser).color == "white":
+        proj_role = project.scrumprojectrole_set.get(user=user.scrumuser)
+        proj_role.color = userBgColor()
+        print("coloooooooooooooooooooooooooooor" + proj_role.color)
+        proj_role.save()
+
 
     user_slack = bool(user.scrumuser.slack_email)
     if project.scrumslack_set.all().exists():
@@ -495,6 +506,7 @@ def jwt_response_payload_handler(token, user=None, request=None):
     else:
         project_slack = "False"
         slack_username = "empty"
+
 
         
     return {
@@ -745,13 +757,15 @@ class Events(APIView):
                 print("========================================Slack details================================") 
                 print(post_data["event"]["channel"])
                 print(slack_details)  
-                if slack_details is not None:           
+                if slack_details is not None: 
+                    slack_message = post_data["event"]["text"]          
                     chatRoom = ScrumChatRoom.objects.get(id = slack_details.room_id).hash
-                    new_message = ScrumChatMessage(room=slack_details.room, user=slack_user_nick, message=post_data["event"]["text"])
+                    new_message = ScrumChatMessage(room=slack_details.room, user=slack_user_nick, message=slack_message)
                     new_message.save()
+                    
                     async_to_sync(self.channel_layer.group_send)(
                         chatRoom,
-                            {"type": "chat_message", 'user': slack_user_nick, 'message': post_data["event"]["text"]},
+                            {"type": "chat_message", 'user': slack_user_nick, 'message': slack_message, 'date_Time':datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H:%M:%S")},
                         )
 
             except KeyError as error:

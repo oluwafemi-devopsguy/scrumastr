@@ -199,3 +199,5 @@ CHANNEL_LAYERS = {
 }
 
 FRONTEND = 'http://localhost:4200/home/'
+
+SECURE_SSL_REDIRECT = False
