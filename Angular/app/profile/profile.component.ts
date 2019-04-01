@@ -14,6 +14,7 @@ import { MzModalModule } from 'ngx-materialize';
 export class ProfileComponent implements OnInit {
 
   public arrCount = [0, 1, 2, 3];
+  public color:string = "blue"
   subs = new Subscription();
   public show_zero: boolean = true;
   public show_history: boolean = false;
@@ -31,8 +32,9 @@ export class ProfileComponent implements OnInit {
   sprint_end: Number;
   goal_id: string;
   public chat_div_title: string = "Project Chat"
-  present_scrum;
-   public task_history: any;
+  present_scrum;  
+  public nav_drop: boolean = false;
+  public task_history: any;
   public iData: any;
   public image_upload: File = null;
   public scrum_image: File = null;
@@ -40,6 +42,7 @@ export class ProfileComponent implements OnInit {
   public clicked_user;
   public note;
   public note_priority;
+  public board: string = "AllTask"
     
   public modalOptions: Materialize.ModalOptions = {
     dismissible: false, // Modal can be dismissed by clicking outside of the modal
@@ -139,7 +142,7 @@ export class ProfileComponent implements OnInit {
             console.log(this.dataservice.project_slack)
             console.log(this.dataservice.user_slack)
             console.log(this.dataservice.slack_app_id)
-            console.log(res1)
+            console.log("hgggggggres1")
 
 
             this.filterSprint(res2)
@@ -151,6 +154,24 @@ export class ProfileComponent implements OnInit {
 
     }
 
+    // this.websocket.onmessage = (evt) => {
+    //     var data = JSON.parse(evt.data);
+    //     if(data['messages'] !== undefined)
+    //     {
+    //         this.messages = []
+    //         for(var i = 0; i < data['messages']['length']; i++)
+    //         {
+    //             this.messages.push(data['messages'][i]['user'] + ': ' + data['messages'][i]['message']);
+    //         }
+    //     } else
+    //     {
+    //         this.messages.push(data['user'] + ': ' + data['message']);
+    //     }
+    //     this.at_bottom = false;
+    //     var chat_scroll = document.getElementById('chat_div_space');
+    //     if(chat_scroll.scrollTop == chat_scroll.scrollHeight - chat_scroll.clientHeight)
+    //         this.at_bottom = true;
+    // }
     this.websocket.onmessage = (evt) => {
         var data = JSON.parse(evt.data);
         if(data['messages'] !== undefined)
@@ -158,12 +179,26 @@ export class ProfileComponent implements OnInit {
             this.messages = []
             for(var i = 0; i < data['messages']['length']; i++)
             {
-                this.messages.push(data['messages'][i]['user'] + ': ' + data['messages'][i]['message']);
+                this.messages.push(data['messages'][i]);
+                console.log('first')
             }
         } else
         {
-            this.messages.push(data['user'] + ': ' + data['message']);
+            this.messages.push(data);
+            console.log('second')
         }
+        console.log(this.messages)
+        // {
+        //     this.messages = []
+        //     for(var i = 0; i < data['messages']['length']; i++)
+        //     {
+        //         this.messages.push(data['messages'][i]['user'] + ': ' + data['messages'][i]['message']);
+        //     }
+        // } else
+        // {
+        //     this.messages.push(data['user'] + ': ' + data['message']);
+        // }
+        console.log(this.messages)
         this.at_bottom = false;
         var chat_scroll = document.getElementById('chat_div_space');
         if(chat_scroll.scrollTop == chat_scroll.scrollHeight - chat_scroll.clientHeight)
@@ -208,13 +243,10 @@ export class ProfileComponent implements OnInit {
             console.log(filter_goal)
             console.log(this.dataservice.users.length)
             for (var j = 0;  j < this.dataservice.users[i].scrumgoal_set.length; j++)  {
-              console.log(filter_goal)
               if (this.dataservice.sprints.length) {
-                console.log(filter_goal)
                 if (this.dataservice.users[i].scrumgoal_set[j].time_created >= this.dataservice.sprints[this.dataservice.sprints.length - 1].created_on && 
                   this.dataservice.users[i].scrumgoal_set[j].time_created <= this.dataservice.sprints[this.dataservice.sprints.length - 1].ends_on)
-                  {         
-                  console.log(filter_goal)         
+                  {                  
                   // console.log(this.dataservice.users[i].scrumgoal_set[j].time_created)
                   // console.log(this.dataservice.users[i].scrumgoal_set[j].name)
                    // this.dataservice.users[i].scrumgoal_set[j].user_id = this.dataservice.users[i].id
@@ -441,6 +473,7 @@ export class ProfileComponent implements OnInit {
       this.goal_id = "main_chat_" + this.dataservice.project_name 
       console.log(this.goal_id)
     }
+    console.log(this.dataservice.realname)
     this.websocket.send(JSON.stringify({
       'user': this.dataservice.realname, 
       'message': this.chat_text,
@@ -474,6 +507,14 @@ export class ProfileComponent implements OnInit {
     this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '!goal_chat' + this.goal_id, 'goal_id': this.goal_id, 'slack_username': this.dataservice.slack_username }))
     this.show_project_chat = true;
     this.chat_div_title = this.goal_id + " Chat"
+  }
+
+  allTask() {
+    this.board = "AllTask"
+  }
+
+  myTask()  {
+    this.board = "MyTask"
   }
 
   initMainChat(){
@@ -730,6 +771,12 @@ export class ProfileComponent implements OnInit {
   ResizeImage(iName) {
     console.log(iName)
     this.scrum_image = iName
+  }
+
+   navDrop() {
+    console.log(this.nav_drop)
+    this.nav_drop = !this.nav_drop
+    console.log(this.nav_drop)
   }
 
     CheckHistory(task) {
