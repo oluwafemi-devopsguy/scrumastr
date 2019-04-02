@@ -99,7 +99,7 @@ class ScrumChatRoom(models.Model):
 class ScrumChatMessage(models.Model):
     user = models.CharField(max_length=50)
     message = models.TextField()
-    date_Time = models.DateTimeField()
+    date_Time = models.DateTimeField(auto_now = True)
     room = models.ForeignKey(ScrumChatRoom, on_delete=models.CASCADE)
 
 

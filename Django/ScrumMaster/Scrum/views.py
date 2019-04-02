@@ -225,7 +225,7 @@ class ScrumUserViewSet(viewsets.ModelViewSet):
         
         user, created = User.objects.get_or_create(username=request.data['email'], email=request.data['email'])
         if created:
-            scrum_user = ScrumUser(user=user, nickname=request.data['full_name'], color = userBgColor())
+            scrum_user = ScrumUser(user=user, nickname=request.data['full_name'])
             scrum_user.save()
             if request.data['usertype'] == 'Owner':
                 scrum_project = ScrumProject(name=request.data['projname'])
@@ -758,7 +758,25 @@ class Events(APIView):
                 print(post_data["event"]["channel"])
                 print(slack_details)  
                 if slack_details is not None: 
-                    slack_message = post_data["event"]["text"]          
+                    slack_message = post_data["event"]["text"]
+                    
+
+                    slack_message_array = re.split(r'\s', slack_message)
+                    print(slack_message_array)
+
+                    for each_word in slack_message_array:
+                        match =re.match(r'<@([\w\.-]+)>',each_word ) 
+                        if match:
+                            print(match.group(1))
+                            slack_name = ScrumUser.objects.filter(slack_user_id=match.group(1))
+                            slack_message = slack_message.replace(each_word, slack_name.slack_user_id)
+                            print(slack_message)
+                            print("pattern matched")
+                            
+                        else:
+                            print("pattern not matched") 
+
+
                     chatRoom = ScrumChatRoom.objects.get(id = slack_details.room_id).hash
                     new_message = ScrumChatMessage(room=slack_details.room, user=slack_user_nick, message=slack_message)
                     new_message.save()
