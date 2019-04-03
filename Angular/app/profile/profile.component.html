@@ -51,8 +51,8 @@
     </div> -->
     <div class="topnav"  [style.display] = "nav_drop == true ? '' : 'none'" >
     
-  <div style="float: right; color: black; padding: 5px;">     
-    <a class="dropd" style="display: inline;" (click)="admin()"> Admin Panel</a>
+  <div style="float: right; color: black; padding: 5px;">    
+    <a (click)="admin()" id="adminpanel" class="dropd" style="display: inline;"  *ngIf="dataservice.role.toLowerCase() == 'owner', 'admin'"> Admin Panel</a>
     <a (click)="logout()" id="logout">Logout</a>
     </div>
 </div>
@@ -75,10 +75,10 @@
                             <tr id="author">
                                 <a [routerLink] fragment='{{user.id}}' (click)="scrollIntoView('u' + user.id)"  (dblclick)="getClicked($event); UserGoalHistory(user.user.nickname, user.id);  userAdvance.openModal()" class="scrumuser_box1" [style.background-color] = user.color  style="width: 200px;">
                                     <span style="font-size: 16px; text-align: left;">{{user.user.nickname}}</span> 
-                                    <a (click)="getClicked($event); basicModal.openModal()"  style="margin: 5px">
-                                        <img src="/assets/image/plus2.png" style="height: 20px; width: 20px; margin 10px">
+                                    <a (click)="getClicked($event); basicModal.openModal()"  style="margin: 5px; float: right;">
+                                        <img src="/assets/image/plus2.png" style="height: 20px; width: 20px; margin 10px; ">
                                     </a> 
-                                    <a (click)="getClicked($event); addNote.openModal(); show_notes()" style="margin: 5px">
+                                    <a (click)="getClicked($event); addNote.openModal(); show_notes()" style="margin: 5px; float: right">
                                         <img src="/assets/image/notes.png" style="height: 20px; width: 20px;  margin 10px; ">
                                     </a>
 
@@ -178,18 +178,18 @@
                                                     <img src="https://{{dataservice.domain_name}}{{goal.file}}" style="width: 15px; height: 15px" alt="{{goal.file}}">
                                                 </a> 
 
-                                            <div class="div-add-file" style="display: inline-flex; padding: 10px;">
+                                            <div class="div-add-file" style="display: inline-flex; padding-bottom: 10px;">
                                                 <select name= "option{{goal.goal_project_id}}" style="height: 18px; margin: 5px; color: #1f7a7a; font-size: 10px;padding: 0; width: 85px;" [(ngModel)]="selected_history[j]" (change)= "CheckHistory(selected_history[j]); showHistory.openModal();" >
                                                     <option [ngValue]="history1" disabled selected>History  </option>
                                                     <option *ngFor = "let history of goal.scrumgoalhistory_set" [ngValue]=history>
                                                         {{history.message}}
                                                     </option>                                                                          
                                                 </select> 
-                                                <a (click)="goalClicked(goal.goal_project_id); upload.openModal()" class="add-file">
-                                                    <img src="/assets/image/foto.png" style="height: 20px; width: 20px; margin 10px">
+                                                <a (click)="goalClicked(goal.goal_project_id); upload.openModal()">
+                                                    <img src="/assets/image/foto.png" style="height: 20px; width: 20px;">
                                                 </a>
                                                 <a (click)="goalClicked(goal.goal_project_id); initGoalChat()">
-                                                    <img src="/assets/image/message.png" style="height: 20px; width: 20px; margin 5px">
+                                                    <img src="/assets/image/message.png" style="height: 20px; width: 20px;">
                                                 </a> 
                                             </div>
                                                 <span class="tooltiptext">{{goal.name}}</span>                                              

@@ -127,7 +127,7 @@ h5 {
 /*=======================================================BOLU====================================================================*/
 
 .add-file {
-    width: 30%!important;
+    
     padding: 0px;
     box-shadow: none; 
 }
@@ -149,7 +149,7 @@ h5 {
     border:1px solid grey;
     border-top: 6px solid lightblue;
     border-radius: 1px;
-    width: 150px;
+    width: 140px;
     height: 100px;
     padding:3px;
     text-align: center;
