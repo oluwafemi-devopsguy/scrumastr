@@ -260,6 +260,10 @@ a:hover, a:active {
     border-radius: 5px;
 }
 
+.scrumuser_box1:hover {
+    color: #000;
+}
+
 .settings_icon {    
     width: 16px;
     height: 16px;

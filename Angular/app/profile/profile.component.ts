@@ -514,6 +514,7 @@ export class ProfileComponent implements OnInit {
   }
 
   myTask()  {
+    console.log(this.dataservice.realname)
     this.board = "MyTask"
   }
 

@@ -240,7 +240,7 @@ class ScrumUserViewSet(viewsets.ModelViewSet):
             return JsonResponse({'message': 'Error: User with that e-mail already exists.'})
 
 def userBgColor():
-    list = ["#ff8080", "#4d4dff","#ffffff", "#66ffb3", "#99ddff","#ffffff", "#ffcc80", "#ff99ff","#ffffff", "#b3ffff", "#ffff80","#ffffff","#1a8cff", "#e085c2","#ffffff","#739900"]
+    list = ["#ff8080", "#4d4dff","#ff7ff6", "#66ffb3", "#99ddff","#ffffff", "#ffcc80", "#ff99ff","#f4f4f4", "#b3ffff", "#ffff80","#dfdfdf","#1a8cff", "#e085c2","#ffffff","#739900"]
     color = random.choice(list)
     return color
 
