@@ -154,7 +154,7 @@ h5 {
     font-family: Roboto;
     border-radius: 1px;
     width: 230px;
-    height: 142px;
+    height: auto;
     padding:5px;
     text-align: left;
     position: relative;
@@ -278,7 +278,7 @@ a:hover, a:active {
     background: #FFFFFF;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);
     background-repeat: no-repeat;
-    background-position: 377px 8px;
+    ;
 }
 
 
@@ -294,7 +294,7 @@ a:hover, a:active {
     background: transparent;
     background-image:url('/assets/image/search.png');
     background-repeat: no-repeat;
-    background-position: 147px 7px;
+    background-position: 147px 5px;
     
 }
 
@@ -316,12 +316,12 @@ a:hover, a:active {
 
 .chat_div   {
     text-indent: 30px;
-    width: 266px;
+   /* width: 266px;*/
     height: auto;
-    margin-top: 15px;
+    margin-top: 5px;
     
-    background: #FFFFFF;
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);
+    background: transparent;
+    
     border-radius: 5px;
 }
 
