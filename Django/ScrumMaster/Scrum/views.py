@@ -565,7 +565,7 @@ class SprintViewSet(viewsets.ModelViewSet):
                     if (last_sprint.created_on.replace(tzinfo=None) + datetime.timedelta(seconds=20) > now_time):
                         queryset = self.get_project_sprint() 
                         return JsonResponse({'message': 'Not Allowed: Minimum Allowed Sprint Run is 60secs.', 'data':queryset, 'users': filtered_users(request.data['project_id'])})
-                    else: 
+                    elif (datetime.datetime.strftime(last_sprint.ends_on, "%Y-%m-%d")) > datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d"): 
                         last_sprint.ends_on = datetime.datetime.now()
                         last_sprint.save()
                         sprint = ScrumSprint(goal_project_id=request.data['project_id'], created_on = now_time, ends_on=datetime.datetime.now() + datetime.timedelta(days=7))
@@ -573,6 +573,8 @@ class SprintViewSet(viewsets.ModelViewSet):
                         self.change_goal_moveability(sprint_goal_carry, scrum_project, scrum_project_role)
                         queryset = self.get_project_sprint()
                         return JsonResponse({'message': 'Last Sprint Ended and New Sprint Created Successfully.', 'data':queryset, 'users': filtered_users(request.data['project_id'])})  
+                    else:
+                        pass            
             else: 
                 sprint = ScrumSprint(goal_project_id=request.data['project_id'], created_on = now_time, ends_on=datetime.datetime.now() + datetime.timedelta(days=7))
                 sprint.save()
