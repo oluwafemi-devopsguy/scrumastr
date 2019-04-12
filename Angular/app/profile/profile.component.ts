@@ -650,7 +650,18 @@ export class ProfileComponent implements OnInit {
             data => {
                 this.dataservice.users = data['data'];
                 this.dataservice.message = data['message'];
-                this.note = '';   
+                this.note = '';  
+
+
+                for (var i = 0;  i < this.dataservice.users.length; i++)  {       
+                if (this.dataservice.users[i].id == this.on_user.slice(1))
+                  { 
+                  console.log(this.dataservice.users[i].scrumnote_set) 
+                  this.dataservice.user_notes = this.dataservice.users[i].scrumnote_set
+                  }
+               } 
+
+               
             },
             err => {
                 console.error(err);

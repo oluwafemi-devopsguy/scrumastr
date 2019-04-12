@@ -261,7 +261,8 @@
                         <h4>Add a Notes</h4>
                     </mz-modal-header>
                     <mz-modal-content>
-                        <h6>Click outside this dialog to cancel.</h6>
+                        <div style="margin-bottom: 10px; font-weight: 500; font-size: 24px;">Notes<span style="font-weight: 500;color: red;">*</span></div>
+                        <h5 style="color: green">{{dataservice.message}}</h5>
                         <form (ngSubmit)="add_a_note()">
                             <textarea id="goal" [(ngModel)]="note" name="goal"></textarea>
                             <select  name="note_priority" style="height: 30px; margin: 15px; color: #1f7a7a; width: auto;" [(ngModel)]="note_priority">
@@ -269,7 +270,10 @@
                                 <option Value="Medium">Medium Priority</option>
                                 <option Value="Low">Low Priority</option>                           
                             </select>
-                            <input class="modal-close waves-effect btn btn-default" type="submit" value="Add Note">
+                            <!-- <input class="modal-close waves-effect btn btn-default" type="submit" value="Add Note"> -->
+                            <div style="text-align: center">
+                                <button type="button" class="btn-round" value="Add Task" (click)="add_a_note()" style=" height: 40px; font-size: 14px">ADD TASK</button>
+                            </div>
                         </form><br>
                         
 
@@ -402,7 +406,7 @@
 
 
         
-              <div class="col s3" style=" background-color:#F5F5F5;">
+              <div class="col s3" style=" background-color:#F5F5F5; float: right;">
             <a style="float: right; margin-right: -10px; background-color: white; border-radius: 0px 0px 0px 10px; color: black; padding: 5px; ">{{chat_div_title}}</a>
             <br>
             <br>
@@ -505,11 +509,11 @@
 
 
 
-        <div class="col s8" style="height: calc(100vh - 65px); overflow: auto; background-color: #f2f2f2; border-left: 3px solid white" [style.display] = "board == 'MyTask' ? '' : 'none'">          
+        <div class="col s9" style="height: calc(100vh - 65px); overflow: auto; background-color: #f2f2f2; border-left: 3px solid white;" [style.display] = "board == 'MyTask' ? '' : 'none'">          
             <div class="main_area">
                  
               
-                <div class="board-area">
+                <div class="board-area" style=" float: left;">
                 <ng-container *ngFor="let user of dataservice.users; let user_index = index">
                     <br>
                     <div  *ngIf="user.user.nickname.toUpperCase() == this.dataservice.realname.toUpperCase()">
@@ -542,7 +546,10 @@
                                                 <a (click)="ResizeImage(goal.file); showImage.openModal()">
                                                     <img src="https://{{dataservice.domain_name}}{{goal.file}}" style="width: 15px; height: 15px" alt="{{goal.file}}">
                                                 </a> 
-
+                                                <br>
+                                                <br>
+                                                <br>
+                                                <br>
                                             <div class="div-add-file" style="display: inline-flex; padding-bottom: 10px;">
                                                 <div style="padding: 8px 5px; font-weight: bold">
                                                     {{goal.goal_project_id}}
