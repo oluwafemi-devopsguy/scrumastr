@@ -236,7 +236,204 @@
                     </ng-container>
                 </div>
             </div>
-            <div class="col m4">
+            
+        </div>
+
+
+
+        
+              <div class="col s3" style=" background-color:#F5F5F5; float: right;">
+            <a style="float: right; margin-right: -10px; background-color: white; border-radius: 0px 0px 0px 10px; color: black; padding: 5px; ">{{chat_div_title}}</a>
+            <br>
+            <br>
+            <br>
+            <div class="card" style="background-color:transparent; box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);">
+                <br>
+                <div style="text-align: right"><a style="text-align: right" (click)="initMainChat()" *ngIf=" show_project_chat"> switch to Project Chat>>> </a></div>
+                
+                <div style="overflow: auto; height: calc(100vh - 345px); padding-left: 10px; padding-right: 10px; background-color:transparent;" id="chat_div_space">
+                    <div *ngFor="let message of messages" style="font-size: 0.85rem"  class="chat_div"  [style.float] = "message.user == dataservice.realname ? 'right' : 'left'" [style.width] = "message.user == dataservice.realname ? '200px' : '266px'">
+                    
+
+                    <li  style="list-style-type: none; padding-top: 1px; padding-bottom: 1px; border-radius: 15px; box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);"  [style.background-color] = "message.user == dataservice.realname ? '#262626' : 'white'">
+                        <tr>                            
+                            <td style="padding: 2px" > 
+                                <div *ngIf="message.user == dataservice.realname" style="color: white; text-align: right; padding: 1px;">                               
+                                    <span style="font-family: Roboto; color: rgba(255, 255, 255, 0.7);">
+                                        <div style="font-size: 10px; text-indent: 3px; padding: 1px">
+                                            {{message.date_Time | date:'shortTime'}}  
+                                            {{message.date_Time | date}}
+                                        </div>
+                                        
+                                    </span> 
+                                    <span [innerText]="message.message" style="  text-indent:7px" >
+                                    </span>
+                                </div>
+                                <div *ngIf="message.user != dataservice.realname">
+                                     <img src="/assets/image/ellipse.png" 
+                                        style=" border-radius: 50px; border: 1px solid #F5F5F5; box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25); height: 50px; float: left;">
+                                </div>
+                            </td>
+
+                            <td style="padding: 2px" > 
+                                <div *ngIf="message.user == dataservice.realname" style="padding: 1px;  float: right;">
+                                    <img src="/assets/image/ellipse.png"
+                                        style="background-color: white; border-radius: 50px; height: 50px;  ">
+                                </div>
+
+                                <div *ngIf="message.user != dataservice.realname">
+                                    <li  style="list-style-type: none; padding-top: 1px; padding-bottom: 1px">
+                                        <div  style="font-weight: bold; text-indent: 5px; text-align: left; font-size: 12px">
+                                            {{message.user}}
+                                            <span style="font-family: Roboto; font-size: 11px; color: rgba(0, 0, 0, 0.5);">
+                                                {{message.date_Time | date:'shortTime'}}  
+                                                {{message.date_Time | date}}
+                                            </span>
+                                            
+                                        </div>  
+                                        <div [innerText]="message.message" style="" ></div>
+                                    </li>
+                                </div>
+                            </td>
+
+                           
+                        </tr>
+                    </li>
+                    <br>
+
+
+                        
+                    </div>
+                </div>
+                
+                <div class="row" style="padding-left: 0; padding-right: 10px; background-color: #f5f5f5;">
+                    <div style="height: 190px; overflow: auto">
+                    <div class="input-field col s12">
+                            <input type="text" id="chat_text"  [(ngModel)]="chat_text" (keyup.enter)="sendMessage('main_chat')" class="chat_input"  style="background-image:url('/assets/image/arrow.png'); border-radius: 10px; box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25); background-position: right; background-color: white;">
+                            
+                            <label for="chat_text" style="padding: 3px 10px 0 20px;"> Send a message</label>
+                        </div>
+                        <hr>
+                     <span>
+                            <li *ngIf="dataservice.role.toLowerCase() != 'owner'">
+                                <div *ngIf="dataservice.project_slack == true && dataservice.user_slack == 'false'" style="font-weight: bold; color: #1f7a7a ">
+                                    Connect Chatscrum app to Slack?<br/>
+                                    <a href="https://slack.com/oauth/authorize?client_id={{this.dataservice.slack_app_id}}&state=main_chat_{{dataservice.project_name}}>>>{{dataservice.username}}&scope=identity.basic identity.team identity.avatar identity.email"><img alt="Sign in with Slack" height="40" width="139" src="https://platform.slack-edge.com/img/sign_in_with_slack.png" srcset="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x" /></a></div>
+                            </li>
+                        </span>
+                        <span *ngIf="dataservice.role.toLowerCase() == 'owner'">                                              
+                            <li *ngIf="dataservice.project_slack == false" style="font-weight: bold; color: #1f7a7a ">
+                                Install Chatscrum App to Slack? <br/>
+                                <a href="https://slack.com/oauth/authorize?client_id={{this.dataservice.slack_app_id}}&state=main_chat_{{dataservice.project_name}}>>>{{dataservice.username}}&scope=incoming-webhook,channels:read,channels:history,groups:history,mpim:history,emoji:read,files:read,groups:read,im:read,im:history,reactions:read,stars:read,users:read,team:read,chat:write:user,chat:write:bot,channels:write,bot"><img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a> 
+                            </li>                                                                       
+                    </span>
+                </div>
+                </div>
+                
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="col s9" style="height: calc(100vh - 65px); overflow: auto; background-color: #f2f2f2; border-left: 3px solid white;" [style.display] = "board == 'MyTask' ? '' : 'none'">          
+            <div class="main_area">
+                 
+              
+                <div class="board-area" style=" float: left;">
+                <ng-container *ngFor="let user of dataservice.users; let user_index = index">
+                    
+                        <button (click)="onUser(user.user.id); basicModal.openModal()" style="background-color: transparent; border:none; box-shadow: none;">
+                            <tr>
+                                <td><img src="/assets/image/plus2.png" style="height: 37px; width: 37px; "> </td>
+                                <td style="font-size: 14px">Add Task </td>
+                            </tr> 
+                        </button>
+
+                       
+                       
+                    <br>
+                    <div  *ngIf="user.user.nickname.toUpperCase() == this.dataservice.realname.toUpperCase()">
+                    
+                    <div style="display:table; width:100%; word-wrap:break-word; border-collapse:collapse; background-color: #f2f2f2;">
+                        
+                        
+
+                        <div style="display: table-row; border-top: 2px solid black; ">
+                            <th> <div class="table_head">Task For The Week</div> </th>
+                            <th><div class="table_head">Today Target</div></th>
+                            <th><div class="table_head">Verify</div></th>
+                            <th><div class="table_head">Done</div></th>
+                        </div>
+                        
+                        <div *ngIf="user.scrumgoal_set.length == 0 && show_zero" style="display: table-row;" dragula="mainTable" [attr.id]="'u' + user.id">
+                                <td class="full-box" id="author" colspan="6">
+                                    {{user.user.nickname}} - NO TASKS ASSIGNED
+                                </td>
+                        </div>
+                            <div style="display: table-row" *ngIf="user.scrumgoal_set.length != 0" [attr.id]="'u' + user.id" [style.background]="user.id == id_click ? 'rgba(0, 128, 128, 0.5)' : (user.id == id_hover ? 'rgba(0, 128, 128, 0.15)' : 'none')" tabindex="-1">
+                                <div *ngFor="let arrItem of arrCount" class="top-box" dragula="mainTable" [attr.id]="arrItem">
+                                    <div class="div_lister" *ngFor="let goal of dataservice.sprint_goals; let j = index; let k = count" [attr.id]="'g' + goal.goal_project_id"> 
+                                            <div class="list_div" *ngIf ="goal.status == arrItem && user.id == goal.user && goal.name; let thisGoal" (dblclick)="goal.status == arrItem ? editGoal($event) : doNothing()" style="" [style.background-color] = "user.color"> {{ (goal.name.length>120) ? (thisGoal | slice:0:120)+'...':(thisGoal) }} {{(goal.hours != -1 && (goal.status == 3 || goal.status == 2) ? ' (' + goal.hours + ')' : '' )}}
+                                                <a (click)="ResizeImage(goal.file); showImage.openModal()">
+                                                    <img src="https://{{dataservice.domain_name}}{{goal.file}}" style="width: 15px; height: 15px" alt="{{goal.file}}">
+                                                </a> 
+                                                <br>
+                                                <br>
+                                                <br>
+                                                <br>
+                                            <div class="div-add-file" style="display: inline-flex; padding-bottom: 10px;">
+                                                <div style="padding: 8px 5px; font-weight: bold">
+                                                    {{goal.goal_project_id}}
+                                                </div>
+                                                <span style="font-weight: bolder; font-size: 17px; font-family: arial-black">.</span>
+                                                <select name= "option{{goal.goal_project_id}}" class="select_option"   [(ngModel)]="selected_history[j]" (change)= "CheckHistory(selected_history[j]); showHistory.openModal();" >
+                                                    <option [ngValue]="history1" disabled selected>History  </option>
+                                                    <option *ngFor = "let history of goal.scrumgoalhistory_set" [ngValue]=history>
+                                                        {{history.message}}
+                                                    </option>
+                                                </select> 
+                                            <div style="padding-top: 3px;">
+                                                <a (click)="goalClicked(goal.goal_project_id); upload.openModal()">
+                                                    <img src="/assets/image/foto.png" style="padding: 2px;">
+                                                </a> 
+                                                <a (click)="goalClicked(goal.goal_project_id); initGoalChat()">
+                                                    <img src="/assets/image/message.png" style="padding: 2px;">
+                                                </a>
+                                            </div> 
+                                            </div>
+                                                <span class="tooltiptext">{{goal.name}}</span>                                              
+                                                <span class="tooltiptext2">
+                                                    <button class="delete_task" (click)="deleteTask(goal.name, goal.goal_project_id)">X</button>
+                                                </span>                                  
+                                            <!-- </div> -->
+                                        </div>                                   
+                                    </div>
+                                </div>
+                            </div>
+                        
+                    </div>
+                    </div>
+                    </ng-container>
+                </div>
+            </div>
+            
+        </div>
+
+
+
+
+
+        <div class="col m4">
                 <mz-modal #basicModal>
                     <mz-modal-header>
                         <h4>Add A Task</h4>
@@ -272,7 +469,7 @@
                             </select>
                             <!-- <input class="modal-close waves-effect btn btn-default" type="submit" value="Add Note"> -->
                             <div style="text-align: center">
-                                <button type="button" class="btn-round" value="Add Task" (click)="add_a_note()" style=" height: 40px; font-size: 14px">ADD TASK</button>
+                                <button type="button" class="btn-round" value="Add Note" (click)="add_a_note()" style=" height: 40px; font-size: 14px">ADD NOTE</button>
                             </div>
                         </form><br>
                         
@@ -296,7 +493,15 @@
                                     </span>  
                                 </td>
                                 <td class="top-box">
-                                    <button type="button" class="btn btn-link s_button"  *ngIf="dataservice.role.toLowerCase() == 'owner'" (click)="note_to_goal(note.id, note.note, note.priority)">Add to Board</button>
+                                    <!-- <button type="button" class="btn btn-link s_button"  *ngIf="dataservice.role.toLowerCase() == 'owner'" (click)="note_to_goal(note.id, note.note, note.priority)">
+                                        Add to Board
+                                    </button> -->
+                                    <button (click)="note_to_goal(note.id, note.note, note.priority)" style="background-color: grey; border:none; box-shadow: none;">
+                                        <tr>
+                                            <td><img src="/assets/image/plus2.png" style="height: 37px; width: 37px; "> </td>
+                                            <!-- <td style="font-size: 14px">Add Task </td> -->
+                                        </tr> 
+                                    </button>
                                     <!-- <span style="font-size: 20px; font-weight: bolder;">+</span> -->
                                 </td>
                             </div>                                
@@ -401,189 +606,3 @@
                 </mz-modal>
 
             </div>
-        </div>
-
-
-
-        
-              <div class="col s3" style=" background-color:#F5F5F5; float: right;">
-            <a style="float: right; margin-right: -10px; background-color: white; border-radius: 0px 0px 0px 10px; color: black; padding: 5px; ">{{chat_div_title}}</a>
-            <br>
-            <br>
-            <br>
-            <div class="card" style="background-color:transparent; box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);">
-                <br>
-                <div style="text-align: right"><a style="text-align: right" (click)="initMainChat()" *ngIf=" show_project_chat"> switch to Project Chat>>> </a></div>
-                
-                <div style="overflow: auto; height: calc(100vh - 345px); padding-left: 10px; padding-right: 10px; background-color:transparent;" id="chat_div_space">
-                    <div *ngFor="let message of messages" style="font-size: 0.85rem"  class="chat_div"  [style.float] = "message.user == dataservice.realname ? 'right' : 'left'" [style.width] = "message.user == dataservice.realname ? '200px' : '266px'">
-                    
-
-                    <li  style="list-style-type: none; padding-top: 1px; padding-bottom: 1px; border-radius: 15px; box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);"  [style.background-color] = "message.user == dataservice.realname ? '#262626' : 'white'">
-                        <tr>                            
-                            <td style="padding: 2px" > 
-                                <div *ngIf="message.user == dataservice.realname" style="color: white; text-align: right; padding: 1px;">                               
-                                    <span style="font-family: Roboto; color: rgba(255, 255, 255, 0.7);">
-                                        <div style="font-size: 10px; text-indent: 3px; padding: 1px">
-                                            {{message.date_Time | date:'shortTime'}}  
-                                            {{message.date_Time | date}}
-                                        </div>
-                                        
-                                    </span> 
-                                    <span [innerText]="message.message" style="  text-indent:7px" >
-                                    </span>
-                                </div>
-                                <div *ngIf="message.user != dataservice.realname">
-                                     <img src="/assets/image/ellipse.png" 
-                                        style=" border-radius: 50px; border: 1px solid #F5F5F5; box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25); height: 50px; float: left;">
-                                </div>
-                            </td>
-
-                            <td style="padding: 2px" > 
-                                <div *ngIf="message.user == dataservice.realname" style="padding: 1px;  float: right;">
-                                    <img src="/assets/image/ellipse.png"
-                                        style="background-color: white; border-radius: 50px; height: 50px;  ">
-                                </div>
-
-                                <div *ngIf="message.user != dataservice.realname">
-                                    <li  style="list-style-type: none; padding-top: 1px; padding-bottom: 1px">
-                                        <div  style="font-weight: bold; text-indent: 5px; text-align: left; font-size: 12px">
-                                            {{message.user}}
-                                            <span style="font-family: Roboto; font-size: 11px; color: rgba(0, 0, 0, 0.5);">
-                                                {{message.date_Time | date:'shortTime'}}  
-                                                {{message.date_Time | date}}
-                                            </span>
-                                            
-                                        </div>  
-                                        <div [innerText]="message.message" style="" ></div>
-                                    </li>
-                                </div>
-                            </td>
-
-                           
-                        </tr>
-                    </li>
-                    <br>
-
-
-                        
-                    </div>
-                </div>
-                
-                <div class="row" style="padding-left: 0; padding-right: 10px; background-color: #f5f5f5;">
-                    <div style="height: 190px; overflow: auto">
-                    <div class="input-field col s12">
-                            <input type="text" id="chat_text"  [(ngModel)]="chat_text" (keyup.enter)="sendMessage('main_chat')" class="chat_input"  style="background-image:url('/assets/image/arrow.png'); border-radius: 10px; box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25); background-position: 240px 13px;background-color: white;">
-                            
-                            <label for="chat_text" style="padding: 3px 10px 0 20px;"> Send a message</label>
-                        </div>
-                        <hr>
-                     <span>
-                            <li *ngIf="dataservice.role.toLowerCase() != 'owner'">
-                                <div *ngIf="dataservice.project_slack == true && dataservice.user_slack == 'false'" style="font-weight: bold; color: #1f7a7a ">
-                                    Connect Chatscrum app to Slack?<br/>
-                                    <a href="https://slack.com/oauth/authorize?client_id={{this.dataservice.slack_app_id}}&state=main_chat_{{dataservice.project_name}}>>>{{dataservice.username}}&scope=identity.basic identity.team identity.avatar identity.email"><img alt="Sign in with Slack" height="40" width="139" src="https://platform.slack-edge.com/img/sign_in_with_slack.png" srcset="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x" /></a></div>
-                            </li>
-                        </span>
-                        <span *ngIf="dataservice.role.toLowerCase() == 'owner'">                                              
-                            <li *ngIf="dataservice.project_slack == false" style="font-weight: bold; color: #1f7a7a ">
-                                Install Chatscrum App to Slack? <br/>
-                                <a href="https://slack.com/oauth/authorize?client_id={{this.dataservice.slack_app_id}}&state=main_chat_{{dataservice.project_name}}>>>{{dataservice.username}}&scope=incoming-webhook,channels:read,channels:history,groups:history,mpim:history,emoji:read,files:read,groups:read,im:read,im:history,reactions:read,stars:read,users:read,team:read,chat:write:user,chat:write:bot,channels:write,bot"><img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a> 
-                            </li>                                                                       
-                    </span>
-                </div>
-                </div>
-                
-    </div>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-        <div class="col s9" style="height: calc(100vh - 65px); overflow: auto; background-color: #f2f2f2; border-left: 3px solid white;" [style.display] = "board == 'MyTask' ? '' : 'none'">          
-            <div class="main_area">
-                 
-              
-                <div class="board-area" style=" float: left;">
-                <ng-container *ngFor="let user of dataservice.users; let user_index = index">
-                    <br>
-                    <div  *ngIf="user.user.nickname.toUpperCase() == this.dataservice.realname.toUpperCase()">
-                    <div style=" display: flex; font-weight: bold; background-color: #f2f2f2;">
-                                {{user.user.nickname.toUpperCase()}}  
-                                <div style="font-family: Roboto;font-size: 11px; color: rgba(0, 0, 0, 0.5); padding: 4px 4px 0px 5px;">
-                                    {{user.total_week_hours}} hours 
-                                </div> 
-                    </div> 
-                    <div style="display:table; width:100%; word-wrap:break-word; border-collapse:collapse; background-color: #f2f2f2;">
-                        
-                        
-
-                        <div style="display: table-row; border-top: 2px solid black; ">
-                            <th> <div class="table_head">Task For The Week</div> </th>
-                            <th><div class="table_head">Today Target</div></th>
-                            <th><div class="table_head">Verify</div></th>
-                            <th><div class="table_head">Done</div></th>
-                        </div>
-                        
-                        <div *ngIf="user.scrumgoal_set.length == 0 && show_zero" style="display: table-row;" dragula="mainTable" [attr.id]="'u' + user.id">
-                                <td class="full-box" id="author" colspan="6">
-                                    {{user.user.nickname}} - NO TASKS ASSIGNED
-                                </td>
-                        </div>
-                            <div style="display: table-row" *ngIf="user.scrumgoal_set.length != 0" [attr.id]="'u' + user.id" [style.background]="user.id == id_click ? 'rgba(0, 128, 128, 0.5)' : (user.id == id_hover ? 'rgba(0, 128, 128, 0.15)' : 'none')" tabindex="-1">
-                                <div *ngFor="let arrItem of arrCount" class="top-box" dragula="mainTable" [attr.id]="arrItem">
-                                    <div class="div_lister" *ngFor="let goal of dataservice.sprint_goals; let j = index; let k = count" [attr.id]="'g' + goal.goal_project_id"> 
-                                            <div class="list_div" *ngIf ="goal.status == arrItem && user.id == goal.user && goal.name; let thisGoal" (dblclick)="goal.status == arrItem ? editGoal($event) : doNothing()" style="" [style.background-color] = "user.color"> {{ (goal.name.length>120) ? (thisGoal | slice:0:120)+'...':(thisGoal) }} {{(goal.hours != -1 && (goal.status == 3 || goal.status == 2) ? ' (' + goal.hours + ')' : '' )}}
-                                                <a (click)="ResizeImage(goal.file); showImage.openModal()">
-                                                    <img src="https://{{dataservice.domain_name}}{{goal.file}}" style="width: 15px; height: 15px" alt="{{goal.file}}">
-                                                </a> 
-                                                <br>
-                                                <br>
-                                                <br>
-                                                <br>
-                                            <div class="div-add-file" style="display: inline-flex; padding-bottom: 10px;">
-                                                <div style="padding: 8px 5px; font-weight: bold">
-                                                    {{goal.goal_project_id}}
-                                                </div>
-                                                <span style="font-weight: bolder; font-size: 17px; font-family: arial-black">.</span>
-                                                <select name= "option{{goal.goal_project_id}}" class="select_option"   [(ngModel)]="selected_history[j]" (change)= "CheckHistory(selected_history[j]); showHistory.openModal();" >
-                                                    <option [ngValue]="history1" disabled selected>History  </option>
-                                                    <option *ngFor = "let history of goal.scrumgoalhistory_set" [ngValue]=history>
-                                                        {{history.message}}
-                                                    </option>
-                                                </select> 
-                                            <div style="padding-top: 3px;">
-                                                <a (click)="goalClicked(goal.goal_project_id); upload.openModal()">
-                                                    <img src="/assets/image/foto.png" style="padding: 2px;">
-                                                </a> 
-                                                <a (click)="goalClicked(goal.goal_project_id); initGoalChat()">
-                                                    <img src="/assets/image/message.png" style="padding: 2px;">
-                                                </a>
-                                            </div> 
-                                            </div>
-                                                <span class="tooltiptext">{{goal.name}}</span>                                              
-                                                <span class="tooltiptext2">
-                                                    <button class="delete_task" (click)="deleteTask(goal.name, goal.goal_project_id)">X</button>
-                                                </span>                                  
-                                            <!-- </div> -->
-                                        </div>                                   
-                                    </div>
-                                </div>
-                            </div>
-                        
-                    </div>
-                    </div>
-                    </ng-container>
-                </div>
-            </div>
-            
-        </div>

@@ -486,6 +486,12 @@ export class ProfileComponent implements OnInit {
 
     }
 
+  onUser(the_user)  {
+    this.on_user = "m" + the_user
+    console.log("onuser")
+    console.log(this.on_user)
+  }
+
   getClicked(event)
   { 
     console.log()
@@ -661,7 +667,7 @@ export class ProfileComponent implements OnInit {
                   }
                } 
 
-               
+
             },
             err => {
                 console.error(err);
