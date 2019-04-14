@@ -461,7 +461,7 @@
                         <div style="margin-bottom: 10px; font-weight: 500; font-size: 24px;">Notes<span style="font-weight: 500;color: red;">*</span></div>
                         <h5 style="color: green">{{dataservice.message}}</h5>
                         <form (ngSubmit)="add_a_note()">
-                            <textarea id="goal" [(ngModel)]="note" name="goal"></textarea>
+                            <textarea id="goal" [(ngModel)]="note" name="goal" placeholder="Enter the Note" style="width: 700px; height: 121px; border-radius: 20px; padding: 10px; margin-bottom: 40px"></textarea>
                             <select  name="note_priority" style="height: 30px; margin: 15px; color: #1f7a7a; width: auto;" [(ngModel)]="note_priority">
                                 <option Value="High" selected>High Priority</option>
                                 <option Value="Medium">Medium Priority</option>
