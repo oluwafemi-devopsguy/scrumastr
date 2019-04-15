@@ -347,22 +347,23 @@
 
         <div class="col s9" style="height: calc(100vh - 65px); overflow: auto; background-color: #f2f2f2; border-left: 3px solid white;" [style.display] = "board == 'MyTask' ? '' : 'none'">          
             <div class="main_area">
-                 
+                
               
                 <div class="board-area" style=" float: left;">
                 <ng-container *ngFor="let user of dataservice.users; let user_index = index">
                     
+                        
+
+                       
+                       
+                    <br>
+                    <div  *ngIf="user.user.nickname.toUpperCase() == this.dataservice.realname.toUpperCase()">
                         <button (click)="onUser(user.user.id); basicModal.openModal()" style="background-color: transparent; border:none; box-shadow: none;">
                             <tr>
                                 <td><img src="/assets/image/plus2.png" style="height: 37px; width: 37px; "> </td>
                                 <td style="font-size: 14px">Add Task </td>
                             </tr> 
                         </button>
-
-                       
-                       
-                    <br>
-                    <div  *ngIf="user.user.nickname.toUpperCase() == this.dataservice.realname.toUpperCase()">
                     
                     <div style="display:table; width:100%; word-wrap:break-word; border-collapse:collapse; background-color: #f2f2f2;">
                         
@@ -492,13 +493,13 @@
                                         {{note.note}} 
                                     </span>  
                                 </td>
-                                <td class="top-box">
+                                <td class="top-box" style="text-align: left;">
                                     <!-- <button type="button" class="btn btn-link s_button"  *ngIf="dataservice.role.toLowerCase() == 'owner'" (click)="note_to_goal(note.id, note.note, note.priority)">
                                         Add to Board
                                     </button> -->
                                     <button (click)="note_to_goal(note.id, note.note, note.priority)" style="background-color: grey; border:none; box-shadow: none;">
                                         <tr>
-                                            <td><img src="/assets/image/plus2.png" style="height: 37px; width: 37px; "> </td>
+                                            <td><img src="/assets/image/plus2.png" style="height: 37px; width: 37px; ">Add As Task </td>
                                             <!-- <td style="font-size: 14px">Add Task </td> -->
                                         </tr> 
                                     </button>

@@ -142,7 +142,6 @@ export class ProfileComponent implements OnInit {
             console.log(this.dataservice.project_slack)
             console.log(this.dataservice.user_slack)
             console.log(this.dataservice.slack_app_id)
-            console.log("hgggggggres1")
 
 
             this.filterSprint(res2)
@@ -214,12 +213,14 @@ export class ProfileComponent implements OnInit {
 
   swapState()
   {
+    this.dataservice.message ="";
     this.show_zero = !this.show_zero;  
   }
 
 
   changeSprint() 
   {   
+    this.dataservice.message ="";
     this.dataservice.sprint_goals = [];
       for (var i = 0;  i < this.dataservice.users.length; i++)  {
         for (var j = 0;  j < this.dataservice.users[i].scrumgoal_set.length; j++)  {
@@ -235,6 +236,7 @@ export class ProfileComponent implements OnInit {
 
             
   filterSprint(uSprints) {
+    this.dataservice.message ="";
     this.dataservice.sprints= uSprints
     var filter_goal = []
     console.log(filter_goal)
@@ -341,6 +343,7 @@ export class ProfileComponent implements OnInit {
   
   editGoal(event)
   {
+    this.dataservice.message ="";
     console.log(this.dataservice.selected_sprint);
     console.log(this.dataservice.users);
     var taskID = event.target.parentElement.id.substring(1);
@@ -393,6 +396,7 @@ export class ProfileComponent implements OnInit {
   }
 
   deleteTask(goal_name, goal_id) {
+      this.dataservice.message ="";
       var pop_event = window.confirm('Delete " ' + goal_name + '"?');
       console.log(goal_id)
       if (pop_event) {
@@ -428,6 +432,7 @@ export class ProfileComponent implements OnInit {
   
   manageUser(event)
   {
+    this.dataservice.message ="";
     this.getClicked(event);
     var role_name = window.prompt('Change User Role:\nSelect Between: Developer, Admin, Quality Analyst, or Owner:', '');
     if(role_name == null || role_name == '')
@@ -468,6 +473,7 @@ export class ProfileComponent implements OnInit {
   
   sendMessage(identity)
   {
+    this.dataservice.message ="";
     if (this.chat_div_title == "Project Chat") {
       
       this.goal_id = "main_chat_" + this.dataservice.project_name 
@@ -494,6 +500,7 @@ export class ProfileComponent implements OnInit {
 
   getClicked(event)
   { 
+    this.dataservice.message ="";
     console.log()
     if(event.target.parentElement.parentElement.parentElement.parentElement.id) {
         this.on_user = event.target.parentElement.parentElement.parentElement.parentElement.id;
@@ -504,27 +511,32 @@ export class ProfileComponent implements OnInit {
   }
   }
 
-  goalClicked(clicked_goal_id) { 
+  goalClicked(clicked_goal_id) {
+      this.dataservice.message =""; 
       console.log(clicked_goal_id);
       this.goal_id = "G" + clicked_goal_id;
     }
 
   initGoalChat(){
+    this.dataservice.message ="";
     this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '!goal_chat' + this.goal_id, 'goal_id': this.goal_id, 'slack_username': this.dataservice.slack_username }))
     this.show_project_chat = true;
     this.chat_div_title = this.goal_id + " Chat"
   }
 
   allTask() {
+    this.dataservice.message ="";
     this.board = "AllTask"
   }
 
   myTask()  {
+    this.dataservice.message ="";
     console.log(this.dataservice.realname)
     this.board = "MyTask"
   }
 
   initMainChat(){
+    this.dataservice.message ="";
     this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '!join ' + this.dataservice.project_name, 'goal_id': 'main_chat_' + this.dataservice.project_name, 'slack_username': this.dataservice.slack_username }));
     this.chat_div_title = "Project Chat"
     this.show_project_chat = false;
@@ -567,6 +579,7 @@ export class ProfileComponent implements OnInit {
 
   addGoal()
   {
+    this.dataservice.message ="";
     console.log("inside addgoal" + this.on_user);
 
 
@@ -603,6 +616,7 @@ export class ProfileComponent implements OnInit {
   }
 
   scrollIntoView(anchorHash) {
+    this.dataservice.message ="";
     this.id_click = parseInt(anchorHash.substring(1), 10);
     setTimeout(() => {
         const anchor = document.getElementById(anchorHash);
@@ -649,7 +663,7 @@ export class ProfileComponent implements OnInit {
   // }
 
   add_a_note()  {
-    console.log("This is add note")
+    this.dataservice.message ="";
     console.log(this.note_priority)
     console.log(this.note)
     this.http.post(this.dataservice.domain_protocol + this.dataservice.domain_name + '/scrum/api/scrumnotes/', JSON.stringify({'note': this.note, 'priority': this.note_priority, 'user': this.on_user, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
@@ -684,6 +698,7 @@ export class ProfileComponent implements OnInit {
   }
 
   note_to_goal(id, goal, priority)  {
+    this.dataservice.message ="";
     this.dataservice.goal_name = goal
     this.dataservice.addGoal(this.on_user);
     this.deleteNote(id)
@@ -717,7 +732,7 @@ export class ProfileComponent implements OnInit {
   }
 
   show_notes() {
-    console.log("This is to show notes")
+    this.dataservice.message ="";
       for (var i = 0;  i < this.dataservice.users.length; i++)  {
        
           if (this.dataservice.users[i].id == this.on_user.slice(1))
@@ -741,6 +756,7 @@ export class ProfileComponent implements OnInit {
   }
 
   imageUpload() {
+    this.dataservice.message ="";
     if (this.image_upload == null) {
       this.dataservice.message = "No file selected!!!"
       console.log("No file selected!");
@@ -787,17 +803,20 @@ export class ProfileComponent implements OnInit {
   }
 
   ResizeImage(iName) {
+    this.dataservice.message ="";
     console.log(iName)
     this.scrum_image = iName
   }
 
    navDrop() {
+    this.dataservice.message ="";
     console.log(this.nav_drop)
     this.nav_drop = !this.nav_drop
     console.log(this.nav_drop)
   }
 
     CheckHistory(task) {
+      this.dataservice.message ="";
       console.log(task)
       this.task_history = task
       this.show_history = !this.show_history; 
