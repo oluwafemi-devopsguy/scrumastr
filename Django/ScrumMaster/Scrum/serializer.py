@@ -49,7 +49,7 @@ class ScrumProjectRoleSerializer(serializers.ModelSerializer):
     scrumgoal_set = ScrumGoalSerializer(many=True)    
     class Meta:
         model = ScrumProjectRole
-        fields = ('role', 'user', 'id', 'scrumgoal_set', 'scrumnote_set')        
+        fields = ('role', 'color', 'user', 'id', 'scrumgoal_set', 'scrumnote_set')        
         
 class ScrumProjectSerializer(serializers.HyperlinkedModelSerializer):
     scrumprojectrole_set = ScrumProjectRoleSerializer(many=True)

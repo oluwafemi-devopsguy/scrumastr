@@ -53,6 +53,7 @@ class ScrumUser(models.Model):
         
 class ScrumProjectRole(models.Model):
     role = models.CharField(max_length=20)
+    color = models.CharField(max_length=50, default="white")
     user = models.ForeignKey(ScrumUser, on_delete=models.CASCADE)
     project = models.ForeignKey(ScrumProject, on_delete=models.CASCADE)
     
@@ -98,6 +99,7 @@ class ScrumChatRoom(models.Model):
 class ScrumChatMessage(models.Model):
     user = models.CharField(max_length=50)
     message = models.TextField()
+    date_Time = models.DateTimeField(auto_now = True)
     room = models.ForeignKey(ScrumChatRoom, on_delete=models.CASCADE)
 
 
