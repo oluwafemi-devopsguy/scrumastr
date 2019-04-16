@@ -124,8 +124,8 @@
                             </label> -->
                         </td>
                  <td style="text-align: right;">
-                    <div style="" [style.display] = "show_sprint_option ? 'inline-flex' : 'none'" >
-                     <select  name="change_sprint" style="font-size: 12px; font-family: Roboto; height: 30px; color: #1f7a7a; width: 260px;" [(ngModel)]="dataservice.selected_sprint"  (change)="changeSprint()">
+                    <div style="" [style.display] = "show_sprint_option ? 'inline-flex' : 'none'"  [style.margin-top] = "dataservice.role.toLowerCase() == 'owner' ? '-9px' : '5px'" >
+                     <select  name="change_sprint" style="font-size: 12px; font-family: Roboto; height: 27px; color: #1f7a7a; width: 260px;" [(ngModel)]="dataservice.selected_sprint"  (change)="changeSprint()">
                         <option *ngFor = "let sprint of dataservice.sprints"  [ngValue]="sprint" [selected] = "index == last ? sprint : doNothing()" >
                         Sprint {{sprint.id}}:  {{sprint.created_on | date}} - {{sprint.ends_on | date}}
                         </option>                           
@@ -360,7 +360,7 @@
                     <div  *ngIf="user.user.nickname.toUpperCase() == this.dataservice.realname.toUpperCase()">
                         <button (click)="onUser(user.user.id); basicModal.openModal()" style="background-color: transparent; border:none; box-shadow: none;">
                             <tr>
-                                <td><img src="/assets/image/plus2.png" style="height: 38px; width: 38px; "> </td>
+                                <td><img src="/assets/image/plus2.png" style="height: 37px; width: 37px; "> </td>
                                 <td style="font-size: 14px">Add Task </td>
                             </tr> 
                         </button>
@@ -499,8 +499,8 @@
                                     </button> -->
                                     <button (click)="note_to_goal(note.id, note.note, note.priority)" style="background-color: grey; border:none; box-shadow: none;">
                                         <tr>
-                                            <td><img src="/assets/image/plus2.png" style="height: 37px; width: 37px; ">Add As Task </td>
-                                            <!-- <td style="font-size: 14px">Add Task </td> -->
+                                            <td><img src="/assets/image/plus2.png" style="height: 20px; width: 20px; "> </td>
+                                            <td style="font-size: 14px; font-family: Roboto; font-weight: bold">Add Task </td>
                                         </tr> 
                                     </button>
                                     <!-- <span style="font-size: 20px; font-weight: bolder;">+</span> -->
