@@ -113,8 +113,8 @@
             <div class="main_area">
                 <table>
                 <tr style="margin: 0">
-                        <td style="width: 50%; padding-top: 17px;">
-                            <div style="margin-top: 7px;">
+                        <td style="padding-top: 17px;">
+                            <div style="margin-top: 8px;">
                                 <button type="button" class="btn-round" *ngIf="dataservice.role.toLowerCase() == 'owner'" >Invite User</button>
                             </div>
                             <h3>{{dataservice.message}}</h3>
@@ -130,8 +130,11 @@
                         Sprint {{sprint.id}}:  {{sprint.created_on | date}} - {{sprint.ends_on | date}}
                         </option>                           
                      </select>
-                    <button type="button" class="btn-round" *ngIf="dataservice.role.toLowerCase() == 'owner'" (click)="createSprint()">NEW SPRINT</button>
+                    
                     </div>                           
+                 </td>
+                 <td  style="padding-top: 6px;">
+                     <button type="button" class="btn-round" *ngIf="dataservice.role.toLowerCase() == 'owner'" (click)="createSprint()">NEW SPRINT</button>
                  </td>
                 </tr>
                 </table>         
@@ -497,7 +500,7 @@
                                     <!-- <button type="button" class="btn btn-link s_button"  *ngIf="dataservice.role.toLowerCase() == 'owner'" (click)="note_to_goal(note.id, note.note, note.priority)">
                                         Add to Board
                                     </button> -->
-                                    <button (click)="note_to_goal(note.id, note.note, note.priority)" style="background-color: grey; border:none; box-shadow: none;">
+                                    <button (click)="note_to_goal(note.id, note.note, note.priority)" style="background-color: grey; border:none; box-shadow: none; border-radius: 8px;">
                                         <tr>
                                             <td><img src="/assets/image/plus2.png" style="height: 20px; width: 20px; "> </td>
                                             <td style="font-size: 14px; font-family: Roboto; font-weight: bold">Add Task </td>
