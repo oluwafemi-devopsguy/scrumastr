@@ -114,17 +114,17 @@
                 <table>
                 <tr style="margin: 0">
                         <td style="padding-top: 17px;">
-                            <div style="margin-top: 8px;">
+                            <div style="margin-top: 7px;">
                                 <button type="button" class="btn-round" *ngIf="dataservice.role.toLowerCase() == 'owner'" >Invite User</button>
                             </div>
-                            <h3>{{dataservice.message}}</h3>
+                            <!-- <h3>{{dataservice.message}}</h3> -->
                             <!-- <label>
                             <input type="checkbox" id="ourcheck" class="filled-in" [checked]="show_zero" (click)="swapState()">
                                 <span >Show Users With No Assigned Tasks</span> 
                             </label> -->
                         </td>
                  <td style="text-align: right;">
-                    <div style="" [style.display] = "show_sprint_option ? 'inline-flex' : 'none'"  [style.margin-top] = "dataservice.role.toLowerCase() == 'owner' ? '-11px' : '5px'" >
+                    <div style="" [style.display] = "show_sprint_option ? 'inline-flex' : 'none'"  [style.margin-top] = "dataservice.role.toLowerCase() == 'owner' ? '10px' : '5px'" >
                      <select  name="change_sprint" style="font-size: 12px; font-family: Roboto; height: 27px; color: #1f7a7a; width: 260px;" [(ngModel)]="dataservice.selected_sprint"  (change)="changeSprint()">
                         <option *ngFor = "let sprint of dataservice.sprints"  [ngValue]="sprint" [selected] = "index == last ? sprint : doNothing()" >
                         Sprint {{sprint.id}}:  {{sprint.created_on | date}} - {{sprint.ends_on | date}}
@@ -133,9 +133,16 @@
                     
                     </div>                           
                  </td>
-                 <td  style="padding-top: 6px;">
+                 <td  style="padding-top: 20px;">
                      <button type="button" class="btn-round" *ngIf="dataservice.role.toLowerCase() == 'owner'" (click)="createSprint()">NEW SPRINT</button>
                  </td>
+                </tr>
+                <tr style="padding-top: 0; margin: 0">
+                    <td colspan="3"  style="padding-top: 0; margin: 0">
+                        <h3  style="padding-top: 0; margin: 0">
+                            {{dataservice.message}}
+                        </h3>
+                    </td>
                 </tr>
                 </table>         
                 <style>
