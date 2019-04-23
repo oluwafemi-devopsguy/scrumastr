@@ -2,7 +2,7 @@
 FROM docker.io/showpopulous/chatscrum_img_base2:basev2
 #FROM docker.io/showpopulous/chatscrum_img_base3:basev3
 
-########################## HOLD ON  ##########################################
+############################# HOLD ON  ##########################################
 # If all you need to do is to run chatscrum,
 # then you do not need to build a new image, just run existing image with the following
 # docker pull docker.io/showpopulous/chatscrum_img_base3:basev3 
