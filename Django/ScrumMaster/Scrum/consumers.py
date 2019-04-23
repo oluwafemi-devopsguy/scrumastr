@@ -4,6 +4,8 @@ from .models import *
 import json
 import hashlib
 from slackclient import SlackClient
+import datetime
+from django.core.serializers.json import DjangoJSONEncoder
 
 #For when you don't have redis; You can only see your own chat.
 # class ChatConsumer(AsyncWebsocketConsumer):
@@ -65,7 +67,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     def getRecentMessages(self):
         messages = []
         for message in self.room_object.scrumchatmessage_set.filter(room_id=self.room_object.id).order_by('-pk')[:30]:
-            messages.insert(0, {'user': message.user, 'message': message.message})
+            messages.insert(0, {'date_Time':message.date_Time, 'user': message.user, 'message': message.message})
         # del messages[-1]
         return messages
 
@@ -92,7 +94,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         return new_room
 
     def generate_message(self, this_room, this_user, this_message):
-        new_message = ScrumChatMessage(room=this_room, user=this_user, message=this_message)
+        new_message = ScrumChatMessage(room=this_room, user=this_user, message=this_message, date_Time=(datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H:%M:%S")))
         new_message.save()
 
     async def connect(self):
@@ -121,12 +123,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
             print("========ROOM GROUP NAME=========" + self.room_group_name)
             self.getOrCreateRoom()
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)
-            await self.channel_layer.group_send(self.room_group_name, {'type': 'chat_message', 'user': 'SERVER INFO', 'message': self.user + ' has joined.'})
+            await self.channel_layer.group_send(self.room_group_name, {'type': 'chat_message', 'date_Time':(datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H:%M:%S")), 'user': 'SERVER INFO', 'message': self.user + ' has joined.'})
             # await database_sync_to_async(self.generate_message)(self.room_object, 'SERVER INFO', str(self.user + ' has joined.'))
             messages = await database_sync_to_async(self.getRecentMessages)()
 
-                
-            await self.send(text_data=json.dumps({'messages': messages}))
+
+            await self.send(text_data=json.dumps({'messages': messages}, sort_keys=True, indent=1,cls=DjangoJSONEncoder))
            
 
         elif self.identity[:9] == 'main_chat' and self.room_group_name != hashlib.sha256(self.identity.encode('UTF-8')).hexdigest():
@@ -137,7 +139,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_send(self.room_group_name, {'type': 'chat_message', 'user': 'SERVER INFO', 'message': self.user + ' has joined.'})
             # await database_sync_to_async(self.generate_message)(self.room_object, 'SERVER INFO', str(self.user + ' has joined.'))
             messages = await database_sync_to_async(self.getRecentMessages)()                    
-            await self.send(text_data=json.dumps({'messages': messages}))
+            await self.send(text_data=json.dumps({'messages': messages}, sort_keys=True, indent=1,cls=DjangoJSONEncoder))
                 
 
         elif message[:5] == '!goal' and self.room_group_name != 'chat_%s' % self.identity:    
@@ -149,7 +151,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_send(self.room_group_name, {'type': 'chat_message', 'user': 'SERVER INFO', 'message': self.user + ' has joined.'})
             # await database_sync_to_async(self.generate_message)(self.room_object, 'SERVER INFO', str(self.user + ' has joined.'))
             messages = await database_sync_to_async(self.getRecentMessages)()
-            await self.send(text_data=json.dumps({'messages': messages}))
+            await self.send(text_data=json.dumps({'messages': messages}, sort_keys=True, indent=1,cls=DjangoJSONEncoder))
 
         else:
             if self.identity[:9] == 'main_chat':
@@ -160,7 +162,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def chat_message(self, event):
         user = event['user']
         message = event['message']
-        await self.send(text_data=json.dumps({'user': user, 'message': message}))  
+        date_Time = (datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H:%M:%S"))
+        await self.send(text_data=json.dumps({'user': user, 'message': message, 'date_Time':date_Time}, sort_keys=True, indent=1,cls=DjangoJSONEncoder))  
 
 
 
