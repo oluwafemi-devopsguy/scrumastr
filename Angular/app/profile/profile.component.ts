@@ -236,7 +236,7 @@ export class ProfileComponent implements OnInit {
 
             
   filterSprint(uSprints) {
-    this.dataservice.message ="";
+    
     this.dataservice.sprints= uSprints
     var filter_goal = []
     console.log(filter_goal)

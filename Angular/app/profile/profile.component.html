@@ -12,7 +12,7 @@
             <img src="/assets/image/Vector_2.png" [style.display] = "nav_drop == true ? '' : 'none'">
             <img src="/assets/image/Vector.png" [style.display] = "nav_drop == false ? '' : 'none'">
             </a>{{dataservice.username}}</h6>
-        <h6>{{dataservice.role}} - {{dataservice.project_name}}</h6>
+        <h6>{{dataservice.role}} -- {{dataservice.project_name}}</h6>
     
     
     </div>
@@ -76,7 +76,7 @@
     <div class="row">
         <div class="col s2" style="height: calc(100vh - 65px); overflow: auto; background-color: #f5f5f5; padding-left: 30px" [style.display] = "board == 'AllTask' ? '' : 'none'">
             <br>
-            <div class="" style="padding-top: 5px">  
+            <div class="" style="padding-top: 7px">  
                 <input type="textarea" placeholder="Search" name="search" class="search_input ">
                 <br>
                 <br>
@@ -113,26 +113,36 @@
             <div class="main_area">
                 <table>
                 <tr style="margin: 0">
-                        <td style="width: 50%;">
-                            <div style="margin-top: 5px;">
+                        <td style="padding-top: 17px;">
+                            <div style="margin-top: 7px;">
                                 <button type="button" class="btn-round" *ngIf="dataservice.role.toLowerCase() == 'owner'" >Invite User</button>
                             </div>
-                            <h3>{{dataservice.message}}</h3>
+                            <!-- <h3>{{dataservice.message}}</h3> -->
                             <!-- <label>
                             <input type="checkbox" id="ourcheck" class="filled-in" [checked]="show_zero" (click)="swapState()">
                                 <span >Show Users With No Assigned Tasks</span> 
                             </label> -->
                         </td>
                  <td style="text-align: right;">
-                    <div style="" [style.display] = "show_sprint_option ? 'inline-flex' : 'none'" >
-                     <select  name="change_sprint" style="font-size: 12px; font-family: Roboto; height: 30px; color: #1f7a7a; width: 260px;" [(ngModel)]="dataservice.selected_sprint"  (change)="changeSprint()">
+                    <div style="" [style.display] = "show_sprint_option ? 'inline-flex' : 'none'"  [style.margin-top] = "dataservice.role.toLowerCase() == 'owner' ? '10px' : '5px'" >
+                     <select  name="change_sprint" style="font-size: 12px; font-family: Roboto; height: 27px; color: #1f7a7a; width: 260px;" [(ngModel)]="dataservice.selected_sprint"  (change)="changeSprint()">
                         <option *ngFor = "let sprint of dataservice.sprints"  [ngValue]="sprint" [selected] = "index == last ? sprint : doNothing()" >
                         Sprint {{sprint.id}}:  {{sprint.created_on | date}} - {{sprint.ends_on | date}}
                         </option>                           
                      </select>
-                    <button type="button" class="btn-round" *ngIf="dataservice.role.toLowerCase() == 'owner'" (click)="createSprint()">NEW SPRINT</button>
+                    
                     </div>                           
                  </td>
+                 <td  style="padding-top: 20px;">
+                     <button type="button" class="btn-round" *ngIf="dataservice.role.toLowerCase() == 'owner'" (click)="createSprint()">NEW SPRINT</button>
+                 </td>
+                </tr>
+                <tr style="padding-top: 0; margin: 0">
+                    <td colspan="3"  style="padding-top: 0; margin: 0">
+                        <h3  style="padding-top: 0; margin: 0">
+                            {{dataservice.message}}
+                        </h3>
+                    </td>
                 </tr>
                 </table>         
                 <style>
@@ -360,7 +370,7 @@
                     <div  *ngIf="user.user.nickname.toUpperCase() == this.dataservice.realname.toUpperCase()">
                         <button (click)="onUser(user.user.id); basicModal.openModal()" style="background-color: transparent; border:none; box-shadow: none;">
                             <tr>
-                                <td><img src="/assets/image/plus2.png" style="height: 38px; width: 38px; "> </td>
+                                <td><img src="/assets/image/plus2.png" style="height: 37px; width: 37px; "> </td>
                                 <td style="font-size: 14px">Add Task </td>
                             </tr> 
                         </button>
@@ -493,14 +503,14 @@
                                         {{note.note}} 
                                     </span>  
                                 </td>
-                                <td class="top-box" style="text-align: left;">
+                                <td class="top-box" style="text-align: center;">
                                     <!-- <button type="button" class="btn btn-link s_button"  *ngIf="dataservice.role.toLowerCase() == 'owner'" (click)="note_to_goal(note.id, note.note, note.priority)">
                                         Add to Board
                                     </button> -->
-                                    <button (click)="note_to_goal(note.id, note.note, note.priority)" style="background-color: grey; border:none; box-shadow: none;">
+                                    <button (click)="note_to_goal(note.id, note.note, note.priority)" style="background-color: grey; border:none; box-shadow: none; border-radius: 8px;">
                                         <tr>
-                                            <td><img src="/assets/image/plus2.png" style="height: 37px; width: 37px; ">Add As Task </td>
-                                            <!-- <td style="font-size: 14px">Add Task </td> -->
+                                            <td><img src="/assets/image/plus2.png" style="height: 20px; width: 20px; "> </td>
+                                            <td style="font-size: 14px; font-family: Roboto; font-weight: bold">Add Task </td>
                                         </tr> 
                                     </button>
                                     <!-- <span style="font-size: 20px; font-weight: bolder;">+</span> -->
