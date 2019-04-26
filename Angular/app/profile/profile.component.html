@@ -12,7 +12,7 @@
             <img src="/assets/image/Vector_2.png" [style.display] = "nav_drop == true ? '' : 'none'">
             <img src="/assets/image/Vector.png" [style.display] = "nav_drop == false ? '' : 'none'">
             </a>{{dataservice.username}}</h6>
-        <h6>{{dataservice.role}} -- {{dataservice.project_name}}</h6>
+        <h6>{{dataservice.role}} - {{dataservice.project_name}}</h6>
     
     
     </div>
@@ -134,7 +134,7 @@
                     </div>                           
                  </td>
                  <td  style="padding-top: 20px;">
-                     <button type="button" class="btn-round" *ngIf="dataservice.role.toLowerCase() == 'owner'" (click)="createSprint()">New Sprint</button>
+                     <button type="button" class="btn-round" *ngIf="dataservice.role.toLowerCase() == 'owner'" (click)="createSprint()">NEW SPRINT</button>
                  </td>
                 </tr>
                 <tr style="padding-top: 0; margin: 0">
@@ -368,7 +368,7 @@
                        
                     <br>
                     <div  *ngIf="user.user.nickname.toUpperCase() == this.dataservice.realname.toUpperCase()">
-                        <button (click)="onUser(user.user.id); basicModal.openModal()" style="background-color: transparent; border:none; box-shadow: none;">
+                        <button (click)="onUser(user.id); basicModal.openModal()" style="background-color: transparent; border:none; box-shadow: none;">
                             <tr>
                                 <td><img src="/assets/image/plus2.png" style="height: 37px; width: 37px; "> </td>
                                 <td style="font-size: 14px">Add Task </td>
