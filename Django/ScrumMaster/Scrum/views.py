@@ -770,8 +770,8 @@ class Events(APIView):
                         match =re.match(r'<@([\w\.-]+)>',each_word ) 
                         if match:
                             print(match.group(1))
-                            slack_name = ScrumUser.objects.filter(slack_user_id=match.group(1))
-                            slack_message = slack_message.replace(each_word, slack_name.slack_user_id)
+                            slack_name = ScrumUser.objects.get(slack_user_id=match.group(1))
+                            slack_message = slack_message.replace(each_word, slack_name.nickname)
                             print(slack_message)
                             print("pattern matched")
                             
