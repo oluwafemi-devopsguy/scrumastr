@@ -8,12 +8,12 @@
 
 
 body{
-    margin: 0 100px;
+    margin: 100px 100px;
     border: 0;
     padding: 0;
     font-family: Helvetica;
   /*  background: linear-gradient(to right,  #8c8c8c,   #e6e6e6);*/
-    background-color: #e6e6e6;
+    
 }
 
 
@@ -25,13 +25,13 @@ table, td, th{
 }
 
 table{
-    border: 2px solid  #00001a;
-    width: 800px;
+    border: 2px solid  #2bbbad;
+    width: 500px;
      height: auto;
 }
 
 .th{
-    background-color:  #00001a;
+    background-color:  #2bbbad;
     height: 50px;
     color: white;
     font-size: 30px;
@@ -50,59 +50,27 @@ section{
     display: flex;
     margin:  10px auto;
     }
-/*table, th, td {
-    border: 0px solid black;
-    border-collapse: collapse;
-}
 
-th{
-	background-color: #aaaaaa;
-}
-
-th, td {
-    padding: 15px;
-    text-align: left;
-}
-
-tr:nth-child(odd){
-	background-color: #dddddd;
-}*/
-
-/*.button {
-    background-color:  #00001a;
-
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    width: 150px;
-    border-radius: 10%;
-    font-size: 15px;
-    font-weight: bold;
-    
-}
-*/
 input[type=button], input[type=submit], input[type=reset] {
-    background-color: #00001a;
+
     border: none;
     color: white;
     padding: 16px 32px;
     text-decoration: none;
     margin: 4px 20px;
     cursor: pointer;
-    border-radius: 10%;
+    border-radius: 5px;
     font-size: 15px;
     font-weight: bold;
+    background-color: #2bbbad;
 
 }
 
 input[type=text], input[type=email], input[type=password], input[type=select] {
-    width: 100%;
+    width: 450px;
     padding: 12px 20px;
     margin: 8px 0;
-    box-sizing: border-box;
-    border: 2px solid #ccc;
     border-radius: 4px;
-    background-color: #f8f8f8;
 }
 
 select{
@@ -162,11 +130,6 @@ nav ul li a.active {
     text-transform: uppercase;
 }
 
-/*body {
-    padding:100px ;
-    background: linear-gradient(to right,  #8c8c8c,   #e6e6e6);
-}*/
-
 
 .result_box {
     max-width:60%;
@@ -193,37 +156,10 @@ nav ul li a.active {
     
 }
 
-.button{
-    background-color: #404040;
-    size: 20; 
-    padding: 10px 20px; 
-    margin: 20px;
-    color: white;
-    font-weight: bold
-}
 
-.rp{
-    width: 300px;
-  
-    border: 1px solid #006600;
-    margin: 0;
-    background-color: #dddddd;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,1.9);
-  
-}
 
-footer {
-    color: #00001a;
-    clear:both;
-    text-align:center;
-    padding:5px;         
-}
 
-.resultImage {
-    height: 40px;
-    width:40px;
-    border-radius: 40px      
-}
+
 
 
 

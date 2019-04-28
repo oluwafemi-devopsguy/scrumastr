@@ -199,7 +199,7 @@ h5 {
     position: absolute;
     z-index: 1; 
     left: -3px;
-    top: -20px;  
+    top: -15px;  
 }
 
                     /* Show the tooltip text when you mouse over the tooltip container */
@@ -399,3 +399,24 @@ select option {
     background-color: #cccccc;
     color: black;
 }
+
+#userHistory {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#userHistory td, #userHistory th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+
+#userHistory th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #26a69a;
+    color: white;
+}
+
