@@ -236,8 +236,19 @@ class ScrumUserViewSet(viewsets.ModelViewSet):
             user.set_password(request.data['password'])
             user.save()
             return JsonResponse({'message': 'User Created Successfully.'})
+        elif user:
+            print("Testing vreationssssssssssss")
+            scrum_user = User.objects.get(email = request.data['email'])
+            print(scrum_user.scrumuser.nickname)
+            scrum_project = ScrumProject(name=request.data['projname'])
+            scrum_project.save()
+            scrum_project_role = ScrumProjectRole(role="Owner", user=scrum_user.scrumuser, project=scrum_project)
+            scrum_project_role.save()
+            print("User exist and project created")
+            return JsonResponse({'message': 'Project Created Successfully for already existing User.'})
         else:
             return JsonResponse({'message': 'Error: User with that e-mail already exists.'})
+
 
 def userBgColor():
     list = ["#ff8080", "#4d4dff","#ff7ff6", "#66ffb3", "#99ddff","#ffffff", "#ffcc80", "#ff99ff","#f4f4f4", "#b3ffff", "#ffff80","#dfdfdf","#1a8cff", "#e085c2","#ffffff","#739900"]
@@ -283,6 +294,22 @@ class ScrumProjectRoleViewSet(viewsets.ModelViewSet):
     queryset = ScrumProjectRole.objects.all()
     serializer_class = ScrumProjectRoleSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            scrum_project = ScrumProject.objects.get(id=instance.project.id)
+            scrum_project_role = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
+            
+            if scrum_project_role.role == "Owner":
+                self.perform_destroy(instance)
+                return JsonResponse({'message': 'User Removed from project', 'data': filtered_users(instance.project.id)})
+            else:
+                print(instance.role)
+                return JsonResponse({'message': 'Permission Denied: Unauthorized to Delete User.', 'data': filtered_users(instance.project.id)})
+
+        except:
+            return JsonResponse({'message': 'User Do not exist'})
     
     def patch(self, request):
         scrum_project = ScrumProject.objects.get(id=request.data['project_id'])
@@ -312,9 +339,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
         scrum_project_role = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
         author = ScrumProjectRole.objects.get(id=user_id)
         sprint = ScrumSprint.objects.filter(goal_project_id = request.data['project_id'])
-        print("Last sprint end time: " + (datetime.datetime.strftime(ScrumSprint.objects.latest('ends_on').ends_on, "%Y-%m-%d %H:%M:%S")))
-        print("Present date: " + str(datetime.datetime.now().replace(tzinfo=None)))
-            
+   
         if scrum_project_role != author and scrum_project_role.role != 'Owner': 
             return JsonResponse({'message': 'Permission Denied: Unauthorized Addition of a Goal.', 'data': filtered_users(request.data['project_id'])})
         
@@ -327,10 +352,24 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
         status_start = 0
         scrum_project.project_count = scrum_project.project_count + 1
         scrum_project.save()
-        goal = ScrumGoal(name=request.data['name'], status=status_start, time_created = datetime.datetime.now(), goal_project_id=scrum_project.project_count, user=author, project_id=request.data['project_id'], moveable = True)
-        goal.save()
-        return JsonResponse({'message': 'Goal Added!', 'data': filtered_users(request.data['project_id'])})
-          
+
+
+
+        goal, created = ScrumGoal.objects.get_or_create(name=request.data['name'], project_id=request.data['project_id'], visible = True,
+            defaults = {
+                "user":author,
+                "status":status_start,
+                "time_created": datetime.datetime.now(),
+                "goal_project_id":scrum_project.project_count,
+                "moveable": True,
+            } )
+        if created:
+            return JsonResponse({'message': 'Goal created success.', 'data': filtered_users(request.data['project_id'])})
+
+        if goal:
+            return JsonResponse({'message': 'Goal already existed.', 'data': filtered_users(request.data['project_id'])})
+
+
     def patch(self, request):
         scrum_project = ScrumProject.objects.get(id=request.data['project_id'])
         scrum_project_a = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
@@ -770,8 +809,8 @@ class Events(APIView):
                         match =re.match(r'<@([\w\.-]+)>',each_word ) 
                         if match:
                             print(match.group(1))
-                            slack_name = ScrumUser.objects.filter(slack_user_id=match.group(1))
-                            slack_message = slack_message.replace(each_word, slack_name.slack_user_id)
+                            slack_name = ScrumUser.objects.get(slack_user_id=match.group(1))
+                            slack_message = slack_message.replace(each_word, slack_name.nickname)
                             print(slack_message)
                             print("pattern matched")
                             

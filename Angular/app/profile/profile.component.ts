@@ -395,6 +395,41 @@ export class ProfileComponent implements OnInit {
     }
   }
 
+  remove_user(nickname, id) {
+    var pop_event = window.confirm('Delete " ' + nickname + '"?');
+    if (pop_event) {
+      console.log("Deleted")
+      this.http.delete(this.dataservice.domain_protocol + this.dataservice.domain_name + '/scrum/api/scrumprojectroles/' + id + "/", this.dataservice.authOptions).subscribe(
+            data => {
+                this.dataservice.users = data['data'];
+                this.dataservice.message = data['message'];
+                if (this.dataservice.selected_sprint) {
+                  this.changeSprint()
+                }
+                else{
+                  this.filterSprint(this.dataservice.sprints)
+                }
+                
+                
+            },
+            err => {
+                console.error(err);
+                if(err['status'] == 401)
+                {
+                    this.dataservice.message = 'Session Invalid or Expired. Please Login.';
+                    this.dataservice.logout();
+                } else
+                {
+                    this.dataservice.message = 'Unexpected Error!';    
+                }
+            }
+        );
+    } else {
+      console.log("Canceled")
+    }
+    }
+
+
   deleteTask(goal_name, goal_id) {
       this.dataservice.message ="";
       var pop_event = window.confirm('Delete " ' + goal_name + '"?');
@@ -576,6 +611,8 @@ export class ProfileComponent implements OnInit {
   //         }
   //       );
   // }
+
+
 
   addGoal()
   {

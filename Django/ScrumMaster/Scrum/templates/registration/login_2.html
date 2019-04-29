@@ -1,0 +1,90 @@
+
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Contact Us Page</title>
+  <link rel="stylesheet" href="{% static 'css/RIASEC.css' %}">
+</head>
+
+
+<body>
+
+  <header>
+    
+    <nav class="headerNav">
+      <ul>
+        <li><a href="{% url 'home' %}">Home</a></li>
+        <li><a href="{% url 'questionaire' %}">Test</a></li>
+        <li><a href="{% url 'result' %}">Results</a></li>
+        <li><a href="{% url 'contact_us' %}">Contact Us</a></li>
+        {%  if user.is_authenticated %}
+        <li><a href="{% url 'logout' %}">Log Out</a></li>
+        {% else %}
+        <li><a href="{% url 'login' %}">Login</a></li>
+        <li><a href="{% url 'signup' %}">Register</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+    
+  </header>
+
+  <section style="width: 400px">
+    <table style="width: 500px;">
+      <tr><th class="th">Login</th></tr>
+      
+      <form method="post" action="{% url 'login' %}"> {% csrf_token %}           
+        <!-- <tr><th class="th">Contact Us</th></tr>
+        <tr><td> {{form.name.label_tag}} {{form.name}} </td></tr>
+        <tr><td> {{form.email.label_tag}}{{form.email}} </td></tr>
+        <tr><td> {{form.message.label_tag}}{{form.message}} </td></tr>
+        <tr><td style="text-align: center;"><input type="submit" name="submit" value="Send Message"><td></tr> -->
+        <tr>
+            <td>
+              {% if form.errors %}
+                <p style="color: red">Your username and password didn't match. Please try again.</p>
+                {% endif %}
+
+                {% if next %}
+                    {% if user.is_authenticated %}
+                    <p style="color: red">Your account doesn't have access to this page. To proceed,
+                    please login with an account that has access.</p>
+                    {% else %}
+                    <p style="color: red">Please login to see this page.</p>
+                    {% endif %}
+                {% endif %}
+            {{ form.username.label_tag }}{{ form.username }}
+          </td>
+        </tr>
+        <tr>
+  
+          <td>{{ form.password.label_tag }}{{ form.password }}</td>
+        </tr> 
+        <tr>
+          <td><input type="submit" value="login" class="button" /><input type="reset" value="Reset" class="button" />
+          <input type="hidden" name="next" value="{{ next }}" /></td>
+        </tr>
+        <tr>
+          <td>
+            {# Assumes you setup the password_reset view in your URLconf #}
+            <p style="text-align: center;"><a href="{% url 'password_reset' %}">Lost password?</a></p>
+          </td>
+        </tr>        
+      </form>
+    </table>
+  </section>
+  
+    
+
+      
+    
+  
+
+
+  <footer>Copyright © richMind</footer> 
+
+</body>
+</html>
+
+
+

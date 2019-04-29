@@ -20,7 +20,7 @@ FROM docker.io/showpopulous/chatscrum_img_base2:basev2
 # run chatscrum with this: docker run -p 5000:5000 --name chatscrum_ci local/chatscrum_img_base2
 # type the ip address of your server into your browser and you should see chatscrum
 
-####### Troubleshooting Tips
+########Troubleshooting Tips
 # to test mysql connection problems if you are using mysql.connect.django: 
 # -- from container, import mysql.connector, then conn = mysql.connector.connect(host='xx',database='xx',password='xx')
 # 

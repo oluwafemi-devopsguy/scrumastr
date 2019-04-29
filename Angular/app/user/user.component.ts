@@ -7,6 +7,7 @@ import { DataService } from '../data.service';
   styleUrls: ['./user.component.css']
 })
 export class UserComponent implements OnInit {
+  public create_new_project: boolean = false;
 
   constructor(private router: Router, public dataservice: DataService) { }
 
@@ -18,10 +19,21 @@ export class UserComponent implements OnInit {
     this.router.navigate(['home']);
     this.dataservice.message = '';
   }
+
+  showCreateProject() {
+    this.create_new_project = !this.create_new_project;
+  }
+
+  createProject() {
+    console.log("project creatinnnnnnnnnnnnnnnn") 
+    this.dataservice.createuser_usertype = "Owner"
+    this.dataservice.createuser_password = "password"
+  }
   
   createUser()
   {
-    this.dataservice.createUser();  
+    this.dataservice.createUser(); 
+
   }
 
 }
