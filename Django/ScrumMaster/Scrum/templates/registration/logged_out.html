@@ -1,0 +1,16 @@
+{% extends 'RIASEC/layout.html' %}
+
+{% block title %} Log Out{% endblock %}
+
+
+
+{% block head %}
+	Logged out!
+{% endblock %}
+
+
+{% block content %}
+
+<a href="{% url 'login'%}" style="text-decoration: none; font-size: 20px">Click here to login again.</a>
+
+{% endblock %}

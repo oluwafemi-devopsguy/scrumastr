@@ -1,0 +1,55 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{% block title %}
+
+			{% endblock %}</title>
+	<link rel="stylesheet" href="{% static 'css/RIASEC.css' %}">
+</head>
+
+
+<body>
+
+	<header>
+		
+		
+		
+	</header>
+
+
+	<section>
+
+
+		<div style="display: block; margin: 0 auto;">
+
+			<table>
+			<tr><th class="th">
+				{% block head %}
+
+				{% endblock %}
+			</th></tr>
+			<tr><td>
+				{% block content %}
+
+				{% endblock %}
+			</td></tr>
+			<tr><td>
+				{% block foot %}
+
+				{% endblock %}
+			</td></tr>
+		</table>
+			
+			
+			
+			
+		</div>
+
+	
+	</section>
+
+	<footer></footer>	
+
+</body>
+</html>

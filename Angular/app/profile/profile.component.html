@@ -181,7 +181,12 @@
                                 <div style="font-family: Roboto;font-size: 11px; color: rgba(0, 0, 0, 0.5); padding: 4px 4px 0px 5px;">
                                     {{user.total_week_hours}} hours 
                                 </div>
-                                
+                                <div *ngIf="dataservice.role.toLowerCase() == 'owner'">
+                                    <a (click)="remove_user(user.user.nickname, user.id)" style="margin: 5px; float: right">
+                                            Remove User
+                                    </a>
+                                </div>
+
                     </div> 
                     <hr style="width: 80%; padding: 0; margin: 0;"> 
                     <div style="display:table; width:100%; word-wrap:break-word; border-collapse:collapse; background-color: #f2f2f2;">
@@ -546,26 +551,33 @@
                         <h4>{{clicked_user}}</h4>
                     </mz-modal-header>
                     <mz-modal-content>
-                        <div style="display: table; width: 100%; word-wrap: break-word; border-collapse: collapse; border: 2px solid black;">
+                        <div style="display: table; width: 100%; word-wrap: break-word; border-collapse: collapse; border: 2px solid #f2f2f2;" id="userHistory">
                             <div style="display: table-row">
                                     <!--
                                     <th class="full-box">Created By</th>
                                     -->
-                                    <th class="full-box">Sprint No</th>
-                                    <th class="full-box">SPRINTS</th>
+                                    <th class="full-box" style="width: 10%; text-align: center">SPRINT NO</th>
+                                    <th class="full-box"  style="width: 35%; text-align: center">SPRINTS</th>
                                     <th class="full-box">GOALS</th>
                             </div>
 
                             <div style="display: table-row" *ngFor="let sprint of dataservice.sprints; let j = index; let k = count">
                                 <td class="top-box">{{sprint.id}}</td>
                                 <td class="top-box">  {{sprint.created_on | date}} - {{sprint.ends_on | date}}</td>
-                                <td class="top-box">
+                                <td class="top-box" style="text-align: left">
                                     <span *ngFor="let user_goal of dataservice.user_goal_history">
                                         <div *ngIf ="user_goal.time_created > sprint.created_on && user_goal.time_created < sprint.ends_on" >
-                                            {{user_goal.name}} --
-                                            <span style="font-weight: bolder;" [innerText]="user_goal.status == 3 ? 'completed' : 'Not Completed'" [style.color]="user_goal.status == 3 ? 'green' : 'red'">
+                                          <div style="border-left: 3px solid #26a69a">
+                                            {{user_goal.name}} <br>
+                                          <div style="text-align: right">
+                                            <span style="font-weight: bolder; " [innerText]="user_goal.status == 3 ? 'completed' : 'Not Completed'" [style.color]="user_goal.status == 3 ? 'green' : 'red'">
                                                 
                                             </span>
+                                          </div>
+                                         </div>
+                                         <br>
+                                         <div style="text-align: center; font-weight: bold;color:#26a69a ">--------</div>
+                                         <br>
                                         </div>
                                     </span>
                                 </td>
