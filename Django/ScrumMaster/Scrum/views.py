@@ -674,6 +674,7 @@ class SprintViewSet(viewsets.ModelViewSet):
 
 
 class Events(APIView):
+    print("Testing from slack=================")
     channel_layer = get_channel_layer()
     try:
         slack_app = ChatscrumSlackApp.objects.all().first()
@@ -809,10 +810,14 @@ class Events(APIView):
                         match =re.match(r'<@([\w\.-]+)>',each_word ) 
                         if match:
                             print(match.group(1))
-                            slack_name = ScrumUser.objects.get(slack_user_id=match.group(1))
-                            slack_message = slack_message.replace(each_word, slack_name.nickname)
-                            print(slack_message)
-                            print("pattern matched")
+                            try:
+                                slack_name = ScrumUser.objects.get(slack_user_id=match.group(1))
+                                slack_message = slack_message.replace(each_word, slack_name.nickname)
+                                print(slack_message)
+                                print("pattern matched")
+                            except ScrumUser.DoesNotExist as e:
+                                slack_message = slack_message.replace(each_word, match.group(1))
+                            
                             
                         else:
                             print("pattern not matched") 
