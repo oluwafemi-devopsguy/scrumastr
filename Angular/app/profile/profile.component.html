@@ -74,42 +74,8 @@
 
 <div style="margin-top: 8px" class="container-fluid">
     <div class="row">
-        <div class="col s2" style="height: calc(100vh - 65px); overflow: auto; background-color: #f5f5f5; padding-left: 30px" [style.display] = "board == 'AllTask' ? '' : 'none'">
-            <br>
-            <div class="" style="padding-top: 7px">  
-                <input type="textarea" placeholder="Search" name="search" class="search_input ">
-                <br>
-                <br>
-                             
-                
-                <ul *ngFor="let user of dataservice.users">
-                    <li style="margin: -6px;">
-                        <div [attr.id]="'m' + user.id" (mouseover)="setSelectedUser(user.id)" (mouseleave)="setSelectedUser(-1)">
-                            <div id="author" style="text-align: left;">
-                                <a [routerLink] fragment='{{user.id}}' (click)="scrollIntoView('u' + user.id)"  (dblclick)="getClicked($event); UserGoalHistory(user.user.nickname, user.id);  userAdvance.openModal()" class="scrumuser_box1" [style.background-color] = user.color  style="width: 185px; height: 30px; border-radius: 7px; text-align: left; padding: 3px 8px;">
-                                    <span style="font-size: 12px; text-align: left;">{{(user.user.nickname.length>14) ? (user.user.nickname | slice:0:13)+'^':(user.user.nickname) }}  
-                                </span> 
-                                    <a (click)="getClicked($event); basicModal.openModal()"  style="margin: 5px; float: right;">
-                                        <img src="/assets/image/plus2.png" style="height: 20px; width: 20px; margin 10px; ">
-                                    </a> 
-                                    <a (click)="getClicked($event); addNote.openModal(); show_notes()" style="margin: 5px; float: right">
-                                        <img src="/assets/image/notes.png" style="height: 20px; width: 20px;  margin 10px; ">
-                                    </a>
-
-                                </a>
-                                    <!-- <div style="display:flex;">
-                                     
-                                        <a mz-button (click)="getClicked($event); basicModal.openModal()" class="btn-floating add-icon"><i class="material-icons" id="add">add</i></a>
-                                        <a mz-button (click)="getClicked($event); addNote.openModal(); show_notes()" class="btn-floating add-icon"><i class="material-icons" id="add">notes</i></a>
-                                    </div> -->
-                                    
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div class="col s7" style="height: calc(100vh - 65px); overflow: auto; background-color: #f5f5f5; border-left: 3px solid white" [style.display] = "board == 'AllTask' ? '' : 'none'">          
+        
+        <div class="col s8" style="height: calc(100vh - 65px); overflow: auto; background-color: #f5f5f5; border-left: 3px solid white" [style.display] = "board == 'AllTask' ? '' : 'none'">          
             <div class="main_area">
                 <table>
                 <tr style="margin: 0">
@@ -123,7 +89,7 @@
                                 <span >Show Users With No Assigned Tasks</span> 
                             </label> -->
                         </td>
-                 <td style="text-align: right;">
+                 <td style="text-align: center;">
                     <div style="" [style.display] = "show_sprint_option ? 'inline-flex' : 'none'"  [style.margin-top] = "dataservice.role.toLowerCase() == 'owner' ? '10px' : '5px'" >
                      <select  name="change_sprint" style="font-size: 12px; font-family: Roboto; height: 27px; color: #1f7a7a; width: 260px;" [(ngModel)]="dataservice.selected_sprint"  (change)="changeSprint()">
                         <option *ngFor = "let sprint of dataservice.sprints"  [ngValue]="sprint" [selected] = "index == last ? sprint : doNothing()" >
@@ -133,17 +99,24 @@
                     
                     </div>                           
                  </td>
+                 <td >
+                    <div style="margin-top: 10px">
+                        <input type="textarea" placeholder="Search" name="search" class="search_input " style="height: 27px; ">
+                    </div>
+                        
+                </td>
                  <td  style="padding-top: 20px;">
                      <button type="button" class="btn-round" *ngIf="dataservice.role.toLowerCase() == 'owner'" (click)="createSprint()">NEW SPRINT</button>
                  </td>
                 </tr>
                 <tr style="padding-top: 0; margin: 0">
-                    <td colspan="3"  style="padding-top: 0; margin: 0">
+                    <td colspan="4"  style="padding-top: 0; margin: 0">
                         <h3  style="padding-top: 0; margin: 0">
                             {{dataservice.message}}
                         </h3>
                     </td>
                 </tr>
+                
                 </table>         
                 <style>
                     .full-box {
@@ -174,21 +147,32 @@
                         input{display: block !important;}
                 </style>
                 <div class="board-area">
-                <ng-container *ngFor="let user of dataservice.users; let user_index = index">
-                    <br>
-                    <div style=" display: flex; font-weight: bold; background-color: transparent;">
+                <ng-container *ngFor="let user of dataservice.users; let user_index = index">         <br>    
+                <details [attr.id]="'detail' + user.id" [style.background-color] = "user.color">  
+                <summary>
+                <span> 
+                    <span style=" font-weight: bold; background-color: transparent;">
+                                
                                 {{user.user.nickname.toUpperCase()}}  
-                                <div style="font-family: Roboto;font-size: 11px; color: rgba(0, 0, 0, 0.5); padding: 4px 4px 0px 5px;">
+                                <span style="font-family: Roboto;font-size: 11px; color: rgba(0, 0, 0, 0.5); padding: 4px 4px 0px 5px; ">
                                     {{user.total_week_hours}} hours 
-                                </div>
-                                <div *ngIf="dataservice.role.toLowerCase() == 'owner'">
-                                    <a (click)="remove_user(user.user.nickname, user.id)" style="margin: 5px; float: right">
+                                </span>
+                                <a (click)="onUser(user.id); basicModal.openModal()"  style="margin: 5px; ">
+                                        <img src="/assets/image/plus2.png" style="height: 20px; width: 20px; margin 10px; ">
+                                </a> 
+                                <a (click)="onUser(user.id); addNote.openModal(); show_notes()" style="margin: 5px;">
+                                        <img src="/assets/image/notes.png" style="height: 20px; width: 20px;  margin 10px; ">
+                                </a>
+                                <span *ngIf="dataservice.role.toLowerCase() == 'owner'" style="float: right;">
+                                    <button type="button" class="btn-round" (click)="remove_user(user.user.nickname, user.id)" style=" border-radius: 5px; margin-top: inherit; height: inherit; border-left: 5px solid white ">
                                             Remove User
-                                    </a>
-                                </div>
+                                    </button>
+                                </span>
 
-                    </div> 
-                    <hr style="width: 80%; padding: 0; margin: 0;"> 
+                    </span>
+                    </span> 
+                
+                    </summary> 
                     <div style="display:table; width:100%; word-wrap:break-word; border-collapse:collapse; background-color: #f2f2f2;">
                         
                         
@@ -210,14 +194,22 @@
                                     <div class="div_lister" *ngFor="let goal of dataservice.sprint_goals; let j = index; let k = count" [attr.id]="'g' + goal.goal_project_id"> 
                                             <div class="list_div" *ngIf ="goal.status == arrItem && user.id == goal.user && goal.name; let thisGoal" (dblclick)="goal.status == arrItem ? editGoal($event) : doNothing()" style="" [style.background-color] = "user.color"> {{ (goal.name.length>120) ? (thisGoal | slice:0:120)+'...':(thisGoal) }} {{(goal.hours != -1 && (goal.status == 3 || goal.status == 2) ? ' (' + goal.hours + ')' : '' )}}
                                                 <a (click)="ResizeImage(goal.file); showImage.openModal()">
-                                                    <img src="https://{{dataservice.domain_name}}{{goal.file}}" style="width: 15px; height: 15px" alt="{{goal.file}}">
+                                                    <img src="{{ dataservice.domain_protocol}}{{dataservice.domain_name}}{{goal.file}}" style="width: 15px; height: 15px" alt="{{goal.file}}">
                                                 </a> 
-                                               <br>
-                                               <br>
-                                               <br>
+                                                {{goal.days_failed}}
+                                        
+                                               <div style="text-align: left; padding: 10px 0; ">
+                                                <div *ngIf ="goal.days_failed < 0">
+                                                    <span>5</span>
+                                                    <span>
+                                                        <img src="/assets/image/fail.png" alt="fail"  style="height: 10px; width: 10px">
+                                                    </span>
+                                                </div>
+                                               </div>
                                                <br>
 
-                                            <div class="div-add-file" style="display: inline-flex; padding-bottom: 10px;">
+                                            <div class="div-add-file" style="display: inline-flex; padding-bottom: 8px;">
+
                                                 <div style="padding: 8px 5px; font-weight: bold">
                                                     {{goal.goal_project_id}}
                                                 </div>
@@ -228,12 +220,12 @@
                                                         {{history.message}}
                                                     </option>
                                                 </select> 
-                                            <div style="padding-top: 3px;">
+                                            <div style="padding-top: 4px;">
                                                 <a (click)="goalClicked(goal.goal_project_id); upload.openModal()">
-                                                    <img src="/assets/image/foto.png" style="padding: 2px;">
+                                                    <img src="/assets/image/foto.png" style="padding: 0 2px;">
                                                 </a> 
                                                 <a (click)="goalClicked(goal.goal_project_id); initGoalChat()">
-                                                    <img src="/assets/image/message.png" style="padding: 2px;">
+                                                    <img src="/assets/image/message.png" style="padding: 0 2px;">
                                                 </a>
                                             </div> 
                                             </div>
@@ -248,6 +240,7 @@
                             </div>
                         
                     </div>
+                    </details>
                     </ng-container>
                 </div>
             </div>
@@ -257,7 +250,7 @@
 
 
         
-              <div class="col s3" style=" background-color:#F5F5F5; float: right;">
+              <div class="col s4" style=" background-color:#F5F5F5; float: right;">
             <a style="float: right; margin-right: -10px; background-color: white; border-radius: 0px 0px 0px 10px; color: black; padding: 5px; ">{{chat_div_title}}</a>
             <br>
             <br>
@@ -386,7 +379,7 @@
 
                         <div style="display: table-row; border-top: 2px solid black; ">
                             <th> <div class="table_head">Task For The Week</div> </th>
-                            <th><div class="table_head">Today Target</div></th>
+                            <th><div class="table_head">Finish Today</div></th>
                             <th><div class="table_head">Verify</div></th>
                             <th><div class="table_head">Done</div></th>
                         </div>

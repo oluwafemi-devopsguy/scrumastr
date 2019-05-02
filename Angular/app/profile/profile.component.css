@@ -133,7 +133,7 @@ h5 {
 }
 
 .div-add-file{   
-    padding-left: 50px;
+    padding-left: 15px;
     position: absolute;
     z-index: 1; 
     left: -1px;
@@ -152,7 +152,7 @@ h5 {
     font-size: 14px;
     font-family: Roboto;
     border-radius: 1px;
-    width: 230px;
+    width: 195px;
     height: auto;
     padding:5px;
     text-align: left;
@@ -286,6 +286,7 @@ a:hover, a:active {
     height: 22px;
     left: 50px;
     top: 81px;
+    padding: 10px;
 
     border: 1px solid rgba(0, 0, 0, 0.5);
     box-sizing: border-box;
@@ -293,7 +294,7 @@ a:hover, a:active {
     background: transparent;
     background-image:url('/assets/image/search.png');
     background-repeat: no-repeat;
-    background-position: 147px 5px;
+    background-position: 135px 5px;
     
 }
 
@@ -304,7 +305,7 @@ a:hover, a:active {
 
 .table_head{
     height: 30px;
-    width: 235px;
+    width: 200px;
     padding: 5px 10px;  
     
     text-align: left;
@@ -420,3 +421,7 @@ select option {
     color: white;
 }
 
+
+details summary {cursor: pointer;}
+details summary::before {content:"►"; padding: 0 10px;}
+details[open] summary::before {content:"▼"; padding: 0 10px;}

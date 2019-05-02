@@ -78,6 +78,7 @@ class ScrumGoal(models.Model):
     hours = models.IntegerField(default=-1)
     time_created = models.DateTimeField()
     file = models.ImageField(blank=True, null=True, storage=fs)
+    days_failed = models.IntegerField(default=0)
     
     '''
     0 = Weekly Goal

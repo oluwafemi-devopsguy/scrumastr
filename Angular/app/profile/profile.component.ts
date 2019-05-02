@@ -1,3 +1,4 @@
+
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../data.service';
 import { DragulaService } from 'ng2-dragula';
@@ -859,5 +860,13 @@ export class ProfileComponent implements OnInit {
       this.show_history = !this.show_history; 
   }
 
+
+// testf(testVar) {
+  
+//   console.log(testVar)
+//   testVar = "detail" + testVar
+//   // document.getElementById(testVar).removeAttribute("open", "open")
+//   console.log(testVar)
+// }
 
 }
