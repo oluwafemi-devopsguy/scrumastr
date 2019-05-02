@@ -51,7 +51,8 @@
     </div> -->
     <div class="topnav"  [style.display] = "nav_drop == true ? '' : 'none'" >
     
-  <div style="padding-left: 300px; color: black;">    
+  <div style="padding-left: 300px; color: black;"> 
+  <div style="display: block; margin: 0 auto; padding-left: 200px;">  
     <a (click)="admin()" id="adminpanel" class="dropd" style="display: inline;"  *ngIf="dataservice.role.toLowerCase() == 'owner', 'admin'">
         <div style="padding-top: 7px">
             <img src="/assets/image/user.png" style="height: 20px; width: 20px; margin 5px">
@@ -65,6 +66,7 @@
             Logout
         </div>
     </a>
+</div>
     </div>
 </div>
     </nav>   
@@ -196,14 +198,13 @@
                                                 <a (click)="ResizeImage(goal.file); showImage.openModal()">
                                                     <img src="{{ dataservice.domain_protocol}}{{dataservice.domain_name}}{{goal.file}}" style="width: 15px; height: 15px" alt="{{goal.file}}">
                                                 </a> 
-                                                {{goal.days_failed}}
+                                                
                                         
                                                <div style="text-align: left; padding: 10px 0; ">
-                                                <div *ngIf ="goal.days_failed < 0">
-                                                    <span>5</span>
+                                                <div *ngIf ="goal.days_failed > 0">
+                                                    <span>{{goal.days_failed}}</span>
                                                     <span>
                                                         <img src="/assets/image/fail.png" alt="fail"  style="height: 10px; width: 10px">
-                                                        {{goal.days_failed}}
                                                     </span>
                                                 </div>
                                                </div>
