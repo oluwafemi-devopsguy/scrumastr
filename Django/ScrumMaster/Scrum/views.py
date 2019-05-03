@@ -434,7 +434,10 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
                      message = 'Error: A Task must have hours assigned.'
                 elif to_id == 2 :
                     goal_item.hours = request.data['hours']
-                    message = 'Goal Moved Successfully! Hours Applied!' 
+                    message = 'Goal Moved Successfully! Hours Applied!'
+                if state_prev == 1 and to_id == 0:
+                    goal_item.days_failed = goal_item.days_failed + 1 
+                
                 self.createHistory(goal_item.name, goal_item.status, goal_item.goal_project_id, goal_item.hours, goal_item.time_created, goal_item.user, goal_item.project, goal_item.file, goal_item.id, 'Goal Moved Successfully by')          
                 goal_item.save()
             else:
@@ -481,7 +484,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             return JsonResponse({'message': 'Image Added Successfully', 'data': filtered_users(request.data['project_id'])})
         elif request.data['mode'] == 2:
             goal = scrum_project.scrumgoal_set.get(goal_project_id=request.data['goal_id'][1:])
-            if request.user == scrum_project_b.user.user and goal.moveable == True:
+            if (request.user == scrum_project_b.user.user or scrum_project_role.role == 'Owner') and goal.moveable == True:
 
                 goal.visible = 0
                 goal.save()
