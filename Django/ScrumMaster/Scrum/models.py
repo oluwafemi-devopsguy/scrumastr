@@ -110,7 +110,8 @@ class ScrumSprint (models.Model):
     goal_project_id = models.IntegerField(default=0)    
 
     def __str__(self):
-        return self.goal_project_id, self.created_on
+        
+        return '{} {} '.format(self.goal_project_id,self.created_on)
 
 
 class ScrumGoalHistory(models.Model):

@@ -251,7 +251,7 @@ class ScrumUserViewSet(viewsets.ModelViewSet):
 
 
 def userBgColor():
-    list = ["#ff8080", "#4d4dff","#ff7ff6", "#66ffb3", "#99ddff","#ffffff", "#ffcc80", "#ff99ff","#ff0000", "#b3ffff", "#ffff80","#dfdfdf","#1a8cff", "#e085c2","#ffffff","#739900", "#ffad33",  "#75a3a3", "#1a1aff"]
+    list = ["#ff8080", "#4d4dff","#ff7ff6", "#66ffb3", "#99ddff","#ffffff", "#ffcc80", "#ff99ff","#ff0000", "#b3ffff", "#ffff80","#dfdfdf","#1a8cff", "#e085c2","#ffffff","#739900", "#739900", "#ffad33",  "#75a3a3", "#1a1aff"]
     color = random.choice(list)
     return color
 
