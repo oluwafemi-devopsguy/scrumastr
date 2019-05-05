@@ -251,7 +251,7 @@ class ScrumUserViewSet(viewsets.ModelViewSet):
 
 
 def userBgColor():
-    list = ["#ff8080", "#4d4dff","#ff7ff6", "#66ffb3", "#99ddff","#ffffff", "#ffcc80", "#ff99ff","#f4f4f4", "#b3ffff", "#ffff80","#dfdfdf","#1a8cff", "#e085c2","#ffffff","#739900"]
+    list = ["#ff8080", "#4d4dff","#ff7ff6", "#66ffb3", "#99ddff","#ffffff", "#ffcc80", "#ff99ff","#ff0000", "#b3ffff", "#ffff80","#dfdfdf","#1a8cff", "#e085c2","#ffffff","#739900", "#739900", "#ffad33",  "#75a3a3", "#1a1aff"]
     color = random.choice(list)
     return color
 
@@ -434,7 +434,10 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
                      message = 'Error: A Task must have hours assigned.'
                 elif to_id == 2 :
                     goal_item.hours = request.data['hours']
-                    message = 'Goal Moved Successfully! Hours Applied!' 
+                    message = 'Goal Moved Successfully! Hours Applied!'
+                if state_prev == 1 and to_id == 0:
+                    goal_item.days_failed = goal_item.days_failed + 1 
+                
                 self.createHistory(goal_item.name, goal_item.status, goal_item.goal_project_id, goal_item.hours, goal_item.time_created, goal_item.user, goal_item.project, goal_item.file, goal_item.id, 'Goal Moved Successfully by')          
                 goal_item.save()
             else:
@@ -481,7 +484,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             return JsonResponse({'message': 'Image Added Successfully', 'data': filtered_users(request.data['project_id'])})
         elif request.data['mode'] == 2:
             goal = scrum_project.scrumgoal_set.get(goal_project_id=request.data['goal_id'][1:])
-            if request.user == scrum_project_b.user.user and goal.moveable == True:
+            if (request.user == scrum_project_b.user.user or scrum_project_role.role == 'Owner') and goal.moveable == True:
 
                 goal.visible = 0
                 goal.save()
@@ -593,7 +596,7 @@ class SprintViewSet(viewsets.ModelViewSet):
 
         if scrum_project_role.role == 'Admin' or scrum_project_role.role == 'Owner':
             if existence == True:   
-                last_sprint = ScrumSprint.objects.latest('ends_on')           
+                last_sprint = ScrumSprint.objects.filter(goal_project_id = request.data['project_id']).latest('ends_on')           
                 if (datetime.datetime.strftime(last_sprint.ends_on, "%Y-%m-%d")) < datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d"):
                     sprint = ScrumSprint(goal_project_id=request.data['project_id'], created_on = now_time, ends_on=datetime.datetime.now() + datetime.timedelta(days=7))
                     sprint.save()
@@ -606,7 +609,7 @@ class SprintViewSet(viewsets.ModelViewSet):
                         return JsonResponse({'message': 'Not Allowed: Minimum Allowed Sprint Run is 60secs.', 'data':queryset, 'users': filtered_users(request.data['project_id'])})
                     elif (datetime.datetime.strftime(last_sprint.ends_on, "%Y-%m-%d")) > datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d"): 
                         last_sprint.ends_on = datetime.datetime.now()
-                        last_sprint.save()
+                        last_sprint.save()                        
                         sprint = ScrumSprint(goal_project_id=request.data['project_id'], created_on = now_time, ends_on=datetime.datetime.now() + datetime.timedelta(days=7))
                         sprint.save()                    
                         self.change_goal_moveability(sprint_goal_carry, scrum_project, scrum_project_role)

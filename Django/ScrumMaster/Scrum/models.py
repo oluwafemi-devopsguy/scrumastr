@@ -78,6 +78,7 @@ class ScrumGoal(models.Model):
     hours = models.IntegerField(default=-1)
     time_created = models.DateTimeField()
     file = models.ImageField(blank=True, null=True, storage=fs)
+    days_failed = models.IntegerField(default=0)
     
     '''
     0 = Weekly Goal
@@ -109,7 +110,8 @@ class ScrumSprint (models.Model):
     goal_project_id = models.IntegerField(default=0)    
 
     def __str__(self):
-        return self.goal_project_id, self.created_on
+        
+        return '{} {} '.format(self.goal_project_id,self.created_on)
 
 
 class ScrumGoalHistory(models.Model):
