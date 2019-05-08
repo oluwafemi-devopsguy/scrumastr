@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'channels',
+    'channels_redis',
     'Scrum.apps.ScrumConfig',
     'rest_framework',
     'corsheaders',
@@ -91,7 +92,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'Scrum.context_processors.my_context',
             ],
         },
     },
@@ -101,29 +101,19 @@ WSGI_APPLICATION = 'ScrumMaster.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
-'''
+
 DATABASES = {
     'default': {
         'ENGINE': 'mysql.connector.django',
-        'NAME': 'scrum',
+        'NAME': 'chatscrum',
         'USER': 'root',
         'PASSWORD': '8iu7*IU&',
+        'HOST': 'ljdb',
+        'PORT': '3306',
         'OPTIONS': {
             'raise_on_warnings': False,
             'use_pure': True
         }
-    }
-}
-'''
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'scrumastrNew',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': ''
-
     }
 }
 
@@ -131,9 +121,9 @@ DATABASES = {
 
 EMAIL_USE_TLS = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_PASSWORD = 'anjolaoluwa'
-EMAIL_HOST_USER = 'nathanoluwaseyi@gmail.com'
+EMAIL_HOST = 'smtp.linuxjobber.com'
+EMAIL_HOST_PASSWORD = 'm4k3Aw!y'
+EMAIL_HOST_USER = 'admin@linuxjobber.com'
 EMAIL_PORT = 587
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
@@ -173,32 +163,24 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-'''
 #Uncomment this on deployment.
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'asset'),
     )
-'''
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 LOGIN_REDIRECT_URL = '/home'
 
-
 ASGI_APPLICATION = "ScrumMaster.routing.application"
 
-
 #Uncomment if you have redis.
-
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            'hosts': [('localhost', 6379)]
+            'hosts': [('redis', 6379)]
         }
     }
 }
-
-FRONTEND = 'http://localhost:4200/home/'
-
-SECURE_SSL_REDIRECT = False
+FRONTEND = 'https://ci.chatscrum.com'
