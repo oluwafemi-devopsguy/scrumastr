@@ -358,18 +358,13 @@
 
 
 
-        <div class="col s9" style="height: calc(100vh - 65px); overflow: auto; background-color: #f2f2f2; border-left: 3px solid white;" [style.display] = "board == 'MyTask' ? '' : 'none'">          
+        <div class="col s8" style="height: calc(100vh - 65px); overflow: auto; background-color: #f2f2f2; border-left: 3px solid white;" [style.display] = "board == 'MyTask' ? '' : 'none'">          
             <div class="main_area">
                 
               
                 <div class="board-area" style=" float: left;">
                 <ng-container *ngFor="let user of dataservice.users; let user_index = index">
                     
-                        
-
-                       
-                       
-                    <br>
                     <div  *ngIf="user.user.nickname.toUpperCase() == this.dataservice.realname.toUpperCase()">
                         <button (click)="onUser(user.id); basicModal.openModal()" style="background-color: transparent; border:none; box-shadow: none;">
                             <tr>
@@ -559,7 +554,7 @@
                                     <th class="full-box">GOALS</th>
                             </div>
 
-                            <div style="display: table-row" *ngFor="let sprint of dataservice.sprints; let j = index; let k = count">
+                            <div style="display: table-row" *ngFor="let sprint of dataservice.sprints.slice().reverse(); let j = index; let k = count">
                                 <td class="top-box">{{sprint.id}}</td>
                                 <td class="top-box">  {{sprint.created_on | date}} - {{sprint.ends_on | date}}</td>
                                 <td class="top-box" style="text-align: left">
