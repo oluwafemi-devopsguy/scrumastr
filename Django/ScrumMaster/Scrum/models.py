@@ -80,6 +80,7 @@ class ScrumGoal(models.Model):
     file = models.ImageField(blank=True, null=True, storage=fs)
     days_failed = models.IntegerField(default=0)
     
+    
     '''
     0 = Weekly Goal
     1 = Daily Target
@@ -113,6 +114,9 @@ class ScrumSprint (models.Model):
         
         return '{} {} '.format(self.goal_project_id,self.created_on)
 
+    class Meta:
+        ordering = ['id']
+
 
 class ScrumGoalHistory(models.Model):
     name = models.TextField()
@@ -131,7 +135,7 @@ class ScrumGoalHistory(models.Model):
         return self.name
     
     class Meta:
-        ordering = ['-id']
+        ordering = ['id']
 
 # class ScrumProjectSlack(models.Model):
 #     project = models.ForeignKey(ScrumProject, on_delete=models.CASCADE)
