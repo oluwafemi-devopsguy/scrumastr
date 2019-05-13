@@ -94,7 +94,7 @@
                  <td style="text-align: center;">
                     <div style="" [style.display] = "show_sprint_option ? 'inline-flex' : 'none'"  [style.margin-top] = "dataservice.role.toLowerCase() == 'owner' ? '10px' : '5px'" >
                      <select  name="change_sprint" style="font-size: 12px; font-family: Roboto; height: 27px; color: #1f7a7a; width: 260px;" [(ngModel)]="dataservice.selected_sprint"  (change)="changeSprint()">
-                        <option *ngFor = "let sprint of dataservice.sprints"  [ngValue]="sprint" [selected] = "index == last ? sprint : doNothing()" >
+                        <option *ngFor = "let sprint of dataservice.sprints;"  [ngValue]="sprint" [selected] = "index == last ? sprint : doNothing()" >
                         Sprint {{sprint.id}}:  {{sprint.created_on | date}} - {{sprint.ends_on | date}}
                         </option>                           
                      </select>
@@ -150,23 +150,26 @@
                 </style>
                 <div class="board-area">
                 <ng-container *ngFor="let user of dataservice.users; let user_index = index">         <br>    
-                <details [attr.id]="'detail' + user.id" [style.background-color] = "user.color">  
+                <details [attr.id]="'detail' + user.id" [style.background-color] = "user.color" style="width: 100%; border-radius: 10px">  
                 <summary>
                 <span> 
                     <span style=" font-weight: bold; background-color: transparent;">
+                        <a [routerLink] fragment='{{user.id}}' (dblclick)="scrollIntoView('u' + user.id)"  (click)="getClicked($event); UserGoalHistory(user.user.nickname, user.id);  userAdvance.openModal()" style="font-size: 0.8rem">{{user.user.nickname.toUpperCase()}}
+                        </a>
+
                                 
-                                {{user.user.nickname.toUpperCase()}}  
+                         <!--        {{user.user.nickname.toUpperCase()}} -->  
                                 <span style="font-family: Roboto;font-size: 11px; color: rgba(0, 0, 0, 0.5); padding: 4px 4px 0px 5px; ">
                                     {{user.total_week_hours}} hours 
                                 </span>
                                 <a (click)="onUser(user.id); basicModal.openModal()"  style="margin: 5px; ">
-                                        <img src="/assets/image/plus2.png" style="height: 20px; width: 20px; margin 10px; ">
+                                        <img src="/assets/image/plus2.png" style="height: 20px; width: 20px; margin 10px; padding-top: 5px; ">
                                 </a> 
                                 <a (click)="onUser(user.id); addNote.openModal(); show_notes()" style="margin: 5px;">
-                                        <img src="/assets/image/notes.png" style="height: 20px; width: 20px;  margin 10px; ">
+                                        <img src="/assets/image/notes.png" style="height: 20px; width: 20px;  margin 10px; padding-top: 5px; ">
                                 </a>
                                 <span *ngIf="dataservice.role.toLowerCase() == 'owner'" style="float: right;">
-                                    <button type="button" class="btn-round" (click)="remove_user(user.user.nickname, user.id)" style=" border-radius: 5px; margin-top: inherit; height: inherit; border-left: 5px solid white ">
+                                    <button type="button" class="btn-round" (click)="remove_user(user.user.nickname, user.id)" style=" border-radius: 5px; margin-top: inherit; height: 27px; border-left: 5px solid white ">
                                             Remove User
                                     </button>
                                 </span>
@@ -181,7 +184,7 @@
 
                         <div style="display: table-row; ">
                             <th> <div class="table_head">Task For The Week</div> </th>
-                            <th><div class="table_head">Today Target</div></th>
+                            <th><div class="table_head">Finish Today</div></th>
                             <th><div class="table_head">Verify</div></th>
                             <th><div class="table_head">Done</div></th>
                         </div>
@@ -262,7 +265,7 @@
                 <div style="text-align: right"><a style="text-align: right" (click)="initMainChat()" *ngIf=" show_project_chat"> switch to Project Chat>>> </a></div>
                 
                 <div style="overflow: auto; height: calc(100vh - 345px); padding-left: 10px; padding-right: 10px; background-color:transparent;" id="chat_div_space">
-                    <div *ngFor="let message of messages" style="font-size: 0.85rem"  class="chat_div"  [style.float] = "message.user == dataservice.realname ? 'right' : 'left'" [style.width] = "message.user == dataservice.realname ? '200px' : '266px'">
+                    <div *ngFor="let message of messages" style="font-size: 0.85rem"  class="chat_div"  [style.float] = "message.user == dataservice.realname ? 'right' : 'left'" [style.width] = "message.user == dataservice.realname ? '220px' : '266px'">
                     
 
                     <li  style="list-style-type: none; padding-top: 1px; padding-bottom: 1px; border-radius: 15px; box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);"  [style.background-color] = "message.user == dataservice.realname ? '#262626' : 'white'">
@@ -319,7 +322,7 @@
                 <div class="row" style="padding-left: 0; padding-right: 10px; background-color: #f5f5f5;">
                     <div style="height: 190px; overflow: auto">
                     <div class="input-field col s12">
-                            <input type="text" id="chat_text"  [(ngModel)]="chat_text" (keyup.enter)="sendMessage('main_chat')" class="chat_input"  style="background-image:url('/assets/image/arrow.png'); border-radius: 10px; box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25); background-position: right; background-color: white;">
+                            <input type="text" id="chat_text"  [(ngModel)]="chat_text" (keyup.enter)="sendMessage('main_chat')" class="chat_input"  style="background-image:url('/assets/image/arrow.png'); border-radius: 10px; box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25); background-position: right; background-color: white; padding: 3px;">
                             
                             <label for="chat_text" style="padding: 3px 10px 0 20px;"> Send a message</label>
                         </div>
@@ -355,18 +358,13 @@
 
 
 
-        <div class="col s9" style="height: calc(100vh - 65px); overflow: auto; background-color: #f2f2f2; border-left: 3px solid white;" [style.display] = "board == 'MyTask' ? '' : 'none'">          
+        <div class="col s8" style="height: calc(100vh - 65px); overflow: auto; background-color: #f2f2f2; border-left: 3px solid white;" [style.display] = "board == 'MyTask' ? '' : 'none'">          
             <div class="main_area">
                 
               
                 <div class="board-area" style=" float: left;">
                 <ng-container *ngFor="let user of dataservice.users; let user_index = index">
                     
-                        
-
-                       
-                       
-                    <br>
                     <div  *ngIf="user.user.nickname.toUpperCase() == this.dataservice.realname.toUpperCase()">
                         <button (click)="onUser(user.id); basicModal.openModal()" style="background-color: transparent; border:none; box-shadow: none;">
                             <tr>
@@ -556,7 +554,7 @@
                                     <th class="full-box">GOALS</th>
                             </div>
 
-                            <div style="display: table-row" *ngFor="let sprint of dataservice.sprints; let j = index; let k = count">
+                            <div style="display: table-row" *ngFor="let sprint of dataservice.sprints.slice().reverse(); let j = index; let k = count">
                                 <td class="top-box">{{sprint.id}}</td>
                                 <td class="top-box">  {{sprint.created_on | date}} - {{sprint.ends_on | date}}</td>
                                 <td class="top-box" style="text-align: left">

@@ -237,6 +237,8 @@ class ScrumUserViewSet(viewsets.ModelViewSet):
             user.save()
             return JsonResponse({'message': 'User Created Successfully.'})
         elif user:
+            if not request.data['projname']:
+                return JsonResponse({'message': 'user already existed as a User. Create new project'})
             print("Testing vreationssssssssssss")
             scrum_user = User.objects.get(email = request.data['email'])
             print(scrum_user.scrumuser.nickname)
