@@ -150,7 +150,7 @@
                 </style>
                 <div class="board-area">
                 <ng-container *ngFor="let user of dataservice.users; let user_index = index">         <br>    
-                <details [attr.id]="'detail' + user.id" [style.background-color] = "user.color">  
+                <details [attr.id]="'detail' + user.id" [style.background-color] = "user.color" style="width: 100%; border-radius: 10px">  
                 <summary>
                 <span> 
                     <span style=" font-weight: bold; background-color: transparent;">
@@ -163,10 +163,10 @@
                                     {{user.total_week_hours}} hours 
                                 </span>
                                 <a (click)="onUser(user.id); basicModal.openModal()"  style="margin: 5px; ">
-                                        <img src="/assets/image/plus2.png" style="height: 20px; width: 20px; margin 10px; ">
+                                        <img src="/assets/image/plus2.png" style="height: 20px; width: 20px; margin 10px; padding-top: 5px; ">
                                 </a> 
                                 <a (click)="onUser(user.id); addNote.openModal(); show_notes()" style="margin: 5px;">
-                                        <img src="/assets/image/notes.png" style="height: 20px; width: 20px;  margin 10px; ">
+                                        <img src="/assets/image/notes.png" style="height: 20px; width: 20px;  margin 10px; padding-top: 5px; ">
                                 </a>
                                 <span *ngIf="dataservice.role.toLowerCase() == 'owner'" style="float: right;">
                                     <button type="button" class="btn-round" (click)="remove_user(user.user.nickname, user.id)" style=" border-radius: 5px; margin-top: inherit; height: 27px; border-left: 5px solid white ">
