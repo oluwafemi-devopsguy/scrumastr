@@ -184,7 +184,7 @@
 
                         <div style="display: table-row; ">
                             <th> <div class="table_head">Task For The Week</div> </th>
-                            <th><div class="table_head">Today Target</div></th>
+                            <th><div class="table_head">Finish Today</div></th>
                             <th><div class="table_head">Verify</div></th>
                             <th><div class="table_head">Done</div></th>
                         </div>
@@ -365,11 +365,6 @@
                 <div class="board-area" style=" float: left;">
                 <ng-container *ngFor="let user of dataservice.users; let user_index = index">
                     
-                        
-
-                       
-                       
-                    <br>
                     <div  *ngIf="user.user.nickname.toUpperCase() == this.dataservice.realname.toUpperCase()">
                         <button (click)="onUser(user.id); basicModal.openModal()" style="background-color: transparent; border:none; box-shadow: none;">
                             <tr>
