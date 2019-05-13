@@ -23,7 +23,7 @@ def_router.register(r'scrumsprint', views.SprintViewSet, base_name='scrumsprint'
     path('scrum-logout/', views.scrum_logout, name="scrum_logout"),
     path('add-goal/', views.add_goal, name="add_goal"),
     path('remove-goal/<int:goal_id>/', views.remove_goal, name="remove_goal"),
-    path('move-goal/<int:goal_id>/<int:to_id>/', views.move_goal, name="move_goal"),
+    path('move-goal/<int:goal_id>/<int:to_id>/', views.move_goal, name="move_goal")
 '''
     
 urlpatterns = [
