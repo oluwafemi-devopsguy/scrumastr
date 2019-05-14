@@ -150,7 +150,7 @@
                 </style>
                 <div class="board-area">
                 <ng-container *ngFor="let user of dataservice.users; let user_index = index">         <br>    
-                <details [attr.id]="'detail' + user.id" [style.background-color] = "user.color" style="width: 100%; border-radius: 10px">  
+                <details [attr.id]="'detail' + user.id" [style.background-color] = "user.color">  
                 <summary>
                 <span> 
                     <span style=" font-weight: bold; background-color: transparent;">
@@ -163,10 +163,10 @@
                                     {{user.total_week_hours}} hours 
                                 </span>
                                 <a (click)="onUser(user.id); basicModal.openModal()"  style="margin: 5px; ">
-                                        <img src="/assets/image/plus2.png" style="height: 20px; width: 20px; margin 10px; padding-top: 5px; ">
+                                        <img src="/assets/image/plus2.png" style="height: 20px; width: 20px; margin 10px; ">
                                 </a> 
                                 <a (click)="onUser(user.id); addNote.openModal(); show_notes()" style="margin: 5px;">
-                                        <img src="/assets/image/notes.png" style="height: 20px; width: 20px;  margin 10px; padding-top: 5px; ">
+                                        <img src="/assets/image/notes.png" style="height: 20px; width: 20px;  margin 10px; ">
                                 </a>
                                 <span *ngIf="dataservice.role.toLowerCase() == 'owner'" style="float: right;">
                                     <button type="button" class="btn-round" (click)="remove_user(user.user.nickname, user.id)" style=" border-radius: 5px; margin-top: inherit; height: 27px; border-left: 5px solid white ">
@@ -184,7 +184,7 @@
 
                         <div style="display: table-row; ">
                             <th> <div class="table_head">Task For The Week</div> </th>
-                            <th><div class="table_head">Finish Today</div></th>
+                            <th><div class="table_head">Today Target</div></th>
                             <th><div class="table_head">Verify</div></th>
                             <th><div class="table_head">Done</div></th>
                         </div>
@@ -365,6 +365,7 @@
                 <div class="board-area" style=" float: left;">
                 <ng-container *ngFor="let user of dataservice.users; let user_index = index">
                     
+                      
                     <div  *ngIf="user.user.nickname.toUpperCase() == this.dataservice.realname.toUpperCase()">
                         <button (click)="onUser(user.id); basicModal.openModal()" style="background-color: transparent; border:none; box-shadow: none;">
                             <tr>
@@ -554,7 +555,7 @@
                                     <th class="full-box">GOALS</th>
                             </div>
 
-                            <div style="display: table-row" *ngFor="let sprint of dataservice.sprints.slice().reverse(); let j = index; let k = count">
+                            <div style="display: table-row" *ngFor="let sprint of dataservice.sprints; let j = index; let k = count">
                                 <td class="top-box">{{sprint.id}}</td>
                                 <td class="top-box">  {{sprint.created_on | date}} - {{sprint.ends_on | date}}</td>
                                 <td class="top-box" style="text-align: left">
