@@ -118,7 +118,7 @@ DATABASES = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'scrumastrNew',
+        'NAME': 'chat',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': 'localhost',
