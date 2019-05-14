@@ -150,15 +150,49 @@
                 </style>
                 <div class="board-area">
                 <ng-container *ngFor="let user of dataservice.users; let user_index = index">         <br>    
-                <details [attr.id]="'detail' + user.id" [style.background-color] = "user.color" style="width: 100%; border-radius: 10px">  
-                <summary>
-                <span> 
+                <details [attr.id]="'detail' + user.id"  style="width: 100%; border-radius: 10px" open="open">  
+                <summary style="height: 70px;">
+                <div style=" display: flex; font-weight: bold; background-color: transparent; padding-left: 40px;">
+                    <table>
+                        <tr style="text-align: left">
+                            <td style="width: 40%">
+                                <a [routerLink] fragment='{{user.id}}' (dblclick)="scrollIntoView('u' + user.id)"  (click)="getClicked($event); UserGoalHistory(user.user.nickname, user.id);  userAdvance.openModal()" style="font-size: 0.8rem">{{user.user.nickname.toUpperCase()}}
+                        </a>  
+                                
+                                 <span style="font-family: Roboto;font-size: 11px; color: rgba(0, 0, 0, 0.5); padding: 4px 4px 0px 5px; ">
+                                    {{user.total_week_hours}} hours 
+                                </span>
+                            </td>
+                            <td  style="width: 15%">
+                                <a (click)="onUser(user.id); basicModal.openModal()"  style="margin: 5px; ">
+                                        <img src="/assets/image/plus2.png" style="height: 20px; width: 20px; margin 10px; ; ">
+                                </a> 
+                                <a (click)="onUser(user.id); addNote.openModal(); show_notes()" style="margin: 5px;">
+                                        <img src="/assets/image/notes.png" style="height: 20px; width: 20px;  margin 10px; ">
+                                </a>
+                            </td>
+                            <td  style="width: 15%">
+                                <span *ngIf="dataservice.role.toLowerCase() == 'owner'" style="">
+                                    <button type="button" class="btn-round" (click)="remove_user(user.user.nickname, user.id)" style=" border-radius: 5px; margin-top: inherit; height: 27px; border-left: 5px solid white ">
+                                            Remove User
+                                    </button>
+                                </span>
+                            </td>
+                        </tr>
+                    </table>
+                        
+                                
+                                
+                                
+                    </div>
+                    <hr style="width: 100%; margin: -10px; "> 
+                <!-- <span> 
                     <span style=" font-weight: bold; background-color: transparent;">
                         <a [routerLink] fragment='{{user.id}}' (dblclick)="scrollIntoView('u' + user.id)"  (click)="getClicked($event); UserGoalHistory(user.user.nickname, user.id);  userAdvance.openModal()" style="font-size: 0.8rem">{{user.user.nickname.toUpperCase()}}
                         </a>
 
                                 
-                         <!--        {{user.user.nickname.toUpperCase()}} -->  
+                       
                                 <span style="font-family: Roboto;font-size: 11px; color: rgba(0, 0, 0, 0.5); padding: 4px 4px 0px 5px; ">
                                     {{user.total_week_hours}} hours 
                                 </span>
@@ -175,7 +209,7 @@
                                 </span>
 
                     </span>
-                    </span> 
+                    </span>  -->
                 
                     </summary> 
                     <div style="display:table; width:100%; word-wrap:break-word; border-collapse:collapse; background-color: #f2f2f2;">
