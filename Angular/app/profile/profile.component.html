@@ -150,7 +150,7 @@
                 </style>
                 <div class="board-area">
                 <ng-container *ngFor="let user of dataservice.users; let user_index = index">         <br>    
-                <details [attr.id]="'detail' + user.id" [style.background-color] = "user.color" style="width: 100%; border-radius: 10px">  
+                <details [attr.id]="'detail' + user.id" open="open">  
                 <summary>
                 <span> 
                     <span style=" font-weight: bold; background-color: transparent;">
@@ -163,10 +163,10 @@
                                     {{user.total_week_hours}} hours 
                                 </span>
                                 <a (click)="onUser(user.id); basicModal.openModal()"  style="margin: 5px; ">
-                                        <img src="/assets/image/plus2.png" style="height: 20px; width: 20px; margin 10px; padding-top: 5px; ">
+                                        <img src="/assets/image/plus2.png" style="height: 20px; width: 20px; margin 10px; ">
                                 </a> 
                                 <a (click)="onUser(user.id); addNote.openModal(); show_notes()" style="margin: 5px;">
-                                        <img src="/assets/image/notes.png" style="height: 20px; width: 20px;  margin 10px; padding-top: 5px; ">
+                                        <img src="/assets/image/notes.png" style="height: 20px; width: 20px;  margin 10px; ">
                                 </a>
                                 <span *ngIf="dataservice.role.toLowerCase() == 'owner'" style="float: right;">
                                     <button type="button" class="btn-round" (click)="remove_user(user.user.nickname, user.id)" style=" border-radius: 5px; margin-top: inherit; height: 27px; border-left: 5px solid white ">
@@ -176,7 +176,7 @@
 
                     </span>
                     </span> 
-                
+                    <hr>
                     </summary> 
                     <div style="display:table; width:100%; word-wrap:break-word; border-collapse:collapse; background-color: #f2f2f2;">
                         
@@ -184,7 +184,7 @@
 
                         <div style="display: table-row; ">
                             <th> <div class="table_head">Task For The Week</div> </th>
-                            <th><div class="table_head">Finish Today</div></th>
+                            <th><div class="table_head">Today Target</div></th>
                             <th><div class="table_head">Verify</div></th>
                             <th><div class="table_head">Done</div></th>
                         </div>
@@ -265,52 +265,30 @@
                 <div style="text-align: right"><a style="text-align: right" (click)="initMainChat()" *ngIf=" show_project_chat"> switch to Project Chat>>> </a></div>
                 
                 <div style="overflow: auto; height: calc(100vh - 345px); padding-left: 10px; padding-right: 10px; background-color:transparent;" id="chat_div_space">
-                    <div *ngFor="let message of messages" style="font-size: 0.85rem"  class="chat_div"  [style.float] = "message.user == dataservice.realname ? 'right' : 'left'" [style.width] = "message.user == dataservice.realname ? '220px' : '266px'">
-                    
+                    <div *ngFor="let message of messages" style="font-size: 0.85rem"  class="chat_div"  [style.float] = "message.user == dataservice.realname ? 'right' : 'left'" [style.width] = "message.user == dataservice.realname ? '295px' : '320px'">
 
                     <li  style="list-style-type: none; padding-top: 1px; padding-bottom: 1px; border-radius: 15px; box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);"  [style.background-color] = "message.user == dataservice.realname ? '#262626' : 'white'">
-                        <tr>                            
-                            <td style="padding: 2px" > 
-                                <div *ngIf="message.user == dataservice.realname" style="color: white; text-align: right; padding: 1px;">                               
-                                    <span style="font-family: Roboto; color: rgba(255, 255, 255, 0.7);">
-                                        <div style="font-size: 10px; text-indent: 3px; padding: 1px">
-                                            {{message.date_Time | date:'shortTime'}}  
-                                            {{message.date_Time | date}}
-                                        </div>
-                                        
-                                    </span> 
-                                    <span [innerText]="message.message" style="  text-indent:7px" >
-                                    </span>
-                                </div>
-                                <div *ngIf="message.user != dataservice.realname">
-                                     <img src="/assets/image/ellipse.png" 
-                                        style=" border-radius: 50px; border: 1px solid #F5F5F5; box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25); height: 50px; float: left;">
-                                </div>
-                            </td>
-
-                            <td style="padding: 2px" > 
-                                <div *ngIf="message.user == dataservice.realname" style="padding: 1px;  float: right;">
-                                    <img src="/assets/image/ellipse.png"
-                                        style="background-color: white; border-radius: 50px; height: 50px;  ">
-                                </div>
-
-                                <div *ngIf="message.user != dataservice.realname">
-                                    <li  style="list-style-type: none; padding-top: 1px; padding-bottom: 1px">
+                        <p [style.float] = "message.user == dataservice.realname ? 'right' : 'left'"  [style.padding-left] = "message.user != dataservice.realname ? '10px' : '0'">
+                            <img src="/assets/image/ellipse.png" 
+                                        style=" border-radius: 50px; border: 1px solid #F5F5F5; box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25); height: 40px; float: left;" [style.background-color] = "message.user == dataservice.realname ? 'white' : 'white'">
+                        </p>
+                        <p [style.color] = "message.user == dataservice.realname ? 'white': '#262626'" style="color: white;  padding: 1px;">  
+                                <li  style="list-style-type: none; padding-top: 1px; padding-bottom: 1px">
                                         <div  style="font-weight: bold; text-indent: 5px; text-align: left; font-size: 12px">
-                                            {{message.user}}
-                                            <span style="font-family: Roboto; font-size: 11px; color: rgba(0, 0, 0, 0.5);">
+                                            <span *ngIf="message.user != dataservice.realname">
+                                                {{message.user}}
+                                            </span>
+                                            <span style="font-family: Roboto; font-size: 11px; color: rgba(0, 0, 0, 0.5);" [style.color] = "message.user == dataservice.realname ? 'white': '#262626'">
                                                 {{message.date_Time | date:'shortTime'}}  
                                                 {{message.date_Time | date}}
                                             </span>
-                                            
-                                        </div>  
-                                        <div [innerText]="message.message" style="" ></div>
-                                    </li>
-                                </div>
-                            </td>
 
-                           
-                        </tr>
+                                        </div>  
+                                        <div [innerText]="message.message" style="padding-top: 10px" ></div>
+                                    </li>
+                                </p>
+                                <br>
+                        
                     </li>
                     <br>
 
