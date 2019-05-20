@@ -9,7 +9,7 @@ sql ="UPDATE scrum_scrumgoal SET status=0 WHERE (status=2 OR status=1) AND movea
 try:
 	cursor.execute(sql)
 	db.commit()
-	print("inside try")
+	print("inside try exec")
 except:
 	db.rollback()
 	print("inside except")
