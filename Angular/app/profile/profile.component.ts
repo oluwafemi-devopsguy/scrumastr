@@ -87,7 +87,17 @@ export class ProfileComponent implements OnInit {
                         if(hours + '' == 'NaN')
                             hours = -1;
                     }
-                    this.dataservice.moveGoal(el['id'], target['id'], hours);
+                    if(target['id'] == '3' && source['id'] == '2')
+                    {
+                        hours = -11;
+                        var push_id = window.prompt('Enter Task Push ID?');
+                        
+                        if(push_id == '') {
+                          console.log('tHE PUSH IS NULL')
+                          push_id = "Null Value" 
+                          }                      
+                    }
+                    this.dataservice.moveGoal(el['id'], target['id'], hours, push_id);
                 if (this.dataservice.selected_sprint) {
                   this.changeSprint()
                 }
@@ -861,12 +871,20 @@ export class ProfileComponent implements OnInit {
   }
 
 
-// testf(testVar) {
+closeAll() {
   
-//   console.log(testVar)
-//   testVar = "detail" + testVar
-//   // document.getElementById(testVar).removeAttribute("open", "open")
-//   console.log(testVar)
-// }
+  console.log()
+  var len = document.getElementsByTagName("details").length;
+  for (var i = 0; i < len; i++) {
+    document.getElementsByTagName('details')[i].removeAttribute("open")
+  }
+  // testVar = "detail" + testVar
+  // document.getElementById(testVar).removeAttribute("open", "open")
+    // Array.from(document.getElementsByTagName('span'))
+    
+  
+}
+
+
 
 }

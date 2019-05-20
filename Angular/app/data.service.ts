@@ -263,9 +263,9 @@ export class DataService {
     sessionStorage.removeItem('project_slack');
   }
 
-  moveGoal(goal_id, to_id, hours)
+  moveGoal(goal_id, to_id, hours, push_id)
   {
-    this.http.patch(this.domain_protocol + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'goal_id': goal_id, 'to_id': to_id, 'hours': hours, 'project_id': this.project}), this.authOptions).subscribe(
+    this.http.patch(this.domain_protocol + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'goal_id': goal_id, 'to_id': to_id, 'hours': hours, 'project_id': this.project, 'push_id': push_id}), this.authOptions).subscribe(
         data => {
             this.users = data['data'];
             this.message = data['message'];

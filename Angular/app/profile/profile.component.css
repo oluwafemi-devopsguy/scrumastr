@@ -150,7 +150,6 @@ h5 {
     border-radius: 5px!important;
     font-size: 14px;
     font-family: Roboto;
-    border-radius: 1px;
     width: 195px;
     height: auto;
     padding:5px;
@@ -160,6 +159,21 @@ h5 {
     margin: 15px 0;
 
    /* border-bottom: 1px dotted black;*/ /* If you want dots under the hoverable text */
+}
+
+.no_task    {
+    color: #444;
+    padding:2px;
+    font-weight: normal;
+    font-size: 14px;
+    border-radius: 5px!important;
+    font-family: Roboto;
+    width: 150px;
+    border: 2px solid #ccc;
+    position: relative;
+    margin: 15px 0;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
 }
 
 
@@ -270,8 +284,7 @@ a:hover, a:active {
 .chat_input {
     
     padding: 15px; 
-    height: 65px; 
-    width: 400px; 
+      
     border-radius: 10px;
     background: #FFFFFF;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);
@@ -424,3 +437,12 @@ select option {
 details summary {cursor: pointer;}
 details summary::before {content:""; padding: 0 10px;}
 details[open] summary::before {content:""; padding: 0 10px;}
+
+
+.minWidthBoard {
+       min-width: 950px;
+}
+
+.minWidthChat {
+       max-width: 399px;
+}

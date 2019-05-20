@@ -79,6 +79,7 @@ class ScrumGoal(models.Model):
     time_created = models.DateTimeField()
     file = models.ImageField(blank=True, null=True, storage=fs)
     days_failed = models.IntegerField(default=0)
+    push_id = models.CharField(max_length=10, default="Null Value")
     
     
     '''
