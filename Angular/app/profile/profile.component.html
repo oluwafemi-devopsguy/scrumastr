@@ -77,7 +77,7 @@
 <div style="margin-top: 8px" class="container-fluid">
     <div class="row">
         
-        <div class="col s8" style="height: calc(100vh - 65px); overflow: auto; background-color: #f5f5f5; border-left: 3px solid white" [style.display] = "board == 'AllTask' ? '' : 'none'">          
+        <div class="col " style="height: calc(100vh - 65px); width: 70%; overflow: auto; background-color: #f5f5f5; border-left: 3px solid white" [style.display] = "board == 'AllTask' ? '' : 'none'">          
             <div class="main_area">
                 <table>
                 <tr style="margin: 0">
@@ -127,6 +127,8 @@
                         text-align: center;
                         border: 0 solid black;
                         padding: 10px;
+                        height: 70px;
+
                     }
                     .top-box {
                         display: table-cell;
@@ -149,8 +151,8 @@
                         input{display: block !important;}
                 </style>
                 <div class="board-area">
-                <ng-container *ngFor="let user of dataservice.users; let user_index = index">         <br>    
-                <details [attr.id]="'detail' + user.id" open="open">  
+                <ng-container *ngFor="let user of dataservice.users; let user_index = index">         <br>   
+                <details (dblclick)="closeAll()" [attr.id]="'detail' + user.id" open="open">  
                 <summary>
                 <span> 
                     <span style=" font-weight: bold; background-color: transparent;">
@@ -184,16 +186,33 @@
 
                         <div style="display: table-row; ">
                             <th> <div class="table_head">Task For The Week</div> </th>
-                            <th><div class="table_head">Today Target</div></th>
+                            <th><div class="table_head">Finish Today</div></th>
                             <th><div class="table_head">Verify</div></th>
                             <th><div class="table_head">Done</div></th>
                         </div>
                         
-                        <div *ngIf="user.scrumgoal_set.length == 0 && show_zero" style="display: table-row;" dragula="mainTable" [attr.id]="'u' + user.id">
+                        <div *ngIf="user.scrumgoal_set.length == 0 && show_zero  && user.user.nickname.toUpperCase() != this.dataservice.realname.toUpperCase()" style="display: table-row;" dragula="mainTable" [attr.id]="'u' + user.id">
                                 <td class="full-box" id="author" colspan="6">
                                     {{user.user.nickname}} - NO TASKS ASSIGNED
                                 </td>
                         </div>
+
+
+                         <div *ngIf="user.scrumgoal_set.length == 0 && show_zero && user.user.nickname.toUpperCase() == this.dataservice.realname.toUpperCase()" style="display: table-row;" dragula="mainTable" [attr.id]="'u' + user.id">
+                                <td class="full-box" id="author" style="padding: 0 25px; text-align: center;" >
+                                  <div (click)="onUser(user.id); basicModal.openModal()" class="no_task">
+                                    
+                                    Welcome, please click here to create your first task
+                                    <br>
+
+                                    <span style="font-size: 20px; font-weight: bold; font-family: Roboto">+</span>
+                                   
+                                  </div>
+                                </td>
+                                <td colspan="3"></td>
+                        </div>
+
+
                             <div style="display: table-row" *ngIf="user.scrumgoal_set.length != 0" [attr.id]="'u' + user.id" [style.background]="user.id == id_click ? 'rgba(0, 128, 128, 0.5)' : (user.id == id_hover ? 'rgba(0, 128, 128, 0.15)' : 'none')" tabindex="-1">
                                 <div *ngFor="let arrItem of arrCount" class="top-box" dragula="mainTable" [attr.id]="arrItem" style="vertical-align: top;">
                                     <div class="div_lister" *ngFor="let goal of dataservice.sprint_goals; let j = index; let k = count" [attr.id]="'g' + goal.goal_project_id"> 
@@ -255,7 +274,7 @@
 
 
         
-              <div class="col s4" style=" background-color:#F5F5F5; float: right;">
+              <div class="col" style=" background-color:#F5F5F5; width: 30%; float: right;">
             <a style="float: right; margin-right: -10px; background-color: white; border-radius: 0px 0px 0px 10px; color: black; padding: 5px; ">{{chat_div_title}}</a>
             <br>
             <br>
@@ -267,13 +286,13 @@
                 <div style="overflow: auto; height: calc(100vh - 345px); padding-left: 10px; padding-right: 10px; background-color:transparent;" id="chat_div_space">
                     <div *ngFor="let message of messages" style="font-size: 0.85rem"  class="chat_div"  [style.float] = "message.user == dataservice.realname ? 'right' : 'left'" [style.width] = "message.user == dataservice.realname ? '295px' : '320px'">
 
-                    <li  style="list-style-type: none; padding-top: 1px; padding-bottom: 1px; border-radius: 15px; box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);"  [style.background-color] = "message.user == dataservice.realname ? '#262626' : 'white'">
+                    <li  style="list-style-type: none; padding-top: 1px;  border-radius: 15px; box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);"  [style.background-color] = "message.user == dataservice.realname ? '#262626' : 'white'">
                         <p [style.float] = "message.user == dataservice.realname ? 'right' : 'left'"  [style.padding-left] = "message.user != dataservice.realname ? '10px' : '0'">
                             <img src="/assets/image/ellipse.png" 
-                                        style=" border-radius: 50px; border: 1px solid #F5F5F5; box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25); height: 40px; float: left;" [style.background-color] = "message.user == dataservice.realname ? 'white' : 'white'">
+                                        style=" border-radius: 50px; border: 1px solid #F5F5F5; box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25); height: 30px; float: left;" [style.background-color] = "message.user == dataservice.realname ? 'white' : 'white'">
                         </p>
                         <p [style.color] = "message.user == dataservice.realname ? 'white': '#262626'" style="color: white;  padding: 1px;">  
-                                <li  style="list-style-type: none; padding-top: 1px; padding-bottom: 1px">
+                                <span  style="list-style-type: none; padding-top: 1px; padding-bottom: 1px">
                                         <div  style="font-weight: bold; text-indent: 5px; text-align: left; font-size: 12px">
                                             <span *ngIf="message.user != dataservice.realname">
                                                 {{message.user}}
@@ -281,13 +300,20 @@
                                             <span style="font-family: Roboto; font-size: 11px; color: rgba(0, 0, 0, 0.5);" [style.color] = "message.user == dataservice.realname ? 'white': '#262626'">
                                                 {{message.date_Time | date:'shortTime'}}  
                                                 {{message.date_Time | date}}
+                                                <br>
+                                                <br>
+                                                <div [innerText]="message.message" style=" text-align: left;" ></div>
+                                                <br>
                                             </span>
 
-                                        </div>  
-                                        <div [innerText]="message.message" style="padding-top: 10px" ></div>
-                                    </li>
+                                        </div> 
+                                       
+                                        
+                                       <!--  <div [innerText]="message.message" style="" ></div> -->
+                                        <!-- <div style="padding-left: 0">jjj{{message.message}}kkk</div> -->
+                                    </span>
                                 </p>
-                                <br>
+                                
                         
                     </li>
                     <br>
@@ -300,7 +326,7 @@
                 <div class="row" style="padding-left: 0; padding-right: 10px; background-color: #f5f5f5;">
                     <div style="height: 190px; overflow: auto">
                     <div class="input-field col s12">
-                            <input type="text" id="chat_text"  [(ngModel)]="chat_text" (keyup.enter)="sendMessage('main_chat')" class="chat_input"  style="background-image:url('/assets/image/arrow.png'); border-radius: 10px; box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25); background-position: right; background-color: white; padding: 3px;">
+                            <textarea id="chat_text"  [(ngModel)]="chat_text" (keyup.enter)="sendMessage('main_chat')" class="chat_input"  style="/*background-image:url('/assets/image/arrow.png');*/ border-radius: 10px; box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25); background-position: right; background-color: white; padding: 3px;" height="inherit"></textarea>
                             
                             <label for="chat_text" style="padding: 3px 10px 0 20px;"> Send a message</label>
                         </div>
