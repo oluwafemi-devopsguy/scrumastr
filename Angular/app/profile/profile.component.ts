@@ -714,6 +714,13 @@ export class ProfileComponent implements OnInit {
     this.dataservice.message ="";
     console.log(this.note_priority)
     console.log(this.note)
+     if(this.note == '' or this.note == null) {
+        console.log('Note is empty string or null')
+        this.dataservice.message = "Note field cannot be empty"
+        return
+      } 
+     
+
     this.http.post(this.dataservice.domain_protocol + this.dataservice.domain_name + '/scrum/api/scrumnotes/', JSON.stringify({'note': this.note, 'priority': this.note_priority, 'user': this.on_user, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
             data => {
                 this.dataservice.users = data['data'];
@@ -880,11 +887,18 @@ closeAll() {
   }
   // testVar = "detail" + testVar
   // document.getElementById(testVar).removeAttribute("open", "open")
-    // Array.from(document.getElementsByTagName('span'))
-    
+    // Array.from(document.getElementsByTagName('span')) 
   
 }
 
+
+autogrow() {
+  let textArea = document.getElementById("chat_text")
+  textArea.style.overflow = 'hidden';
+  textArea.style.height = 'auto';
+  textArea.style.height = textArea.scrollHeight + 'px';
+
+}
 
 
 }
