@@ -874,7 +874,7 @@ class ScrumNoteViewSet(viewsets.ModelViewSet):
             note.save()
             return JsonResponse({'message': 'Note Created Successfully!', 'data': filtered_users(request.data['project_id'])})
         except KeyError as error:
-             return JsonResponse({'message': 'Priority or notes cannot be empty', 'data': filtered_users(request.data['project_id'])})
+             return JsonResponse({'message': 'Priority or notes cannot be an empty field', 'data': filtered_users(request.data['project_id'])})
     def put(self, request):
         print("This is note deleting")
         note = ScrumNote.objects.get(id=request.data['id'])

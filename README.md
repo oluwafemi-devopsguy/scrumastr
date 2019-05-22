@@ -8,7 +8,7 @@ To deploy for Angular, you need to create a new Angular2 project outside of this
 Before building, be sure to open up the src/app/data.service.ts file and change the domain_name variable to the domain::port of your Django backend.
 Then build <ng build --prod --aot> to generate your files. You should see them in the dist/<your project name> directory.
 
-Below are the dependencies this project needs to work.
+Below are all dependencies this project needs to work.
 
 Extra Dependencies
 ==================
