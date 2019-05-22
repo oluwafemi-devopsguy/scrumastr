@@ -714,7 +714,7 @@ export class ProfileComponent implements OnInit {
     this.dataservice.message ="";
     console.log(this.note_priority)
     console.log(this.note)
-     if(this.note == '' or this.note == null) {
+     if(this.note == '' || this.note == null) {
         console.log('Note is empty string or null')
         this.dataservice.message = "Note field cannot be empty"
         return
