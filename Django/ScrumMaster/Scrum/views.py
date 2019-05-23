@@ -357,13 +357,12 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
 
 
 
-        goal, created = ScrumGoal.objects.get_or_create(name=request.data['name'], project_id=request.data['project_id'], visible = True,
+        goal, created = ScrumGoal.objects.get_or_create(name=request.data['name'], project_id=request.data['project_id'], visible = True, moveable= True,
             defaults = {
                 "user":author,
                 "status":status_start,
                 "time_created": datetime.datetime.now(),
                 "goal_project_id":scrum_project.project_count,
-                "moveable": True,
             } )
         if created:
             return JsonResponse({'message': 'Goal created success.', 'data': filtered_users(request.data['project_id'])})
@@ -412,6 +411,8 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
                 to_allowed = [0, 1, 2, 3]
             
             state_prev = goal_item.status
+            print("=======================PATCH REQUEST DATA======================")
+            print(request.data)
             
             if (goal_item.status in from_allowed) and (to_id in to_allowed):
                 goal_item.status = to_id
@@ -428,15 +429,23 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
                 return JsonResponse({'message': 'Permission Denied: Unauthorized Movement of Goal.', 'data': filtered_users(request.data['project_id'])})
             if goal_item.moveable == True:
                 message = 'Goal Moved Successfully!'
+                if to_id == 3 and request.data['hours'] == -11 :
+                    goal_item.push_id = request.data['push_id']
+                    goal_item.status = to_id
+                    goal_item.hours = goal_item.hours
+                    goal_item.push_id = request.data['push_id']
+                    message = 'Goal Moved Successfully! Push ID is ' + request.data['push_id']
                 if request.data['hours'] > 8:
                     goal_item.status = state_prev
                     message = 'Error: Task Exceeds 8 hours of completion.'
                 elif request.data['hours'] == -1 and goal_item.hours == -1 and to_id > 1:
                      goal_item.status = state_prev
                      message = 'Error: A Task must have hours assigned.'
-                elif to_id == 2 :
+                elif to_id == 2 and state_prev == 1 :
                     goal_item.hours = request.data['hours']
                     message = 'Goal Moved Successfully! Hours Applied!'
+
+
                 if state_prev == 1 and to_id == 0:
                     goal_item.days_failed = goal_item.days_failed + 1 
                 
@@ -865,7 +874,7 @@ class ScrumNoteViewSet(viewsets.ModelViewSet):
             note.save()
             return JsonResponse({'message': 'Note Created Successfully!', 'data': filtered_users(request.data['project_id'])})
         except KeyError as error:
-             return JsonResponse({'message': 'Priority or notes cannot be empty', 'data': filtered_users(request.data['project_id'])})
+             return JsonResponse({'message': 'Priority or notes cannot be an empty field', 'data': filtered_users(request.data['project_id'])})
     def put(self, request):
         print("This is note deleting")
         note = ScrumNote.objects.get(id=request.data['id'])
