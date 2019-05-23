@@ -10,9 +10,9 @@ try:
 	cursor.execute(sql)
 	db.commit()
 	print("inside try")
-except:
+except Exception as e:
 	db.rollback()
-	print("inside except")
+	print("inside except") 
+	raise e
 
 db.close()
-
