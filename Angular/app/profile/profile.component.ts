@@ -115,6 +115,7 @@ export class ProfileComponent implements OnInit {
     this.dataservice.username = sessionStorage.getItem('username');
     this.dataservice.role = sessionStorage.getItem('role');
     this.dataservice.project = sessionStorage.getItem('project_id');
+    this.dataservice.to_clear_board = sessionStorage.getItem('to_clear_board');
     this.dataservice.project_slack = sessionStorage.getItem('project_slack');
     this.dataservice.user_slack = sessionStorage.getItem('user_slack');
     this.dataservice.slack_username = sessionStorage.getItem('slack_username');
@@ -145,6 +146,7 @@ export class ProfileComponent implements OnInit {
             this.msg_obs.observe(document.getElementById('chat_div_space'), { attributes: true, childList: true, subtree: true });
             this.dataservice.users = res1['data'];
             this.dataservice.project_name = res1['project_name'];
+            this.dataservice.to_clear_board = res1['to_clear_board'];
             this.dataservice.sprints = res2;
             this.dataservice.project_slack = res1['slack_installed'];
             this.dataservice.slack_app_id = res1['slack_app_id'];
