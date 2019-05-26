@@ -12,7 +12,7 @@ try:
 	print("inside try")
 except Exception as e:
 	db.rollback()
-	print("inside except new") 
+	print("inside except") 
 	raise e
 
 db.close()
