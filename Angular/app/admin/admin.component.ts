@@ -59,6 +59,7 @@ export class AdminComponent implements OnInit {
   this.dataservice.username = sessionStorage.getItem('username');
   this.dataservice.role = sessionStorage.getItem('role');
   this.dataservice.project = sessionStorage.getItem('project_id');
+  this.dataservice.to_clear_board = sessionStorage.getItem('to_clear_board');
 
   this.dataservice.authOptions = {
         headers: new HttpHeaders({'Content-Type': 'application/json', 'Authorization': 'JWT ' + sessionStorage.getItem('token')})
@@ -208,6 +209,13 @@ export class AdminComponent implements OnInit {
   home()
   {
   	this.dataservice.profile();
+  }
+
+  clearBoardSwitch() {
+    console.log("Switch worked")
+    console.log(this.dataservice.to_clear_board)
+    this.dataservice.clearBoardSwitch()
+    
   }
 
 }

@@ -20,6 +20,7 @@ class ChatscrumSlackApp(models.Model):
 class ScrumProject(models.Model):
     name = models.CharField(max_length=50)
     project_count = models.IntegerField(default=0)
+    to_clear_TFT = models.BooleanField(default=True)
  
     
     def __str__(self):

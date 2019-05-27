@@ -459,7 +459,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
     def put(self, request):
         scrum_project = ScrumProject.objects.get(id=request.data['project_id'])
         scrum_project_role = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
-        scrum_project_b = scrum_project.scrumgoal_set.get(goal_project_id=request.data['goal_id'][1:]).user
+        # scrum_project_b = scrum_project.scrumgoal_set.get(goal_project_id=request.data['goal_id'][1:]).user
         if request.data['mode'] == 0:
             from_id = request.data['goal_id'][1:]
             to_id = request.data['to_id'][1:]
@@ -495,6 +495,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             return JsonResponse({'message': 'Image Added Successfully', 'data': filtered_users(request.data['project_id'])})
         elif request.data['mode'] == 2:
             goal = scrum_project.scrumgoal_set.get(goal_project_id=request.data['goal_id'][1:])
+            scrum_project_b = scrum_project.scrumgoal_set.get(goal_project_id=request.data['goal_id'][1:]).user
             if (request.user == scrum_project_b.user.user or scrum_project_role.role == 'Owner') and goal.moveable == True:
 
                 goal.visible = 0
@@ -503,7 +504,18 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
                 return JsonResponse({'message': 'Goal Deleted Successfully!', 'data': filtered_users(request.data['project_id'])})
             else:
                 return JsonResponse({'message': 'Permission Denied: Unauthorized Deletion of Goal.', 'data': filtered_users(request.data['project_id'])})
-            
+        elif request.data['mode'] == 3:
+            print(scrum_project.id)
+            if scrum_project.to_clear_TFT == True:
+                message = "Auto Clear TFT toggle OFF!!! "
+                scrum_project.to_clear_TFT = False
+                print("This toggles============================")
+            else:
+                message = "Auto Clear TFT toggle ON successfully!!!" 
+                scrum_project.to_clear_TFT = True
+            scrum_project.save() 
+            print(scrum_project.to_clear_TFT)
+            return JsonResponse({'message': message, 'to_clear_board':scrum_project.to_clear_TFT, 'data': filtered_users(request.data['project_id'])})
         else:
             scrum_project_b = scrum_project.scrumgoal_set.get(goal_project_id=request.data['goal_id'][1:]).user
             if scrum_project_role.role != 'Owner' and request.user != scrum_project_b.user.user:
@@ -570,7 +582,8 @@ def jwt_response_payload_handler(token, user=None, request=None):
         'role_id': project.scrumprojectrole_set.get(user=user.scrumuser).id,
         'user_slack' : user_slack,
         'project_slack' : project_slack,
-        "slack_username": slack_username
+        "slack_username": slack_username,
+        "to_clear_board": project.to_clear_TFT
     }
     
 
