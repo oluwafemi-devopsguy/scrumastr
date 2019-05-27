@@ -446,3 +446,8 @@ details[open] summary::before {content:""; padding: 0 10px;}
 .minWidthChat {
        max-width: 399px;
 }
+
+.modal-dialog {
+    display: inline-block;
+    width: 1400px;
+}
