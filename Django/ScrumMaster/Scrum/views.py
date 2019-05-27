@@ -621,7 +621,7 @@ class SprintViewSet(viewsets.ModelViewSet):
         if scrum_project_role.role == 'Admin' or scrum_project_role.role == 'Owner':
             if existence == True:   
                 last_sprint = ScrumSprint.objects.filter(goal_project_id = request.data['project_id']).latest('ends_on')           
-                if (datetime.datetime.strftime(last_sprint.ends_on, "%Y-%m-%d")) < datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d"):
+                if (datetime.datetime.strftime(last_sprint.ends_on, "%Y-%m-%d %H-%M-%S")) < datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H-%M-%S"):
                     sprint = ScrumSprint(goal_project_id=request.data['project_id'], created_on = now_time, ends_on=datetime.datetime.now() + datetime.timedelta(days=7))
                     sprint.save()
                     self.change_goal_moveability(sprint_goal_carry, scrum_project, scrum_project_role)
