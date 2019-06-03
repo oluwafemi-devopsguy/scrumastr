@@ -496,7 +496,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
         elif request.data['mode'] == 2:
             goal = scrum_project.scrumgoal_set.get(goal_project_id=request.data['goal_id'][1:])
             scrum_project_b = scrum_project.scrumgoal_set.get(goal_project_id=request.data['goal_id'][1:]).user
-            if (request.user == scrum_project_b.user.user or scrum_project_role.role == 'Owner') and goal.moveable == True:
+            if (request.user == scrum_project_b.user.user or scrum_project_role.role == 'Owner') and goal.moveable == True and goal.status == 3:
 
                 goal.visible = 0
                 goal.save()
@@ -631,7 +631,7 @@ class SprintViewSet(viewsets.ModelViewSet):
                     if (last_sprint.created_on.replace(tzinfo=None) + datetime.timedelta(seconds=20) > now_time):
                         queryset = self.get_project_sprint() 
                         return JsonResponse({'message': 'Not Allowed: Minimum Allowed Sprint Run is 60secs.', 'data':queryset, 'users': filtered_users(request.data['project_id'])})
-                    elif (datetime.datetime.strftime(last_sprint.ends_on, "%Y-%m-%d")) > datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d"): 
+                    elif (datetime.datetime.strftime(last_sprint.ends_on,  "%Y-%m-%d %H-%M-%S")) > datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d"): 
                         last_sprint.ends_on = datetime.datetime.now()
                         last_sprint.save()                        
                         sprint = ScrumSprint(goal_project_id=request.data['project_id'], created_on = now_time, ends_on=datetime.datetime.now() + datetime.timedelta(days=7))

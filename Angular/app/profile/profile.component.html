@@ -164,12 +164,24 @@
                                 <span style="font-family: Roboto;font-size: 11px; color: rgba(0, 0, 0, 0.5); padding: 4px 4px 0px 5px; ">
                                     {{user.total_week_hours}} hours 
                                 </span>
-                                <a (click)="onUser(user.id); basicModal.openModal()"  style="margin: 5px; ">
+                                <span class="tool">
+                                    <a (click)="onUser(user.id); basicModal.openModal()"  style="margin: 5px; ">
                                         <img src="/assets/image/plus2.png" style="height: 20px; width: 20px; margin 10px; ">
-                                </a> 
-                                <a (click)="onUser(user.id); addNote.openModal(); show_notes()" style="margin: 5px;">
+                                    </a> 
+                                    <span class="tooltiptext3">
+                                        Add New Task
+                                    </span>
+                                </span>
+                                
+                                <span class="tool">
+                                    <a (click)="onUser(user.id); addNote.openModal(); show_notes()" style="margin: 5px;">
                                         <img src="/assets/image/notes.png" style="height: 20px; width: 20px;  margin 10px; ">
-                                </a>
+                                    </a>
+                                    <span   class="tooltiptext3">
+                                        Add a Note
+                                    </span>
+                                </span>
+                                
                                 <span *ngIf="dataservice.role.toLowerCase() == 'owner'" style="float: right;">
                                     <button type="button" class="btn-round" (click)="remove_user(user.user.nickname, user.id)" style=" border-radius: 5px; margin-top: inherit; height: 27px; border-left: 5px solid white ">
                                             Remove User
@@ -234,11 +246,12 @@
 
                                             <div class="div-add-file" style="display: inline-flex; padding-bottom: 8px;">
 
+
                                                 <div style="padding: 8px 5px; font-weight: bold">
                                                     {{goal.goal_project_id}}
                                                 </div>
                                                 <span style="font-weight: bolder; font-size: 17px; font-family: arial-black">.</span>
-                                                <select name= "option{{goal.goal_project_id}}" class="select_option"   [(ngModel)]="selected_history[j]" (change)= "CheckHistory(selected_history[j]); showHistory.openModal();" >
+                                                <select name= "option{{goal.goal_project_id}}" class="select_option"   [(ngModel)]="selected_history[j]" (change)= "CheckHistory(selected_history[j], goal.push_id); showHistory.openModal();" >
                                                     <option [ngValue]="history1" disabled selected>History  </option>
                                                     <option *ngFor = "let history of goal.scrumgoalhistory_set" [ngValue]=history>
                                                         {{history.message}}
@@ -254,9 +267,9 @@
                                             </div> 
                                             </div>
                                                 <span class="tooltiptext">{{goal.name}}</span>                                              
-                                                <span class="tooltiptext2">
+                                                <span *ngIf="goal.status == 3" class="tooltiptext2">
                                                     <button class="delete_task" (click)="deleteTask(goal.name, goal.goal_project_id)">X</button>
-                                                </span>                                  
+                                                </span>                                
                                             <!-- </div> -->
                                         </div>                                   
                                     </div>
@@ -425,7 +438,7 @@
                                             </div> 
                                             </div>
                                                 <span class="tooltiptext">{{goal.name}}</span>                                              
-                                                <span class="tooltiptext2">
+                                                <span *ngIf="goal.status == 3" class="tooltiptext2">
                                                     <button class="delete_task" (click)="deleteTask(goal.name, goal.goal_project_id)">X</button>
                                                 </span>                                  
                                             <!-- </div> -->
@@ -588,6 +601,10 @@
                         </mz-modal-header>
                         <mz-modal-content>
                             <div *ngIf="task_history">
+                            <h5  *ngIf ="goal_push_id != 'Null Value'">
+                                <span style="color: #26a69a">History Push ID:</span>  
+                                <span style="color: white; background-color:  #26a69a; padding: 8px 25px; margin-left: 30px;">{{goal_push_id}}</span>
+                            </h5>
                                 <table>
                                     <tr  style="margin: 0; padding: 0">
                                         <td style="font-weight: Bold; text-align: left">
