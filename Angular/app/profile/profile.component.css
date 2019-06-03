@@ -218,6 +218,30 @@ h5 {
                     /* Show the tooltip text when you mouse over the tooltip container */
 .list_div:hover .tooltiptext2 {
     visibility: visible;
+}  
+
+
+.list_div .tooltiptext3 {
+    visibility: hidden;
+    background-color: white;
+    color: black;
+    border: 1px solid grey;
+    /*opacity: 0.6;*/
+    filter: alpha(opacity=60);
+    font-size: 12px;
+    font-weight: bold;
+    padding: 0;
+              /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1; 
+    left: 80px;
+    top: -18px; 
+    padding: 1px; 
+}
+
+                    /* Show the tooltip text when you mouse over the tooltip container */
+.list_div:hover .tooltiptext3 {
+    visibility: visible;
 }
 
 a:link, a:visited{

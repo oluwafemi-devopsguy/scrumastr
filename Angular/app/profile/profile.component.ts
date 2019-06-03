@@ -22,6 +22,7 @@ export class ProfileComponent implements OnInit {
   public show_project_chat: boolean = false;
   public show_sprint_option: boolean = false;
   public chat_text: string = "";
+  public goal_push_id;
   public messages = [];
   public websocket;
   public msg_obs;
@@ -872,10 +873,12 @@ export class ProfileComponent implements OnInit {
     console.log(this.nav_drop)
   }
 
-    CheckHistory(task) {
+    CheckHistory(task, push_id) {
       this.dataservice.message ="";
-      console.log(task)
-      this.task_history = task
+      console.log(task);
+      console.log("kfkfgkfgk" + push_id);
+      this.goal_push_id = push_id;
+      this.task_history = task;
       this.show_history = !this.show_history; 
   }
 
