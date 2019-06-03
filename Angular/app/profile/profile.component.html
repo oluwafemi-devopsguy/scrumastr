@@ -164,12 +164,24 @@
                                 <span style="font-family: Roboto;font-size: 11px; color: rgba(0, 0, 0, 0.5); padding: 4px 4px 0px 5px; ">
                                     {{user.total_week_hours}} hours 
                                 </span>
-                                <a (click)="onUser(user.id); basicModal.openModal()"  style="margin: 5px; ">
+                                <span class="tool">
+                                    <a (click)="onUser(user.id); basicModal.openModal()"  style="margin: 5px; ">
                                         <img src="/assets/image/plus2.png" style="height: 20px; width: 20px; margin 10px; ">
-                                </a> 
-                                <a (click)="onUser(user.id); addNote.openModal(); show_notes()" style="margin: 5px;">
+                                    </a> 
+                                    <span class="tooltiptext3">
+                                        Add New Task
+                                    </span>
+                                </span>
+                                
+                                <span class="tool">
+                                    <a (click)="onUser(user.id); addNote.openModal(); show_notes()" style="margin: 5px;">
                                         <img src="/assets/image/notes.png" style="height: 20px; width: 20px;  margin 10px; ">
-                                </a>
+                                    </a>
+                                    <span   class="tooltiptext3">
+                                        Add a Note
+                                    </span>
+                                </span>
+                                
                                 <span *ngIf="dataservice.role.toLowerCase() == 'owner'" style="float: right;">
                                     <button type="button" class="btn-round" (click)="remove_user(user.user.nickname, user.id)" style=" border-radius: 5px; margin-top: inherit; height: 27px; border-left: 5px solid white ">
                                             Remove User
@@ -255,9 +267,9 @@
                                             </div> 
                                             </div>
                                                 <span class="tooltiptext">{{goal.name}}</span>                                              
-                                                <span class="tooltiptext2">
+                                                <span *ngIf="goal.status == 3" class="tooltiptext2">
                                                     <button class="delete_task" (click)="deleteTask(goal.name, goal.goal_project_id)">X</button>
-                                                </span>                                 
+                                                </span>                                
                                             <!-- </div> -->
                                         </div>                                   
                                     </div>
@@ -426,7 +438,7 @@
                                             </div> 
                                             </div>
                                                 <span class="tooltiptext">{{goal.name}}</span>                                              
-                                                <span class="tooltiptext2">
+                                                <span *ngIf="goal.status == 3" class="tooltiptext2">
                                                     <button class="delete_task" (click)="deleteTask(goal.name, goal.goal_project_id)">X</button>
                                                 </span>                                  
                                             <!-- </div> -->
