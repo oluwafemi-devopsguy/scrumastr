@@ -234,11 +234,12 @@
 
                                             <div class="div-add-file" style="display: inline-flex; padding-bottom: 8px;">
 
+
                                                 <div style="padding: 8px 5px; font-weight: bold">
                                                     {{goal.goal_project_id}}
                                                 </div>
                                                 <span style="font-weight: bolder; font-size: 17px; font-family: arial-black">.</span>
-                                                <select name= "option{{goal.goal_project_id}}" class="select_option"   [(ngModel)]="selected_history[j]" (change)= "CheckHistory(selected_history[j]); showHistory.openModal();" >
+                                                <select name= "option{{goal.goal_project_id}}" class="select_option"   [(ngModel)]="selected_history[j]" (change)= "CheckHistory(selected_history[j], goal.push_id); showHistory.openModal();" >
                                                     <option [ngValue]="history1" disabled selected>History  </option>
                                                     <option *ngFor = "let history of goal.scrumgoalhistory_set" [ngValue]=history>
                                                         {{history.message}}
@@ -256,7 +257,7 @@
                                                 <span class="tooltiptext">{{goal.name}}</span>                                              
                                                 <span class="tooltiptext2">
                                                     <button class="delete_task" (click)="deleteTask(goal.name, goal.goal_project_id)">X</button>
-                                                </span>                                  
+                                                </span>                                 
                                             <!-- </div> -->
                                         </div>                                   
                                     </div>
@@ -588,6 +589,10 @@
                         </mz-modal-header>
                         <mz-modal-content>
                             <div *ngIf="task_history">
+                            <h5  *ngIf ="goal_push_id != 'Null Value'">
+                                <span style="color: #26a69a">History Push ID:</span>  
+                                <span style="color: white; background-color:  #26a69a; padding: 8px 25px; margin-left: 30px;">{{goal_push_id}}</span>
+                            </h5>
                                 <table>
                                     <tr  style="margin: 0; padding: 0">
                                         <td style="font-weight: Bold; text-align: left">
