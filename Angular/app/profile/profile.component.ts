@@ -136,7 +136,7 @@ export class ProfileComponent implements OnInit {
                         }                     
                     }
 
-                    if (target['id'] == 3 && source['id'] < 2) {
+                    if (target['id'] == "3" && source['id'] < "2") {
                       hours = -13;
                      var push_id = window.prompt('Enter Task Push ID?');
                         
