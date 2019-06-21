@@ -441,6 +441,12 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
                 elif request.data['hours'] == -1 and goal_item.hours == -1 and to_id > 1:
                      goal_item.status = state_prev
                      message = 'Error: A Task must have hours assigned.'
+                elif request.data['hours'] == -13:
+                     goal_item.status = state_prev
+                     if request.data['push_id'] == "Canceled":
+                        message = "Error,  No Work ID assigned"
+                     else:
+                        message = 'Error: A Task must have hours assigned.'
                 elif to_id == 2 and state_prev == 1 :
                     goal_item.hours = request.data['hours']
                     message = 'Goal Moved Successfully! Hours Applied!'
@@ -676,7 +682,8 @@ class SprintViewSet(viewsets.ModelViewSet):
                 if each_goal.moveable != False:
                     each_goal.moveable = False
                     each_goal.save()
-                    if each_goal.status == 0 and each_goal.visible == 1 :
+                    copy_status = [0,1,2]
+                    if each_goal.status in copy_status and each_goal.visible == 1 :
                         goal = ScrumGoal(
                         name=each_goal.name,
                         status= 0,

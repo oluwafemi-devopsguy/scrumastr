@@ -7,8 +7,8 @@ import { Router } from '@angular/router';
 export class DataService {
     
   public domain_name = '127.0.0.1:8000';
-  public domain_protocol = 'https://';
-  public websocket = 'wss://';
+  public domain_protocol = 'http://';
+  public websocket = 'ws://';
   
   public message;
   public goal_name;
@@ -39,6 +39,9 @@ export class DataService {
   public project_id;
   public to_clear_board;
   public users;
+  public work_IDs = [];
+  public users_id = [];
+  public workID_goal_array;
   public sprints;
   public sprint_start;
   public sprint_end;
@@ -269,6 +272,11 @@ export class DataService {
 
   moveGoal(goal_id, to_id, hours, push_id)
   {
+    console.log("~~~~~~~~~~~~~~~~~~~~~~parameters passed ~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    console.log(goal_id)
+    console.log(to_id)
+    console.log(hours)
+    console.log(push_id)
     this.http.patch(this.domain_protocol + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'goal_id': goal_id, 'to_id': to_id, 'hours': hours, 'project_id': this.project, 'push_id': push_id}), this.authOptions).subscribe(
         data => {
             this.users = data['data'];

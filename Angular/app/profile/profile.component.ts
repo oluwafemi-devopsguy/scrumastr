@@ -14,7 +14,7 @@ import { MzModalModule } from 'ngx-materialize';
 })
 export class ProfileComponent implements OnInit {
 
-  public arrCount = [0, 1, 2, 3];
+  public arrCount = [0, 1, 2];
   public color:string = "blue"
   subs = new Subscription();
   public show_zero: boolean = true;
@@ -74,12 +74,19 @@ export class ProfileComponent implements OnInit {
     this.subs.add(
         this.dragula.drop('mainTable').subscribe(
             value => {
+                this.dataservice.users_id = []
                 console.log(value);
                 var el = value['el'];
                 var target = value['target'];
                 var source = value['source'];
                 
                 if (target['parentElement'] == source['parentElement']) {
+                  console.log("The if ===================")
+                  console.log( target['parentElement']['id'])
+                  console.log(el['id'])
+                  console.log(target['parentElement'])
+                  console.log(source['parentElement'])
+
                     var hours = -1;
                     if(target['id'] == '2' && source['id'] == '1')
                     {
@@ -98,14 +105,60 @@ export class ProfileComponent implements OnInit {
                           push_id = "Null Value" 
                           }                      
                     }
+                    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@in hours@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+                    console.log(hours)
                     this.dataservice.moveGoal(el['id'], target['id'], hours, push_id);
-                if (this.dataservice.selected_sprint) {
-                  this.changeSprint()
+                  // if (this.dataservice.selected_sprint) {
+                  //   this.changeSprint()
+                  // }
+                  // else{
+                  //   this.filterSprint(this.dataservice.sprints)
+                  // }
+                } else if (target['parentElement'].id == source['parentElement'].id)  {
+                  hours = -12;
+                  console.log(" 888888888888888888888 inside else if inner if 8888888888888888888888888888")
+                  console.log(target['id'])
+                  console.log(source['id'])
+                  
+                    if(target['id'] == '3' && source['id'] == '2')
+                    {
+                        hours = -11;
+                        var push_id = window.prompt('Enter Task Push ID?');
+                        
+                        if(push_id == '') {
+                          console.log('tHE PUSH IS NULL')
+                          push_id = "Null Value" 
+                          } 
+                        else if(!push_id)  {
+                           hours = -13;
+                           push_id = "Canceled"
+                          console.log("##@@@@@@@@@@@####################################uyuyuyyu $$$$$$$$$$$$$$$$$$$$$$")
+                        }                     
+                    }
+
+                    if (target['id'] == 3 && source['id'] < 2) {
+                      hours = -13;
+                     var push_id = window.prompt('Enter Task Push ID?');
+                        
+                        if(push_id == '') {
+                          console.log('tHE PUSH IS NULL')
+                          push_id = "Null Value" 
+                          } 
+                          } 
+                  console.log("%%%%%%%%%%%%((((((((((((((((((())))))))))))))))))&&&&&&&&&&&&&&&&&&&")
+                  console.log(target['id'])
+                  console.log(source['id'])
+                  console.log(el['id'])
+                  console.log(hours)
+                  this.dataservice.moveGoal(el['id'], target['id'], hours, push_id);
                 }
-                else{
-                  this.filterSprint(this.dataservice.sprints)
-                }
-                } else {
+
+                 else {
+                  console.log("********************************thec else ==================")
+                  console.log( target['parentElement']['id'])
+                  console.log(el['id'])
+                  console.log(target['parentElement'])
+                  console.log(source['parentElement']['parentElement'])
                     this.dataservice.changeOwner(el['id'], target['parentElement']['id']);
                 } 
             }
@@ -233,7 +286,8 @@ export class ProfileComponent implements OnInit {
 
 
   changeSprint() 
-  {   
+  {  
+  this.dataservice.users_id = [] 
     this.dataservice.message ="";
     this.dataservice.sprint_goals = [];
       for (var i = 0;  i < this.dataservice.users.length; i++)  {
@@ -250,7 +304,7 @@ export class ProfileComponent implements OnInit {
 
             
   filterSprint(uSprints) {
-    
+    this.dataservice.users_id = []
     this.dataservice.sprints= uSprints
     var filter_goal = []
     console.log(filter_goal)
@@ -358,9 +412,11 @@ export class ProfileComponent implements OnInit {
   editGoal(event)
   {
     this.dataservice.message ="";
-    console.log(this.dataservice.selected_sprint);
+    console.log(event);
     console.log(this.dataservice.users);
     var taskID = event.target.parentElement.id.substring(1);
+    console.log("new editgoal----====================")
+  console.log(taskID)
     var message = null;
     for(var i = 0; i < this.dataservice.users.length; i++)
     {
@@ -863,7 +919,13 @@ export class ProfileComponent implements OnInit {
   ResizeImage(iName) {
     this.dataservice.message ="";
     console.log(iName)
-    this.scrum_image = iName
+    // window.open(this.dataservice.domain_protocol + this.dataservice.domain_name + iName, "Image open", "width=1000, height=1000");
+     this.scrum_image = iName
+  }
+
+   ResizeImageFull() {
+    window.open(this.dataservice.domain_protocol + this.dataservice.domain_name + this.scrum_image, "Image open", "width=1500px, height=1500px");
+
   }
 
    navDrop() {

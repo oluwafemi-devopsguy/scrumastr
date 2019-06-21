@@ -4,6 +4,9 @@
     <span style="float: left; padding: 10px 50px;">
         <img src="/assets/image/Converted-PNG.png" alt="nav-logo" class="logo"  style="height: 45px; width: 145px">
     </span>
+    
+
+
   <a [ngClass]="(board == 'MyTask')? 'active':doNothing()" (click)="myTask()">My Tasks</a>
   <a [ngClass]="(board == 'AllTask')? 'active':doNothing()" style="border-left: 1px solid #f2f2f2" (click)="allTask()">All Task</a>
   <div style="float: right; color: black; padding: 5px;">
@@ -226,6 +229,8 @@
 
 
                             <div style="display: table-row" *ngIf="user.scrumgoal_set.length != 0" [attr.id]="'u' + user.id" [style.background]="user.id == id_click ? 'rgba(0, 128, 128, 0.5)' : (user.id == id_hover ? 'rgba(0, 128, 128, 0.15)' : 'none')" tabindex="-1">
+
+
                                 <div *ngFor="let arrItem of arrCount" class="top-box" dragula="mainTable" [attr.id]="arrItem" style="vertical-align: top;">
                                     <div class="div_lister" *ngFor="let goal of dataservice.sprint_goals; let j = index; let k = count" [attr.id]="'g' + goal.goal_project_id"> 
                                             <div class="list_div" *ngIf ="goal.status == arrItem && user.id == goal.user && goal.name; let thisGoal" (dblclick)="goal.status == arrItem ? editGoal($event) : doNothing()" style="" [style.background-color] = "user.color"> {{ (goal.name.length>120) ? (thisGoal | slice:0:120)+'...':(thisGoal) }} {{(goal.hours != -1 && (goal.status == 3 || goal.status == 2) ? ' (' + goal.hours + ')' : '' )}}
@@ -258,12 +263,19 @@
                                                     </option>
                                                 </select> 
                                             <div style="padding-top: 4px;">
-                                                <a (click)="goalClicked(goal.goal_project_id); upload.openModal()">
+                                                <span class="list_div_tool">
+                                                    <a (click)="goalClicked(goal.goal_project_id); upload.openModal()">
                                                     <img src="/assets/image/foto.png" style="padding: 0 2px;">
-                                                </a> 
-                                                <a (click)="goalClicked(goal.goal_project_id); initGoalChat()">
+                                                    </a>
+                                                    <span class="tooltiptext3">Upload Image</span>
+                                                </span>
+                                               <span  class="list_div_tool">
+                                                    <a (click)="goalClicked(goal.goal_project_id); initGoalChat()">
                                                     <img src="/assets/image/message.png" style="padding: 0 2px;">
-                                                </a>
+                                                    </a>
+                                                    <span class="tooltiptext3">Goal Chat</span>
+                                               </span>
+                                                
                                             </div> 
                                             </div>
                                                 <span class="tooltiptext">{{goal.name}}</span>                                              
@@ -274,6 +286,119 @@
                                         </div>                                   
                                     </div>
                                 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                <div  class="top-box"  [attr.id]="3" style="vertical-align: top;" dragula="mainTable">
+                                    
+
+                                    <div  *ngFor="let goal of dataservice.sprint_goals; let j = index; let k = count" [attr.id]="'g' + goal.goal_project_id"> 
+                                            <div *ngIf ="goal.status == 3 && user.id == goal.user && goal.name; let thisGoal" (dblclick)="goal.status == 3 ? editGoal($event) : doNothing()" style="" [style.background-color] = "user.color">
+
+                                                {{goal | workids}} 
+                                        </div>                                   
+                                    </div>
+
+
+                                     <div style="display: table-row" *ngFor="let w_id of dataservice.users_id;"  [attr.id]="'u' + user.id"> 
+                                        
+                                          
+
+
+                                        <div *ngIf="user.id == w_id.user_id" style="margin-top: 30px;"  dragula="mainTable" [attr.id]=3 style="border: 2px solid black">
+                                            <div style="background-color: grey;  width: 100%">
+                                                {{ w_id.work_id }}
+                                            </div>
+                                            
+                                               
+                                        <div class="div_lister" *ngFor="let goal of w_id.goal_array; let j = index; let k = count" [attr.id]="'g' + goal.goal_project_id"> 
+                                            <!-- <div class="list_div" *ngIf ="goal.status == 3 && user.id == goal.user && goal.name; let thisGoal" (dblclick)="goal.status == 3 ? editGoal($event) : doNothing()" style="" [style.background-color] = "user.color"> -->
+                                            <div  class="list_div" *ngIf="user.id == goal.user" (dblclick)="goal.status == 3 ? editGoal($event) : doNothing()" style="" [style.background-color] = "user.color">
+                                                 {{goal.name}} {{(goal.hours != -1 && (goal.status == 3 || goal.status == 2) ? ' (' + goal.hours + ')' : '' )}}
+                                                ====================== ==============================<br>
+                                                <div class="div_lister" *ngFor="let work_ID of dataservice.work_IDs; let j = index; let k = count" [attr.id]="'g' + goal.goal_project_id">
+                                                {{work_ID.push_id }} ==============
+                                                </div>
+                                                <a (click)="ResizeImage(goal.file); showImage.openModal()">
+                                                    <img src="{{ dataservice.domain_protocol}}{{dataservice.domain_name}}{{goal.file}}" style="width: 15px; height: 15px" alt="{{goal.file}}">
+                                                </a> 
+                                                
+                                        
+                                               <div style="text-align: left; padding: 10px 0; ">
+                                                <div *ngIf ="goal.days_failed > 0">
+                                                    <span>{{goal.days_failed}}</span>
+                                                    <span>
+                                                        <img src="/assets/image/fail.png" alt="fail"  style="height: 10px; width: 10px">
+                                                    </span>
+                                                </div>
+                                               </div>
+                                               <br>
+
+                                            <div class="div-add-file" style="display: inline-flex; padding-bottom: 8px;">
+
+
+                                                <div style="padding: 8px 5px; font-weight: bold">
+                                                    {{goal.goal_project_id}}
+                                                </div>
+                                                <span style="font-weight: bolder; font-size: 17px; font-family: arial-black">.</span>
+                                                <select name= "option{{goal.goal_project_id}}" class="select_option"   [(ngModel)]="selected_history[j]" (change)= "CheckHistory(selected_history[j], goal.push_id); showHistory.openModal();" >
+                                                    <option [ngValue]="history1" disabled selected>History  </option>
+                                                    <option *ngFor = "let history of goal.scrumgoalhistory_set" [ngValue]=history>
+                                                        {{history.message}}
+                                                    </option>
+                                                </select> 
+                                            <div style="padding-top: 4px;">
+                                                <span class="list_div_tool">
+                                                    <a (click)="goalClicked(goal.goal_project_id); upload.openModal()">
+                                                    <img src="/assets/image/foto.png" style="padding: 0 2px;">
+                                                    </a>
+                                                    <span class="tooltiptext3">Upload Image</span>
+                                                </span>
+                                               <span  class="list_div_tool">
+                                                    <a (click)="goalClicked(goal.goal_project_id); initGoalChat()">
+                                                    <img src="/assets/image/message.png" style="padding: 0 2px;">
+                                                    </a>
+                                                    <span class="tooltiptext3">Goal Chat</span>
+                                               </span>
+                                                
+                                            </div> 
+                                            </div>
+                                                <span class="tooltiptext">{{goal.name}}</span>                                              
+                                                <span *ngIf="goal.status == 3" class="tooltiptext2">
+                                                    <button class="delete_task" (click)="deleteTask(goal.name, goal.goal_project_id)">X</button>
+                                                </span> 
+                                            </div>
+                                            
+                                        </div>
+                                     
+                                     </div>
+                                    </div>
+                                   <!--  bbbbbbbbbbbbbbb {{dataservice.username| WorkIDsGoals}} -->
+                                </div>
+
+
+
+
+
+
+
+
+
+
+
+
                             </div>
                         
                     </div>
@@ -548,17 +673,22 @@
                         </form>
                     </mz-modal-content>
                 </mz-modal>
-                <mz-modal #showImage>
-                    <mz-modal-header>
-                        <h4>Image</h4>
-                    </mz-modal-header>
+                <mz-modal #showImage >
+                    
                     <mz-modal-content>
-                        <img src="https://{{dataservice.domain_name}}{{scrum_image}}" style="width: 450px; height: 220px" alt="image">
+                        <img src="{{dataservice.domain_protocol}}{{dataservice.domain_name}}{{scrum_image}}" style="width: 800px; height: 400px" alt="image">
+                         <div>
+                            <button type="button" class="btn-round" (click)="ResizeImageFull();" style=" border-radius: 5px;  width: 130px height: 50px; border-left: 5px solid white ">
+                                                View Full size
+                            </button>
+                        </div>
                     </mz-modal-content>
+                   
                 </mz-modal>   
                 <mz-modal #userAdvance>
                     <mz-modal-header>
-                        <h4>{{clicked_user}}</h4>
+                        <h4>User Task Histories =>
+                        <span style="color: white; background-color:  #26a69a; padding: 8px 25px; margin-left: 30px;">{{clicked_user}}</span> </h4>
                     </mz-modal-header>
                     <mz-modal-content>
                         <div style="display: table; width: 100%; word-wrap: break-word; border-collapse: collapse; border: 2px solid #f2f2f2;" id="userHistory">
@@ -577,8 +707,15 @@
                                 <td class="top-box" style="text-align: left">
                                     <span *ngFor="let user_goal of dataservice.user_goal_history">
                                         <div *ngIf ="user_goal.time_created > sprint.created_on && user_goal.time_created < sprint.ends_on" >
+                                            <div style="font-size: 16px">
+                                                <span  style="font-weight: bolder;">
+                                                    Work ID: 
+                                                </span>                                                
+                                                <span style="color: white; background-color:  #26a69a;">{{user_goal.push_id}}</span>
+                                            </div>
                                           <div style="border-left: 3px solid #26a69a">
                                             {{user_goal.name}} <br>
+                                            
                                           <div style="text-align: right">
                                             <span style="font-weight: bolder; " [innerText]="user_goal.status == 3 ? 'completed' : 'Not Completed'" [style.color]="user_goal.status == 3 ? 'green' : 'red'">
                                                 
