@@ -204,7 +204,7 @@ export class ProfileComponent implements OnInit {
             this.dataservice.sprints = res2;
             this.dataservice.project_slack = res1['slack_installed'];
             this.dataservice.slack_app_id = res1['slack_app_id'];
-            this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '!join ' + this.dataservice.project_name, 'goal_id': 'main_chat_' + this.dataservice.project_name, 'slack_username': this.dataservice.slack_username }));
+            this.websocket.send(JSON.stringify({'project_id': this.dataservice.project, 'user': this.dataservice.realname, 'message': '!join ' + this.dataservice.project_name, 'goal_id': 'main_chat_' + this.dataservice.project_name, 'slack_username': this.dataservice.slack_username }));
             console.log(this.dataservice.users)
             console.log(this.dataservice.project_slack)
             console.log(this.dataservice.user_slack)
@@ -586,6 +586,7 @@ export class ProfileComponent implements OnInit {
     }
     console.log(this.dataservice.realname)
     this.websocket.send(JSON.stringify({
+      'project_id': this.dataservice.project, 
       'user': this.dataservice.realname, 
       'message': this.chat_text,
       'goal_id': this.goal_id,
@@ -624,7 +625,7 @@ export class ProfileComponent implements OnInit {
 
   initGoalChat(){
     this.dataservice.message ="";
-    this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '!goal_chat' + this.goal_id, 'goal_id': this.goal_id, 'slack_username': this.dataservice.slack_username }))
+    this.websocket.send(JSON.stringify({'project_id': this.dataservice.project, 'user': this.dataservice.realname, 'message': '!goal_chat' + this.goal_id, 'goal_id': this.goal_id, 'slack_username': this.dataservice.slack_username }))
     this.show_project_chat = true;
     this.chat_div_title = this.goal_id + " Chat"
   }
@@ -642,7 +643,7 @@ export class ProfileComponent implements OnInit {
 
   initMainChat(){
     this.dataservice.message ="";
-    this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '!join ' + this.dataservice.project_name, 'goal_id': 'main_chat_' + this.dataservice.project_name, 'slack_username': this.dataservice.slack_username }));
+    this.websocket.send(JSON.stringify({'project_id': this.dataservice.project,  'user': this.dataservice.realname, 'message': '!join ' + this.dataservice.project_name, 'goal_id': 'main_chat_' + this.dataservice.project_name, 'slack_username': this.dataservice.slack_username }));
     this.chat_div_title = "Project Chat"
     this.show_project_chat = false;
   }

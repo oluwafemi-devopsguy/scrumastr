@@ -559,21 +559,26 @@ def jwt_response_payload_handler(token, user=None, request=None):
         project = ScrumProject.objects.get(name__iexact=request.data['project'])        
     except ScrumProject.DoesNotExist:
         raise ValidationError('The selected project does not exist.');
+
+    
     
     if project.scrumprojectrole_set.filter(user=user.scrumuser).count() == 0:
         scrum_project_role = ScrumProjectRole(role="Developer", user=user.scrumuser, project=project, color=userBgColor())
         scrum_project_role.save()
+
+    proj_role = project.scrumprojectrole_set.get(user=user.scrumuser)
+
     if project.scrumprojectrole_set.get(user=user.scrumuser).color == "white":
-        proj_role = project.scrumprojectrole_set.get(user=user.scrumuser)
+        
         proj_role.color = userBgColor()
         print("coloooooooooooooooooooooooooooor" + proj_role.color)
         proj_role.save()
 
 
-    user_slack = bool(user.scrumuser.slack_email)
+    user_slack = bool(proj_role.slack_email)
     if project.scrumslack_set.all().exists():
         project_slack = "True"
-        slack_username = user.scrumuser.slack_username
+        slack_username = proj_role.slack_username
     else:
         project_slack = "False"
         slack_username = "empty"
@@ -724,6 +729,7 @@ class Events(APIView):
         project_id = the_state[:splitter] 
         user_email = the_state[(splitter+3):]
         post_data = request.data
+        scrum_project = ScrumProject.objects.get(name = project_id[10:])
 
 
 # =================================Get Auth code response from slack==============================================
@@ -754,7 +760,13 @@ class Events(APIView):
                 print(user_response)
                 # print( user_response["user"]["email"])
                 try:
+                    print("============= INSIDE TRY GET USER============" )
                     user= ScrumUser.objects.get(user__username=user_email)
+                    print(user)
+                    user_role = user.scrumprojectrole_set.get(user=user, project = scrum_project)
+                    print(user_role)
+                    
+                    print("============= AFTER TRY GET USER============" )
                 except:
                     print(user_response)
                     html = "<html><body>An error occured!!!</body></html>" 
@@ -762,10 +774,11 @@ class Events(APIView):
                 
                 
                 
+                
 
 # =========================================Get Room and project=====================================================================
         chat_room,created = ScrumChatRoom.objects.get_or_create(name=project_id, hash=hashlib.sha256(project_id.encode('UTF-8')).hexdigest())
-        scrum_project = ScrumProject.objects.get(name = project_id[10:])  
+          
         try:
             project_token, created = ScrumSlack.objects.get_or_create(
             scrumproject = scrum_project,
@@ -779,19 +792,21 @@ class Events(APIView):
             bot_access_token=auth_response["bot"]["bot_access_token"]
             )
             #===============================Update Scrumy user details for Add to slack======================================================================
-            user.slack_user_id = user_response["user"]["id"]
-            user.slack_email = user_response["user"]["email"]
-            user.slack_username = user_response["user"]["name"]
-            user.save()
+            user_role.slack_user_id = user_response["user"]["id"]
+            user_role.slack_email = user_response["user"]["email"]
+            user_role.slack_username = user_response["user"]["name"]
+            user_role.slack_profile_picture = user_response["user"]["image_512"]
+            user_role.save()
             print("===================================================user channel add=========================")
         except KeyError as error:
-            print(user.slack_user_id)
-            user.slack_user_id = user_response["user"]["id"]
-            user.slack_email = user_response["user"]["email"]
-            user.slack_username = user_response["user"]["name"]
-            user.save()            
+            print(user_role.slack_user_id)
+            user_role.slack_user_id = user_response["user"]["id"]
+            user_role.slack_email = user_response["user"]["email"]
+            user_role.slack_username = user_response["user"]["name"]
+            user_role.slack_profile_picture = user_response["user"]["image_512"]
+            user_role.save()            
             print("===================================================user add=========================")
-            print(user)
+            print(user_role)
        
         return redirect(settings.FRONTEND)
 
@@ -814,17 +829,17 @@ class Events(APIView):
         if post_data.get('event')["type"] == "message":
 
             try:
-                slack_user = ScrumUser.objects.filter(slack_user_id=post_data["event"]["user"]).first()
+                slack_user = ScrumProjectRole.objects.filter(slack_user_id=post_data["event"]["user"]).first()
                 if slack_user is not None: 
-                    print("==========================Slack user=================" + slack_user.nickname)
-                    slack_user_nick = slack_user.nickname
+                    print("==========================Slack user=================" + slack_user.user.nickname)
+                    slack_user_nick = slack_user.user.nickname
                 else:
                     slack_user_nick = post_data["event"]["user"]                
             except ScrumUser.DoesNotExist as error:
                 print("User Not matched: failed")
                 slack_user_nick = post_data["event"]["user"]
             except KeyError as error:
-                slack_user = ScrumUser.objects.filter(slack_user_id=post_data["event"]["username"]).first()
+                slack_user = ScrumProjectRole.objects.filter(slack_user_id=post_data["event"]["username"]).first()
                 return Response(data=post_data,
                                 status=status.HTTP_200_OK)
 
@@ -845,8 +860,8 @@ class Events(APIView):
                         if match:
                             print(match.group(1))
                             try:
-                                slack_name = ScrumUser.objects.get(slack_user_id=match.group(1))
-                                slack_message = slack_message.replace(each_word, slack_name.nickname)
+                                slack_name = ScrumProjectRole.objects.get(slack_user_id=match.group(1))
+                                slack_message = slack_message.replace(each_word, slack_name.user.nickname)
                                 print(slack_message)
                                 print("pattern matched")
                             except ScrumUser.DoesNotExist as e:
@@ -858,7 +873,7 @@ class Events(APIView):
 
 
                     chatRoom = ScrumChatRoom.objects.get(id = slack_details.room_id).hash
-                    new_message = ScrumChatMessage(room=slack_details.room, user=slack_user_nick, message=slack_message)
+                    new_message = ScrumChatMessage(room=slack_details.room, user=slack_user_nick, message=slack_message, profile_picture=slack_user.slack_profile_picture)
                     new_message.save()
                     
                     async_to_sync(self.channel_layer.group_send)(

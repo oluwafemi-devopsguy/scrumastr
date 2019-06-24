@@ -426,7 +426,7 @@
 
                     <li  style="list-style-type: none; padding-top: 1px;  border-radius: 15px; box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);"  [style.background-color] = "message.user == dataservice.realname ? '#262626' : 'white'">
                         <p [style.float] = "message.user == dataservice.realname ? 'right' : 'left'"  [style.padding-left] = "message.user != dataservice.realname ? '10px' : '0'">
-                            <img src="/assets/image/ellipse.png" 
+                            <img src={{message.profile_picture}} 
                                         style=" border-radius: 50px; border: 1px solid #F5F5F5; box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25); height: 30px; float: left;" [style.background-color] = "message.user == dataservice.realname ? 'white' : 'white'">
                         </p>
                         <p [style.color] = "message.user == dataservice.realname ? 'white': '#262626'" style="color: white;  padding: 1px;">  
