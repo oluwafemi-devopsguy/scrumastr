@@ -172,7 +172,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = event['message'] 
         date_Time = (datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H:%M:%S"))
         profile_picture = self.scrum_user.slack_profile_picture
-        await self.send(text_data=json.dumps({'user': user, 'message': message +  "yer", 'date_Time':date_Time, 'profile_picture': profile_picture}, sort_keys=True, indent=1,cls=DjangoJSONEncoder))  
+        await self.send(text_data=json.dumps({'user': user, 'message': message, 'date_Time':date_Time, 'profile_picture': profile_picture}, sort_keys=True, indent=1,cls=DjangoJSONEncoder))  
 
 
 

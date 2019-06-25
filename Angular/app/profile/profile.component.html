@@ -200,10 +200,10 @@
                         
 
                         <div style="display: table-row; ">
-                            <th> <div class="table_head">Task For The Week</div> </th>
-                            <th><div class="table_head">Finish Today</div></th>
-                            <th><div class="table_head">Verify</div></th>
-                            <th><div class="table_head">Done</div></th>
+                            <th><div class="table_head">Task For The Week </div> </th>
+                            <th><div class="table_head">Finish Today </div></th>
+                            <th><div class="table_head">Verify </div></th>
+                            <th><div class="table_head">Done </div></th>
                         </div>
                         
                         <div *ngIf="user.scrumgoal_set.length == 0 && show_zero  && user.user.nickname.toUpperCase() != this.dataservice.realname.toUpperCase()" style="display: table-row;" dragula="mainTable" [attr.id]="'u' + user.id">
@@ -327,9 +327,9 @@
                                             <!-- <div class="list_div" *ngIf ="goal.status == 3 && user.id == goal.user && goal.name; let thisGoal" (dblclick)="goal.status == 3 ? editGoal($event) : doNothing()" style="" [style.background-color] = "user.color"> -->
                                             <div  class="list_div" *ngIf="user.id == goal.user" (dblclick)="goal.status == 3 ? editGoal($event) : doNothing()" style="" [style.background-color] = "user.color">
                                                  {{goal.name}} {{(goal.hours != -1 && (goal.status == 3 || goal.status == 2) ? ' (' + goal.hours + ')' : '' )}}
-                                                ====================== ==============================<br>
+                                                <br>
                                                 <div class="div_lister" *ngFor="let work_ID of dataservice.work_IDs; let j = index; let k = count" [attr.id]="'g' + goal.goal_project_id">
-                                                {{work_ID.push_id }} ==============
+                                                {{work_ID.push_id }} 
                                                 </div>
                                                 <a (click)="ResizeImage(goal.file); showImage.openModal()">
                                                     <img src="{{ dataservice.domain_protocol}}{{dataservice.domain_name}}{{goal.file}}" style="width: 15px; height: 15px" alt="{{goal.file}}">
@@ -464,7 +464,7 @@
                 <div class="row" style="padding-left: 0; padding-right: 10px; background-color: #f5f5f5;">
                     <div style="height: 190px; overflow: auto">
                     <div class="input-field col s12">
-                            <textarea id="chat_text"  [(ngModel)]="chat_text" (keyup.enter)="sendMessage('main_chat')" class="chat_input" (keyup)='autogrow()' rows='3' (click)='autogrow()'  style="/*background-image:url('/assets/image/arrow.png');*/ resize: vertical; border-radius: 10px; box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25); background-position: right; background-color: white; padding: 3px;" height="inherit"></textarea>
+                            <textarea id="chat_text"  [(ngModel)]="chat_text" (keyup.enter)="sendMessage('main_chat')" class="chat_input" (keyup)='autogrow()' rows='3' (click)='autogrow()'  style="resize: vertical; border-radius: 10px; box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25); background-position: right; background-color: white; padding: 3px;" height="inherit"></textarea>
                             
                             <label for="chat_text" style="padding: 3px 10px 0 20px;"> Send a message</label>
                         </div>
@@ -679,7 +679,7 @@
                         <img src="{{dataservice.domain_protocol}}{{dataservice.domain_name}}{{scrum_image}}" style="width: 800px; height: 400px" alt="image">
                          <div>
                             <button type="button" class="btn-round" (click)="ResizeImageFull();" style=" border-radius: 5px;  width: 130px height: 50px; border-left: 5px solid white ">
-                                                View Full size
+                                                View Original size
                             </button>
                         </div>
                     </mz-modal-content>
