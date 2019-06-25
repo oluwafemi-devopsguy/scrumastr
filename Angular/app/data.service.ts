@@ -8,7 +8,7 @@ export class DataService {
     
   public domain_name = '127.0.0.1:8000';
   public domain_protocol = 'https://';
-  public websocket = 'wss://';
+  public websocket = 'ws://';
   
   public message;
   public goal_name;
