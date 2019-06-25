@@ -9,10 +9,10 @@ sql ="UPDATE scrum_scrumgoal SET status=0 WHERE status=1 AND moveable = 1 AND vi
 try:
 	cursor.execute(sql)
 	db.commit()
-	print("inside try exec")
-except:
+	print("inside try")
+except Exception as e:
 	db.rollback()
-	print("inside except")
+	print("inside except") 
+	raise e
 
 db.close()
-

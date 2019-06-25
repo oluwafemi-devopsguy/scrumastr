@@ -26,7 +26,7 @@ class ScrumGoalSerializer(serializers.ModelSerializer):
     scrumgoalhistory_set = ScrumGoalHistorySerializer(many=True)
     class Meta:
         model = ScrumGoal
-        fields = ('visible', 'id', 'name', 'status', 'goal_project_id', 'hours', 'time_created', 'user', 'project', 'file', 'scrumgoalhistory_set', 'days_failed')
+        fields = ('visible', 'id', 'name', 'status', 'goal_project_id', 'hours', 'time_created', 'user', 'project', 'file', 'scrumgoalhistory_set', 'days_failed', 'push_id')
         
 class ScrumUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -49,7 +49,7 @@ class ScrumProjectRoleSerializer(serializers.ModelSerializer):
     scrumgoal_set = ScrumGoalSerializer(many=True)    
     class Meta:
         model = ScrumProjectRole
-        fields = ('role', 'color', 'user', 'id', 'scrumgoal_set', 'scrumnote_set')        
+        fields = ('role', 'color', 'user', 'slack_user_id', 'slack_email', 'slack_username', 'slack_profile_picture', 'id', 'scrumgoal_set', 'scrumnote_set')        
         
 class ScrumProjectSerializer(serializers.HyperlinkedModelSerializer):
     scrumprojectrole_set = ScrumProjectRoleSerializer(many=True)

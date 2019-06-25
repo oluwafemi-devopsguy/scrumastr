@@ -14,7 +14,7 @@ import { MzModalModule } from 'ngx-materialize';
 })
 export class ProfileComponent implements OnInit {
 
-  public arrCount = [0, 1, 2, 3];
+  public arrCount = [0, 1, 2];
   public color:string = "blue"
   subs = new Subscription();
   public show_zero: boolean = true;
@@ -22,6 +22,7 @@ export class ProfileComponent implements OnInit {
   public show_project_chat: boolean = false;
   public show_sprint_option: boolean = false;
   public chat_text: string = "";
+  public goal_push_id;
   public messages = [];
   public websocket;
   public msg_obs;
@@ -73,12 +74,19 @@ export class ProfileComponent implements OnInit {
     this.subs.add(
         this.dragula.drop('mainTable').subscribe(
             value => {
+                this.dataservice.users_id = []
                 console.log(value);
                 var el = value['el'];
                 var target = value['target'];
                 var source = value['source'];
                 
                 if (target['parentElement'] == source['parentElement']) {
+                  console.log("The if ===================")
+                  console.log( target['parentElement']['id'])
+                  console.log(el['id'])
+                  console.log(target['parentElement'])
+                  console.log(source['parentElement'])
+
                     var hours = -1;
                     if(target['id'] == '2' && source['id'] == '1')
                     {
@@ -97,14 +105,60 @@ export class ProfileComponent implements OnInit {
                           push_id = "Null Value" 
                           }                      
                     }
+                    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@in hours@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+                    console.log(hours)
                     this.dataservice.moveGoal(el['id'], target['id'], hours, push_id);
-                if (this.dataservice.selected_sprint) {
-                  this.changeSprint()
+                  // if (this.dataservice.selected_sprint) {
+                  //   this.changeSprint()
+                  // }
+                  // else{
+                  //   this.filterSprint(this.dataservice.sprints)
+                  // }
+                } else if (target['parentElement'].id == source['parentElement'].id)  {
+                  hours = -12;
+                  console.log(" 888888888888888888888 inside else if inner if 8888888888888888888888888888")
+                  console.log(target['id'])
+                  console.log(source['id'])
+                  
+                    if(target['id'] == '3' && source['id'] == '2')
+                    {
+                        hours = -11;
+                        var push_id = window.prompt('Enter Task Push ID?');
+                        
+                        if(push_id == '') {
+                          console.log('tHE PUSH IS NULL')
+                          push_id = "Null Value" 
+                          } 
+                        else if(!push_id)  {
+                           hours = -13;
+                           push_id = "Canceled"
+                          console.log("##@@@@@@@@@@@####################################uyuyuyyu $$$$$$$$$$$$$$$$$$$$$$")
+                        }                     
+                    }
+
+                    if (target['id'] == "3" && source['id'] < "2") {
+                      hours = -13;
+                     var push_id = window.prompt('Enter Task Push ID?');
+                        
+                        if(push_id == '') {
+                          console.log('tHE PUSH IS NULL')
+                          push_id = "Null Value" 
+                          } 
+                          } 
+                  console.log("%%%%%%%%%%%%((((((((((((((((((())))))))))))))))))&&&&&&&&&&&&&&&&&&&")
+                  console.log(target['id'])
+                  console.log(source['id'])
+                  console.log(el['id'])
+                  console.log(hours)
+                  this.dataservice.moveGoal(el['id'], target['id'], hours, push_id);
                 }
-                else{
-                  this.filterSprint(this.dataservice.sprints)
-                }
-                } else {
+
+                 else {
+                  console.log("********************************thec else ==================")
+                  console.log( target['parentElement']['id'])
+                  console.log(el['id'])
+                  console.log(target['parentElement'])
+                  console.log(source['parentElement']['parentElement'])
                     this.dataservice.changeOwner(el['id'], target['parentElement']['id']);
                 } 
             }
@@ -115,6 +169,7 @@ export class ProfileComponent implements OnInit {
     this.dataservice.username = sessionStorage.getItem('username');
     this.dataservice.role = sessionStorage.getItem('role');
     this.dataservice.project = sessionStorage.getItem('project_id');
+    this.dataservice.to_clear_board = sessionStorage.getItem('to_clear_board');
     this.dataservice.project_slack = sessionStorage.getItem('project_slack');
     this.dataservice.user_slack = sessionStorage.getItem('user_slack');
     this.dataservice.slack_username = sessionStorage.getItem('slack_username');
@@ -145,10 +200,11 @@ export class ProfileComponent implements OnInit {
             this.msg_obs.observe(document.getElementById('chat_div_space'), { attributes: true, childList: true, subtree: true });
             this.dataservice.users = res1['data'];
             this.dataservice.project_name = res1['project_name'];
+            this.dataservice.to_clear_board = res1['to_clear_board'];
             this.dataservice.sprints = res2;
             this.dataservice.project_slack = res1['slack_installed'];
             this.dataservice.slack_app_id = res1['slack_app_id'];
-            this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '!join ' + this.dataservice.project_name, 'goal_id': 'main_chat_' + this.dataservice.project_name, 'slack_username': this.dataservice.slack_username }));
+            this.websocket.send(JSON.stringify({'project_id': this.dataservice.project, 'user': this.dataservice.realname, 'message': '!join ' + this.dataservice.project_name, 'goal_id': 'main_chat_' + this.dataservice.project_name, 'slack_username': this.dataservice.slack_username }));
             console.log(this.dataservice.users)
             console.log(this.dataservice.project_slack)
             console.log(this.dataservice.user_slack)
@@ -230,7 +286,8 @@ export class ProfileComponent implements OnInit {
 
 
   changeSprint() 
-  {   
+  {  
+  this.dataservice.users_id = [] 
     this.dataservice.message ="";
     this.dataservice.sprint_goals = [];
       for (var i = 0;  i < this.dataservice.users.length; i++)  {
@@ -247,7 +304,7 @@ export class ProfileComponent implements OnInit {
 
             
   filterSprint(uSprints) {
-    
+    this.dataservice.users_id = []
     this.dataservice.sprints= uSprints
     var filter_goal = []
     console.log(filter_goal)
@@ -355,9 +412,11 @@ export class ProfileComponent implements OnInit {
   editGoal(event)
   {
     this.dataservice.message ="";
-    console.log(this.dataservice.selected_sprint);
+    console.log(event);
     console.log(this.dataservice.users);
     var taskID = event.target.parentElement.id.substring(1);
+    console.log("new editgoal----====================")
+  console.log(taskID)
     var message = null;
     for(var i = 0; i < this.dataservice.users.length; i++)
     {
@@ -527,6 +586,7 @@ export class ProfileComponent implements OnInit {
     }
     console.log(this.dataservice.realname)
     this.websocket.send(JSON.stringify({
+      'project_id': this.dataservice.project, 
       'user': this.dataservice.realname, 
       'message': this.chat_text,
       'goal_id': this.goal_id,
@@ -565,7 +625,7 @@ export class ProfileComponent implements OnInit {
 
   initGoalChat(){
     this.dataservice.message ="";
-    this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '!goal_chat' + this.goal_id, 'goal_id': this.goal_id, 'slack_username': this.dataservice.slack_username }))
+    this.websocket.send(JSON.stringify({'project_id': this.dataservice.project, 'user': this.dataservice.realname, 'message': '!goal_chat' + this.goal_id, 'goal_id': this.goal_id, 'slack_username': this.dataservice.slack_username }))
     this.show_project_chat = true;
     this.chat_div_title = this.goal_id + " Chat"
   }
@@ -583,7 +643,7 @@ export class ProfileComponent implements OnInit {
 
   initMainChat(){
     this.dataservice.message ="";
-    this.websocket.send(JSON.stringify({'user': this.dataservice.realname, 'message': '!join ' + this.dataservice.project_name, 'goal_id': 'main_chat_' + this.dataservice.project_name, 'slack_username': this.dataservice.slack_username }));
+    this.websocket.send(JSON.stringify({'project_id': this.dataservice.project,  'user': this.dataservice.realname, 'message': '!join ' + this.dataservice.project_name, 'goal_id': 'main_chat_' + this.dataservice.project_name, 'slack_username': this.dataservice.slack_username }));
     this.chat_div_title = "Project Chat"
     this.show_project_chat = false;
   }
@@ -860,7 +920,13 @@ export class ProfileComponent implements OnInit {
   ResizeImage(iName) {
     this.dataservice.message ="";
     console.log(iName)
-    this.scrum_image = iName
+    // window.open(this.dataservice.domain_protocol + this.dataservice.domain_name + iName, "Image open", "width=1000, height=1000");
+     this.scrum_image = iName
+  }
+
+   ResizeImageFull() {
+    window.open(this.dataservice.domain_protocol + this.dataservice.domain_name + this.scrum_image, "Image open", "width=1500px, height=1500px");
+
   }
 
    navDrop() {
@@ -870,10 +936,12 @@ export class ProfileComponent implements OnInit {
     console.log(this.nav_drop)
   }
 
-    CheckHistory(task) {
+    CheckHistory(task, push_id) {
       this.dataservice.message ="";
-      console.log(task)
-      this.task_history = task
+      console.log(task);
+      console.log("kfkfgkfgk" + push_id);
+      this.goal_push_id = push_id;
+      this.task_history = task;
       this.show_history = !this.show_history; 
   }
 
@@ -897,6 +965,7 @@ autogrow() {
   textArea.style.overflow = 'hidden';
   textArea.style.height = 'auto';
   textArea.style.height = textArea.scrollHeight + 'px';
+  console.log(this.chat_text)
 
 }
 

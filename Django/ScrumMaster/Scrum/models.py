@@ -20,6 +20,7 @@ class ChatscrumSlackApp(models.Model):
 class ScrumProject(models.Model):
     name = models.CharField(max_length=50)
     project_count = models.IntegerField(default=0)
+    to_clear_TFT = models.BooleanField(default=True)
  
     
     def __str__(self):
@@ -56,9 +57,15 @@ class ScrumProjectRole(models.Model):
     color = models.CharField(max_length=50, default="white")
     user = models.ForeignKey(ScrumUser, on_delete=models.CASCADE)
     project = models.ForeignKey(ScrumProject, on_delete=models.CASCADE)
+
+    slack_user_id = models.CharField(blank=True, null=True, max_length=50)
+    slack_email = models.CharField(blank=True, null=True, max_length=50)
+    slack_username = models.CharField(blank=True, null=True, max_length=50)
+    slack_profile_picture = models.TextField(blank=True, null=True, default="https://secure.gravatar.com/avatar/8ca9b9d6ee37371cba9ee9362cdbbc9b.jpg?s=512&d=https%3A%2F%2Fa.slack-edge.com%2F00b63%2Fimg%2Favatars%2Fava_0005-512.png")
     
     def __str__(self):
         return self.role
+        return '{} {} '.format(self.role,self.user)
 
 class ScrumDemoProject(models.Model):
     project = models.ForeignKey(ScrumProject, on_delete=models.CASCADE)
@@ -102,6 +109,7 @@ class ScrumChatRoom(models.Model):
 class ScrumChatMessage(models.Model):
     user = models.CharField(max_length=50)
     message = models.TextField()
+    profile_picture = models.TextField(default="prof_pic")
     date_Time = models.DateTimeField(auto_now = True)
     room = models.ForeignKey(ScrumChatRoom, on_delete=models.CASCADE)
 
@@ -181,5 +189,4 @@ class ScrumNote(models.Model):
     
     class Meta:
         ordering = ['-id']
-        
-        
+    

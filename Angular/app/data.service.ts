@@ -37,7 +37,11 @@ export class DataService {
   public project;
   public project_name;
   public project_id;
+  public to_clear_board;
   public users;
+  public work_IDs = [];
+  public users_id = [];
+  public workID_goal_array;
   public sprints;
   public sprint_start;
   public sprint_end;
@@ -136,6 +140,7 @@ export class DataService {
             sessionStorage.setItem('role_id', data['role_id']);
             sessionStorage.setItem('token', data['token']);
             sessionStorage.setItem('project_id', data['project_id']);
+            sessionStorage.setItem('to_clear_board', data['to_clear_board']);
             sessionStorage.setItem('user_slack', data['user_slack']);
             sessionStorage.setItem('project_slack', data['project_slack']);
             sessionStorage.setItem('slack_username', data['slack_username']);
@@ -144,6 +149,8 @@ export class DataService {
             this.role_id = data['role_id'];
             this.realname = data['name'];
             this.project = data['project_id'];
+            this.to_clear_board = data['to_clear_board'];
+            console.log(this.to_clear_board)
             this.user_slack = data['user_slack'];
             this.project_slack = data['project_slack'];
             this.slack_username = data['slack_username'];
@@ -265,6 +272,11 @@ export class DataService {
 
   moveGoal(goal_id, to_id, hours, push_id)
   {
+    console.log("~~~~~~~~~~~~~~~~~~~~~~parameters passed ~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    console.log(goal_id)
+    console.log(to_id)
+    console.log(hours)
+    console.log(push_id)
     this.http.patch(this.domain_protocol + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'goal_id': goal_id, 'to_id': to_id, 'hours': hours, 'project_id': this.project, 'push_id': push_id}), this.authOptions).subscribe(
         data => {
             this.users = data['data'];
@@ -313,4 +325,32 @@ export class DataService {
         }
     );   
   }
+
+  clearBoardSwitch()  {
+
+    this.http.put(this.domain_protocol + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'mode': 3, 'project_id': this.project}), this.authOptions).subscribe(
+        data => {
+            console.log("toggle successful")
+            this.message = data['message'];
+            console.log(data['to_clear_board'] + 'true')
+            sessionStorage.setItem('to_clear_board', data['to_clear_board']);
+            this.to_clear_board  = data['to_clear_board']; 
+
+        },
+        err => {
+          console.log('toggle failed')
+            console.error(err);
+            if(err['status'] == 401)
+            {
+                this.message = 'Session Invalid or Expired. Please Login.';
+                this.logout();
+            } else
+            {
+                this.message = 'Unexpected Error!';    
+            }
+        }
+    );   
+  }
+
+
 }
