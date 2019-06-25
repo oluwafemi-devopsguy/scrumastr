@@ -965,6 +965,7 @@ autogrow() {
   textArea.style.overflow = 'hidden';
   textArea.style.height = 'auto';
   textArea.style.height = textArea.scrollHeight + 'px';
+  console.log(this.chat_text)
 
 }
 
