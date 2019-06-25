@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 export class DataService {
     
   public domain_name = '127.0.0.1:8000';
-  public domain_protocol = 'http://';
+  public domain_protocol = 'https://';
   public websocket = 'ws://';
   
   public message;
