@@ -212,6 +212,10 @@ class ScrumUserViewSet(viewsets.ModelViewSet):
     serializer_class = ScrumUserSerializer
     
     def create(self, request):
+        print("Testing New user create====================")
+        html = "<html><body>An error occured!!!</body></html>" 
+        return HttpResponse(html)
+        
         # Pattern Match For an Email: https://www.regular-expressions.info/email.html
         regex_pattern = re.compile(r'(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)')
         if regex_pattern.match(request.data['email']) == None:
@@ -437,7 +441,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
                     message = 'Goal Moved Successfully! Push ID is ' + request.data['push_id']
                 if request.data['hours'] > 8:
                     goal_item.status = state_prev
-                    message = 'Error: Task Exceeds 8 hours of completion.'
+                    message = 'Error: Task cannot Exceeds 8hours or less than an hour of completion.'
                 elif request.data['hours'] == -1 and goal_item.hours == -1 and to_id > 1:
                      goal_item.status = state_prev
                      message = 'Error: A Task must have hours assigned.'
@@ -475,7 +479,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
                 
             goal = scrum_project.scrumgoal_set.get(goal_project_id=from_id)
             if goal.moveable == True:
-            
+                print(to_id)
                 author = ScrumProjectRole.objects.get(id=to_id)
                 goal.user = author
                 self.createHistory(goal.name, goal.status, goal.goal_project_id, goal.hours, goal.time_created, goal.user, goal.project, goal.file, goal.id, 'Goal Reassigned Successfully by')
@@ -555,6 +559,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             
 def jwt_response_payload_handler(token, user=None, request=None):
     project = None
+    
     try:
         project = ScrumProject.objects.get(name__iexact=request.data['project'])        
     except ScrumProject.DoesNotExist:
@@ -860,11 +865,11 @@ class Events(APIView):
                         if match:
                             print(match.group(1))
                             try:
-                                slack_name = ScrumProjectRole.objects.get(slack_user_id=match.group(1))
+                                a = ScrumProjectRole.objects.get(slack_user_id=match.group(1))
                                 slack_message = slack_message.replace(each_word, slack_name.user.nickname)
                                 print(slack_message)
                                 print("pattern matched")
-                            except ScrumUser.DoesNotExist as e:
+                            except ScrumProjectRole.DoesNotExist as e:
                                 slack_message = slack_message.replace(each_word, match.group(1))
                             
                             

@@ -30,6 +30,7 @@ export class ProfileComponent implements OnInit {
   public at_bottom: boolean = true;
   public id_hover = -1;
   public id_click = -1;
+  public id_clicks = -1;
   sprint_start: Number;
   sprint_end: Number;
   goal_id: string;
@@ -45,6 +46,7 @@ export class ProfileComponent implements OnInit {
   public note;
   public note_priority;
   public board: string = "AllTask"
+  public rep;
     
   public modalOptions: Materialize.ModalOptions = {
     dismissible: false, // Modal can be dismissed by clicking outside of the modal
@@ -74,7 +76,7 @@ export class ProfileComponent implements OnInit {
     this.subs.add(
         this.dragula.drop('mainTable').subscribe(
             value => {
-                this.dataservice.users_id = []
+                this.dataservice.users_done = []
                 console.log(value);
                 var el = value['el'];
                 var target = value['target'];
@@ -211,6 +213,17 @@ export class ProfileComponent implements OnInit {
             console.log(this.dataservice.slack_app_id)
 
 
+            if (this.dataservice.user_slack == "false" && this.dataservice.project_slack == false && dataservice.role.toLowerCase() == "owner") {
+             window.location.replace("https://slack.com/oauth/authorize?client_id=" + this.dataservice.slack_app_id + "&state=main_chat_" + this.dataservice.project_name + ">>>" + this.dataservice.username + "&scope=incoming-webhook,channels:read,channels:history,groups:history,mpim:history,emoji:read,files:read,groups:read,im:read,im:history,reactions:read,stars:read,users:read,team:read,chat:write:user,chat:write:bot,channels:write,bot")
+           
+              console.log("=======================THIS IS OWNER PROJECT=================================")
+            } else if(this.dataservice.user_slack == "false" && this.dataservice.project_slack == true) {
+              window.location.replace("https://slack.com/oauth/authorize?client_id=" + this.dataservice.slack_app_id + "&state=main_chat_" + this.dataservice.project_name + ">>>" + this.dataservice.username + "&scope=identity.basic identity.team identity.avatar identity.email")
+              console.log("=======================THIS IS other user PROJECT=================================")
+            }
+
+
+
             this.filterSprint(res2)
         },
         err => {
@@ -287,7 +300,7 @@ export class ProfileComponent implements OnInit {
 
   changeSprint() 
   {  
-  this.dataservice.users_id = [] 
+  this.dataservice.users_done = [] 
     this.dataservice.message ="";
     this.dataservice.sprint_goals = [];
       for (var i = 0;  i < this.dataservice.users.length; i++)  {
@@ -304,7 +317,7 @@ export class ProfileComponent implements OnInit {
 
             
   filterSprint(uSprints) {
-    this.dataservice.users_id = []
+    this.dataservice.users_done = []
     this.dataservice.sprints= uSprints
     var filter_goal = []
     console.log(filter_goal)
@@ -723,18 +736,7 @@ export class ProfileComponent implements OnInit {
     this.dragula.destroy('mainTable');
   }
 
-  scrollIntoView(anchorHash) {
-    this.dataservice.message ="";
-    this.id_click = parseInt(anchorHash.substring(1), 10);
-    setTimeout(() => {
-        const anchor = document.getElementById(anchorHash);
-        console.log(anchorHash);
-        if (anchor) {
-            anchor.focus();
-            anchor.scrollIntoView();
-        }
-    });
-}
+
 
 // this.dataservice.sprint_goals = [];
 //       for (var i = 0;  i < this.dataservice.users.length; i++)  {
@@ -966,6 +968,80 @@ autogrow() {
   textArea.style.height = 'auto';
   textArea.style.height = textArea.scrollHeight + 'px';
   console.log(this.chat_text)
+
+}
+
+  scrollIntoView(anchorHash) {
+    console.log("This is scroll into view")
+    console.log(anchorHash)
+    this.dataservice.message ="";
+    this.id_clicks = parseInt(anchorHash.substring(2), 10);
+    console.log(this.id_clicks)
+    console.log(anchorHash.substring(0))
+    console.log(anchorHash.substring(1))
+    console.log(anchorHash.substring(2))
+    setTimeout(() => {
+        const anchor = document.getElementById(anchorHash);
+        console.log(anchorHash);
+        if (anchor) {
+            anchor.focus();
+            anchor.scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
+        }
+    });
+}
+
+
+taskHighlight(message) {
+  console.log("This is task highlight")
+  console.log(message)
+  let m = message.split(" ").pop(); 
+    if( m.startsWith("#") && m.length > 1)  {
+      console.log("Start wiith =====")
+      console.log(m)
+      console.log(m.substring(1))
+      let gs = "gs" + m.substring(1)
+      console.log(gs)
+      this.scrollIntoView(gs)
+    }
+  
+  // var test = '';
+  // this.rep = 'gg';
+  // var text = "oooooooo";
+  
+  // let stylizedText: string = '';
+  // for(let m of message.split(" "))  {
+  //   if( m.startsWith("#") && m.length > 1)
+  //     stylizedText += `<span style="font-weight: bold; color: #1f7a7a">${m}</span> `;
+  //   else
+  //     stylizedText += m + " ";
+  // }  
+  // console.log("THE OUTPUT DATA")
+  // console.log(stylizedText)
+  // console.log(this.chat_text)
+  // console.log(message)
+  // this.chat_text = message.replace(/yes/g, "<a>tttty</a>")
+ // var newDiv = document.createElement("span");
+ // newDiv.innerHTML = "yytt"
+ // newDiv.style.color = "red"
+
+ //  this.chat_text = newDiv
+ //  console.log("Output values after replace")
+ //  console.log(this.rep)
+ //  console.log(this.chat_text)
+ //  console.log("Output values end of replace")
+
+}
+
+insertElement() {
+  var text = "oooooooo";
+  var newDiv = document.createElement("span");
+  var divContent = document.createTextNode(text)
+
+  newDiv.innerHTML = "yytt"
+
+  var output = newDiv.appendChild(divContent)
+  console.log(output)
+  return output
 
 }
 

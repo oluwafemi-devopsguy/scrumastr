@@ -17,7 +17,9 @@ import { SignupComponent } from './signup/signup.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ProfileComponent } from './profile/profile.component';
 import { WorkIDsPipe } from './profile/profile.pipe';
-import { WorkIDsGoalsPipe } from './profile/profile.pipe';
+import { TFTsGoalsPipe } from './profile/profile.pipe';
+import { InitUserLanePipe } from './profile/profile.pipe';
+import { ElementizePipe } from './profile/profile.pipe';
 
 import { DragulaModule } from 'ng2-dragula';
 import { MzButtonModule, MzModalModule } from 'ngx-materialize';
@@ -35,7 +37,9 @@ import { AdminComponent } from './admin/admin.component';
     SignupComponent,
     AdminComponent,
     WorkIDsPipe,
-    WorkIDsGoalsPipe
+    TFTsGoalsPipe, 
+    InitUserLanePipe,
+    ElementizePipe
   ],
   imports: [
     HttpClientModule,

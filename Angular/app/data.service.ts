@@ -40,7 +40,9 @@ export class DataService {
   public to_clear_board;
   public users;
   public work_IDs = [];
-  public users_id = [];
+  public users_done = [];
+  public users_TFT = [];
+  // public users_id = [];
   public workID_goal_array;
   public sprints;
   public sprint_start;
@@ -51,6 +53,7 @@ export class DataService {
   public _user_sprint_goals;
   public user_goal_history;
   public user_notes;
+  public off_today: boolean = true;
   
   public httpOptions = {
     headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -97,7 +100,7 @@ export class DataService {
   createUser()
   {
     this.http.post(this.domain_protocol + this.domain_name + '/scrum/api/scrumusers/', JSON.stringify({'email': this.createuser_email, 'password': this.createuser_password, 'full_name': this.createuser_fullname, 'usertype': this.createuser_usertype, 'projname': this.createuser_projname}), this.httpOptions).subscribe(
-        data => {
+        data => { 
             this.message = data['message'];
             this.createuser_email = '';
             this.createuser_password = '';
