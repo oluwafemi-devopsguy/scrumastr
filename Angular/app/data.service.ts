@@ -7,8 +7,8 @@ import { Router } from '@angular/router';
 export class DataService {
     
   public domain_name = '127.0.0.1:8000';
-  public domain_protocol = 'https://';
-  public websocket = 'wss://';
+  public domain_protocol = 'http://';
+  public websocket = 'ws://';
   
   public message;
   public goal_name;
@@ -22,6 +22,7 @@ export class DataService {
   public createuser_fullname;
   public createuser_usertype = "User";
   public createuser_projname;
+  public add_slack: boolean = false;
   
   public inviteuser_email;
   public message_body;
@@ -99,6 +100,8 @@ export class DataService {
   
   createUser()
   {
+    console.log("inside DataService")
+    console.log(this.add_slack)
     this.http.post(this.domain_protocol + this.domain_name + '/scrum/api/scrumusers/', JSON.stringify({'email': this.createuser_email, 'password': this.createuser_password, 'full_name': this.createuser_fullname, 'usertype': this.createuser_usertype, 'projname': this.createuser_projname}), this.httpOptions).subscribe(
         data => { 
             this.message = data['message'];
@@ -107,6 +110,10 @@ export class DataService {
             this.createuser_fullname = '';
             this.createuser_usertype = '';
             this.createuser_projname = '';
+            if (this.add_slack) {
+              console.log("======================= ADDING PROJECT TO SLACK=================================")
+              window.location.replace("https://slack.com/oauth/authorize?client_id=" + this.slack_app_id + "&state=main_chat_" + this.project_name + ">>>" + this.username + "&scope=incoming-webhook,channels:read,channels:history,groups:history,mpim:history,emoji:read,files:read,groups:read,im:read,im:history,reactions:read,stars:read,users:read,team:read,chat:write:user,chat:write:bot,channels:write,bot")
+            }
         },
         err => {
             this.message = 'User Creation Failed! Unexpected Error!';

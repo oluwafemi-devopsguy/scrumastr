@@ -213,15 +213,10 @@ export class ProfileComponent implements OnInit {
             console.log(this.dataservice.slack_app_id)
 
 
-            if (this.dataservice.user_slack == "false" && this.dataservice.project_slack == false && dataservice.role.toLowerCase() == "owner") {
-             window.location.replace("https://slack.com/oauth/authorize?client_id=" + this.dataservice.slack_app_id + "&state=main_chat_" + this.dataservice.project_name + ">>>" + this.dataservice.username + "&scope=incoming-webhook,channels:read,channels:history,groups:history,mpim:history,emoji:read,files:read,groups:read,im:read,im:history,reactions:read,stars:read,users:read,team:read,chat:write:user,chat:write:bot,channels:write,bot")
-           
-              console.log("=======================THIS IS OWNER PROJECT=================================")
-            } else if(this.dataservice.user_slack == "false" && this.dataservice.project_slack == true) {
+            if (this.dataservice.user_slack == "false" && this.dataservice.project_slack == true) {
+              console.log("=======================C SIGNING IN USER TO SLACK =================================")
               window.location.replace("https://slack.com/oauth/authorize?client_id=" + this.dataservice.slack_app_id + "&state=main_chat_" + this.dataservice.project_name + ">>>" + this.dataservice.username + "&scope=identity.basic identity.team identity.avatar identity.email")
-              console.log("=======================THIS IS other user PROJECT=================================")
-            }
-
+            } 
 
 
             this.filterSprint(res2)

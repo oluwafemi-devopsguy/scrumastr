@@ -32,6 +32,8 @@ export class UserComponent implements OnInit {
   
   createUser()
   {
+  console.log("inside user")
+  console.log(this.dataservice.add_slack)
     this.dataservice.createUser(); 
 
   }

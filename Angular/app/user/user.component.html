@@ -51,7 +51,10 @@
                 <div class="form-group" *ngIf="dataservice.createuser_usertype == 'Owner' || create_new_project">
                     
                     <input class="form-control" rows="1" cols="30" [(ngModel)]="dataservice.createuser_projname" id="projname" name="projname" placeholder="Project Name">
-                    <br>
+                    
+                  <!--   <input class="form-control with-gap" type="checkbox" name="add_slack" [(ngModel)]="dataservice.add_slack" value="add_slack"> -->
+                  <label><input class="form-control with-gap" type="checkbox" name="add_slack" [(ngModel)]="dataservice.add_slack" value="add_slack"><span>Add Slack</span></label><br><br>
+                    <!-- <label><h6 style="font-weight: bold;">Add Slack  </h6></label><br><br> -->
                 </div>
                 
                 <input  *ngIf="!create_new_project" class="btn btn-default" type="submit" value="Create User" id="create_user">
