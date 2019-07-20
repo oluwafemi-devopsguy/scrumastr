@@ -213,8 +213,7 @@ class ScrumUserViewSet(viewsets.ModelViewSet):
     
     def create(self, request):
         print("Testing New user create====================")
-        html = "<html><body>An error occured!!!</body></html>" 
-        return HttpResponse(html)
+
         
         # Pattern Match For an Email: https://www.regular-expressions.info/email.html
         regex_pattern = re.compile(r'(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)')
