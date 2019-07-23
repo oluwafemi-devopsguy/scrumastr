@@ -112,8 +112,13 @@ export class ElementizePipe implements  PipeTransform {
       ) { }
 
 
-  transform(value: any, args?: any): SafeHtml  {
-    return this._domSanitizer.bypassSecurityTrustHtml(this.stylize(value));
+  transform(value: any): SafeHtml   {
+  	let output = this.stylize(value)
+  	console.log(typeof output)
+  	console.log(output)
+  	console.log(typeof `<strong>hello world</strong>`)
+    return this._domSanitizer.bypassSecurityTrustHtml(output);
+    // return this.sanitizer.sanitize(SecurityContext.HTML, output);
     // return this.sanitizer.sanitize(SecurityContext.HTML, (this.stylize(value)))
     // return value;
   }
@@ -130,7 +135,7 @@ export class ElementizePipe implements  PipeTransform {
           stylizedText += t + " ";
       }
       console.log("This is stylized======================")
-      console.log(stylizedText)
+      console.log(typeof stylizedText)
       return stylizedText;
     }
     console.log("This is stylized====================== no length")

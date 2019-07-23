@@ -213,6 +213,8 @@ class ScrumUserViewSet(viewsets.ModelViewSet):
     
     def create(self, request):
         print("Testing New user create====================")
+        slack_app_id = ChatscrumSlackApp.objects.all().first().CLIENT_ID
+        print(slack_app_id)
 
         
         # Pattern Match For an Email: https://www.regular-expressions.info/email.html
@@ -233,15 +235,16 @@ class ScrumUserViewSet(viewsets.ModelViewSet):
             if request.data['usertype'] == 'Owner':
                 scrum_project = ScrumProject(name=request.data['projname'])
                 scrum_project.save()
+                print(slack_app_id)
                 scrum_project_role = ScrumProjectRole(role="Owner", user=scrum_user, project=scrum_project)
                 scrum_project_role.save()
 
             user.set_password(request.data['password'])
             user.save()
-            return JsonResponse({'message': 'User Created Successfully.'})
+            return JsonResponse({'message': 'User Created Successfully.', 'client_id': slack_app_id })
         elif user:
             if not request.data['projname']:
-                return JsonResponse({'message': 'user already existed as a User. Create new project'})
+                return JsonResponse({'message': 'user already existed as a User. Create new project', 'client_id': slack_app_id})
             print("Testing vreationssssssssssss")
             scrum_user = User.objects.get(email = request.data['email'])
             print(scrum_user.scrumuser.nickname)
@@ -250,7 +253,7 @@ class ScrumUserViewSet(viewsets.ModelViewSet):
             scrum_project_role = ScrumProjectRole(role="Owner", user=scrum_user.scrumuser, project=scrum_project)
             scrum_project_role.save()
             print("User exist and project created")
-            return JsonResponse({'message': 'Project Created Successfully for already existing User.'})
+            return JsonResponse({'message': 'Project Created Successfully for already existing User.', 'client_id': slack_app_id})
         else:
             return JsonResponse({'message': 'Error: User with that e-mail already exists.'})
 
