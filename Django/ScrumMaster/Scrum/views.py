@@ -834,11 +834,14 @@ class Events(APIView):
 
             try:
                 slack_user = ScrumProjectRole.objects.filter(slack_user_id=post_data["event"]["user"]).first()
+
                 if slack_user is not None: 
                     print("==========================Slack user=================" + slack_user.user.nickname)
                     slack_user_nick = slack_user.user.nickname
+                    slack_profile_picture = slack_user.slack_profile_picture
                 else:
-                    slack_user_nick = post_data["event"]["user"]                
+                    slack_user_nick = post_data["event"]["user"]
+                    slack_profile_picture = "https://ca.slack-edge.com/T73UK2WNS-UKRNK9ULR-gd4dbac35d17-24"               
             except ScrumUser.DoesNotExist as error:
                 print("User Not matched: failed")
                 slack_user_nick = post_data["event"]["user"]
@@ -879,10 +882,10 @@ class Events(APIView):
                     chatRoom = ScrumChatRoom.objects.get(id = slack_details.room_id).hash
                     new_message = ScrumChatMessage(room=slack_details.room, user=slack_user_nick, message=slack_message, profile_picture=slack_user.slack_profile_picture)
                     new_message.save()
-                    
+            
                     async_to_sync(self.channel_layer.group_send)(
                         chatRoom,
-                            {"type": "chat_message", 'user': slack_user_nick, 'message': slack_message, 'date_Time':datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H:%M:%S")},
+                            {"type": "chat_message", 'user': slack_user_nick, 'message': slack_message, 'date_Time':datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H:%M:%S"), 'profile_picture': slack_profile_picture},
                         )
 
             except KeyError as error:
