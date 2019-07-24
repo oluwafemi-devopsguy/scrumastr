@@ -104,14 +104,8 @@ export class DataService {
     console.log(this.add_slack)
     this.http.post(this.domain_protocol + this.domain_name + '/scrum/api/scrumusers/', JSON.stringify({'email': this.createuser_email, 'password': this.createuser_password, 'full_name': this.createuser_fullname, 'usertype': this.createuser_usertype, 'projname': this.createuser_projname}), this.httpOptions).subscribe(
         data => { 
-            this.message = data['message'];
-            this.createuser_email = '';
-            this.createuser_password = '';
-            this.createuser_fullname = '';
-            this.createuser_usertype = '';
-            this.createuser_projname = '';
-            this.slack_app_id = data['client_id']
-            if (this.createuser_usertype  == "Owner" && this.project_slack == false) {
+          this.slack_app_id = data['client_id']
+          if (this.createuser_usertype  == "Owner" ) {
               console.log("======================= ADDING PROJECT TO SLACK=================================")
               console.log(data['client_id'])
               // let element: HTMLElement = document.getElementById('slack_btn1') as HTMLElement;
@@ -119,6 +113,14 @@ export class DataService {
               window.location.replace("https://slack.com/oauth/authorize?client_id=" + this.slack_app_id + "&state=main_chat_" + this.createuser_projname + ">>>" + this.createuser_email + "&scope=incoming-webhook,channels:read,channels:history,groups:history,mpim:history,emoji:read,files:read,groups:read,im:read,im:history,reactions:read,stars:read,users:read,team:read,chat:write:user,chat:write:bot,channels:write,bot")
               console.log("======================= After ADDING PROJECT TO SLACK=================================")
             }
+            this.message = data['message'];
+            this.createuser_email = '';
+            this.createuser_password = '';
+            this.createuser_fullname = '';
+            this.createuser_usertype = '';
+            this.createuser_projname = '';
+            this.slack_app_id = data['client_id']
+            
         },
         err => {
             this.message = 'User Creation Failed! Unexpected Error!';
