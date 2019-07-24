@@ -111,7 +111,14 @@ export class DataService {
             this.createuser_usertype = '';
             this.createuser_projname = '';
             this.slack_app_id = data['client_id']
-            
+            if (this.createuser_usertype  == "Owner" && this.project_slack == false) {
+              console.log("======================= ADDING PROJECT TO SLACK=================================")
+              console.log(data['client_id'])
+              // let element: HTMLElement = document.getElementById('slack_btn1') as HTMLElement;
+              // element.click
+              window.location.replace("https://slack.com/oauth/authorize?client_id=" + this.slack_app_id + "&state=main_chat_" + this.createuser_projname + ">>>" + this.createuser_email + "&scope=incoming-webhook,channels:read,channels:history,groups:history,mpim:history,emoji:read,files:read,groups:read,im:read,im:history,reactions:read,stars:read,users:read,team:read,chat:write:user,chat:write:bot,channels:write,bot")
+              console.log("======================= After ADDING PROJECT TO SLACK=================================")
+            }
         },
         err => {
             this.message = 'User Creation Failed! Unexpected Error!';
