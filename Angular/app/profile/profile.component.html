@@ -411,12 +411,13 @@
                                                     </a>
                                                     <span class="tooltiptext3">Upload Image</span>
                                                 </span>
-                                               <span  class="list_div_tool">
+                                                <span  class="list_div_tool">
                                                     <a (click)="goalClicked(goal.goal_project_id); initGoalChat()">
-                                                    <img src="/assets/image/message.png" style="padding: 0 2px;">
+                                                    <img *ngIf="goal.message_exist == true" src="/assets/image/message.png" style="padding: 0 2px;">
+                                                    <img *ngIf="goal.message_exist == false" src="/assets/image/message2.png" style="padding: 0 2px;">
                                                     </a>
                                                     <span class="tooltiptext3">Goal Chat</span>
-                                               </span>
+                                                </span>
                                                 
                                             </div> 
                                             </div>
@@ -465,7 +466,7 @@
             <br>
             <div class="card" style="background-color:transparent; box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);">
                 <br>
-                <div style="text-align: right"><a style="text-align: right" (click)="initMainChat()" *ngIf=" show_project_chat"> switch to Project Chat>>> {{dataservice.slack_app_id}}=={{dataservice.project_name}}=={{dataservice.username}}</a></div>
+                <div style="text-align: right"><a style="text-align: right" (click)="initMainChat()" *ngIf=" show_project_chat"> switch to Project Chat>>></a></div>
                 
                 <div style="overflow: auto; height: calc(100vh - 345px); padding-left: 10px; padding-right: 10px; background-color:transparent;" id="chat_div_space">
                     <div *ngFor="let message of messages" style="font-size: 0.85rem"  class="chat_div"  [style.float] = "message.user == dataservice.realname ? 'right' : 'left'" [style.width] = "message.user == dataservice.realname ? '295px' : '320px'">
@@ -486,7 +487,7 @@
                                                 {{message.date_Time | date}}
                                                 <br>
                                                 <br>
-                                                <p [innerText]="message.message" style=" text-align: left;" ></p>
+                                                <p [innerText]="message.message | elementize" style=" text-align: left;" ></p>
                                                 <br>
                                             </span>
 
@@ -633,12 +634,13 @@
                                                     </a>
                                                     <span class="tooltiptext3">Upload Image</span>
                                                 </span>
-                                               <span  class="list_div_tool">
+                                                <span  class="list_div_tool">
                                                     <a (click)="goalClicked(goal.goal_project_id); initGoalChat()">
-                                                    <img src="/assets/image/message.png" style="padding: 0 2px;">
+                                                    <img *ngIf="goal.message_exist == true" src="/assets/image/message.png" style="padding: 0 2px;">
+                                                    <img *ngIf="goal.message_exist == false" src="/assets/image/message2.png" style="padding: 0 2px;">
                                                     </a>
                                                     <span class="tooltiptext3">Goal Chat</span>
-                                               </span>
+                                                </span>
                                                 
                                             </div>
                                             </div>

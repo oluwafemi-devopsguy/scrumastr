@@ -79,7 +79,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.generate_message(new_room, 'SERVER INFO', '=== This is the beginning of the chatroom history. ===')
             self.room_object = new_room
         else:
-            self.room_object = self.firstObject(room)        
+            self.room_object = self.firstObject(room)
+
+        if self.identity[:9] != 'main_chat':
+            try:
+                print(self.identity[1:])
+                goal_obj = ScrumGoal.objects.get(goal_project_id=self.identity[1:])
+                print(goal_obj.message_exist)
+                goal_obj.message_exist = True
+                goal_obj.save()
+            except IndexError:
+                print("failed")        
         return
 
     def getCount(self, object):
