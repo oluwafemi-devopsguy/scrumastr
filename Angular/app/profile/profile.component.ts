@@ -206,7 +206,7 @@ export class ProfileComponent implements OnInit {
             this.dataservice.sprints = res2;
             this.dataservice.project_slack = res1['slack_installed'];
             this.dataservice.slack_app_id = res1['slack_app_id'];
-            this.websocket.send(JSON.stringify({'project_id': this.dataservice.project, 'user': this.dataservice.realname, 'message': '!join ' + this.dataservice.project_name, 'goal_id': 'o0099t_' + this.dataservice.project_name, 'slack_username': this.dataservice.slack_username }));
+            this.websocket.send(JSON.stringify({'project_id': this.dataservice.project, 'user': this.dataservice.realname, 'message': '!join ' + this.dataservice.project_name, 'goal_id': 'main_chat_' + this.dataservice.project_name, 'slack_username': this.dataservice.slack_username }));
             console.log(this.dataservice.users)
             console.log(this.dataservice.project_slack)
             console.log(this.dataservice.user_slack)
