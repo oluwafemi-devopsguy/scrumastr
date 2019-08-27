@@ -83,7 +83,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         if self.identity[:9] != 'main_chat':
             try:
-                print(self.identity[1:])
+                print(self.identity)
                 goal_obj = ScrumGoal.objects.get(goal_project_id=self.identity[1:])
                 print(goal_obj.message_exist)
                 goal_obj.message_exist = True
@@ -131,7 +131,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 
 
-        print("USER IDENTITY VIA PROJECT_ID =============================" + self.project_id)
+        print("USER IDENTITY VIA PROJECT_ID is =============================")
+        print(self.project_id)
         print(self.user)
         # self.scrum_user = ScrumProjectRole.objects.get(user = self.user, project_id=self.project_id)
         self.scrum_user = ScrumUser.objects.get(nickname = self.user).scrumprojectrole_set.get(project_id=self.project_id)

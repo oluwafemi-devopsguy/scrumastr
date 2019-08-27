@@ -766,18 +766,18 @@ class Events(APIView):
                 
                 print(user_response)
                 # print( user_response["user"]["email"])
-                try:
-                    print("============= INSIDE TRY GET USER============" )
-                    user= ScrumUser.objects.get(user__username=user_email)
-                    print(user)
-                    user_role = user.scrumprojectrole_set.get(user=user, project = scrum_project)
-                    print(user_role)
+                # try:
+                print("============= INSIDE TRY GET USER============" )
+                user= ScrumUser.objects.get(user__username=user_email)
+                print(user)
+                user_role = user.scrumprojectrole_set.get(user=user, project = scrum_project)
+                print(user_role)
                     
-                    print("============= AFTER TRY GET USER============" )
-                except:
-                    print(user_response)
-                    html = "<html><body>An error occured!!!</body></html>" 
-                    return HttpResponse(html)
+                print("============= AFTER TRY GET USER============" )
+                # except:
+                #     print(user_response)
+                #     html = "<html><body>An error occured!!!</body></html>" 
+                #     return HttpResponse(html)
                 
                 
                 

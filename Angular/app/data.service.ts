@@ -1,14 +1,25 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { environment } from '../environments/environment';
+
 @Injectable({
   providedIn: 'root'
 })
 export class DataService {
     
-  public domain_name = '127.0.0.1:8000';
-  public domain_protocol = 'http://';
-  public websocket = 'ws://';
+  // API_domain_name = environment.API_domain_name;
+  // API_domain_protocol = environment.API_domain_protocol;
+  // API_websocket = environment.API_websocket;
+
+  public domain_name = environment.domain_name;
+  public domain_protocol = environment.domain_protocol
+  public websocket = environment.websocket
+
+
+  // public domain_name = '127.0.0.1:8000';
+  // public domain_protocol = 'http://';
+  //  public websocket = 'ws://';
   
   public message;
   public goal_name;
