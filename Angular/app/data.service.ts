@@ -7,8 +7,8 @@ import { Router } from '@angular/router';
 export class DataService {
     
   public domain_name = '127.0.0.1:8000';
-  public domain_protocol = 'https://';
-  public websocket = 'wss://';
+  public domain_protocol = 'http://';
+  public websocket = 'ws://';
   
   public message;
   public goal_name;
@@ -51,6 +51,7 @@ export class DataService {
   public _user_sprint_goals;
   public user_goal_history;
   public user_notes;
+  public user_workid;
   
   public httpOptions = {
     headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -178,6 +179,7 @@ export class DataService {
         }
     );
   }
+
   
   addGoal(on_user)
   {

@@ -189,4 +189,16 @@ class ScrumNote(models.Model):
     
     class Meta:
         ordering = ['-id']
+
+class ScrumWorkId(models.Model):
+    user = models.ForeignKey(ScrumProjectRole, on_delete=models.CASCADE)
+    project = models.ForeignKey(ScrumProject, on_delete=models.CASCADE)
+    workid = models.TextField(blank=True, null=True)
+    branch = models.TextField(blank=True, null=True)
     
+    def __str__(self):
+        return self.workid
+        return self.branch   
+
+    class Meta:
+        ordering = ['-id'] 
