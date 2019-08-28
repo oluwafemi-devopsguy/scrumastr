@@ -184,7 +184,16 @@
                                         Add a Note
                                     </span>
                                 </span>
-                                
+
+                                <span class="tool">
+                                    <a (click)="onUser(user.id); addWorkid.openModal(); show_workid()" style="margin: 5px; ">
+                                        <img src="/assets/image/search.png" style="height: 20px; width: 20px; margin 10px; ">
+                                    </a> 
+                                    <span class="tooltiptext3">
+                                        Add or View Workid
+                                    </span>
+                                </span>                                
+
                                 <span *ngIf="dataservice.role.toLowerCase() == 'owner'" style="float: right;">
                                     <button type="button" class="btn-round" (click)="remove_user(user.user.nickname, user.id)" style=" border-radius: 5px; margin-top: inherit; height: 27px; border-left: 5px solid white ">
                                             Remove User
@@ -582,7 +591,60 @@
 
 
 
+        <mz-modal #addWorkid>
+            <mz-modal-header>
+                <h4>Add WorkId</h4>
+            </mz-modal-header>
+            <mz-modal-content>
+                
+                <h5 style="color: green">{{dataservice.message}}</h5>
+                <form (ngSubmit)="add_a_workid()">
+                    <textarea id="goal" [(ngModel)]="workid" name="goal" placeholder="Enter Workid" style="width: 150px; height: 60px; border-radius: 20px; padding: 10px; margin-bottom: 40px"></textarea>
+                    <h5>Select none Option</h5>
+                    <select  name="branch" style="height: 30px; margin: 15px; color: black; width: 100px; font-size: 20px;" [(ngModel)]="branch" value="none">
+                        <option Value="none" selected>none</option>                         
+                    </select>
+                    <div style="text-align: center">
+                        <button type="button" class="btn-round" value="Add Workid" (click)="add_a_workid()" style=" height: 40px; font-size: 14px">ADD WorkId</button>
+                    </div>
+                </form><br>
+                
 
+                <br>
+                <div style="display: table; width: 100%; word-wrap: break-word; border-collapse: collapse; border: 2px solid black;">
+                    <div style="display: table-row">
+                            <!--
+                            <th class="full-box">Created By</th>
+                            -->
+                            <th class="full-box">ID</th>
+                            <th class="full-box">WORKID</th>
+                            <th class="full-box">BRANCH</th>
+                            <th class="full-box">ACTION</th>
+                    </div>
+
+                    <div style="display: table-row" *ngFor="let workid of dataservice.user_workid; let j = index; let k = count">
+                        <td class="top-box">{{workid.id}}</td>
+                        <td class="top-box">
+                            <span style="font-weight: bolder;">
+                                {{workid.workid}} 
+                            </span>  
+                        </td>
+                        <td class="top-box">
+                            <span style="font-weight: bolder;">
+                                {{workid.branch}} 
+                            </span>  
+                        </td>
+                        <button (click)="deleteworkid(workid.id, workid.workid, workid.branch)" style="background-color: grey; border:none; box-shadow: none; border-radius: 8px;">
+                            <tr>
+                                <td><img src="/assets/image/plus2.png" style="height: 20px; width: 20px; "> </td>
+                                <td style="font-size: 14px; font-family: Roboto; font-weight: bold">Delete Workid </td>
+                            </tr> 
+                        </button>
+                       
+                    </div>                                
+                </div>
+            </mz-modal-content>
+        </mz-modal>
 
         <div class="col m4">
                 <mz-modal #basicModal>

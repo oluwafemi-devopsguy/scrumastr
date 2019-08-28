@@ -51,6 +51,7 @@ export class DataService {
   public _user_sprint_goals;
   public user_goal_history;
   public user_notes;
+  public user_workid;
   
   public httpOptions = {
     headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -178,6 +179,7 @@ export class DataService {
         }
     );
   }
+
   
   addGoal(on_user)
   {

@@ -43,6 +43,8 @@ export class ProfileComponent implements OnInit {
   public selected_history:any = [];
   public clicked_user;
   public note;
+  public workid;
+  public branch;
   public note_priority;
   public board: string = "AllTask"
     
@@ -857,12 +859,104 @@ export class ProfileComponent implements OnInit {
             }
          }
   }
+
+
 //   addGoalModal(){
 //     $(document).ready(function(){
 //         // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
 //         $('.modal-trigger').leanModal();
 //       });
 //   }
+
+  add_a_workid()  {
+    this.dataservice.message ="";
+    console.log(this.workid)
+    console.log(this.branch)
+     if(this.workid == '' || this.workid == null) {
+        console.log('WorkID is empty string or null')
+        this.dataservice.message = "Workid field cannot be empty"
+        return
+      } 
+     
+
+    this.http.post(this.dataservice.domain_protocol + this.dataservice.domain_name + '/scrum/api/scrumworkid/', JSON.stringify({'workid': this.workid, 'branch': this.branch, 'user': this.on_user, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
+            data => {
+                this.dataservice.users = data['data'];
+                this.dataservice.message = data['message'];
+                this.workid = ''; 
+
+
+                for (var i = 0;  i < this.dataservice.users.length; i++)  {       
+                if (this.dataservice.users[i].id == this.on_user.slice(1))
+                  { 
+                  console.log(this.dataservice.users)  
+                  console.log(this.dataservice.users[i].scrumworkid_set) 
+                  this.dataservice.user_workid = this.dataservice.users[i].scrumworkid_set
+                  }
+               } 
+
+
+            },
+            err => {
+                console.error(err);
+                if(err['status'] == 401)
+                {
+                    this.dataservice.message = 'Session Invalid or Expired. Please Login.';
+                    this.dataservice.logout();
+                } else
+                {
+                    this.dataservice.message = 'Unexpected Error!';    
+                }
+            }
+        );
+  }
+
+  deleteworkid(workid_id)  {
+    this.http.put(this.dataservice.domain_protocol + this.dataservice.domain_name + '/scrum/api/scrumworkid/', JSON.stringify({ 'id': workid_id, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
+            data => {
+                this.dataservice.users = data['data'];
+                this.dataservice.message = data['message'];
+                this.show_workid()
+                if (this.dataservice.selected_sprint) {
+                  this.changeSprint()
+                }
+                else{
+                  this.filterSprint(this.dataservice.sprints)
+                }               
+            },
+            err => {
+                console.error(err);
+                if(err['status'] == 401)
+                {
+                    this.dataservice.message = 'Session Invalid or Expired. Please Login.';
+                    this.dataservice.logout();
+                } else
+                {
+                    this.dataservice.message = 'Unexpected Error!';    
+                }
+            }
+        );
+  }
+
+  show_workid() {
+    this.dataservice.message ="";
+      for (var i = 0;  i < this.dataservice.users.length; i++)  {
+       
+          if (this.dataservice.users[i].id == this.on_user.slice(1))
+            { 
+            console.log(this.dataservice.users[i].scrumworkid_set) 
+            this.dataservice.user_workid = this.dataservice.users[i].scrumworkid_set
+            }
+         }
+  }
+
+
+
+
+
+
+
+
 
 
   selectFile(event) {
