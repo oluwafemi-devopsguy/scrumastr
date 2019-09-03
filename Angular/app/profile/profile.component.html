@@ -613,7 +613,7 @@
                                         <th class="full-box">Action</th>
                                 </div>
     
-                                <div style="display: table-row" *ngFor="let log.id of dataservice.proj_log; let j = index; let k = count">
+                                <div style="display: table-row" *ngFor="let log of dataservice.proj_log; let j = index; let k = count">
                                     <td class="top-box">{{log.id}}</td>
                                     <td class="top-box">
                                         <span style="font-weight: bolder;" [style.color]="log.priority == 'High' ? 'rgb(255,0,0)' : (log.priority == 'Medium' ? 'rgb(0,0,255)' : 'rgb(0,255,0)')">
