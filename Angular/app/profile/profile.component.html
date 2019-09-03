@@ -9,6 +9,7 @@
 
   <a [ngClass]="(board == 'MyTask')? 'active':doNothing()" (click)="myTask()">My Tasks</a>
   <a [ngClass]="(board == 'AllTask')? 'active':doNothing()" style="border-left: 1px solid #f2f2f2" (click)="allTask()">All Task</a>
+  <a [ngClass]="(board == 'Backlog')? 'active':doNothing()" style="border-left: 1px solid #f2f2f2" (click)="backlog()">Backlog</a>
   <div style="float: right; color: black; padding: 5px;">
     
         <h6><a class="dropd" style="display: inline; float: right; padding: 0; margin: 0 15px;" (click)="navDrop()">  
@@ -589,7 +590,55 @@
             
         </div>
 
+        <div class="col s8" style="height: calc(100vh - 65px); overflow: auto; background-color: #f2f2f2; border-left: 3px solid white;" [style.display] = "board == 'Backlog' ? '' : 'none'">
+            <div class="main_area">
+                <ng-container *ngFor="let user of dataservice.users; let user_index = index">
+                    <div *ngIf="user.user.nickname.toUpperCase() == this.dataservice.realname.toUpperCase()" class="board-area" style=" float: left;">
+                            <button (click)="onUser(user.id); addLog.openModal()" *ngIf="dataservice.role.toLowerCase() == 'owner', 'admin'" style="background-color: transparent; border:none; box-shadow: none;">
+                                    <tr>
+                                        <td><img src="/assets/image/plus2.png" style="height: 37px; width: 37px; "> </td>
+                                        <td style="font-size: 14px">Add New </td>
+                                    </tr> 
+                                </button>
 
+                                <br>
+                            <div style="display: table; width: 100%; word-wrap: break-word; border-collapse: collapse; border: 2px solid black;">
+                                <div style="display: table-row">
+                                        <!--
+                                        <th class="full-box">Created By</th>
+                                        -->
+                                        <th class="full-box">ID</th>
+                                        <th class="full-box">Feature</th>
+                                        <th class="full-box">PRIORITY</th>
+                                        <th class="full-box">Action</th>
+                                </div>
+    
+                                <div style="display: table-row" *ngFor="let log.id of dataservice.proj_log; let j = index; let k = count">
+                                    <td class="top-box">{{log.id}}</td>
+                                    <td class="top-box">
+                                        <span style="font-weight: bolder;" [style.color]="log.priority == 'High' ? 'rgb(255,0,0)' : (log.priority == 'Medium' ? 'rgb(0,0,255)' : 'rgb(0,255,0)')">
+                                            {{log.log}} 
+                                        </span>  
+                                    </td>
+                                    <td class="top-box" style="text-align: center;">
+                                        <!-- <button type="button" class="btn btn-link s_button"  *ngIf="dataservice.role.toLowerCase() == 'owner'" (click)="note_to_goal(note.id, note.note, note.priority)">
+                                            Add to Board
+                                        </button> -->
+                                        <button (click)="note_to_goal(log.id, log.log, log.priority)" style="background-color: grey; border:none; box-shadow: none; border-radius: 8px;">
+                                            <tr>
+                                                <td><img src="/assets/image/plus2.png" style="height: 20px; width: 20px; "> </td>
+                                                <td style="font-size: 14px; font-family: Roboto; font-weight: bold">Add Task </td>
+                                            </tr> 
+                                        </button>
+                                        <!-- <span style="font-size: 20px; font-weight: bolder;">+</span> -->
+                                    </td>
+                                </div>                                
+                            </div>
+                        </div>
+                    </ng-container>        
+                </div>
+        </div>    
+                
 
         <mz-modal #addWorkid>
             <mz-modal-header>
@@ -721,6 +770,34 @@
                         </div>
                     </mz-modal-content>
                 </mz-modal>
+
+
+                <mz-modal #addLog>
+                        <mz-modal-header>
+                            <h4>Add a Feature or Bug</h4>
+                        </mz-modal-header>
+                        <mz-modal-content>
+                            <div style="margin-bottom: 10px; font-weight: 500; font-size: 24px;">Features/Bugs<span style="font-weight: 500;color: red;">*</span></div>
+                            <h5 style="color: green">{{dataservice.message}}</h5>
+                            <form (ngSubmit)="add_a_log()">
+                                <textarea id="goal" [(ngModel)]="log" name="goal" placeholder="Enter new feature or bug..." style="width: 700px; height: 121px; border-radius: 20px; padding: 10px; margin-bottom: 40px"></textarea>
+                                <br>
+                                <div style="margin-bottom: 10px; font-weight: 500; font-size: 24px;">Priority<span style="font-weight: 500;color: red;">*</span></div>
+
+                                <select  name="log_priority" style="height: 30px; margin: 15px; color: #1f7a7a; width: auto;" [(ngModel)]="log_priority">
+                                    <option Value="High" selected>High Priority</option>
+                                    <option Value="Medium">Medium Priority</option>
+                                    <option Value="Low">Low Priority</option>                           
+                                </select>
+                                <!-- <input class="modal-close waves-effect btn btn-default" type="submit" value="Add Note"> -->
+                                <div style="text-align: center">
+                                    <button type="button" class="btn-round" value="Add" (click)="add_a_log()" style=" height: 40px; font-size: 14px">ADD</button>
+                                </div>
+                            </form><br>
+                        </mz-modal-content>
+                    </mz-modal>
+
+
                 <mz-modal #upload>
                     <mz-modal-header>
                         <h4>Add A File</h4>
