@@ -86,7 +86,9 @@ class ScrumGoal(models.Model):
     time_created = models.DateTimeField()
     file = models.ImageField(blank=True, null=True, storage=fs)
     days_failed = models.IntegerField(default=0)
+    message_exist = models.BooleanField(default=False)
     push_id = models.CharField(max_length=10, default="Null Value")
+
     
     
     '''
@@ -202,3 +204,16 @@ class ScrumWorkId(models.Model):
 
     class Meta:
         ordering = ['-id'] 
+
+class ScrumLog(models.Model):
+    user = models.ForeignKey(ScrumProjectRole, on_delete=models.CASCADE)
+    project = models.ForeignKey(ScrumProject, on_delete=models.CASCADE)
+    log = models.TextField(blank=True, null=True)
+    priority  = models.CharField(max_length=500)    
+    time_created = models.DateTimeField()
+    
+    def __str__(self):
+        return self.log
+    
+    class Meta:
+        ordering = ['-id']         

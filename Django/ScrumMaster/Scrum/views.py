@@ -212,6 +212,11 @@ class ScrumUserViewSet(viewsets.ModelViewSet):
     serializer_class = ScrumUserSerializer
     
     def create(self, request):
+        print("Testing New user create====================")
+        slack_app_id = ChatscrumSlackApp.objects.all().first().CLIENT_ID
+        print(slack_app_id)
+
+        
         # Pattern Match For an Email: https://www.regular-expressions.info/email.html
         regex_pattern = re.compile(r'(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)')
         if regex_pattern.match(request.data['email']) == None:
@@ -230,15 +235,16 @@ class ScrumUserViewSet(viewsets.ModelViewSet):
             if request.data['usertype'] == 'Owner':
                 scrum_project = ScrumProject(name=request.data['projname'])
                 scrum_project.save()
+                print(slack_app_id)
                 scrum_project_role = ScrumProjectRole(role="Owner", user=scrum_user, project=scrum_project)
                 scrum_project_role.save()
 
             user.set_password(request.data['password'])
             user.save()
-            return JsonResponse({'message': 'User Created Successfully.'})
+            return JsonResponse({'message': 'User Created Successfully.', 'client_id': slack_app_id })
         elif user:
             if not request.data['projname']:
-                return JsonResponse({'message': 'user already existed as a User. Create new project'})
+                return JsonResponse({'message': 'user already existed as a User. Create new project', 'client_id': slack_app_id})
             print("Testing vreationssssssssssss")
             scrum_user = User.objects.get(email = request.data['email'])
             print(scrum_user.scrumuser.nickname)
@@ -247,7 +253,7 @@ class ScrumUserViewSet(viewsets.ModelViewSet):
             scrum_project_role = ScrumProjectRole(role="Owner", user=scrum_user.scrumuser, project=scrum_project)
             scrum_project_role.save()
             print("User exist and project created")
-            return JsonResponse({'message': 'Project Created Successfully for already existing User.'})
+            return JsonResponse({'message': 'Project Created Successfully for already existing User.', 'client_id': slack_app_id})
         else:
             return JsonResponse({'message': 'Error: User with that e-mail already exists.'})
 
@@ -437,7 +443,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
                     message = 'Goal Moved Successfully! Push ID is ' + request.data['push_id']
                 if request.data['hours'] > 8:
                     goal_item.status = state_prev
-                    message = 'Error: Task Exceeds 8 hours of completion.'
+                    message = 'Error: Task cannot Exceeds 8hours or less than an hour of completion.'
                 elif request.data['hours'] == -1 and goal_item.hours == -1 and to_id > 1:
                      goal_item.status = state_prev
                      message = 'Error: A Task must have hours assigned.'
@@ -475,7 +481,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
                 
             goal = scrum_project.scrumgoal_set.get(goal_project_id=from_id)
             if goal.moveable == True:
-            
+                print(to_id)
                 author = ScrumProjectRole.objects.get(id=to_id)
                 goal.user = author
                 self.createHistory(goal.name, goal.status, goal.goal_project_id, goal.hours, goal.time_created, goal.user, goal.project, goal.file, goal.id, 'Goal Reassigned Successfully by')
@@ -555,6 +561,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             
 def jwt_response_payload_handler(token, user=None, request=None):
     project = None
+    
     try:
         project = ScrumProject.objects.get(name__iexact=request.data['project'])        
     except ScrumProject.DoesNotExist:
@@ -759,18 +766,18 @@ class Events(APIView):
                 
                 print(user_response)
                 # print( user_response["user"]["email"])
-                try:
-                    print("============= INSIDE TRY GET USER============" )
-                    user= ScrumUser.objects.get(user__username=user_email)
-                    print(user)
-                    user_role = user.scrumprojectrole_set.get(user=user, project = scrum_project)
-                    print(user_role)
+                # try:
+                print("============= INSIDE TRY GET USER============" )
+                user= ScrumUser.objects.get(user__username=user_email)
+                print(user)
+                user_role = user.scrumprojectrole_set.get(user=user, project = scrum_project)
+                print(user_role)
                     
-                    print("============= AFTER TRY GET USER============" )
-                except:
-                    print(user_response)
-                    html = "<html><body>An error occured!!!</body></html>" 
-                    return HttpResponse(html)
+                print("============= AFTER TRY GET USER============" )
+                # except:
+                #     print(user_response)
+                #     html = "<html><body>An error occured!!!</body></html>" 
+                #     return HttpResponse(html)
                 
                 
                 
@@ -830,11 +837,14 @@ class Events(APIView):
 
             try:
                 slack_user = ScrumProjectRole.objects.filter(slack_user_id=post_data["event"]["user"]).first()
+
                 if slack_user is not None: 
                     print("==========================Slack user=================" + slack_user.user.nickname)
                     slack_user_nick = slack_user.user.nickname
+                    slack_profile_picture = slack_user.slack_profile_picture
                 else:
-                    slack_user_nick = post_data["event"]["user"]                
+                    slack_user_nick = post_data["event"]["user"]
+                    slack_profile_picture = "https://ca.slack-edge.com/T73UK2WNS-UKRNK9ULR-gd4dbac35d17-24"               
             except ScrumUser.DoesNotExist as error:
                 print("User Not matched: failed")
                 slack_user_nick = post_data["event"]["user"]
@@ -860,11 +870,11 @@ class Events(APIView):
                         if match:
                             print(match.group(1))
                             try:
-                                slack_name = ScrumProjectRole.objects.get(slack_user_id=match.group(1))
+                                a = ScrumProjectRole.objects.get(slack_user_id=match.group(1))
                                 slack_message = slack_message.replace(each_word, slack_name.user.nickname)
                                 print(slack_message)
                                 print("pattern matched")
-                            except ScrumUser.DoesNotExist as e:
+                            except ScrumProjectRole.DoesNotExist as e:
                                 slack_message = slack_message.replace(each_word, match.group(1))
                             
                             
@@ -875,10 +885,10 @@ class Events(APIView):
                     chatRoom = ScrumChatRoom.objects.get(id = slack_details.room_id).hash
                     new_message = ScrumChatMessage(room=slack_details.room, user=slack_user_nick, message=slack_message, profile_picture=slack_user.slack_profile_picture)
                     new_message.save()
-                    
+            
                     async_to_sync(self.channel_layer.group_send)(
                         chatRoom,
-                            {"type": "chat_message", 'user': slack_user_nick, 'message': slack_message, 'date_Time':datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H:%M:%S")},
+                            {"type": "chat_message", 'user': slack_user_nick, 'message': slack_message, 'date_Time':datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H:%M:%S"), 'profile_picture': slack_profile_picture},
                         )
 
             except KeyError as error:
@@ -949,3 +959,20 @@ class ScrumWorkIdViewSet(viewsets.ModelViewSet):
         workid.delete()
         return JsonResponse({'message': 'WorkId deleted Successfully!', 'data': filtered_users(request.data['project_id'])})        
 
+class ScrumLogViewSet(viewsets.ModelViewSet):
+    queryset = ScrumLog.objects.all()
+    serializer_class = ScrumLogSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    now_time = datetime.datetime.now().replace(tzinfo=None)
+    
+    def create(self, request):
+        user_id = request.data['user'][1:]
+        author = ScrumProjectRole.objects.get(id=user_id)
+        print(author.role)
+        print(request.data['project_id'])
+        try:
+            log = ScrumLog(user=author, log=request.data['log'], priority=request.data['priority'], time_created=self.now_time, project_id=request.data['project_id'])
+            log.save()
+            return JsonResponse({'message': 'Created Successfully!', 'data': filtered_users(request.data['project_id'])})
+        except KeyError as error:
+             return JsonResponse({'message': 'Priority or feature/bug cannot be an empty field', 'data': filtered_users(request.data['project_id'])})    

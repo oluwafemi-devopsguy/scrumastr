@@ -16,6 +16,11 @@ class ScrumNoteSerializer(serializers.ModelSerializer):
         model = ScrumNote
         fields = ('id','user', 'note', 'priority', 'time_created')
 
+class ScrumLogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ScrumLog
+        fields = ('id', 'user', 'log', 'priority', 'time_created')          
+
 # class ScrumProjectSlackSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = ScrumProjectSlack
@@ -30,7 +35,7 @@ class ScrumGoalSerializer(serializers.ModelSerializer):
     scrumgoalhistory_set = ScrumGoalHistorySerializer(many=True)
     class Meta:
         model = ScrumGoal
-        fields = ('visible', 'id', 'name', 'status', 'goal_project_id', 'hours', 'time_created', 'user', 'project', 'file', 'scrumgoalhistory_set', 'days_failed', 'push_id')
+        fields = ('message_exist', 'visible', 'id', 'name', 'status', 'goal_project_id', 'hours', 'time_created', 'user', 'project', 'file', 'scrumgoalhistory_set', 'days_failed', 'push_id')
         
 class ScrumUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -50,11 +55,12 @@ class ScrumSprintSerializer(serializers.HyperlinkedModelSerializer):
 class ScrumProjectRoleSerializer(serializers.ModelSerializer):     
     scrumnote_set = ScrumNoteSerializer(many=True)
     scrumworkid_set = ScrumWorkIdSerializer(many=True)
+    scrumlog_set = ScrumLogSerializer(many=True)
     user = ScrumUserSerializer()
     scrumgoal_set = ScrumGoalSerializer(many=True)    
     class Meta:
         model = ScrumProjectRole
-        fields = ('role', 'color', 'user', 'slack_user_id', 'slack_email', 'slack_username', 'slack_profile_picture', 'id', 'scrumgoal_set', 'scrumnote_set', 'scrumworkid_set')        
+        fields = ('role', 'color', 'user', 'slack_user_id', 'slack_email', 'slack_username', 'slack_profile_picture', 'id', 'scrumgoal_set', 'scrumnote_set', 'scrumworkid_set', 'scrumlog_set')        
         
 class ScrumProjectSerializer(serializers.HyperlinkedModelSerializer):
     scrumprojectrole_set = ScrumProjectRoleSerializer(many=True)

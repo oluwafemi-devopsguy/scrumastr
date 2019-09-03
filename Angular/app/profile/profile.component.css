@@ -176,6 +176,23 @@ h5 {
     cursor: pointer;
 }
 
+.off_today    {
+    color: red;
+    padding:45px 2px;
+    font-weight: normal;
+    font-size: 20px;
+    border-radius: 5px!important;
+    font-family: Roboto;
+    width: 200px;
+    height: 150px;
+    border: 2px solid #ccc;
+    position: relative;
+    margin: 15px 0;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+    background-color: black
+}
+
 
 .list_div .tooltiptext {
     visibility: hidden;
