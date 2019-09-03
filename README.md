@@ -11,7 +11,7 @@ Then build <ng build --prod --aot> to generate your files. You should see them i
 Below are all dependencies this project needs to work.
 
 Extra Dependencies
-=====================
+========================
 
 Django
 ------
