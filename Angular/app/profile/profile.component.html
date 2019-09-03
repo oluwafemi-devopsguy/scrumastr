@@ -610,7 +610,6 @@
                                         <th class="full-box">ID</th>
                                         <th class="full-box">Feature</th>
                                         <th class="full-box">PRIORITY</th>
-                                        <th class="full-box">Action</th>
                                 </div>
     
                                 <div style="display: table-row" *ngFor="let log of dataservice.proj_log; let j = index; let k = count">
@@ -620,18 +619,7 @@
                                             {{log.log}} 
                                         </span>  
                                     </td>
-                                    <td class="top-box" style="text-align: center;">
-                                        <!-- <button type="button" class="btn btn-link s_button"  *ngIf="dataservice.role.toLowerCase() == 'owner'" (click)="note_to_goal(note.id, note.note, note.priority)">
-                                            Add to Board
-                                        </button> -->
-                                        <button (click)="note_to_goal(log.id, log.log, log.priority)" style="background-color: grey; border:none; box-shadow: none; border-radius: 8px;">
-                                            <tr>
-                                                <td><img src="/assets/image/plus2.png" style="height: 20px; width: 20px; "> </td>
-                                                <td style="font-size: 14px; font-family: Roboto; font-weight: bold">Add Task </td>
-                                            </tr> 
-                                        </button>
-                                        <!-- <span style="font-size: 20px; font-weight: bolder;">+</span> -->
-                                    </td>
+                                   
                                 </div>                                
                             </div>
                         </div>
@@ -649,7 +637,7 @@
                 <h5 style="color: green">{{dataservice.message}}</h5>
                 <form (ngSubmit)="add_a_workid()">
                     <textarea id="goal" [(ngModel)]="workid" name="goal" placeholder="Enter Workid" style="width: 150px; height: 60px; border-radius: 20px; padding: 10px; margin-bottom: 40px"></textarea>
-                    <h5>Select none Option</h5>
+                    <div style="margin-bottom: 10px; font-weight: 500; font-size: 24px;">Select the None Option<span style="font-weight: 500;color: red;">*</span></div>
                     <select  name="branch" style="height: 30px; margin: 15px; color: black; width: 100px; font-size: 20px;" [(ngModel)]="branch" value="none">
                         <option Value="none" selected>none</option>                         
                     </select>
