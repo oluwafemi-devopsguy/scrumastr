@@ -35,7 +35,7 @@ class ScrumGoalSerializer(serializers.ModelSerializer):
     scrumgoalhistory_set = ScrumGoalHistorySerializer(many=True)
     class Meta:
         model = ScrumGoal
-        fields = ('visible', 'id', 'name', 'status', 'goal_project_id', 'hours', 'time_created', 'user', 'project', 'file', 'scrumgoalhistory_set', 'days_failed', 'push_id')
+        fields = ('message_exist', 'visible', 'id', 'name', 'status', 'goal_project_id', 'hours', 'time_created', 'user', 'project', 'file', 'scrumgoalhistory_set', 'days_failed', 'push_id')
         
 class ScrumUserSerializer(serializers.ModelSerializer):
     class Meta:
