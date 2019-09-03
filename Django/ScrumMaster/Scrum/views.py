@@ -925,4 +925,37 @@ class ScrumNoteViewSet(viewsets.ModelViewSet):
         note = ScrumNote.objects.get(id=request.data['id'])
         note.delete()
         return JsonResponse({'message': 'Goal Added and note deleted Successfully!', 'data': filtered_users(request.data['project_id'])})
-            
+
+class ScrumWorkIdViewSet(viewsets.ModelViewSet):
+    queryset = ScrumWorkId.objects.all()
+    serializer_class = ScrumWorkIdSerializer  
+    
+    def create(self, request):
+        user_id = request.data['user'][1:]
+        author = ScrumProjectRole.objects.get(id=user_id)
+        print(author.role)
+        print(request.data['project_id'])
+        try:
+            workid = ScrumWorkId(user=author, workid=request.data['workid'], branch=request.data['branch'], project_id=request.data['project_id'])
+            workid.save()
+            return JsonResponse({'message': 'Workid added Successfully!', 'data': filtered_users(request.data['project_id'])})
+        except KeyError as error:
+             return JsonResponse({'message': 'Error adding workid', 'data': filtered_users(request.data['project_id'])}) 
+
+    
+    def patch(self, request):
+        print("This is WorkId Updating")
+        workids = ScrumWorkId.objects.get(workid=request.data['workid'])
+        print(workids)
+        workids.workid = request.data['workid']
+        workids.branch = request.data['branch']
+        #workids = ScrumWorkId(user=author, workid=request.data['workid'], branch=request.data['branch'])
+        workids.save()
+        return JsonResponse({'message': 'WorkId Updated Successfully!'})                
+
+    def put(self, request):
+        print("This is WorkId deleting")
+        workid = ScrumWorkId.objects.get(id=request.data['id'])
+        workid.delete()
+        return JsonResponse({'message': 'WorkId deleted Successfully!', 'data': filtered_users(request.data['project_id'])})        
+

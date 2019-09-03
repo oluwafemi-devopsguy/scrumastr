@@ -6,6 +6,10 @@ class ScrumSlackSerializer(serializers.ModelSerializer):
         model = ScrumSlack
         fields = ('id','bot_access_token', 'access_token')
 
+class ScrumWorkIdSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ScrumWorkId
+        fields = ('id','user','workid', 'branch') 
 
 class ScrumNoteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -45,11 +49,12 @@ class ScrumSprintSerializer(serializers.HyperlinkedModelSerializer):
         
 class ScrumProjectRoleSerializer(serializers.ModelSerializer):     
     scrumnote_set = ScrumNoteSerializer(many=True)
+    scrumworkid_set = ScrumWorkIdSerializer(many=True)
     user = ScrumUserSerializer()
     scrumgoal_set = ScrumGoalSerializer(many=True)    
     class Meta:
         model = ScrumProjectRole
-        fields = ('role', 'color', 'user', 'slack_user_id', 'slack_email', 'slack_username', 'slack_profile_picture', 'id', 'scrumgoal_set', 'scrumnote_set')        
+        fields = ('role', 'color', 'user', 'slack_user_id', 'slack_email', 'slack_username', 'slack_profile_picture', 'id', 'scrumgoal_set', 'scrumnote_set', 'scrumworkid_set')        
         
 class ScrumProjectSerializer(serializers.HyperlinkedModelSerializer):
     scrumprojectrole_set = ScrumProjectRoleSerializer(many=True)

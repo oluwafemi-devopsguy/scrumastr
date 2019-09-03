@@ -65,7 +65,11 @@ export class DataService {
   public _user_sprint_goals;
   public user_goal_history;
   public user_notes;
+<<<<<<< HEAD
   public off_today: boolean = true;
+=======
+  public user_workid;
+>>>>>>> 885a0961c614cc3d55cfdf50bcc4cfd7642fd6cf
   
   public httpOptions = {
     headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -206,6 +210,7 @@ export class DataService {
         }
     );
   }
+
   
   addGoal(on_user)
   {
