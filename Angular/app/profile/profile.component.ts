@@ -46,8 +46,11 @@ export class ProfileComponent implements OnInit {
   public note;
   public workid;
   public branch;
+  public log;
+  public log_priority;
   public note_priority;
   public board: string = "AllTask"
+  public proj_log;
   public rep;
     
   public modalOptions: Materialize.ModalOptions = {
@@ -653,6 +656,14 @@ export class ProfileComponent implements OnInit {
     this.board = "MyTask"
   }
 
+  backlog()  {
+    this.dataservice.message ="";
+    this.dataservice.proj_log;
+    console.log(this.proj_log)
+    console.log(this.dataservice.project)
+    this.board = "Backlog"
+  }
+
   initMainChat(){
     this.dataservice.message ="";
     this.websocket.send(JSON.stringify({'project_id': this.dataservice.project,  'user': this.dataservice.realname, 'message': '!join ' + this.dataservice.project_name, 'goal_id': 'main_chat_' + this.dataservice.project_name, 'slack_username': this.dataservice.slack_username }));
@@ -949,6 +960,64 @@ export class ProfileComponent implements OnInit {
          }
   }
 
+
+
+  ///////////////////////////
+
+  add_a_log()  {
+    this.dataservice.message ="";
+    console.log(this.log_priority)
+    console.log(this.log)
+     if(this.log == '' || this.log == null) {
+        console.log('Field is empty string or null')
+        this.dataservice.message = "Input field cannot be empty"
+        return
+      } 
+     
+
+    this.http.post(this.dataservice.domain_protocol + this.dataservice.domain_name + '/scrum/api/scrumlog/', JSON.stringify({'log': this.log, 'priority': this.log_priority, 'user': this.on_user, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
+            data => {
+                this.dataservice.users = data['data'];
+                this.dataservice.message = data['message'];
+                this.log = '';  
+
+
+                for (var i = 0;  i < this.dataservice.users.length; i++)  {       
+                if (this.dataservice.users[i].id == this.on_user.slice(1))
+                  { 
+                  console.log(this.dataservice.users[i].scrumlog_set) 
+                  this.dataservice.proj_log = this.dataservice.users[i].scrumlog_set
+                  }
+               } 
+
+
+            },
+            err => {
+                console.error(err);
+                if(err['status'] == 401)
+                {
+                    this.dataservice.message = 'Session Invalid or Expired. Please Login.';
+                    this.dataservice.logout();
+                } else
+                {
+                    this.dataservice.message = 'Unexpected Error!';    
+                }
+            }
+        );
+  }
+
+
+  show_log() {
+    this.dataservice.message ="";
+      for (var i = 0;  i < this.dataservice.users.length; i++)  {
+       
+          if (this.dataservice.users[i].id == this.dataservice.users[i].id)
+            { 
+            console.log(this.dataservice.users[i].scrumlog_set) 
+            this.dataservice.proj_log = this.dataservice.users[i].scrumlog_set
+            }
+         }
+  }
 
 
 

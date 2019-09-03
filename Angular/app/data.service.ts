@@ -8,6 +8,11 @@ import { environment } from '../environments/environment';
 })
 export class DataService {
     
+
+  public domain_name = '127.0.0.1:8000';
+  public domain_protocol = 'https://';
+  public websocket = 'wss://';
+=======
   // API_domain_name = environment.API_domain_name;
   // API_domain_protocol = environment.API_domain_protocol;
   // API_websocket = environment.API_websocket;
@@ -16,10 +21,6 @@ export class DataService {
   public domain_protocol = environment.domain_protocol
   public websocket = environment.websocket
 
-
-  // public domain_name = '127.0.0.1:8000';
-  // public domain_protocol = 'http://';
-  //  public websocket = 'ws://';
   
   public message;
   public goal_name;
@@ -65,11 +66,10 @@ export class DataService {
   public _user_sprint_goals;
   public user_goal_history;
   public user_notes;
-<<<<<<< HEAD
   public off_today: boolean = true;
-=======
   public user_workid;
->>>>>>> 885a0961c614cc3d55cfdf50bcc4cfd7642fd6cf
+  public proj_log;
+
   
   public httpOptions = {
     headers: new HttpHeaders({'Content-Type': 'application/json'})

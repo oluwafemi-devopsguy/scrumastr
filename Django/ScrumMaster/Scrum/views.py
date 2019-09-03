@@ -959,3 +959,20 @@ class ScrumWorkIdViewSet(viewsets.ModelViewSet):
         workid.delete()
         return JsonResponse({'message': 'WorkId deleted Successfully!', 'data': filtered_users(request.data['project_id'])})        
 
+class ScrumLogViewSet(viewsets.ModelViewSet):
+    queryset = ScrumLog.objects.all()
+    serializer_class = ScrumLogSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    now_time = datetime.datetime.now().replace(tzinfo=None)
+    
+    def create(self, request):
+        user_id = request.data['user'][1:]
+        author = ScrumProjectRole.objects.get(id=user_id)
+        print(author.role)
+        print(request.data['project_id'])
+        try:
+            log = ScrumLog(user=author, log=request.data['log'], priority=request.data['priority'], time_created=self.now_time, project_id=request.data['project_id'])
+            log.save()
+            return JsonResponse({'message': 'Created Successfully!', 'data': filtered_users(request.data['project_id'])})
+        except KeyError as error:
+             return JsonResponse({'message': 'Priority or feature/bug cannot be an empty field', 'data': filtered_users(request.data['project_id'])})    
