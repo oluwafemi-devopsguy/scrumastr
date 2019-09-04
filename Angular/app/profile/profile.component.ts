@@ -30,6 +30,7 @@ export class ProfileComponent implements OnInit {
   public at_bottom: boolean = true;
   public id_hover = -1;
   public id_click = -1;
+  public id_clicks = -1;
   sprint_start: Number;
   sprint_end: Number;
   goal_id: string;
@@ -45,8 +46,12 @@ export class ProfileComponent implements OnInit {
   public note;
   public workid;
   public branch;
+  public log;
+  public log_priority;
   public note_priority;
   public board: string = "AllTask"
+  public proj_log;
+  public rep;
     
   public modalOptions: Materialize.ModalOptions = {
     dismissible: false, // Modal can be dismissed by clicking outside of the modal
@@ -76,7 +81,7 @@ export class ProfileComponent implements OnInit {
     this.subs.add(
         this.dragula.drop('mainTable').subscribe(
             value => {
-                this.dataservice.users_id = []
+                this.dataservice.users_done = []
                 console.log(value);
                 var el = value['el'];
                 var target = value['target'];
@@ -213,6 +218,14 @@ export class ProfileComponent implements OnInit {
             console.log(this.dataservice.slack_app_id)
 
 
+            if (this.dataservice.user_slack == "false" && this.dataservice.project_slack == true) {
+              console.log("=======================C SIGNING IN USER TO SLACK =================================")
+              window.location.replace("https://slack.com/oauth/authorize?client_id=" + this.dataservice.slack_app_id + "&state=main_chat_" + this.dataservice.project_name + ">>>" + this.dataservice.username + "&scope=identity.basic identity.team identity.avatar identity.email")
+            } 
+
+
+
+
             this.filterSprint(res2)
         },
         err => {
@@ -289,7 +302,7 @@ export class ProfileComponent implements OnInit {
 
   changeSprint() 
   {  
-  this.dataservice.users_id = [] 
+  this.dataservice.users_done = [] 
     this.dataservice.message ="";
     this.dataservice.sprint_goals = [];
       for (var i = 0;  i < this.dataservice.users.length; i++)  {
@@ -306,7 +319,7 @@ export class ProfileComponent implements OnInit {
 
             
   filterSprint(uSprints) {
-    this.dataservice.users_id = []
+    this.dataservice.users_done = []
     this.dataservice.sprints= uSprints
     var filter_goal = []
     console.log(filter_goal)
@@ -643,6 +656,14 @@ export class ProfileComponent implements OnInit {
     this.board = "MyTask"
   }
 
+  backlog()  {
+    this.dataservice.message ="";
+    this.dataservice.proj_log;
+    console.log(this.proj_log)
+    console.log(this.dataservice.project)
+    this.board = "Backlog"
+  }
+
   initMainChat(){
     this.dataservice.message ="";
     this.websocket.send(JSON.stringify({'project_id': this.dataservice.project,  'user': this.dataservice.realname, 'message': '!join ' + this.dataservice.project_name, 'goal_id': 'main_chat_' + this.dataservice.project_name, 'slack_username': this.dataservice.slack_username }));
@@ -725,18 +746,7 @@ export class ProfileComponent implements OnInit {
     this.dragula.destroy('mainTable');
   }
 
-  scrollIntoView(anchorHash) {
-    this.dataservice.message ="";
-    this.id_click = parseInt(anchorHash.substring(1), 10);
-    setTimeout(() => {
-        const anchor = document.getElementById(anchorHash);
-        console.log(anchorHash);
-        if (anchor) {
-            anchor.focus();
-            anchor.scrollIntoView();
-        }
-    });
-}
+
 
 // this.dataservice.sprint_goals = [];
 //       for (var i = 0;  i < this.dataservice.users.length; i++)  {
@@ -952,6 +962,64 @@ export class ProfileComponent implements OnInit {
 
 
 
+  ///////////////////////////
+
+  add_a_log()  {
+    this.dataservice.message ="";
+    console.log(this.log_priority)
+    console.log(this.log)
+     if(this.log == '' || this.log == null) {
+        console.log('Field is empty string or null')
+        this.dataservice.message = "Input field cannot be empty"
+        return
+      } 
+     
+
+    this.http.post(this.dataservice.domain_protocol + this.dataservice.domain_name + '/scrum/api/scrumlog/', JSON.stringify({'log': this.log, 'priority': this.log_priority, 'user': this.on_user, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
+            data => {
+                this.dataservice.users = data['data'];
+                this.dataservice.message = data['message'];
+                this.log = '';  
+
+
+                for (var i = 0;  i < this.dataservice.users.length; i++)  {       
+                if (this.dataservice.users[i].id == this.on_user.slice(1))
+                  { 
+                  console.log(this.dataservice.users[i].scrumlog_set) 
+                  this.dataservice.proj_log = this.dataservice.users[i].scrumlog_set
+                  }
+               } 
+
+
+            },
+            err => {
+                console.error(err);
+                if(err['status'] == 401)
+                {
+                    this.dataservice.message = 'Session Invalid or Expired. Please Login.';
+                    this.dataservice.logout();
+                } else
+                {
+                    this.dataservice.message = 'Unexpected Error!';    
+                }
+            }
+        );
+  }
+
+
+  show_log() {
+    this.dataservice.message ="";
+      for (var i = 0;  i < this.dataservice.users.length; i++)  {
+       
+          if (this.dataservice.users[i].id == this.dataservice.users[i].id)
+            { 
+            console.log(this.dataservice.users[i].scrumlog_set) 
+            this.dataservice.proj_log = this.dataservice.users[i].scrumlog_set
+            }
+         }
+  }
+
+
 
 
 
@@ -1060,6 +1128,80 @@ autogrow() {
   textArea.style.height = 'auto';
   textArea.style.height = textArea.scrollHeight + 'px';
   console.log(this.chat_text)
+
+}
+
+  scrollIntoView(anchorHash) {
+    console.log("This is scroll into view")
+    console.log(anchorHash)
+    this.dataservice.message ="";
+    this.id_clicks = parseInt(anchorHash.substring(2), 10);
+    console.log(this.id_clicks)
+    console.log(anchorHash.substring(0))
+    console.log(anchorHash.substring(1))
+    console.log(anchorHash.substring(2))
+    setTimeout(() => {
+        const anchor = document.getElementById(anchorHash);
+        console.log(anchorHash);
+        if (anchor) {
+            anchor.focus();
+            anchor.scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
+        }
+    });
+}
+
+
+taskHighlight(message) {
+  console.log("This is task highlight")
+  console.log(message)
+  let m = message.split(" ").pop(); 
+    if( m.startsWith("#") && m.length > 1)  {
+      console.log("Start wiith =====")
+      console.log(m)
+      console.log(m.substring(1))
+      let gs = "gs" + m.substring(1)
+      console.log(gs)
+      this.scrollIntoView(gs)
+    }
+  
+  // var test = '';
+  // this.rep = 'gg';
+  // var text = "oooooooo";
+  
+  // let stylizedText: string = '';
+  // for(let m of message.split(" "))  {
+  //   if( m.startsWith("#") && m.length > 1)
+  //     stylizedText += `<span style="font-weight: bold; color: #1f7a7a">${m}</span> `;
+  //   else
+  //     stylizedText += m + " ";
+  // }  
+  // console.log("THE OUTPUT DATA")
+  // console.log(stylizedText)
+  // console.log(this.chat_text)
+  // console.log(message)
+  // this.chat_text = message.replace(/yes/g, "<a>tttty</a>")
+ // var newDiv = document.createElement("span");
+ // newDiv.innerHTML = "yytt"
+ // newDiv.style.color = "red"
+
+ //  this.chat_text = newDiv
+ //  console.log("Output values after replace")
+ //  console.log(this.rep)
+ //  console.log(this.chat_text)
+ //  console.log("Output values end of replace")
+
+}
+
+insertElement() {
+  var text = "oooooooo";
+  var newDiv = document.createElement("span");
+  var divContent = document.createTextNode(text)
+
+  newDiv.innerHTML = "yytt"
+
+  var output = newDiv.appendChild(divContent)
+  console.log(output)
+  return output
 
 }
 

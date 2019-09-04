@@ -9,6 +9,7 @@
 
   <a [ngClass]="(board == 'MyTask')? 'active':doNothing()" (click)="myTask()">My Tasks</a>
   <a [ngClass]="(board == 'AllTask')? 'active':doNothing()" style="border-left: 1px solid #f2f2f2" (click)="allTask()">All Task</a>
+  <a [ngClass]="(board == 'Backlog')? 'active':doNothing()" style="border-left: 1px solid #f2f2f2" (click)="backlog()">Backlog</a>
   <div style="float: right; color: black; padding: 5px;">
     
         <h6><a class="dropd" style="display: inline; float: right; padding: 0; margin: 0 15px;" (click)="navDrop()">  
@@ -154,7 +155,9 @@
                         input{display: block !important;}
                 </style>
                 <div class="board-area">
-                <ng-container *ngFor="let user of dataservice.users; let user_index = index">         <br>   
+                <ng-container *ngFor="let user of dataservice.users; let user_index = index"> 
+                   
+                <br>   
                 <details (dblclick)="closeAll()" [attr.id]="'detail' + user.id" open="open">  
                 <summary>
                 <span> 
@@ -215,15 +218,15 @@
                             <th><div class="table_head">Done </div></th>
                         </div>
                         
-                        <div *ngIf="user.scrumgoal_set.length == 0 && show_zero  && user.user.nickname.toUpperCase() != this.dataservice.realname.toUpperCase()" style="display: table-row;" dragula="mainTable" [attr.id]="'u' + user.id">
+                        <div *ngIf="user.scrumgoal_set.length == 0 && show_zero  && user.user.nickname.toUpperCase() != this.dataservice.realname.toUpperCase()" style="display: table-row;" dragula="mainTable" [attr.id]="'c' + user.id">
                                 <td class="full-box" id="author" colspan="6">
                                     {{user.user.nickname}} - NO TASKS ASSIGNED
                                 </td>
                         </div>
 
 
-                         <div *ngIf="user.scrumgoal_set.length == 0 && show_zero && user.user.nickname.toUpperCase() == this.dataservice.realname.toUpperCase()" style="display: table-row;" dragula="mainTable" [attr.id]="'u' + user.id">
-                                <td class="full-box" id="author" style="padding: 0 25px; text-align: center;" >
+                         <div *ngIf="user.scrumgoal_set.length == 0 && show_zero && user.user.nickname.toUpperCase() == this.dataservice.realname.toUpperCase()" style="display: table-row;" [attr.id]="'u' + user.id">
+                                <td  dragula="mainTable" class="full-box" id="author" style="padding: 0 25px; text-align: center;" >
                                   <div (click)="onUser(user.id); basicModal.openModal()" class="no_task">
                                     
                                     Welcome, please click here to create your first task
@@ -233,7 +236,8 @@
                                    
                                   </div>
                                 </td>
-                                <td colspan="3"></td>
+                                <td   colspan="3"></td>
+                                
                         </div>
 
 
@@ -241,8 +245,41 @@
 
 
                                 <div *ngFor="let arrItem of arrCount" class="top-box" dragula="mainTable" [attr.id]="arrItem" style="vertical-align: top;">
-                                    <div class="div_lister" *ngFor="let goal of dataservice.sprint_goals; let j = index; let k = count" [attr.id]="'g' + goal.goal_project_id"> 
-                                            <div class="list_div" *ngIf ="goal.status == arrItem && user.id == goal.user && goal.name; let thisGoal" (dblclick)="goal.status == arrItem ? editGoal($event) : doNothing()" style="" [style.background-color] = "user.color"> {{ (goal.name.length>120) ? (thisGoal | slice:0:120)+'...':(thisGoal) }} {{(goal.hours != -1 && (goal.status == 3 || goal.status == 2) ? ' (' + goal.hours + ')' : '' )}}
+
+
+                                    <div class="div_lister" *ngFor="let goal of dataservice.sprint_goals; let j = index; let k = count" [attr.id]="'g' + goal.goal_project_id" >
+
+<!-- ============================ This is to show user work today ========================== -->
+                    <div *ngIf ="goal.status == 1 && user.id == goal.user && arrItem ==1">
+                        {{goal | user_TFT: user.id}} 
+                    </div> 
+<!-- ======================================================= -->
+
+
+
+<!-- ======================== This is for when user is off by default ============================= -->
+                    
+    <div *ngIf ="arrItem ==1"> 
+    {{user | init_user_lane}}  
+        <div *ngFor="let a_TFT of dataservice.users_TFT; let b = index; let a = count">
+            
+            <div *ngIf ="user.id == a_TFT.user_id && a_TFT.done_goal_array.length == 0 && j == 0 ">                
+            <!-- <div *ngIf =" user.id == a_TFT.user_id && arrItem == 1 && a_TFT.done_goal_array.length==0"> --><!-- 2 1{{j}} {{a_TFT.done_goal_array.length}} -->
+                <div (click)="onUser(user.id)" class="off_today" *ngIf ="arrItem == 1" >    
+                    I am Off Today!!! 
+                    
+                </div> 
+            </div>
+                                                        
+        </div>
+    </div>
+                    
+<!-- ============================================================================================== -->
+       
+
+                                            <div class="list_div" *ngIf ="goal.status == arrItem && user.id == goal.user && goal.name; let thisGoal" (dblclick)="goal.status == arrItem ? editGoal($event) : doNothing()" style=""  [style.background]="goal.goal_project_id == id_clicks ? 'rgba(0, 128, 128, 0.5)' :  user.color"   [attr.id]="'gs' + goal.goal_project_id"> 
+
+                                             {{ (goal.name.length>120) ? (thisGoal | slice:0:120)+'...':(thisGoal) }} {{(goal.hours != -1 && (goal.status == 3 || goal.status == 2) ? ' (' + goal.hours + ')' : '' )}}
                                                 <a (click)="ResizeImage(goal.file); showImage.openModal()">
                                                     <img src="{{ dataservice.domain_protocol}}{{dataservice.domain_name}}{{goal.file}}" style="width: 15px; height: 15px" alt="{{goal.file}}">
                                                 </a> 
@@ -280,7 +317,8 @@
                                                 </span>
                                                <span  class="list_div_tool">
                                                     <a (click)="goalClicked(goal.goal_project_id); initGoalChat()">
-                                                    <img src="/assets/image/message.png" style="padding: 0 2px;">
+                                                    <img *ngIf="goal.message_exist == true" src="/assets/image/message.png" style="padding: 0 2px;">
+                                                    <img *ngIf="goal.message_exist == false" src="/assets/image/message2.png" style="padding: 0 2px;">
                                                     </a>
                                                     <span class="tooltiptext3">Goal Chat</span>
                                                </span>
@@ -292,8 +330,16 @@
                                                     <button class="delete_task" (click)="deleteTask(goal.name, goal.goal_project_id)">X</button>
                                                 </span>                                
                                             <!-- </div> -->
-                                        </div>                                   
-                                    </div>
+                                        </div>
+
+
+
+
+                </div>
+
+
+             
+
                                 </div>
 
 
@@ -321,7 +367,7 @@
                                     </div>
 
 
-                                     <div style="display: table-row" *ngFor="let w_id of dataservice.users_id;"  [attr.id]="'u' + user.id"> 
+                                     <div style="display: table-row" *ngFor="let w_id of dataservice.users_done;"  [attr.id]="'u' + user.id"> 
                                         
                                           
 
@@ -334,7 +380,7 @@
                                                
                                         <div class="div_lister" *ngFor="let goal of w_id.goal_array; let j = index; let k = count" [attr.id]="'g' + goal.goal_project_id"> 
                                             <!-- <div class="list_div" *ngIf ="goal.status == 3 && user.id == goal.user && goal.name; let thisGoal" (dblclick)="goal.status == 3 ? editGoal($event) : doNothing()" style="" [style.background-color] = "user.color"> -->
-                                            <div  class="list_div" *ngIf="user.id == goal.user" (dblclick)="goal.status == 3 ? editGoal($event) : doNothing()" style="" [style.background-color] = "user.color">
+                                            <div  class="list_div" *ngIf="user.id == goal.user" (dblclick)="goal.status == 3 ? editGoal($event) : doNothing()" style=""  [style.background]="goal.goal_project_id == id_clicks ? 'rgba(0, 128, 128, 0.5)' :  user.color" [attr.id]="'gs' + goal.goal_project_id">
                                                  {{goal.name}} {{(goal.hours != -1 && (goal.status == 3 || goal.status == 2) ? ' (' + goal.hours + ')' : '' )}}
                                                 <br>
                                                 <div class="div_lister" *ngFor="let work_ID of dataservice.work_IDs; let j = index; let k = count" [attr.id]="'g' + goal.goal_project_id">
@@ -375,12 +421,13 @@
                                                     </a>
                                                     <span class="tooltiptext3">Upload Image</span>
                                                 </span>
-                                               <span  class="list_div_tool">
+                                                <span  class="list_div_tool">
                                                     <a (click)="goalClicked(goal.goal_project_id); initGoalChat()">
-                                                    <img src="/assets/image/message.png" style="padding: 0 2px;">
+                                                    <img *ngIf="goal.message_exist == true" src="/assets/image/message.png" style="padding: 0 2px;">
+                                                    <img *ngIf="goal.message_exist == false" src="/assets/image/message2.png" style="padding: 0 2px;">
                                                     </a>
                                                     <span class="tooltiptext3">Goal Chat</span>
-                                               </span>
+                                                </span>
                                                 
                                             </div> 
                                             </div>
@@ -412,6 +459,7 @@
                         
                     </div>
                     </details>
+
                     </ng-container>
                 </div>
             </div>
@@ -428,7 +476,7 @@
             <br>
             <div class="card" style="background-color:transparent; box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);">
                 <br>
-                <div style="text-align: right"><a style="text-align: right" (click)="initMainChat()" *ngIf=" show_project_chat"> switch to Project Chat>>> </a></div>
+                <div style="text-align: right"><a style="text-align: right" (click)="initMainChat()" *ngIf=" show_project_chat"> switch to Project Chat>>></a></div>
                 
                 <div style="overflow: auto; height: calc(100vh - 345px); padding-left: 10px; padding-right: 10px; background-color:transparent;" id="chat_div_space">
                     <div *ngFor="let message of messages" style="font-size: 0.85rem"  class="chat_div"  [style.float] = "message.user == dataservice.realname ? 'right' : 'left'" [style.width] = "message.user == dataservice.realname ? '295px' : '320px'">
@@ -449,7 +497,7 @@
                                                 {{message.date_Time | date}}
                                                 <br>
                                                 <br>
-                                                <div [innerText]="message.message" style=" text-align: left;" ></div>
+                                                <p [innerText]="message.message" style=" text-align: left;" ></p>
                                                 <br>
                                             </span>
 
@@ -473,22 +521,22 @@
                 <div class="row" style="padding-left: 0; padding-right: 10px; background-color: #f5f5f5;">
                     <div style="height: 190px; overflow: auto">
                     <div class="input-field col s12">
-                            <textarea id="chat_text"  [(ngModel)]="chat_text" (keyup.enter)="sendMessage('main_chat')" class="chat_input" (keyup)='autogrow()' rows='3' (click)='autogrow()'  style="resize: vertical; border-radius: 10px; box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25); background-position: right; background-color: white; padding: 3px;" height="inherit"></textarea>
+                            <textarea #chat id="chat_text"  [(ngModel)]="chat_text" (keyup.enter)="sendMessage('main_chat')" class="chat_input" (keyup)='autogrow(); taskHighlight(chat.value)' rows='3'  style="resize: vertical; border-radius: 10px; box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25); background-position: right; background-color: white; padding: 3px;" height="inherit"></textarea>
                             
-                            <label for="chat_text" style="padding: 3px 10px 0 20px;"> Send a message</label>
+                            <label for="chat_text" style="padding: 3px 10px 0 20px;"> Send a message </label>
                         </div>
                         <hr>
                      <span>
                             <li *ngIf="dataservice.role.toLowerCase() != 'owner'">
                                 <div *ngIf="dataservice.project_slack == true && dataservice.user_slack == 'false'" style="font-weight: bold; color: #1f7a7a ">
                                     Connect Chatscrum app to Slack?<br/>
-                                    <a href="https://slack.com/oauth/authorize?client_id={{this.dataservice.slack_app_id}}&state=main_chat_{{dataservice.project_name}}>>>{{dataservice.username}}&scope=identity.basic identity.team identity.avatar identity.email"><img alt="Sign in with Slack" height="40" width="139" src="https://platform.slack-edge.com/img/sign_in_with_slack.png" srcset="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x" /></a></div>
+                                    <a href="https://slack.com/oauth/authorize?client_id={{this.dataservice.slack_app_id}}&state=main_chat_{{dataservice.project_name}}>>>{{dataservice.username}}&scope=identity.basic identity.team identity.avatar identity.email" id = "slack_btn2"><img alt="Sign in with Slack" height="40" width="139" src="https://platform.slack-edge.com/img/sign_in_with_slack.png" srcset="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x" /></a></div>
                             </li>
                         </span>
-                        <span *ngIf="dataservice.role.toLowerCase() == 'owner'">                                              
+                        <span *ngIf="dataservice.role.toLowerCase() == 'owner'">                                             
                             <li *ngIf="dataservice.project_slack == false" style="font-weight: bold; color: #1f7a7a ">
                                 Install Chatscrum App to Slack? <br/>
-                                <a href="https://slack.com/oauth/authorize?client_id={{this.dataservice.slack_app_id}}&state=main_chat_{{dataservice.project_name}}>>>{{dataservice.username}}&scope=incoming-webhook,channels:read,channels:history,groups:history,mpim:history,emoji:read,files:read,groups:read,im:read,im:history,reactions:read,stars:read,users:read,team:read,chat:write:user,chat:write:bot,channels:write,bot"><img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a> 
+                                <a href="https://slack.com/oauth/authorize?client_id={{this.dataservice.slack_app_id}}&state=main_chat_{{dataservice.project_name}}>>>{{dataservice.username}}&scope=incoming-webhook,channels:read,channels:history,groups:history,mpim:history,emoji:read,files:read,groups:read,im:read,im:history,reactions:read,stars:read,users:read,team:read,chat:write:user,chat:write:bot,channels:write,bot" id = "slack_btn1"><img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a> 
                             </li>                                                                       
                     </span>
                 </div>
@@ -509,20 +557,47 @@
 
 
 
-        <div class="col s8" style="height: calc(100vh - 65px); overflow: auto; background-color: #f2f2f2; border-left: 3px solid white;" [style.display] = "board == 'MyTask' ? '' : 'none'">          
+        <div class="col s8" style="height: calc(100vh - 65px); width: 70%; overflow: auto; background-color: #f5f5f5; border-left: 3px solid white" [style.display] = "board == 'MyTask' ? '' : 'none'">          
             <div class="main_area">
                 
               
                 <div class="board-area" style=" float: left;">
                 <ng-container *ngFor="let user of dataservice.users; let user_index = index">
                     
-                    <div  *ngIf="user.user.nickname.toUpperCase() == this.dataservice.realname.toUpperCase()">
-                        <button (click)="onUser(user.id); basicModal.openModal()" style="background-color: transparent; border:none; box-shadow: none;">
-                            <tr>
-                                <td><img src="/assets/image/plus2.png" style="height: 37px; width: 37px; "> </td>
-                                <td style="font-size: 14px">Add Task </td>
-                            </tr> 
-                        </button>
+                    <div  style="margin-top: 40px;"  *ngIf="user.user.nickname.toUpperCase() == this.dataservice.realname.toUpperCase()">
+                    <span> 
+                    <span style=" font-weight: bold; background-color: transparent;">
+                        <a [routerLink] fragment='{{user.id}}' (dblclick)="scrollIntoView('u' + user.id)"  (click)="getClicked($event); UserGoalHistory(user.user.nickname, user.id);  userAdvance.openModal()" style="font-size: 0.8rem">{{user.user.nickname.toUpperCase()}}
+                        </a>
+
+                                
+                         <!--        {{user.user.nickname.toUpperCase()}} -->  
+                                <span style="font-family: Roboto;font-size: 11px; color: rgba(0, 0, 0, 0.5); padding: 4px 4px 0px 5px; ">
+                                    {{user.total_week_hours}} hours 
+                                </span>
+                                <span class="tool">
+                                    <a (click)="onUser(user.id); basicModal.openModal()"  style="margin: 5px; ">
+                                        <img src="/assets/image/plus2.png" style="height: 20px; width: 20px; margin 10px; ">
+                                    </a> 
+                                    <span class="tooltiptext3">
+                                        Add New Task
+                                    </span>
+                                </span>
+                                
+                                <span class="tool">
+                                    <a (click)="onUser(user.id); addNote.openModal(); show_notes()" style="margin: 5px;">
+                                        <img src="/assets/image/notes.png" style="height: 20px; width: 20px;  margin 10px; ">
+                                    </a>
+                                    <span   class="tooltiptext3">
+                                        Add a Note
+                                    </span>
+                                </span>
+                                
+                                
+
+                    </span>
+                    </span> 
+                   
                     
                     <div style="display:table; width:100%; word-wrap:break-word; border-collapse:collapse; background-color: #f2f2f2;">
                         
@@ -562,14 +637,22 @@
                                                         {{history.message}}
                                                     </option>
                                                 </select> 
-                                            <div style="padding-top: 3px;">
-                                                <a (click)="goalClicked(goal.goal_project_id); upload.openModal()">
-                                                    <img src="/assets/image/foto.png" style="padding: 2px;">
-                                                </a> 
-                                                <a (click)="goalClicked(goal.goal_project_id); initGoalChat()">
-                                                    <img src="/assets/image/message.png" style="padding: 2px;">
-                                                </a>
-                                            </div> 
+                                            <div style="padding-top: 4px;">
+                                                <span class="list_div_tool">
+                                                    <a (click)="goalClicked(goal.goal_project_id); upload.openModal()">
+                                                    <img src="/assets/image/foto.png" style="padding: 0 2px;">
+                                                    </a>
+                                                    <span class="tooltiptext3">Upload Image</span>
+                                                </span>
+                                                <span  class="list_div_tool">
+                                                    <a (click)="goalClicked(goal.goal_project_id); initGoalChat()">
+                                                    <img *ngIf="goal.message_exist == true" src="/assets/image/message.png" style="padding: 0 2px;">
+                                                    <img *ngIf="goal.message_exist == false" src="/assets/image/message2.png" style="padding: 0 2px;">
+                                                    </a>
+                                                    <span class="tooltiptext3">Goal Chat</span>
+                                                </span>
+                                                
+                                            </div>
                                             </div>
                                                 <span class="tooltiptext">{{goal.name}}</span>                                              
                                                 <span *ngIf="goal.status == 3" class="tooltiptext2">
@@ -589,7 +672,43 @@
             
         </div>
 
+        <div class="col s8" style="height: calc(100vh - 65px); overflow: auto; background-color: #f2f2f2; border-left: 3px solid white;" [style.display] = "board == 'Backlog' ? '' : 'none'">
+            <div class="main_area">
+                <ng-container *ngFor="let user of dataservice.users; let user_index = index">
+                    <div *ngIf="user.user.nickname.toUpperCase() == this.dataservice.realname.toUpperCase()" class="board-area" style=" float: left;">
+                            <button (click)="onUser(user.id); addLog.openModal()" *ngIf="dataservice.role.toLowerCase() == 'owner', 'admin'" style="background-color: transparent; border:none; box-shadow: none;">
+                                    <tr>
+                                        <td><img src="/assets/image/plus2.png" style="height: 37px; width: 37px; "> </td>
+                                        <td style="font-size: 14px">Add New </td>
+                                    </tr> 
+                                </button>
 
+                                <br>
+                            <div style="display: table; width: 100%; word-wrap: break-word; border-collapse: collapse; border: 2px solid black;">
+                                <div style="display: table-row">
+                                        <!--
+                                        <th class="full-box">Created By</th>
+                                        -->
+                                        <th class="full-box">ID</th>
+                                        <th class="full-box">Feature</th>
+                                        <th class="full-box">PRIORITY</th>
+                                </div>
+    
+                                <div style="display: table-row" *ngFor="let log of dataservice.proj_log; let j = index; let k = count">
+                                    <td class="top-box">{{log.id}}</td>
+                                    <td class="top-box">
+                                        <span style="font-weight: bolder;" [style.color]="log.priority == 'High' ? 'rgb(255,0,0)' : (log.priority == 'Medium' ? 'rgb(0,0,255)' : 'rgb(0,255,0)')">
+                                            {{log.log}} 
+                                        </span>  
+                                    </td>
+                                   
+                                </div>                                
+                            </div>
+                        </div>
+                    </ng-container>        
+                </div>
+        </div>    
+                
 
         <mz-modal #addWorkid>
             <mz-modal-header>
@@ -600,7 +719,7 @@
                 <h5 style="color: green">{{dataservice.message}}</h5>
                 <form (ngSubmit)="add_a_workid()">
                     <textarea id="goal" [(ngModel)]="workid" name="goal" placeholder="Enter Workid" style="width: 150px; height: 60px; border-radius: 20px; padding: 10px; margin-bottom: 40px"></textarea>
-                    <h5>Select none Option</h5>
+                    <div style="margin-bottom: 10px; font-weight: 500; font-size: 24px;">Select the None Option<span style="font-weight: 500;color: red;">*</span></div>
                     <select  name="branch" style="height: 30px; margin: 15px; color: black; width: 100px; font-size: 20px;" [(ngModel)]="branch" value="none">
                         <option Value="none" selected>none</option>                         
                     </select>
@@ -721,6 +840,34 @@
                         </div>
                     </mz-modal-content>
                 </mz-modal>
+
+
+                <mz-modal #addLog>
+                        <mz-modal-header>
+                            <h4>Add a Feature or Bug</h4>
+                        </mz-modal-header>
+                        <mz-modal-content>
+                            <div style="margin-bottom: 10px; font-weight: 500; font-size: 24px;">Features/Bugs<span style="font-weight: 500;color: red;">*</span></div>
+                            <h5 style="color: green">{{dataservice.message}}</h5>
+                            <form (ngSubmit)="add_a_log()">
+                                <textarea id="goal" [(ngModel)]="log" name="goal" placeholder="Enter new feature or bug..." style="width: 700px; height: 121px; border-radius: 20px; padding: 10px; margin-bottom: 40px"></textarea>
+                                <br>
+                                <div style="margin-bottom: 10px; font-weight: 500; font-size: 24px;">Priority<span style="font-weight: 500;color: red;">*</span></div>
+
+                                <select  name="log_priority" style="height: 30px; margin: 15px; color: #1f7a7a; width: auto;" [(ngModel)]="log_priority">
+                                    <option Value="High" selected>High Priority</option>
+                                    <option Value="Medium">Medium Priority</option>
+                                    <option Value="Low">Low Priority</option>                           
+                                </select>
+                                <!-- <input class="modal-close waves-effect btn btn-default" type="submit" value="Add Note"> -->
+                                <div style="text-align: center">
+                                    <button type="button" class="btn-round" value="Add" (click)="add_a_log()" style=" height: 40px; font-size: 14px">ADD</button>
+                                </div>
+                            </form><br>
+                        </mz-modal-content>
+                    </mz-modal>
+
+
                 <mz-modal #upload>
                     <mz-modal-header>
                         <h4>Add A File</h4>
