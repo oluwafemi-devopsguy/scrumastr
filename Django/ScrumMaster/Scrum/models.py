@@ -87,7 +87,7 @@ class ScrumGoal(models.Model):
     file = models.ImageField(blank=True, null=True, storage=fs)
     days_failed = models.IntegerField(default=0)
     message_exist = models.BooleanField(default=False)
-    push_id = models.CharField(max_length=10, default="Null Value")
+    push_id = models.CharField(max_length=100, default="Null Value")
 
     
     
