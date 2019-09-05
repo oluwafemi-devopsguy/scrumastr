@@ -672,7 +672,7 @@
             
         </div>
 
-        <div class="col s8" style="height: calc(100vh - 65px); overflow: auto; background-color: #f2f2f2; border-left: 3px solid white;" [style.display] = "board == 'Backlog' ? '' : 'none'">
+        <div class="col s8" style="height: calc(100vh - 65px); width: 70%; overflow: auto; background-color: #f2f2f2; border-left: 3px solid white;" [style.display] = "board == 'Backlog' ? '' : 'none'">
             <div class="main_area">
                 <ng-container *ngFor="let user of dataservice.users; let user_index = index">
                     <div *ngIf="user.user.nickname.toUpperCase() == this.dataservice.realname.toUpperCase()" class="board-area" style=" float: left;">
@@ -684,7 +684,7 @@
                                 </button>
 
                                 <br>
-                            <div style="display: table; width: 100%; word-wrap: break-word; border-collapse: collapse; border: 2px solid black;">
+                            <div style="display: table; max-width: 400%; word-wrap: break-word; border-collapse: collapse; border: 2px solid black;">
                                 <div style="display: table-row">
                                         <!--
                                         <th class="full-box">Created By</th>
@@ -697,8 +697,13 @@
                                 <div style="display: table-row" *ngFor="let log of dataservice.proj_log; let j = index; let k = count">
                                     <td class="top-box">{{log.id}}</td>
                                     <td class="top-box">
-                                        <span style="font-weight: bolder;" [style.color]="log.priority == 'High' ? 'rgb(255,0,0)' : (log.priority == 'Medium' ? 'rgb(0,0,255)' : 'rgb(0,255,0)')">
+                                        <span style="font-weight: bolder; ">
                                             {{log.log}} 
+                                        </span>  
+                                    </td>
+                           <td class="top-box">
+                                        <span style="font-weight: bolder;" [style.color]="log.priority == 'High' ? 'rgb(255,0,0)' : (log.priority == 'Medium' ? 'rgb(0,0,255)' : 'rgb(0,255,0)')">
+                                            {{log.priority}} 
                                         </span>  
                                     </td>
                                    
