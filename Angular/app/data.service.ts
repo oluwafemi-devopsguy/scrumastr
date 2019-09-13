@@ -52,6 +52,7 @@ export class DataService {
   public project_id;
   public to_clear_board;
   public users;
+  public proj_log;
   public work_IDs = [];
   public users_done = [];
   public users_TFT = [];
@@ -68,7 +69,7 @@ export class DataService {
   public user_notes;
   public off_today: boolean = true;
   public user_workid;
-  public proj_log;
+  
 
   
   public httpOptions = {
@@ -176,6 +177,7 @@ export class DataService {
             sessionStorage.setItem('user_slack', data['user_slack']);
             sessionStorage.setItem('project_slack', data['project_slack']);
             sessionStorage.setItem('slack_username', data['slack_username']);
+            sessionStorage.setItem('proj_log', data['proj_log']);
             this.username = this.login_username;
             this.role = data['role'];
             this.role_id = data['role_id'];
