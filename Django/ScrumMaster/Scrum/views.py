@@ -982,4 +982,4 @@ class ScrumLogViewSet(viewsets.ModelViewSet):
         print("This is log deleting")
         log = ScrumLog.objects.get(id=request.data['id'])
         log.delete()
-        return JsonResponse({'message': 'Goal Added and log deleted Successfully!', 'data': filtered_users(request.data['project_id'])})        
+        return JsonResponse({'message': 'Goal Assigned and log deleted Successfully!', 'data': filtered_users(request.data['project_id'])})        

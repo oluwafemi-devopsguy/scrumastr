@@ -755,12 +755,13 @@
 
                 <mz-modal #assignlog>
                     <mz-modal-header>
-                        <h4>Assign to User</h4>
+                        <h4>Assign</h4>
 
                     </mz-modal-header>
                     <mz-modal-content>
                         
                 <div>
+                    <h5 style="color: green">{{dataservice.message}}</h5>
             <div *ngFor="let log of dataservice.proj_log; let j = index; let k = count" tabindex="-1">
                 <ul *ngFor="let user of dataservice.users">
                     <li>
