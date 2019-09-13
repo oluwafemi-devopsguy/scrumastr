@@ -976,3 +976,10 @@ class ScrumLogViewSet(viewsets.ModelViewSet):
             return JsonResponse({'message': 'Created Successfully!', 'data': filtered_users(request.data['project_id'])})
         except KeyError as error:
              return JsonResponse({'message': 'Priority or feature/bug cannot be an empty field', 'data': filtered_users(request.data['project_id'])})    
+
+
+    def put(self, request):
+        print("This is log deleting")
+        log = ScrumLog.objects.get(id=request.data['id'])
+        log.delete()
+        return JsonResponse({'message': 'Goal Assigned and log deleted Successfully!', 'data': filtered_users(request.data['project_id'])})        

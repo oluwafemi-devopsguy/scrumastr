@@ -27,6 +27,7 @@ export class ProfileComponent implements OnInit {
   public websocket;
   public msg_obs;
   public on_user;
+  public proj_log;
   public at_bottom: boolean = true;
   public id_hover = -1;
   public id_click = -1;
@@ -50,7 +51,6 @@ export class ProfileComponent implements OnInit {
   public log_priority;
   public note_priority;
   public board: string = "AllTask"
-  public proj_log;
   public rep;
     
   public modalOptions: Materialize.ModalOptions = {
@@ -610,6 +610,7 @@ export class ProfileComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log(this.dataservice.proj_log);
 
     }
 
@@ -658,8 +659,6 @@ export class ProfileComponent implements OnInit {
 
   backlog()  {
     this.dataservice.message ="";
-    this.dataservice.proj_log;
-    console.log(this.proj_log)
     console.log(this.dataservice.project)
     this.board = "Backlog"
   }
@@ -827,6 +826,8 @@ export class ProfileComponent implements OnInit {
   note_to_goal(id, goal, priority)  {
     this.dataservice.message ="";
     this.dataservice.goal_name = goal
+    console.log(goal)
+    console.log(this.on_user)
     this.dataservice.addGoal(this.on_user);
     this.deleteNote(id)
   }
@@ -1007,18 +1008,58 @@ export class ProfileComponent implements OnInit {
   }
 
 
+  log_to_goal(id, goal, priority, clickuser)  {
+    this.dataservice.message ="";
+    this.dataservice.goal_name = goal
+    this.clicked_user = "m" + clickuser
+    console.log(goal)
+    console.log(this.clicked_user)
+    this.dataservice.addGoal(this.clicked_user);
+    this.deleteLog(id)
+  }
+
+
+
   show_log() {
     this.dataservice.message ="";
       for (var i = 0;  i < this.dataservice.users.length; i++)  {
-       
+      console.log("Back logs")
+      console.log(this.dataservice.users)
           if (this.dataservice.users[i].id == this.dataservice.users[i].id)
             { 
-            console.log(this.dataservice.users[i].scrumlog_set) 
+            console.log(this.dataservice.users[i]) 
             this.dataservice.proj_log = this.dataservice.users[i].scrumlog_set
+            console.log(this.dataservice.proj_log)
             }
          }
   }
 
+  deleteLog(log_id)  {
+    this.http.put(this.dataservice.domain_protocol + this.dataservice.domain_name + '/scrum/api/scrumlog/', JSON.stringify({ 'id': log_id, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
+            data => {
+                this.dataservice.users = data['data'];
+                this.dataservice.message = data['message'];
+                this.show_log()
+                if (this.dataservice.selected_sprint) {
+                  this.changeSprint()
+                }
+                else{
+                  this.filterSprint(this.dataservice.sprints)
+                }               
+            },
+            err => {
+                console.error(err);
+                if(err['status'] == 401)
+                {
+                    this.dataservice.message = 'Session Invalid or Expired. Please Login.';
+                    this.dataservice.logout();
+                } else
+                {
+                    this.dataservice.message = 'Unexpected Error!';    
+                }
+            }
+        );
+  }
 
 
 
