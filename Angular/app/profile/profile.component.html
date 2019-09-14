@@ -648,6 +648,7 @@
                 <div class="board-area" style=" float: left;">
                 <ng-container *ngFor="let user of dataservice.users; let user_index = index">
                     <div *ngIf="user.user.nickname.toUpperCase() == this.dataservice.realname.toUpperCase()">
+                        <h5 style="color: green">{{dataservice.message}}</h5>
                         <span>
                             <button (click)="onUser(user.id); addLog.openModal()" *ngIf="dataservice.role.toLowerCase() == 'owner', 'admin'" style="background-color: transparent; border:none; box-shadow: none;">
                                     <tr>
@@ -672,13 +673,11 @@
                                         </span> 
                                         <span class="tooltiptext">{{log.log}}</span> 
                                      <div style="padding-top: 4px; float: right;">   
-                                        <span class="list_div_tool">
-                                    <a (click)="onUser(user.id); assignlog.openModal()"  style="margin: 5px; ">
-                                        <img src="/assets/image/plus2.png" style="height: 20px; width: 20px; margin 10px; ">
-                                        <span class="tooltiptext3">
-                                        Assign to user
-                                    </span>
-                                    </a> 
+                                        <span class="list_div_tool" >
+                                    <select >
+
+                                                    <option *ngFor="let user of dataservice.users" [routerLink] fragment='{{user.id}}' (click)="getClicked($event); log_to_goal(log.id, log.log, log.priority, user.id); ">{{user.user.nickname}}</option>
+                                                </select> 
                                     
                                 </span>
                                     </div>
