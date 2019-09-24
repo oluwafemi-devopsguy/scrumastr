@@ -266,18 +266,21 @@ def userBgColor():
 
 def filtered_users(project_id):
     project = ScrumProjectSerializer(ScrumProject.objects.get(id=project_id)).data
-    latest_sprint = ScrumSprint.objects.filter(goal_project_id = project_id).latest('ends_on')
     time_check = datetime.datetime.utcnow().replace(tzinfo=None)
     for user in project['scrumprojectrole_set']:
         user['scrumgoal_set'] = [x for x in user['scrumgoal_set'] if x['visible'] == True]
         total_hours = 0
 
-
-        for goal in user['scrumgoal_set']:
-            if latest_sprint.ends_on > parse_datetime(goal['time_created']) and latest_sprint.created_on < parse_datetime(goal['time_created']):
-                if goal['hours'] != -1 and goal['status'] == 3:
-                    total_hours += goal['hours']
-                    print("condition Tested okay")
+        try:
+            latest_sprint = ScrumSprint.objects.filter(goal_project_id = project_id).latest('ends_on')
+            for goal in user['scrumgoal_set']:
+                if latest_sprint.ends_on > parse_datetime(goal['time_created']) and latest_sprint.created_on < parse_datetime(goal['time_created']):
+                    if goal['hours'] != -1 and goal['status'] == 3:
+                        total_hours += goal['hours']
+                        print("condition Tested okay")
+        except Exception as e:
+            pass
+        
 
         
         user['total_week_hours'] = total_hours            
