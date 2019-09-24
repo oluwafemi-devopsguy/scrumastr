@@ -1,4 +1,3 @@
-
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../data.service';
 import { DragulaService } from 'ng2-dragula';
@@ -134,7 +133,7 @@ export class ProfileComponent implements OnInit {
                         
                         if(push_id == '') {
                           console.log('tHE PUSH IS NULL')
-                          push_id = "Null Value" 
+                          push_id = "No PID" 
                           } 
                         else if(!push_id)  {
                            hours = -13;
@@ -1028,7 +1027,7 @@ export class ProfileComponent implements OnInit {
           if (this.dataservice.users[i].id == this.dataservice.users[i].id)
             { 
             console.log(this.dataservice.users[i]) 
-            this.dataservice.proj_log = this.dataservice.users[0].scrumlog_set
+            this.dataservice.proj_log = this.dataservice.users[2].scrumlog_set
             console.log(this.dataservice.proj_log)
             }
          }

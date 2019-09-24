@@ -105,9 +105,9 @@ WSGI_APPLICATION = 'ScrumMaster.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'mysql.connector.django',
-        'NAME': 'chatscrum',
+        'NAME': 'scrum',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': '8iu7*IU&',
         'OPTIONS': {
             'raise_on_warnings': False,
             'use_pure': True
@@ -118,7 +118,7 @@ DATABASES = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'chatscrum',
+        'NAME': 'chat',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': 'localhost',
