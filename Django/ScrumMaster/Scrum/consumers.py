@@ -27,6 +27,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 #For when you do have redis; You can see everyone's chat.
 class ChatConsumer(AsyncWebsocketConsumer):
     def send_to_slack(self, user, message):
+        image_url = self.scrum_user.slack_profile_picture
         print("+++++++++++++++++++++++ room grouup name++++++++++++++++"  + self.room_group_name)
         room = ScrumChatRoom.objects.get(hash=self.room_group_name)
         print("+++++++++++++++++++++++room send to slack++++++++++++++++")
@@ -59,7 +60,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
           channel=slack.channel_id,
           text=message,
           username=user,
-          as_user = as_user
+          as_user = as_user,          
+          icon_url=image_url,
         )
         print("After call")
         return
@@ -83,7 +85,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         if self.identity[:9] != 'main_chat':
             try:
-                print(self.identity)
+                print(self.identity[1:])
                 goal_obj = ScrumGoal.objects.get(goal_project_id=self.identity[1:])
                 print(goal_obj.message_exist)
                 goal_obj.message_exist = True
@@ -131,8 +133,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 
 
-        print("USER IDENTITY VIA PROJECT_ID is =============================")
-        print(self.project_id)
+        print("USER IDENTITY VIA PROJECT_ID =============================" + self.project_id)
         print(self.user)
         # self.scrum_user = ScrumProjectRole.objects.get(user = self.user, project_id=self.project_id)
         self.scrum_user = ScrumUser.objects.get(nickname = self.user).scrumprojectrole_set.get(project_id=self.project_id)
