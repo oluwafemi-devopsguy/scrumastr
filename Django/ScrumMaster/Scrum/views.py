@@ -266,6 +266,7 @@ def userBgColor():
 
 def filtered_users(project_id):
     project = ScrumProjectSerializer(ScrumProject.objects.get(id=project_id)).data
+    latest_sprint = ScrumSprint.objects.filter(goal_project_id = project_id).latest('ends_on')
     time_check = datetime.datetime.utcnow().replace(tzinfo=None)
     for user in project['scrumprojectrole_set']:
         user['scrumgoal_set'] = [x for x in user['scrumgoal_set'] if x['visible'] == True]
@@ -273,7 +274,6 @@ def filtered_users(project_id):
 
 
         for goal in user['scrumgoal_set']:
-            latest_sprint = ScrumSprint.objects.filter(goal_project_id = project_id).latest('ends_on')
             if latest_sprint.ends_on > parse_datetime(goal['time_created']) and latest_sprint.created_on < parse_datetime(goal['time_created']):
                 if goal['hours'] != -1 and goal['status'] == 3:
                     total_hours += goal['hours']
@@ -367,15 +367,13 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
 
 
 
-        goal, created = ScrumGoal.objects.get_or_create(user=author, name=request.data['name'], project_id=request.data['project_id'], visible = True, moveable= True,
+        goal, created = ScrumGoal.objects.get_or_create(name=request.data['name'], project_id=request.data['project_id'], visible = True, moveable= True,
             defaults = {
                 "user":author,
                 "status":status_start,
                 "time_created": datetime.datetime.now(),
                 "goal_project_id":scrum_project.project_count,
             } )
-        print("Test ::::::::::::::::::: Goal")
-        print(request.data['name'])
         if created:
             return JsonResponse({'message': 'Goal created success.', 'data': filtered_users(request.data['project_id'])})
 
@@ -722,7 +720,6 @@ class SprintViewSet(viewsets.ModelViewSet):
 
         return
 
-
  
 
 
@@ -750,7 +747,6 @@ class Events(APIView):
         print("====================================auth code=================" + auth_code)
         print(project_id)
         print(user_email)
-        print(self.slack_app.CLIENT_ID)
         print("====================================auth code=================" + self.slack_app.CLIENT_ID)
         if auth_code:
             auth_response = sc.api_call(
@@ -774,18 +770,18 @@ class Events(APIView):
                 
                 print(user_response)
                 # print( user_response["user"]["email"])
-                try:
-                    print("============= INSIDE TRY GET USER============" )
-                    user= ScrumUser.objects.get(user__username=user_email)
-                    print(user)
-                    user_role = user.scrumprojectrole_set.get(user=user, project = scrum_project)
-                    print(user_role)
+                # try:
+                print("============= INSIDE TRY GET USER============" )
+                user= ScrumUser.objects.get(user__username=user_email)
+                print(user)
+                user_role = user.scrumprojectrole_set.get(user=user, project = scrum_project)
+                print(user_role)
                     
-                    print("============= AFTER TRY GET USER============" )
-                except:
-                    print(user_response)
-                    html = "<html><body>An error occured!!!</body></html>" 
-                    return HttpResponse(html)
+                print("============= AFTER TRY GET USER============" )
+                # except:
+                #     print(user_response)
+                #     html = "<html><body>An error occured!!!</body></html>" 
+                #     return HttpResponse(html)
                 
                 
                 
@@ -933,7 +929,7 @@ class ScrumNoteViewSet(viewsets.ModelViewSet):
         note = ScrumNote.objects.get(id=request.data['id'])
         note.delete()
         return JsonResponse({'message': 'Goal Added and note deleted Successfully!', 'data': filtered_users(request.data['project_id'])})
-            
+
 class ScrumWorkIdViewSet(viewsets.ModelViewSet):
     queryset = ScrumWorkId.objects.all()
     serializer_class = ScrumWorkIdSerializer  
