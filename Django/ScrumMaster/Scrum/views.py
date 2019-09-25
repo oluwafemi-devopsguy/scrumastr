@@ -715,10 +715,16 @@ class SprintViewSet(viewsets.ModelViewSet):
                         project_id=self.request.data['project_id'],
                         moveable = True,
                         goal_project_id=each_goal.goal_project_id)
-                        scrum_project.project_count = each_goal.goal_project_id                       
+                        print("inside if:::::: count")    
+                        print(scrum_project.project_count)
+                        scrum_project.project_count = scrum_project.project_count + 1 
+                        print(scrum_project.project_count)                     
                         goal.save()
-                
+
+
+            print("Outside if:::::: count")    
             # # Save Total number of project goals
+            print(scrum_project.project_count)
             scrum_project.save()
 
         else:
