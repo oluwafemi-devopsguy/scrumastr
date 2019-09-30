@@ -987,7 +987,7 @@ export class ProfileComponent implements OnInit {
                 if (this.dataservice.users[i].id == this.on_user.slice(1))
                   { 
                   console.log(this.dataservice.users[i].scrumlog_set) 
-                  this.dataservice.proj_log = this.dataservice.users[0].scrumlog_set
+                  this.dataservice.proj_log = this.dataservice.users[2].scrumlog_set
                   }
                } 
 
