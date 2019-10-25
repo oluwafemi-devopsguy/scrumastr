@@ -445,7 +445,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
                 return JsonResponse({'message': 'Permission Denied: Unauthorized Movement of Goal.', 'data': filtered_users(request.data['project_id'])})
             if goal_item.moveable == True:
                 message = 'Goal Moved Successfully!'
-                if to_id == 3 and request.data['hours'] == -11 :
+                if to_id == 2 and request.data['hours'] :
                     goal_item.push_id = request.data['push_id']
                     goal_item.status = to_id
                     goal_item.hours = goal_item.hours
@@ -466,6 +466,10 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
                 elif to_id == 2 and state_prev == 1 :
                     goal_item.hours = request.data['hours']
                     message = 'Goal Moved Successfully! Hours Applied!'
+
+                if to_id == 2 and request.data['hours'] < 8 and request.data['push_id'] == "Null Value":
+                    goal_item.status = state_prev
+                    message = 'Error: No PUSH-ID added.'               
 
 
                 if state_prev == 1 and to_id == 0:

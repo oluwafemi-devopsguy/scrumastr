@@ -278,6 +278,9 @@
        
 
                                             <div class="list_div" *ngIf ="goal.status == arrItem && user.id == goal.user && goal.name; let thisGoal" (dblclick)="goal.status == arrItem ? editGoal($event) : doNothing()" style=""  [style.background]="goal.goal_project_id == id_clicks ? 'rgba(0, 128, 128, 0.5)' :  user.color"   [attr.id]="'gs' + goal.goal_project_id"> 
+                                                <a  *ngIf ="goal.push_id != 'Null Value'">
+                                <div style="color: #26a69a">PID:{{goal.push_id}}</div>
+                            </a>
 
                                              {{ (goal.name.length>120) ? (thisGoal | slice:0:120)+'...':(thisGoal) }} {{(goal.hours != -1 && (goal.status == 3 || goal.status == 2) ? ' (' + goal.hours + ')' : '' )}}
                                                 <a (click)="ResizeImage(goal.file); showImage.openModal()">
@@ -301,6 +304,7 @@
                                                 <div style="padding: 8px 5px; font-weight: bold">
                                                     {{goal.goal_project_id}}
                                                 </div>
+                                                                            
                                                 <span style="font-weight: bolder; font-size: 17px; font-family: arial-black">.</span>
                                                 <select name= "option{{goal.goal_project_id}}" class="select_option"   [(ngModel)]="selected_history[j]" (change)= "CheckHistory(selected_history[j], goal.push_id); showHistory.openModal();" >
                                                     <option [ngValue]="history1" disabled selected>History  </option>
@@ -596,6 +600,7 @@
                                                 </a> 
                                                 <br>
                                                 <br>
+
                                                 <br>
                                                 <br>
                                             <div class="div-add-file" style="display: inline-flex; padding-bottom: 10px;">

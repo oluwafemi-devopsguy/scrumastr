@@ -100,18 +100,17 @@ export class ProfileComponent implements OnInit {
                         var hours_in = window.prompt('How many hours did you spend on this task?');
                         hours = parseInt(hours_in, 10);
                         if(hours + '' == 'NaN')
-                            hours = -1;
-                    }
-                    if(target['id'] == '3' && source['id'] == '2')
-                    {
-                        hours = -11;
+                            hours = -1; 
+
+                        hours = hours;
                         var push_id = window.prompt('Enter Task Push ID?');
                         
                         if(push_id == '') {
                           console.log('tHE PUSH IS NULL')
                           push_id = "Null Value" 
-                          }                      
+                          }                                        
                     }
+                   
                     console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@in hours@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
                     console.log(hours)
                     this.dataservice.moveGoal(el['id'], target['id'], hours, push_id);
@@ -127,7 +126,7 @@ export class ProfileComponent implements OnInit {
                   console.log(target['id'])
                   console.log(source['id'])
                   
-                    if(target['id'] == '3' && source['id'] == '2')
+                    if(target['id'] == '2' && source['id'] == '1')
                     {
                         hours = -11;
                         var push_id = window.prompt('Enter Task Push ID?');
@@ -143,7 +142,7 @@ export class ProfileComponent implements OnInit {
                         }                     
                     }
 
-                    if (target['id'] == "3" && source['id'] < "2") {
+                    if (target['id'] == "2" && source['id'] < "1") {
                       hours = -13;
                      var push_id = window.prompt('Enter Task Push ID?');
                         
@@ -1028,7 +1027,7 @@ export class ProfileComponent implements OnInit {
           if (this.dataservice.users[i].id == this.dataservice.users[i].id)
             { 
             console.log(this.dataservice.users[i]) 
-            this.dataservice.proj_log = this.dataservice.users[0].scrumlog_set
+            this.dataservice.proj_log = this.dataservice.users[2].scrumlog_set
             console.log(this.dataservice.proj_log)
             }
          }
