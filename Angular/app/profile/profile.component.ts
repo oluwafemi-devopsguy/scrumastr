@@ -101,17 +101,16 @@ export class ProfileComponent implements OnInit {
                         hours = parseInt(hours_in, 10);
                         if(hours + '' == 'NaN')
                             hours = -1; 
-                    }
-                    if(target['id'] == '2' && source['id'] == '1')
-                    {
+
                         hours = hours;
                         var push_id = window.prompt('Enter Task Push ID?');
                         
                         if(push_id == '') {
                           console.log('tHE PUSH IS NULL')
                           push_id = "Null Value" 
-                          }                      
+                          }                                        
                     }
+                   
                     console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@in hours@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
                     console.log(hours)
                     this.dataservice.moveGoal(el['id'], target['id'], hours, push_id);
