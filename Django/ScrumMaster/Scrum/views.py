@@ -469,7 +469,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
 
                 if to_id == 2 and request.data['hours'] < 8 and request.data['push_id'] == "Null Value":
                     goal_item.status = state_prev
-                    message = 'Error: No Workid added.'               
+                    message = 'Error: No PUSH-ID added.'               
 
 
                 if state_prev == 1 and to_id == 0:
