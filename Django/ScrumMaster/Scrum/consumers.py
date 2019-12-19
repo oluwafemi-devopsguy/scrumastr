@@ -27,6 +27,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 #For when you do have redis; You can see everyone's chat.
 class ChatConsumer(AsyncWebsocketConsumer):
     def send_to_slack(self, user, message):
+        image_url = self.scrum_user.slack_profile_picture
         print("+++++++++++++++++++++++ room grouup name++++++++++++++++"  + self.room_group_name)
         room = ScrumChatRoom.objects.get(hash=self.room_group_name)
         print("+++++++++++++++++++++++room send to slack++++++++++++++++")
@@ -59,7 +60,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
           channel=slack.channel_id,
           text=message,
           username=user,
-          as_user = as_user
+          as_user = as_user,          
+          icon_url=image_url,
         )
         print("After call")
         return
@@ -79,7 +81,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.generate_message(new_room, 'SERVER INFO', '=== This is the beginning of the chatroom history. ===')
             self.room_object = new_room
         else:
-            self.room_object = self.firstObject(room)        
+            self.room_object = self.firstObject(room)
+
+        if self.identity[:9] != 'main_chat':
+            try:
+                print(self.identity[1:])
+                goal_obj = ScrumGoal.objects.get(goal_project_id=self.identity[1:])
+                print(goal_obj.message_exist)
+                goal_obj.message_exist = True
+                goal_obj.save()
+            except IndexError:
+                print("failed")        
         return
 
     def getCount(self, object):
@@ -118,9 +130,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
         print("Received Goal ID " + text_data_json['goal_id'])
 
 
+
+
+
         print("USER IDENTITY VIA PROJECT_ID =============================" + self.project_id)
+        print(self.user)
+        # self.scrum_user = ScrumProjectRole.objects.get(user = self.user, project_id=self.project_id)
         self.scrum_user = ScrumUser.objects.get(nickname = self.user).scrumprojectrole_set.get(project_id=self.project_id)
-        print(self.scrum_user)
+        print(self.scrum_user.user.nickname)
+        print(self.user)
+        self.user = self.scrum_user.user.nickname
         
  
         
@@ -160,6 +179,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
             # await database_sync_to_async(self.generate_message)(self.room_object, 'SERVER INFO', str(self.user + ' has joined.'))
             messages = await database_sync_to_async(self.getRecentMessages)()
             await self.send(text_data=json.dumps({'messages': messages}, sort_keys=True, indent=1,cls=DjangoJSONEncoder))
+            
+            
+            try:
+                print(messages[1])
+                print(self.identity[1:])
+                goal_obj = ScrumGoal.objects.get(goal_project_id=self.identity[1:])
+                print(goal_obj.message_exist)
+                goal_obj.message_exist = True
+                goal_obj.save()
+            except IndexError:
+                print("failed")
+
 
         else:
             if self.identity[:9] == 'main_chat':
@@ -171,29 +202,5 @@ class ChatConsumer(AsyncWebsocketConsumer):
         user = event['user']
         message = event['message'] 
         date_Time = (datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H:%M:%S"))
-        profile_picture = self.scrum_user.slack_profile_picture
+        profile_picture = event['profile_picture']
         await self.send(text_data=json.dumps({'user': user, 'message': message, 'date_Time':date_Time, 'profile_picture': profile_picture}, sort_keys=True, indent=1,cls=DjangoJSONEncoder))  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
