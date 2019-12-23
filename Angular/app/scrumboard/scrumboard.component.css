@@ -225,9 +225,9 @@ body {
    
 }
 
-#tfw #tft #verify #done {
+/* #tfw #tft #verify #done {
   background: rgba(255, 255, 255, 0.5);
-}
+} */
 
 /* #done {
   margin-left: 10px;
@@ -694,6 +694,12 @@ body {
   .right {
     width: 0%
   }
+}
+
+.notif {
+  margin-left: -14px;
+  margin-top: -13px;
+  font-size: 15px;
 }
 
     

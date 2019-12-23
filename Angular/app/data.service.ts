@@ -9,9 +9,9 @@ export class DataService {
     
   public _signUpurl = 'http://54.185.254.239:5000/scrum/api/scrumusers/';
   public _loginurl = 'http://54.185.254.239:5000/scrum/api-token-auth/';
-  public domain_name = '54.185.254.239:5000';
-  public domain_protocol = 'http://';
-  public websocket = 'ws://';
+  public domain_name = '127.0.0.1:8000';
+  public domain_protocol = 'https://';
+  public websocket = 'wss://';
 
   
   public message;
@@ -228,6 +228,7 @@ export class DataService {
             else
                 this.message = 'Login Failed! Unexpected Error!';
             console.error(err);
+            document.getElementById('lodr').style.display = 'none';
             this.login_username = '';
             this.login_password = '';
             this.login_project = '';

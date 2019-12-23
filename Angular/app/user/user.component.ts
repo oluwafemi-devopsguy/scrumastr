@@ -23,12 +23,6 @@ export class UserComponent implements OnInit {
     this.setTitle("Sign Up");
   }
 
-  // pageLoader () {
-  //   $(window).on('load', function() {
-  //     $('#mdb-preloader').addClass('loaded');
-  //   });
-  // }
-
   setTitle (title) {
     this.titleService.setTitle(title);
   }

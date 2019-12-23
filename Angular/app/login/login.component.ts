@@ -20,6 +20,10 @@ export class LoginComponent implements OnInit {
     this.titleService.setTitle(title);
   }
 
+  lgnBTN() {
+    $('#btn-one').html('<span id="lodr" class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>LOGIN').addClass('disabled');
+  }
+
   toUser()
   {
     this.router.navigate(['createuser']);
@@ -28,6 +32,7 @@ export class LoginComponent implements OnInit {
   
   login()
   {
+    document.getElementById('alert-error').style.display = 'none';
     this.dataservice.login();
   }
 }
