@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'websocketlab',
 ]
 
 
@@ -202,3 +203,11 @@ CHANNEL_LAYERS = {
 FRONTEND = 'http://localhost:4200/home/'
 
 SECURE_SSL_REDIRECT = False
+
+#AWS config
+AWS_ACCESS_KEY_ID = 'AKIA3TZ6IUIDQJSPSYN3'
+AWS_SECRET_ACCESS_KEY = '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'
+# REGION = 'us-west-2'
+REGION = 'us-east-2'
+
+AWS_WS_GATEWAY = 'https://85zctiv75k.execute-api.us-east-2.amazonaws.com/test/'
