@@ -6,13 +6,21 @@ import { UserComponent } from './user/user.component';
 import { AdminComponent } from './admin/admin.component';
 import { ProfileComponent } from './profile/profile.component';
 import { DragulaModule } from 'ng2-dragula';
+
+import { TermsComponent } from './terms/terms.component';
+import { SupportComponent } from './support/support.component';
+import { ScrumboardComponent } from './scrumboard/scrumboard.component';
+
 const routes: Routes = [
     { path: "", redirectTo: "/home", pathMatch: "full" },
     { path: "home", component: HomeComponent},
     { path: "login", component: LoginComponent },
     { path: "createuser", component: UserComponent },
+    { path: "scrumboard", component: ScrumboardComponent },
     { path: "profile", component: ProfileComponent },
-    { path: "admin", component: AdminComponent }
+    { path: "admin", component: AdminComponent },
+    { path: "terms", component: TermsComponent },
+    { path: "support", component: SupportComponent }
 ];
 
 @NgModule({

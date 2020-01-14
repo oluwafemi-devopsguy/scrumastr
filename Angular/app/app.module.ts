@@ -25,6 +25,11 @@ import { DragulaModule } from 'ng2-dragula';
 import { MzButtonModule, MzModalModule } from 'ngx-materialize';
 import { AdminComponent } from './admin/admin.component';
 
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { TermsComponent } from './terms/terms.component';
+import { SupportComponent } from './support/support.component';
+import { ScrumboardComponent } from './scrumboard/scrumboard.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -39,7 +44,10 @@ import { AdminComponent } from './admin/admin.component';
     WorkIDsPipe,
     TFTsGoalsPipe, 
     InitUserLanePipe,
-    ElementizePipe
+    ElementizePipe,
+    TermsComponent,
+    SupportComponent,
+    ScrumboardComponent
   ],
   imports: [
     HttpClientModule,
@@ -54,6 +62,7 @@ import { AdminComponent } from './admin/admin.component';
   providers: [
     DataService
   ],
+  schemas: [NO_ERRORS_SCHEMA],
 
   bootstrap: [AppComponent]
 

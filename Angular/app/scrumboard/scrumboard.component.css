@@ -1,0 +1,918 @@
+*, *::after, *::before {
+  box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+    width: 2px;
+    background:#808080;;
+    margin-right: 1px;
+}
+
+::-webkit-scrollbar:hover {
+  width: 10px;
+}
+
+
+::-webkit-scrollbar-thumb {
+    background:#808080
+}
+
+::-webkit-scrollbar-track {
+  background: #E5E5E5;
+}
+
+
+
+body {
+  background: white;
+  color: black;
+}
+
+.preloader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  background: #26A69A;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+}
+
+.page-content {
+  max-width: 100vw;
+  margin: 0 auto;
+}
+
+/* #mloaderImg {
+    display: none;
+}
+
+#loadrImg {
+  display: block;
+} */
+
+/* @media  (min-width: 360px) {
+  #loadrImg {
+    display: none;
+  }
+  #mloaderImg {
+    display: block;
+  }
+} */
+
+.navbarr {
+  overflow: hidden;
+  background-color: #333;
+  position: fixed;
+  top: 0;
+  width: 100vw;
+  left: 0;
+  background: #26A69A;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* @media (min-width: 800px) {
+  .navbarr img {
+    margin-left: 10px
+  }
+} */
+
+@media (min-width: 1100px) {
+  .navbarr img {
+    margin-left: 5px
+  }
+}
+
+@media (min-width: 1300px) {
+  .navbarr img {
+    margin-left: 10px
+  }
+}
+
+.navbarr a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.navbarr a:hover {
+  background: yellow!important;
+  color: black;
+}
+
+.main {
+  padding: 16px;
+  margin-top: 37px;
+  /* height: 1500px; */
+}
+
+.split {
+  height: 100%;
+  position: fixed;
+  z-index: 1;
+  /* top: 10; */
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+.left {
+  width: 76%;
+  left: 0;
+  background-color: white;
+  /* overflow-x: auto; */
+}
+
+.right {
+  width: 24%;
+  right: 0;
+  background-color: #111;
+  overflow-y: hidden;
+}
+
+.ex h4 {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 16px;
+  margin-top: 10px;
+  margin-bottom: 18px;
+  color:rgba(0, 0, 0, 1);
+
+}
+
+.ex {
+  z-index:5;
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  border-radius: 10px;
+  border-top: 10px solid #E5E5E5;
+  align-items: center!important;
+  text-align: center!important;
+  padding: 5px 10px 8px 8px;
+  margin-left: -8px;
+}
+
+.ex .excontent {
+  
+  background: #FFFFFF;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  padding: 7px;
+  text-align: left;
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 18px;
+  color: rgba(0, 0, 0, 0.9);
+  margin-bottom: 1.6em;
+}
+
+.ex .excontent .scrumtools {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 13px;
+  padding-top: 20px;
+  color: rgba(0, 0, 0, 0.5);
+  margin-bottom: 3px;
+}
+
+.ex .excontent  n {
+  font-size: 11px;
+}
+
+.ex .excontent .scrumtools span {
+  font-size: 15px; 
+  margin-right: 8px;
+  
+}
+
+.ex .excontent .scrumtools i {
+  font-size: 16px; 
+  margin-right: 8px;
+  
+}
+
+.ex .icon-move {
+  font-size: 17px!important;
+}
+
+.tools {
+  display: none;
+}
+
+.excontent:hover .tools {
+  display: inline-block;
+}
+
+.excontent .tools:hover {
+  color: #4DFFD4;
+}
+
+.child{
+   border-left: 9px solid #000;
+   margin-left: -12px;
+   
+}
+
+/* #tfw #tft #verify #done {
+  background: rgba(255, 255, 255, 0.5);
+} */
+
+/* #done {
+  margin-left: 10px;
+}
+
+.fordone {
+  margin-left: 5px;
+} */
+
+/*MODAL CSS STARTS FROM HERE*/
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  padding-top: 100px; 
+  left: 0;
+  top: 0;
+  width: 100%; 
+  height: 100%; 
+  overflow: auto;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.4);
+}
+
+
+.modal-contentForTask {
+  border-radius: 5px;
+  background-color: #fefefe;
+  margin: auto;
+  margin-top:17vh;
+  margin-left: 15em;
+  padding: 0;
+  border: 1px solid #888;
+  /* width: 50%; */
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  -webkit-animation-name: animatetop;
+  -webkit-animation-duration: 0.4s;
+  animation-name: animatetop;
+  animation-duration: 0.4s;
+  width: 621px;
+  height: 309px;
+  
+}
+
+.modal-contentForImage {
+  border-radius: 5px;
+  background-color: #fefefe;
+  margin: auto;
+  margin-top:17vh;
+  margin-left: 15em;
+  padding: 0;
+  border: 1px solid #888;
+  /* width: 50%; */
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  -webkit-animation-name: animatetop;
+  -webkit-animation-duration: 0.4s;
+  animation-name: animatetop;
+  animation-duration: 0.4s;
+  width: 621px;
+  height: 203px;
+  
+}
+
+/* Add Animation */
+@-webkit-keyframes animatetop {
+  from {top:-300px; opacity:0} 
+  to {top:0; opacity:1}
+}
+
+@keyframes animatetop {
+  from {top:-300px; opacity:0}
+  to {top:0; opacity:1}
+}
+
+.close:hover, .close:focus {
+  cursor: pointer;
+}
+
+.modal-header {
+  height: 44px;
+  background-color: rgba(0, 0, 0, 0.1);
+  
+  
+}
+
+.modal-bodyForTask {padding: 2px 16px;}
+
+.modal-bodyForNote {
+  background: #FAFAFA;
+}
+
+.insidemodalContentForTask {
+  width: 581px;
+  height: 142px;
+  margin-top:15px;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
+  border-radius: 10px;
+  padding: 8px;
+}
+
+.insidemodalContentForImageUpload {
+  width: 453px;
+  height: 38px;
+  margin-top:15px;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
+  border-radius: 10px;
+  padding-left: 16px;
+  padding-top: 5px;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.modal-contentForImage {
+    border-radius: 5px;
+    background-color: #fefefe;
+    margin: auto;
+    margin-top:17vh;
+    margin-left: 15em;
+    padding: 0;
+    border: 1px solid #888;
+    /* width: 50%; */
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animatetop;
+    animation-duration: 0.4s;
+    width: 621px;
+    height: 203px;
+    
+  }
+
+.addT {
+  color:#26A69A;
+  font-size: 14px;
+  font-weight: bold;
+  font-family: 'Roboto', sans-serif;
+  line-height: 16px;
+  
+}
+
+.submitTask {
+  margin-top: 20px;
+  margin-left: 174px;
+}
+
+.submitNote {
+  margin-top: 4em!important;
+  margin-left: 361px;
+}
+
+.uploadImg {
+  margin-top: 20px;
+  margin-left: 200px;
+}
+
+.closebtn {
+    background: none;
+    font-size: 14px;
+    line-height: 17px;
+    color: black;
+    font-weight: normal;
+    outline: none;
+    font-family: SF;
+    margin-left: 5px;
+}
+
+
+.addTbtn {
+  background: #4DFFD4;
+  padding: 6px 46px;
+  font-weight: bold;
+  font-size: 14px;
+  font-family: SF;
+  color: black;
+}
+
+
+.openAddTaskModalBtn {
+  height: 35px;
+  cursor: pointer;
+  background: #4DFFD4;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+  border-radius: 5px;
+  border: none;
+  position: fixed;
+  left: 2%;
+  right: 86.11%;
+  bottom: 4%;
+  z-index: 9999;
+  width: 150px;
+  font-weight: bold;
+  font-size: 14px;
+  
+}
+
+
+.openAddNoteModalbtn {
+  width: 35px;
+  height: 34px;
+  cursor: pointer;
+  background: #4DFFD4;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+  border-radius: 5px;
+  border: none;
+  position: fixed;
+  left: 13.5%;
+  padding: 5px;
+  bottom: 4%;
+  z-index: 9999;
+  font-weight: bold;
+}
+
+.insidemodalContentForNote {
+  width: 954px;
+  height: 142px;
+  margin-top:15px;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
+  border-radius: 10px;
+  padding: 8px;
+}
+
+.modal-contentForNote {
+  
+  background-color: #fefefe;
+  margin: auto;
+  margin-top:-15vh;
+  /* margin-left: 15em; */
+  padding: 0;
+  border: 1px solid #888;
+  /* width: 50%; */
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  -webkit-animation-name: animatetop;
+  -webkit-animation-duration: 0.4s;
+  animation-name: animatetop;
+  animation-duration: 0.4s;
+  width: 994px;
+  height: 833px;
+}
+
+
+.priorityI input[type=radio]{
+  box-shadow: none;
+  margin-right: 3px;
+  float: left;
+  clear: none;
+}
+
+.priorityI  span{
+  color: #000;
+  margin-right: 50px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  font-family: 'Roboto', sans-serif;
+  float: left;
+  clear: none;
+}
+
+.int {
+  color: rgba(51, 51, 51, 0.5);
+}
+
+.int i:first-letter {
+  padding-bottom: 10px!important;
+  /* line-height: 10px; */
+  /* font-size: 50px; */
+  margin-left: 5px;
+}
+
+.userNoteHistory .h2 {
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 16px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+
+.userNoteHistory .h4{
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 16px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.userNoteHistory span {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 16px;
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.userNoteHistory .addN {
+  color:#26A69A;
+  font-size: 14px;
+  font-weight: bold;
+  font-family: 'Roboto', sans-serif;
+  line-height: 16px;
+  font-weight: bold;
+  
+}
+
+.modal-contentForImage input[type="file"] {
+  display: none;
+  /* background-color: #FFFFFF;
+  color: black;
+  opacity: 0.0;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 16px; */
+}
+
+.modal-contentForImage .imgMsg {
+  font-size: 14px;
+  font-weight: normal;
+  color: #000000;
+  font-family: 'Roboto', sans-serif;
+  line-height: 16px;
+}
+
+.modal-contentForImage .fileName {
+  float: right;
+  margin-top: 1.6em;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  font-family: 'Roboto', sans-serif;
+  color: #000000;
+  
+}
+
+.progressTrack {
+  width: 522px; 
+  height: 2px; 
+  background: rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.progressBar {
+  height: 2px;
+  width: 0; 
+  background: #26A69A;
+}
+
+#alert {
+  visibility: hidden;
+  min-width: 255px;
+  height: 38px;
+  margin-left: -160px;
+  background-color: #333333;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  padding: 10px;
+  position: fixed;
+  z-index: 9999;
+  left: 50%;
+  bottom: 40px;
+  border-radius: 5px;
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.25);
+}
+
+#alert.show {
+  visibility: visible;
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@-webkit-keyframes fadein {
+  from {bottom: 0; opacity: 0;} 
+  to {bottom: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+  from {bottom: 0; opacity: 0;}
+  to {bottom: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+  from {bottom: 30px; opacity: 1;} 
+  to {bottom: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+  from {bottom: 30px; opacity: 1;}
+  to {bottom: 0; opacity: 0;}
+}
+
+
+.modal-contentForTaskHistory { 
+  background-color: #fefefe;
+  margin: auto;
+  margin-top:-15vh;
+  /* margin-left: 15em; */
+  padding: 0;
+  border: 1px solid #888;
+  /* width: 50%; */
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  -webkit-animation-name: animatetop;
+  -webkit-animation-duration: 0.4s;
+  animation-name: animatetop;
+  animation-duration: 0.4s;
+  width: 994px;
+  height: 833px;
+}
+
+/*.taskHistoryModalMain {
+  padding: 16px;
+  margin-top: 37px;
+}
+
+.taskHistoryModalSplit {
+  background: #fff;
+  height: 100%;
+  position: fixed;
+  z-index: 1;
+  /* top: 10; 
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+.taskHistoryModalLeft {
+  width: 24%;
+  left: 10;
+  background-color: #111;
+  overflow-y: hidden;
+}
+
+.taskHistoryModalRight {
+  background: greenyellow;
+  width: 76%;
+  right:0;
+}
+*/
+
+.ForMobile {
+  display: none;
+}
+
+@media (min-height: 900px) {
+  .modal-contentForNote, .modal-contentForTaskHistory {
+    margin-top: -10vh;
+  }
+}
+
+@media (max-width: 800px) {
+  .left {
+    width: 100%;
+  }
+
+  .right {
+    width: 0%
+  }
+}
+
+.notif {
+  margin-left: -14px;
+  margin-top: -13px;
+  font-size: 15px;
+}
+
+    
+@media (max-width: 412px) {
+  .col {
+    width: 100vw!important;
+    padding: 2em;
+    /* height: 82vh!important; */
+  }
+
+  #done {
+    margin-bottom: 2em;
+  }
+
+  #alert{
+    margin-left: -120px;
+  }
+
+  .modal-contentForTask {
+    border-radius: 5px;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 0;
+    border: 1px solid #888;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animatetop;
+    animation-duration: 0.4s;
+    width: 343px;
+    height: 374px;
+    left: calc(50% - 343px/2);
+    top: 219px;
+  }
+
+  .insidemodalContentForTask, .insidemodalContentForNote {
+    width: 323px;
+    height: 211px;
+    margin-left: -7px;
+    top: 264px;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    box-sizing: border-box;
+    border-radius: 10px;
+    padding: 2px 5px;
+    font-size: 13px;
+    margin-top: 4px;
+  }
+
+  .insidemodalContentForNote {
+    width: 343px;
+    height: 128px;
+    box-sizing: border-box;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+  }
+
+  .close {
+    margin-top: -7px;
+  }
+
+  .addTbtn {
+    
+    font-weight: bold;
+    font-size: 12px;
+    font-family: SF;
+    color: black;
+    padding: 8px 36px;
+    background: #4DFFD4;
+    border-radius: 4px;
+    margin-top: -3em;
+  }
+
+  .submitTask, .submitNote {
+    margin-top: 10px;
+    margin-left: 5.5em;
+  }
+
+  .closebtn {
+      background: none;
+      font-size: 12px;
+      color: black;
+      font-weight: normal;
+      outline: none;
+      font-family: SF;
+      margin-top: 5em;
+      margin-left: -9em;
+  }
+
+  .modal-bodyForTask .addT {
+    color:#26A69A;
+    font-size: 12px;
+    font-weight: bold;
+    font-family: 'Roboto', sans-serif;
+    /* margin-bottom: -2em; */
+  }
+
+  .modal-bodyForTask  {
+    margin-top: 1em;
+  }
+
+  #addTaskModal .modal-header {
+    display: none;
+  }
+
+  .ForMobile {
+    display: block;
+    font-size: 15px;
+  }
+
+  .tools {
+    display: inline-block;
+    margin-right: 12px!important;
+  }
+
+  .scrumtools n {
+    margin-right: 14px!important;
+  }
+
+  .openAddTaskModalBtn {
+    height: 35px;
+    left: 5%;
+    right: 86.11%;
+    bottom: 7%;
+    width: 140px;
+    font-weight: bold;
+    font-size: 12px;
+  }
+
+  .openAddNoteModalbtn {
+    width: 33px;
+    left: 46%;
+    bottom: 7%;
+  }
+
+  .modal-contentForNote, .modal-contentForTaskHistory {
+    margin-top: -17vh;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .headerUserRole{
+    display: none;
+    
+  }
+
+  #addNoteModal .modal-header {
+    background: #26A69A;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);
+    padding: 25px;
+  }
+
+  #addNoteModal .fa-arrow-left {
+    font-size: 20px;
+    color: white;
+    margin-top: -5px;
+  }
+
+  .userNoteHistory h2, h4, span {
+    font-size: 13px;
+  }
+
+  .userNoteHistory .tasks {
+    margin-top: 1em;
+  }
+
+  .insidemodalContentForImageUpload {
+    width: 323px;
+    height: 29px;
+    margin-top:15px;
+    padding-left: 16px;
+    padding-top: 4px;
+    margin-left: -6px;
+    font-size: 12px;
+    
+  }
+
+  .modal-contentForImage {
+    margin: auto;
+    margin-top:17vh;
+    /* margin-left: 15em; */
+    width: 343px;
+    height: 212px;
+    
+  }
+
+  .modal-contentForImage .addT {
+    margin-left: -6px;
+  }
+
+  .uploadImg {
+    margin-top: 4.5em;
+    margin-left: 100px;
+    margin-bottom: -1.5em;
+  }
+
+  .progressTrack {
+    width: 324px;
+    margin-left: -6px;
+  }
+
+  .modal-contentForImage .fileName {
+    float: left;
+    margin-top: 0.5em;
+    font-size: 12px;
+    margin-left: 9.5em;
+  }
+
+  .modal-contentForImage .icon-cancel {
+    font-size: 18px;
+  }
+
+  .modal-bodyForTask .close {
+    margin-top: -2em!important;
+    margin-right: -7px;
+  }
+
+}

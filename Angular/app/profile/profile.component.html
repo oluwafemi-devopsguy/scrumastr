@@ -83,6 +83,15 @@
         
         <div class="col " style="height: calc(100vh - 65px); width: 70%; overflow: auto; background-color: #f5f5f5; border-left: 3px solid white" [style.display] = "board == 'AllTask' ? '' : 'none'">          
             <div class="main_area">
+
+
+
+
+
+
+
+
+
                 <table>
                 <tr style="margin: 0">
                         <td style="padding-top: 17px;">
@@ -98,9 +107,9 @@
                  <td style="text-align: center;">
                     <div style="" [style.display] = "show_sprint_option ? 'inline-flex' : 'none'"  [style.margin-top] = "dataservice.role.toLowerCase() == 'owner' ? '10px' : '5px'" >
                      <select  name="change_sprint" style="font-size: 12px; font-family: Roboto; height: 27px; color: #1f7a7a; width: 260px;" [(ngModel)]="dataservice.selected_sprint"  (change)="changeSprint()">
-                        <option *ngFor = "let sprint of dataservice.sprints;"  [ngValue]="sprint" [selected] = "index == last ? sprint : doNothing()" >
+                        <!-- <option *ngFor = "let sprint of dataservice.sprints;"  [ngValue]="sprint" [selected] = "index == last ? sprint : doNothing()" >
                         Sprint {{sprint.id}}:  {{sprint.created_on | date}} - {{sprint.ends_on | date}}
-                        </option>                           
+                        </option>                            -->
                      </select>
                     
                     </div>                           
@@ -306,12 +315,12 @@
                                                 </div>
                                                                             
                                                 <span style="font-weight: bolder; font-size: 17px; font-family: arial-black">.</span>
-                                                <select name= "option{{goal.goal_project_id}}" class="select_option"   [(ngModel)]="selected_history[j]" (change)= "CheckHistory(selected_history[j], goal.push_id); showHistory.openModal();" >
+                                                <!-- <select name= "option{{goal.goal_project_id}}" class="select_option"   [(ngModel)]="selected_history[j]" (change)= "CheckHistory(selected_history[j], goal.push_id); showHistory.openModal();" >
                                                     <option [ngValue]="history1" disabled selected>History  </option>
                                                     <option *ngFor = "let history of goal.scrumgoalhistory_set" [ngValue]=history>
                                                         {{history.message}}
                                                     </option>
-                                                </select> 
+                                                </select>  -->
                                             <div style="padding-top: 4px;">
                                                 <span class="list_div_tool">
                                                     <a (click)="goalClicked(goal.goal_project_id); upload.openModal()">
@@ -395,12 +404,12 @@
                                                     {{goal.goal_project_id}}
                                                 </div>
                                                 <span style="font-weight: bolder; font-size: 17px; font-family: arial-black">.</span>
-                                                <select name= "option{{goal.goal_project_id}}" class="select_option"   [(ngModel)]="selected_history[j]" (change)= "CheckHistory(selected_history[j], goal.push_id); showHistory.openModal();" >
+                                                <!-- <select name= "option{{goal.goal_project_id}}" class="select_option"   [(ngModel)]="selected_history[j]" (change)= "CheckHistory(selected_history[j], goal.push_id); showHistory.openModal();" >
                                                     <option [ngValue]="history1" disabled selected>History  </option>
                                                     <option *ngFor = "let history of goal.scrumgoalhistory_set" [ngValue]=history>
                                                         {{history.message}}
                                                     </option>
-                                                </select> 
+                                                </select>  -->
                                             <div style="padding-top: 4px;">
                                                 <span class="list_div_tool">
                                                     <a (click)="goalClicked(goal.goal_project_id); upload.openModal()">
@@ -492,6 +501,15 @@
 
                         
                     </div>
+
+
+
+
+
+
+
+
+
                 </div>
                 
                 <div class="row" style="padding-left: 0; padding-right: 10px; background-color: #f5f5f5;">
@@ -515,10 +533,15 @@
                                 <a href="https://slack.com/oauth/authorize?client_id={{this.dataservice.slack_app_id}}&state=main_chat_{{dataservice.project_name}}>>>{{dataservice.username}}&scope=incoming-webhook,channels:read,channels:history,groups:history,mpim:history,emoji:read,files:read,groups:read,im:read,im:history,reactions:read,stars:read,users:read,team:read,chat:write:user,chat:write:bot,channels:write,bot" id = "slack_btn1"><img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a> 
                             </li>                                                                       
                     </span>
+
+                    
+
+                
                 </div>
                 </div>
                 
     </div>
+
 </div>
 
 
@@ -608,12 +631,12 @@
                                                     {{goal.goal_project_id}}
                                                 </div>
                                                 <span style="font-weight: bolder; font-size: 17px; font-family: arial-black">.</span>
-                                                <select name= "option{{goal.goal_project_id}}" class="select_option"   [(ngModel)]="selected_history[j]" (change)= "CheckHistory(selected_history[j]); showHistory.openModal();" >
+                                                <!-- <select name= "option{{goal.goal_project_id}}" class="select_option"   [(ngModel)]="selected_history[j]" (change)= "CheckHistory(selected_history[j]); showHistory.openModal();" >
                                                     <option [ngValue]="history1" disabled selected>History  </option>
                                                     <option *ngFor = "let history of goal.scrumgoalhistory_set" [ngValue]=history>
                                                         {{history.message}}
                                                     </option>
-                                                </select> 
+                                                </select>  -->
                                             <div style="padding-top: 4px;">
                                                 <span class="list_div_tool">
                                                     <a (click)="goalClicked(goal.goal_project_id); upload.openModal()">
@@ -743,12 +766,12 @@
                                 {{workid.branch}} 
                             </span>  
                         </td>
-                        <button (click)="deleteworkid(workid.id, workid.workid, workid.branch)" style="background-color: grey; border:none; box-shadow: none; border-radius: 8px;">
+                        <!-- <button (click)="deleteworkid(workid.id, workid.workid, workid.branch)" style="background-color: grey; border:none; box-shadow: none; border-radius: 8px;">
                             <tr>
                                 <td><img src="/assets/image/plus2.png" style="height: 20px; width: 20px; "> </td>
                                 <td style="font-size: 14px; font-family: Roboto; font-weight: bold">Delete Workid </td>
                             </tr> 
-                        </button>
+                        </button> -->
                        
                     </div>                                
                 </div>

@@ -20,11 +20,5 @@ export class HomeComponent implements OnInit {
   {
     this.dataservice.createDemo();
   }
-  //Login method
-  login()
-  {
-    this.dataservice.login();
-  }
-  
 
 }

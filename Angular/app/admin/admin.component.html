@@ -59,8 +59,8 @@
                     <li>
                         <table style="border-collapse: separate;" [attr.id]="'m' + user.id" (mouseover)="setSelectedUser(user.id)" (mouseleave)="setSelectedUser(-1)">
                             <tr id="author">
-                                <th style="width: 1%"><a [routerLink] fragment='{{user.id}}' (click)="scrollIntoView('u' + user.id)"><i class="material-icons" id="account_circle">account_circle</i></a></th>
-                                <a [routerLink] fragment='{{user.id}}' (click)="scrollIntoView('u' + user.id)"  style="margin-right: 0;font-size: 1.2rem">{{user.user.nickname}}</a>
+                                <th style="width: 1%"><a [routerLink] fragment='{{user.id}}' ><i class="material-icons" id="account_circle">account_circle</i></a></th>
+                                <a [routerLink] fragment='{{user.id}}'   style="margin-right: 0;font-size: 1.2rem">{{user.user.nickname}}</a>
                                     <div style="display:flex;">
                                         <a mz-button (click)="dataservice.role.toLowerCase() == 'owner' ? manageUser($event) : doNothing()" class="btn-floating change-role"><i class="material-icons" id="settings">settings</i></a>
                                     </div>

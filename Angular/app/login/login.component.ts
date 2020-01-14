@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataService } from '../data.service';
+import {Title} from "@angular/platform-browser";
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -8,9 +10,18 @@ import { DataService } from '../data.service';
 })
 export class LoginComponent implements OnInit {
 
-  constructor(private router: Router, public dataservice: DataService) { }
+  constructor(private router: Router, public dataservice: DataService, private titleService:Title) { }
 
   ngOnInit() {
+  this.setTitle('Login')
+  }
+
+  setTitle (title) {
+    this.titleService.setTitle(title);
+  }
+
+  lgnBTN() {
+    $('#btn-one').html('<span id="lodr" class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>LOGIN').addClass('disabled');
   }
 
   toUser()
@@ -21,6 +32,7 @@ export class LoginComponent implements OnInit {
   
   login()
   {
+    document.getElementById('alert-error').style.display = 'none';
     this.dataservice.login();
   }
 }

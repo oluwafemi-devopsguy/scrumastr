@@ -1,25 +1,18 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataService {
     
-
+  public _signUpurl = 'http://54.185.254.239:5000/scrum/api/scrumusers/';
+  public _loginurl = 'http://54.185.254.239:5000/scrum/api-token-auth/';
   public domain_name = '127.0.0.1:8000';
-  public domain_protocol = 'https://';
-  public websocket = 'wss://';
-
-  // API_domain_name = environment.API_domain_name;
-  // API_domain_protocol = environment.API_domain_protocol;
-  // API_websocket = environment.API_websocket;
-
-  //public domain_name = environment.domain_name;
-  //public domain_protocol = environment.domain_protocol;
-  //public websocket = environment.websocket;
+  public WS_URL = 'wss://6vpxcuvqe4.execute-api.us-west-2.amazonaws.com/dev'
+  public domain_protocol = 'http://';
+  public websocket = 'ws://';
 
   
   public message;
@@ -32,7 +25,7 @@ export class DataService {
   public createuser_email;
   public createuser_password;
   public createuser_fullname;
-  public createuser_usertype = "User";
+  public createuser_usertype;
   public createuser_projname;
   public add_slack: boolean = false;
   
@@ -116,38 +109,67 @@ export class DataService {
   
  createUser()
   {
-    console.log("inside DataService")
     console.log(this.add_slack)
     this.http.post(this.domain_protocol + this.domain_name + '/scrum/api/scrumusers/', JSON.stringify({'email': this.createuser_email, 'password': this.createuser_password, 'full_name': this.createuser_fullname, 'usertype': this.createuser_usertype, 'projname': this.createuser_projname}), this.httpOptions).subscribe(
+    //console.log({'email': this.createuser_email, 'password': this.createuser_password, 'full_name': this.createuser_fullname, 'usertype': this.createuser_usertype, 'projname': this.createuser_projname})
+   //this.http.post(this._signUpurl, JSON.stringify({'email': this.createuser_email, 'password': this.createuser_password, 'full_name': this.createuser_fullname, 'usertype': this.createuser_usertype, 'projname': this.createuser_projname}), this.httpOptions).subscribe(
         data => { 
-          this.slack_app_id = data['client_id']
-          if (this.createuser_usertype  == "Owner" && this.add_slack == true ) {
-              console.log("======================= ADDING PROJECT TO SLACK=================================")
-              console.log(this.createuser_usertype)
-              // let element: HTMLElement = document.getElementById('slack_btn1') as HTMLElement;
-              // element.click
-              window.location.replace("https://slack.com/oauth/authorize?client_id=" + this.slack_app_id + "&state=main_chat_" + this.createuser_projname + ">>>" + this.createuser_email + "&scope=incoming-webhook,channels:read,channels:history,groups:history,mpim:history,emoji:read,files:read,groups:read,im:read,im:history,reactions:read,stars:read,users:read,team:read,chat:write:user,chat:write:bot,channels:write,bot")
-              console.log("======================= After ADDING PROJECT TO SLACK=================================")
-            }
+          // this.slack_app_id = data['client_id']
+          // if (this.createuser_usertype  == "Owner" && this.add_slack == true ) {
+          //     console.log("======================= ADDING PROJECT TO SLACK=================================")
+          //     console.log(this.createuser_usertype)
+          //     // let element: HTMLElement = document.getElementById('slack_btn1') as HTMLElement;
+          //     // element.click
+          //     window.location.replace("https://slack.com/oauth/authorize?client_id=" + this.slack_app_id + "&state=main_chat_" + this.createuser_projname + ">>>" + this.createuser_email + "&scope=incoming-webhook,channels:read,channels:history,groups:history,mpim:history,emoji:read,files:read,groups:read,im:read,im:history,reactions:read,stars:read,users:read,team:read,chat:write:user,chat:write:bot,channels:write,bot")
+          //     console.log("======================= After ADDING PROJECT TO SLACK=================================")
+          //   }
+            console.log(data);
+            if ( 
+                  data['message'] == 'User Created Successfully.' || 
+                  data['message'] == 'Project Created Successfully for already existing User.'
+                ) {
+              document.getElementById('alert-success').style.display = 'block';
+              setTimeout(() => {
+              this.router.navigate(['login']);
+              },  5000); 
+              
+              // this.loginService.setTitle("Success");
+              
+            } else {
+               document.getElementById('alert-error').style.display = 'block';
+               document.getElementById('lodr').style.display = 'none';
+               this.message = 'creating account.';
+               this.createuser_password = '';
+               this.createuser_fullname = '';
+               this.createuser_projname = '';
+               
+               // document.getElementById('alert-error').style.display = 'block';
+               // this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
+               // this.router.navigate(['createuser']));
+            };
             this.message = data['message'];
             this.createuser_email = '';
             this.createuser_password = '';
             this.createuser_fullname = '';
-            this.createuser_usertype = '';
             this.createuser_projname = '';
-            this.slack_app_id = data['client_id']
+            
+            this.slack_app_id = data['client_id'];
             
         },
         err => {
-            this.message = 'User Creation Failed! Unexpected Error!';
             console.error(err);
-            this.createuser_email = '';
+            document.getElementById('lodr').style.display = 'none';
+            document.getElementById('alert-error').style.display = 'block';
+            this.message = 'User already exists or invalid data';
             this.createuser_password = '';
             this.createuser_fullname = '';
-            this.createuser_usertype = '';
             this.createuser_projname = '';
+            
+            
         }
+
     );
+
   }
 
   
@@ -201,11 +223,13 @@ export class DataService {
             };
         },
         err => {
+            document.getElementById('alert-error').style.display = 'block';
             if(err['status'] == 400)
                 this.message = 'Login Failed: Invalid Credentials.';
             else
                 this.message = 'Login Failed! Unexpected Error!';
             console.error(err);
+            document.getElementById('lodr').style.display = 'none';
             this.login_username = '';
             this.login_password = '';
             this.login_project = '';
