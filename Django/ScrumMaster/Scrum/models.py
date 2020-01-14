@@ -216,4 +216,28 @@ class ScrumLog(models.Model):
         return self.log
     
     class Meta:
-        ordering = ['-id']         
+        ordering = ['-id']      
+
+
+class Connection(models.Model):
+    project = models.ForeignKey(ScrumProject, on_delete=models.CASCADE)
+    connection_id = models.CharField(max_length=255)
+
+    def __str__(self):
+        return '{} {} '.format(self.project,self.connection_id)
+    
+    class Meta:
+        ordering = ['-id'] 
+
+
+class ChatMessage(models.Model):
+    username = models.CharField(max_length=50)
+    project_name = models.CharField(max_length=200)
+    message = models.CharField(max_length=400)
+    timestamp = models.CharField(max_length=100)
+
+    def __str__(self):        
+        return '{} {} '.format(self.username,self.project_name)
+
+    class Meta:
+        ordering = ['id']

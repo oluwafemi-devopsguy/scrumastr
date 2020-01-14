@@ -24,7 +24,10 @@ export class ProfileComponent implements OnInit {
   public chat_text: string = "";
   public goal_push_id;
   public messages = [];
+  public messages2 = [];
+  public chat_text2;
   public websocket;
+  AmazonWebsocketConnection;
   public msg_obs;
   public on_user;
   public proj_log;
@@ -52,6 +55,7 @@ export class ProfileComponent implements OnInit {
   public note_priority;
   public board: string = "AllTask"
   public rep;
+
     
   public modalOptions: Materialize.ModalOptions = {
     dismissible: false, // Modal can be dismissed by clicking outside of the modal
@@ -138,8 +142,7 @@ export class ProfileComponent implements OnInit {
                         else if(!push_id)  {
                            hours = -13;
                            push_id = "Canceled"
-                          console.log("##@@@@@@@@@@@####################################uyuyuyyu $$$$$$$$$$$$$$$$$$$$$$")
-                        }                     
+                         }                     
                     }
 
                     if (target['id'] == "2" && source['id'] < "1") {
@@ -151,7 +154,6 @@ export class ProfileComponent implements OnInit {
                           push_id = "Null Value" 
                           } 
                           } 
-                  console.log("%%%%%%%%%%%%((((((((((((((((((())))))))))))))))))&&&&&&&&&&&&&&&&&&&")
                   console.log(target['id'])
                   console.log(source['id'])
                   console.log(el['id'])
@@ -167,8 +169,13 @@ export class ProfileComponent implements OnInit {
                   console.log(source['parentElement']['parentElement'])
                     this.dataservice.changeOwner(el['id'], target['parentElement']['id']);
                 } 
+                this.send_message_to_AWS_websocket()
             }
+
+
         )
+
+
     );
     
     this.dataservice.realname = sessionStorage.getItem('realname');
@@ -193,10 +200,43 @@ export class ProfileComponent implements OnInit {
         console.log(chat_scroll.scrollTop);
         if(this.at_bottom)
             chat_scroll.scrollTop = chat_scroll.scrollHeight - chat_scroll.clientHeight;
-        console.log(this.messages);
     });
 
     this.websocket = new WebSocket(this.dataservice.websocket + this.dataservice.domain_name + '/scrum/');
+
+
+// ==================================== This is Amazon websocket!!! ======================================
+
+    this.AmazonWebsocketConnection  = new WebSocket(this.dataservice.WS_URL);
+
+    this.AmazonWebsocketConnection.onopen=(event)=>{
+      console.log(this.dataservice.project)
+      const context = {action:'connectToProject', project_id:this.dataservice.project}
+      this.AmazonWebsocketConnection.send(JSON.stringify(context)); 
+      
+    
+     
+    }
+
+    this.AmazonWebsocketConnection.onmessage = (event) => {
+      let data=JSON.parse(event.data)
+      console.log("This:::::::::: Is::::::::::: On:::::::::::::::: Message")
+      if (data['messages']!==undefined) {
+        console.log(data['messages'])
+        this.dataservice.users = data['messages']['data']
+        this.filterSprint(this.dataservice.sprints)
+      }
+    }
+
+        this.AmazonWebsocketConnection.onclose = (evt) => {
+        console.log('Amazon websocket disconnected!');
+        this.msg_obs.disconnect();
+    }
+
+// ================================== End amazon websocket conf ================================================
+
+
+
     this.websocket.onopen = (evt) => {
       forkJoin(
           this.http.get(this.dataservice.domain_protocol + this.dataservice.domain_name + '/scrum/api/scrumprojects/' + this.dataservice.project + '/', this.dataservice.httpOptions),
@@ -292,6 +332,15 @@ export class ProfileComponent implements OnInit {
   }
   
 
+  send_message_to_AWS_websocket()
+    {
+      console.log(this.dataservice.project)
+      const context = {action:"sendMessage", project_id:this.dataservice.project}
+      console.log(context)
+      this.AmazonWebsocketConnection.send(JSON.stringify(context)); 
+    }
+
+
   swapState()
   {
     this.dataservice.message ="";
@@ -348,26 +397,14 @@ export class ProfileComponent implements OnInit {
           this.dataservice.sprint_goals = filter_goal
   }
 
-
   createSprintMethod(myDate) {
-          console.log(this.dataservice.users)
-          console.log(this.dataservice.sprints)
-          forkJoin(
-          this.http.post(this.dataservice.domain_protocol + this.dataservice.domain_name + '/scrum/api/scrumsprint/?goal_project_id=' + this.dataservice.project, JSON.stringify({'project_id': this.dataservice.project, 'ends_on': myDate}), this.dataservice.authOptions),
-          this.http.get(this.dataservice.domain_protocol + this.dataservice.domain_name + '/scrum/api/scrumprojects/' + this.dataservice.project + '/', this.dataservice.httpOptions)
-        )
-         .subscribe(([res2, res1]) => {
+        this.http.post(this.dataservice.domain_protocol + this.dataservice.domain_name + '/scrum/api/scrumsprint/?goal_project_id=' + this.dataservice.project, JSON.stringify({'project_id': this.dataservice.project, 'ends_on': myDate}), this.dataservice.authOptions).subscribe(
+          data => {
             this.msg_obs.observe(document.getElementById('chat_div_space'), { attributes: true, childList: true, subtree: true });
-            this.dataservice.users = res2['users'];
-            this.dataservice.project_name = res1['project_name'];
-            this.dataservice.sprints = res2['data']
-            this.dataservice.message = res2['message']
             
-            console.log(this.dataservice.sprints)
-            console.log(this.dataservice.users)
-            console.log(this.dataservice.sprint_goals)
-            this.filterSprint(res2['data'])
-            console.log(this.dataservice.sprint_goals)
+            this.dataservice.sprints = data['data']
+            this.dataservice.message = data['message']
+            
         },
 
             err => {
@@ -382,7 +419,11 @@ export class ProfileComponent implements OnInit {
                   }
                 }
               );
-  }
+                
+                }
+
+
+
 
   createSprint() 
   {
@@ -455,14 +496,11 @@ export class ProfileComponent implements OnInit {
     {
         this.http.put(this.dataservice.domain_protocol + this.dataservice.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'mode': 1, 'goal_id': event.target.parentElement.id, 'new_name': goal_name, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
             data => {
-                this.dataservice.users = data['data'];
                 this.dataservice.message = data['message'];                
                 if (this.dataservice.selected_sprint) {
                   this.changeSprint()
                 }
-                else{
-                  this.filterSprint(this.dataservice.sprints)
-                }
+                
             },
             err => {
                 console.error(err);
@@ -477,6 +515,7 @@ export class ProfileComponent implements OnInit {
             }
         );
     }
+     this.send_message_to_AWS_websocket()
   }
 
   remove_user(nickname, id) {
@@ -485,14 +524,11 @@ export class ProfileComponent implements OnInit {
       console.log("Deleted")
       this.http.delete(this.dataservice.domain_protocol + this.dataservice.domain_name + '/scrum/api/scrumprojectroles/' + id + "/", this.dataservice.authOptions).subscribe(
             data => {
-                this.dataservice.users = data['data'];
                 this.dataservice.message = data['message'];
                 if (this.dataservice.selected_sprint) {
                   this.changeSprint()
                 }
-                else{
-                  this.filterSprint(this.dataservice.sprints)
-                }
+                
                 
                 
             },
@@ -511,6 +547,7 @@ export class ProfileComponent implements OnInit {
     } else {
       console.log("Canceled")
     }
+    this.send_message_to_AWS_websocket()
     }
 
 
@@ -521,14 +558,11 @@ export class ProfileComponent implements OnInit {
       if (pop_event) {
           this.http.put(this.dataservice.domain_protocol + this.dataservice.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({'mode': 2, 'goal_id':'g' + goal_id, 'new_name': goal_name, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
             data => {
-                this.dataservice.users = data['data'];
                 this.dataservice.message = data['message'];
                 if (this.dataservice.selected_sprint) {
                   this.changeSprint()
                 }
-                else{
-                  this.filterSprint(this.dataservice.sprints)
-                }
+               
                 
                 
             },
@@ -547,6 +581,7 @@ export class ProfileComponent implements OnInit {
       } else {
           console.log('cancel');
       };
+     this.send_message_to_AWS_websocket()
     }
   
   manageUser(event)
@@ -564,7 +599,6 @@ export class ProfileComponent implements OnInit {
     {
         this.http.patch(this.dataservice.domain_protocol + this.dataservice.domain_name + '/scrum/api/scrumprojectroles/', JSON.stringify({'role': role_name, 'id': this.on_user, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
             data => {
-                this.dataservice.users = data['data'];
                 this.dataservice.message = data['message'];
             },
             err => {
@@ -583,6 +617,7 @@ export class ProfileComponent implements OnInit {
     {
         this.dataservice.message = 'Invalid Input.';
     }
+this.send_message_to_AWS_websocket()
   }
   
   doNothing()
@@ -713,6 +748,7 @@ export class ProfileComponent implements OnInit {
 
 
     this.dataservice.addGoal(this.on_user);
+    this.send_message_to_AWS_websocket()
   }
   
   setSelectedUser(id)
@@ -793,7 +829,6 @@ export class ProfileComponent implements OnInit {
 
     this.http.post(this.dataservice.domain_protocol + this.dataservice.domain_name + '/scrum/api/scrumnotes/', JSON.stringify({'note': this.note, 'priority': this.note_priority, 'user': this.on_user, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
             data => {
-                this.dataservice.users = data['data'];
                 this.dataservice.message = data['message'];
                 this.note = '';  
 
@@ -820,6 +855,9 @@ export class ProfileComponent implements OnInit {
                 }
             }
         );
+
+    this.send_message_to_AWS_websocket()
+ 
   }
 
   note_to_goal(id, goal, priority)  {
@@ -829,20 +867,18 @@ export class ProfileComponent implements OnInit {
     console.log(this.on_user)
     this.dataservice.addGoal(this.on_user);
     this.deleteNote(id)
+    this.send_message_to_AWS_websocket()
   }
 
   deleteNote(note_id)  {
     this.http.put(this.dataservice.domain_protocol + this.dataservice.domain_name + '/scrum/api/scrumnotes/', JSON.stringify({ 'id': note_id, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
             data => {
-                this.dataservice.users = data['data'];
                 this.dataservice.message = data['message'];
                 this.show_notes()
                 if (this.dataservice.selected_sprint) {
                   this.changeSprint()
                 }
-                else{
-                  this.filterSprint(this.dataservice.sprints)
-                }               
+                           
             },
             err => {
                 console.error(err);
@@ -891,7 +927,6 @@ export class ProfileComponent implements OnInit {
 
     this.http.post(this.dataservice.domain_protocol + this.dataservice.domain_name + '/scrum/api/scrumworkid/', JSON.stringify({'workid': this.workid, 'branch': this.branch, 'user': this.on_user, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
             data => {
-                this.dataservice.users = data['data'];
                 this.dataservice.message = data['message'];
                 this.workid = ''; 
 
@@ -919,20 +954,20 @@ export class ProfileComponent implements OnInit {
                 }
             }
         );
+
+    this.send_message_to_AWS_websocket()
+ 
   }
 
   deleteworkid(workid_id)  {
     this.http.put(this.dataservice.domain_protocol + this.dataservice.domain_name + '/scrum/api/scrumworkid/', JSON.stringify({ 'id': workid_id, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
             data => {
-                this.dataservice.users = data['data'];
                 this.dataservice.message = data['message'];
                 this.show_workid()
                 if (this.dataservice.selected_sprint) {
                   this.changeSprint()
                 }
-                else{
-                  this.filterSprint(this.dataservice.sprints)
-                }               
+                           
             },
             err => {
                 console.error(err);
@@ -946,6 +981,8 @@ export class ProfileComponent implements OnInit {
                 }
             }
         );
+
+   this.send_message_to_AWS_websocket()
   }
 
   show_workid() {
@@ -977,7 +1014,6 @@ export class ProfileComponent implements OnInit {
 
     this.http.post(this.dataservice.domain_protocol + this.dataservice.domain_name + '/scrum/api/scrumlog/', JSON.stringify({'log': this.log, 'priority': this.log_priority, 'user': this.on_user, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
             data => {
-                this.dataservice.users = data['data'];
                 this.dataservice.message = data['message'];
                 this.log = '';  
 
@@ -1004,6 +1040,8 @@ export class ProfileComponent implements OnInit {
                 }
             }
         );
+
+    this.send_message_to_AWS_websocket()
   }
 
 
@@ -1015,6 +1053,8 @@ export class ProfileComponent implements OnInit {
     console.log(this.clicked_user)
     this.dataservice.addGoal(this.clicked_user);
     this.deleteLog(id)
+    this.send_message_to_AWS_websocket()
+ 
   }
 
 
@@ -1036,15 +1076,12 @@ export class ProfileComponent implements OnInit {
   deleteLog(log_id)  {
     this.http.put(this.dataservice.domain_protocol + this.dataservice.domain_name + '/scrum/api/scrumlog/', JSON.stringify({ 'id': log_id, 'project_id': this.dataservice.project}), this.dataservice.authOptions).subscribe(
             data => {
-                this.dataservice.users = data['data'];
                 this.dataservice.message = data['message'];
                 this.show_log()
                 if (this.dataservice.selected_sprint) {
                   this.changeSprint()
                 }
-                else{
-                  this.filterSprint(this.dataservice.sprints)
-                }               
+                              
             },
             err => {
                 console.error(err);
@@ -1058,6 +1095,7 @@ export class ProfileComponent implements OnInit {
                 }
             }
         );
+    this.send_message_to_AWS_websocket()
   }
 
 
@@ -1101,9 +1139,7 @@ export class ProfileComponent implements OnInit {
       this.dataservice.imageAuthOptions)
       .subscribe(
         data => {
-          this.dataservice.users = data['data'];
           this.dataservice.message = data['message'];
-          this.filterSprint(this.dataservice.sprints)
         },
         err => {
           console.error(err);
@@ -1117,6 +1153,7 @@ export class ProfileComponent implements OnInit {
             }
           }
         );
+    this.send_message_to_AWS_websocket()
   }
 
   ResizeImage(iName) {
@@ -1244,6 +1281,5 @@ insertElement() {
   return output
 
 }
-
 
 }

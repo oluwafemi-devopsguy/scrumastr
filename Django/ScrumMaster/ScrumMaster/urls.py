@@ -21,8 +21,6 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('scrum/', include('Scrum.urls')),
-    path('djangowebsocketlab/', include('djangowebsocketlab.urls')),
-    path('websocketlab/', include('websocketlab.urls')),
     path('accounts/', include('django.contrib.auth.urls'))
 ]
 
