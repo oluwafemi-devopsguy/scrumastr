@@ -91,3 +91,4 @@ RUN touch /run/chatscrumuwsgi/uwsgi.sock
 EXPOSE 5000 5100
 
 CMD ["/start.sh"]
+
