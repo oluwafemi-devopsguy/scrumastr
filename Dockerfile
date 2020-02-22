@@ -47,16 +47,19 @@ RUN chmod +x /start.sh
 RUN rm -rf /web/Chatscrum-Angular
 RUN yum install -y nodejs && yum install -y gcc-c++ make 
 RUN cd /web && npm install
-RUN git config --global user.email "joseph.showunmi@linuxjobber.com"
-RUN git config --global user.name "joseph.showunmi"
+RUN git config --global user.email "prosper.sopuruchi@gmail.com"
+RUN git config --global user.name "Prosper Sopuruchi"
 RUN cd /web && . $HOME/.nvm/nvm.sh && ng new Chatscrum-Angular --routing
 RUN pip3.6 install Pillow
-RUN pip3.6 install slackclient pymysql
+RUN pip3.6 install slackclient==1.3.0 pymysql
 
 RUN . $HOME/.nvm/nvm.sh && yes | cp -r /web/www/Angular/* /web/Chatscrum-Angular/src
-RUN cd /web/Chatscrum-Angular/ && sed -i '26s/.*/"src\/styles.css","node_modules\/materialize-css\/dist\/css\/materialize.min.css"/' angular.json; 
-RUN cd /web/Chatscrum-Angular/ && sed -i '28s/.*/"scripts": ["node_modules\/jquery\/dist\/jquery.min.js","node_modules\/materialize-css\/dist\/js\/materialize.min.js"]/' angular.json; sed -i '19s/.*/],"types": ["jquery","materialize-css"]/' tsconfig.json;
-RUN cd /web/Chatscrum-Angular/ && sed -i 's/127.0.0.1:8000/35.166.43.193:5000/' src/app/data.service.ts;
+#RUN cd /web/Chatscrum-Angular/ && sed -i '26s/.*/"src\/styles.css","node_modules\/materialize-css\/dist\/css\/materialize.min.css"/' angular.json; 
+#RUN cd /web/Chatscrum-Angular/ && sed -i '28s/.*/"scripts": ["node_modules\/jquery\/dist\/jquery.min.js","node_modules\/materialize-css\/dist\/js\/materialize.min.js"]/' angular.json; sed -i '19s/.*/],"types": ["jquery","materialize-css"]/' tsconfig.json;
+RUN cd /web/Chatscrum-Angular/ && sed -i 's/styles.css/styles.scss/g' angular.json;
+RUN cd /web/Chatscrum-Angular/src && ls;
+RUN cd /web/Chatscrum-Angular/src && rm -r styles.css;
+RUN cd /web/Chatscrum-Angular/ && sed -i 's/127.0.0.1:8000/54.185.254.239:5000/' src/app/data.service.ts;
 #RUN ls /web/Chatsrum-Angular
 #RUN cat /web/Chatscrum-Angular/src/app/profile/profile.component.html
 RUN cd /web/Chatscrum-Angular && . $HOME/.nvm/nvm.sh && npm install ngx-materialize materialize-css@next ng2-dragula rxjs && ng build --prod --aot
@@ -64,7 +67,7 @@ RUN yes | cp -r /web/Chatscrum-Angular/dist/Chatscrum-Angular/assets/ /web/Chats
 RUN yes | cp -r /web/Chatscrum-Angular/dist/Chatscrum-Angular/* /usr/share/nginx/web/Chatscrum-Angular
 
 #RUN cd /web/www/Django/ScrumMaster/ && /bin/python3.6 manage.py makemigrations && /bin/python3.6 manage.py migrate
-#RUN cd /web/www/Django/ScrumMaster/ && /bin/python3.6 manage.py runserver 0.0.0.0:5000
+#RUN cd /web/www/Django/ScrumMaster/ && /bin/python3.6 manage.py ruserver 0.0.0.0:5000
 
 RUN touch /etc/uwsgi.d/chatscrum.ini 
 RUN echo "[uwsgi]" > /etc/uwsgi.d/chatscrum.ini

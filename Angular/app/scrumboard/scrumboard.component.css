@@ -38,7 +38,7 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 9999;
+  z-index: 10;
 }
 
 .page-content {
@@ -64,14 +64,17 @@ body {
 } */
 
 .navbarr {
-  overflow: hidden;
-  background-color: #333;
-  position: fixed;
   top: 0;
   width: 100vw;
   left: 0;
   background: #26A69A;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  border: none;
+}
+
+
+.navbarr ul {
+  border-bottom: none;
 }
 
 /* @media (min-width: 800px) {
@@ -95,22 +98,16 @@ body {
 .navbarr a {
   float: left;
   display: block;
-  color: #f2f2f2;
   text-align: center;
-  padding: 14px 16px;
+  padding: 11px;
   text-decoration: none;
   font-size: 17px;
 }
 
-.navbarr a:hover {
-  background: yellow!important;
-  color: black;
-}
 
 .main {
   padding: 16px;
-  margin-top: 37px;
-  /* height: 1500px; */
+  padding-top: 0px;
 }
 
 .split {
@@ -119,21 +116,22 @@ body {
   z-index: 1;
   /* top: 10; */
   overflow-x: hidden;
-  padding-top: 20px;
+  padding-top: 22px;
 }
 
 .left {
   width: 76%;
   left: 0;
-  background-color: white;
   /* overflow-x: auto; */
 }
 
 .right {
   width: 24%;
   right: 0;
-  background-color: #111;
-  overflow-y: hidden;
+  background: #343434;
+  overflow-y: scroll;
+  margin-top: -1px;
+  
 }
 
 .ex h4 {
@@ -149,8 +147,8 @@ body {
 }
 
 .ex {
-  z-index:5;
-  background: #FFFFFF;
+  z-index:3;
+  background: rgba(255, 255, 255, 0.5);
   border: 1px solid rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
   border-radius: 10px;
@@ -164,7 +162,7 @@ body {
 .ex .excontent {
   
   background: #FFFFFF;
-  border: 2px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 5px;
   padding: 7px;
   text-align: left;
@@ -175,6 +173,7 @@ body {
   line-height: 18px;
   color: rgba(0, 0, 0, 0.9);
   margin-bottom: 1.6em;
+  transition: ease-in 0.5s;
 }
 
 .ex .excontent .scrumtools {
@@ -185,6 +184,7 @@ body {
   padding-top: 20px;
   color: rgba(0, 0, 0, 0.5);
   margin-bottom: 3px;
+  transition: ease-in 0.2s;
 }
 
 .ex .excontent  n {
@@ -194,12 +194,14 @@ body {
 .ex .excontent .scrumtools span {
   font-size: 15px; 
   margin-right: 8px;
+  transition: ease-in 0.2s;
   
 }
 
 .ex .excontent .scrumtools i {
   font-size: 16px; 
   margin-right: 8px;
+  transition: ease-in 0.2s;
   
 }
 
@@ -209,9 +211,11 @@ body {
 
 .tools {
   display: none;
+  transition: ease-in 0.2s;
 }
 
 .excontent:hover .tools {
+  transition: ease-in 0.2s;
   display: inline-block;
 }
 
@@ -242,14 +246,13 @@ body {
 .modal {
   display: none;
   position: fixed;
-  z-index: 9999;
+  z-index: 2;
   padding-top: 100px; 
   left: 0;
   top: 0;
   width: 100%; 
   height: 100%; 
   overflow: auto;
-  background-color: rgb(0,0,0);
   background-color: rgba(0,0,0,0.4);
 }
 
@@ -314,7 +317,9 @@ body {
   
 }
 
-.modal-bodyForTask {padding: 2px 16px;}
+.modal-bodyForTask {
+  padding: 2px 16px;
+}
 
 .modal-bodyForNote {
   background: #FAFAFA;
@@ -419,7 +424,7 @@ body {
   left: 2%;
   right: 86.11%;
   bottom: 4%;
-  z-index: 9999;
+  z-index: 5;
   width: 150px;
   font-weight: bold;
   font-size: 14px;
@@ -439,7 +444,7 @@ body {
   left: 13.5%;
   padding: 5px;
   bottom: 4%;
-  z-index: 9999;
+  z-index: 5;
   font-weight: bold;
 }
 
@@ -644,7 +649,7 @@ body {
   animation-name: animatetop;
   animation-duration: 0.4s;
   width: 994px;
-  height: 833px;
+  /* height: 833px; */
 }
 
 /*.taskHistoryModalMain {
@@ -915,4 +920,767 @@ body {
     margin-right: -7px;
   }
 
+}
+
+.teamTaskDropDownMenu {
+  height: 45px;
+  left: 50px;
+  background: rgba(255, 76, 109, 0.1);
+  border-radius: 10px;
+  padding-left: 10px;
+  margin-left: -9px;
+  margin-top: 20px;
+}
+
+.teamTaskDropDownMenuToggle {
+  height: 55px;
+  border-radius: 10px 10px 0px 0px;
+}
+
+.teamTaskDropDownMenu img {
+  left: 60px;
+  margin-top: 10px;
+}
+
+.teamTaskDropDownMenu .teamTaskTitle {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 16px;
+}
+
+.teamTaskDropDownMenu .teamTaskTitle.firstOne {
+  color: #FF4D6D;
+}
+
+.teamTaskDropDownMenu ul {
+  list-style-type: none;
+  margin-left: 5px;
+  margin-top: -2em;
+  margin-left: -5px;
+}
+
+.teamTaskDropDownMenu .ttTasksandTime {
+  font-family:'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 14px;
+  color: #808080;
+}
+
+#teamTaskTools li{
+  display: inline;
+  color: white;
+}
+
+#teamTaskTools i {
+  padding: 8px;
+  background-color: #FF4C6D;
+  margin-right: 10px;
+  border-radius: 5px;
+}
+
+#teamTaskTools {
+  margin-top: -3.1em;
+}
+
+#teamTaskDropDown {
+  position: relative;
+}
+
+.ttDropDownContent {
+  display: none;
+  position: absolute;
+  margin-top: -10px;
+}
+
+.showDropDown {
+  display: block;
+}
+
+.slackNotification{
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 14px;
+  text-align: center;
+  margin-top: 25px;
+  
+
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.slackMessage {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-sizing: border-box;
+  border-radius: 10px;
+  left: 0px;
+  margin-top: 20px;
+
+}
+
+.slackMessage .userName {
+  margin-top: 10px;
+}
+
+.slackMessage .userName h3 {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 16px;
+  align-items: center;
+  color: #4DFFD4;
+  margin-left: 35px;
+  margin-top: -19px;
+}
+
+.slackMessage .userMsg {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 17px;
+  color: #FFFFFF;
+  margin-top: 12px;
+}
+
+.slackMessage .msgTime {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 14px;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.2);
+  margin-top: 10px;
+  
+}
+
+#inputSlackMsg {
+  position: fixed; 
+  bottom: 0; 
+  width: 100%; 
+  background-color: white;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+}
+
+#inputSlackMsg::focus {
+  border-color: none;
+  border: none;
+}
+
+#inputSlackMsg::placeholder {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 16px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+#inputSlackMsg::-webkit-input-placeholder {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 16px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+#inputSlackMsg:-ms-input-placeholder {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 16px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+
+.slackMsgSection {
+  margin-top: 8em;
+}
+
+.nav-tabs .nav-link {
+  width: 166px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 0px!important;
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  color: #FFFFFF;
+  padding-top: 14px;
+  transition: 0.4s;
+  
+}
+
+.nav-tabs .nav-link.active {
+    background: rgba(255, 255, 255, 0.2);
+    border-top: 5px solid #4DFFD4;
+    padding-top: 9px!important;
+}
+
+
+.nav-tabs .nav-link:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+#home-tab {
+  margin-left: 1.5em;
+}
+
+.nav-tabs .otherNavTools {
+  float: left;
+  width: 114px;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  border-right: 2px solid rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+}
+
+.nav-tabs #projectsTab {
+  margin-left: 110px;
+}
+
+.nav-tabs #themeTab {
+  width: 113px;
+}
+
+.nav-tabs #profileTab {
+  width: 179px;
+  border-right: 2px solid rgba(255, 255, 255, 0.3);
+   padding: unset;
+   cursor: pointer;
+}
+
+.nav-tabs #profileTab img{
+  float: left;
+  margin-top: 5px;
+}
+
+.nav-tabs #profileTab h4{
+  font-weight: 500;
+  font-size: 14px;
+  color: #FFFFFF;
+  float: left;
+  margin-top: 10px;
+  margin-left: 2px;
+}
+
+.nav-tabs #profileTab p{
+  float: left;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 14px;
+  color: #4DFFD4;
+  margin-top: -8px;
+  margin-left: 2px;
+  
+}
+
+.nav-tabs #logoutTab {
+  width: 100px;
+  
+}
+
+.nav-tabs #logoutTab span{
+  font-size: 25px;
+  letter-spacing: 15px;
+  margin-left: 6px;
+  font-weight: 500;
+  transition: 0.1s;
+}
+
+
+.modal-contentForUserProfile {
+  
+  background-color: #fefefe;
+  margin: auto;
+  margin-top:-15vh;
+  /* margin-left: 15em; */
+  padding: 0;
+  border: 1px solid #888;
+  /* width: 50%; */
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  -webkit-animation-name: animatetop;
+  -webkit-animation-duration: 0.4s;
+  animation-name: animatetop;
+  animation-duration: 0.4s;
+  width: 994px;
+  height: 833px;
+}
+
+.modal-contentForLogout {
+  position: relative;
+  width: 621px;
+  height: 115px;
+  left: calc(50% - 630px/2);
+  top: 29%;
+  background: #FFFFFF;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);
+  border-radius: 5px;
+  margin-left: -10px;
+  
+  animation:animatezoom 0.2s
+
+}
+
+@keyframes animatezoom {
+  from {transform:scale(0)}
+  to{transform:scale(1)}
+}
+
+.submitSignOutRequest {
+  margin-left: 174px;
+  margin-top: 15px;
+}
+
+.signOutText {
+  margin-left: 280px;
+  padding-top: 20px;
+}
+
+.signOutText > span {
+  font-family:'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 16px;
+  color: #26A69A;
+}
+
+.modal-contentForAppInfo {
+  position: relative;
+  width: 621px;
+  height: 433px;
+  left: calc(50% - 630px/2);
+  top: 0px;
+  background: #FFFFFF;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);
+  border-radius: 5px;
+  margin-top: 10px;
+  animation:animatezoom 0.2s
+}
+
+.modal-contentForAppInfo .appVersion {
+  margin-left: 205px;
+  padding-top: 32px;
+}
+
+.modal-contentForAppInfo .appVersion h3 {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 18px;
+  line-height: 21px;
+  color: #26A69A;
+  margin-left: 60px;
+  margin-top: 10px;
+  margin-bottom: -4px;
+}
+
+.modal-contentForAppInfo .appVersion span {
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+  font-size: 13px;
+  color: #343434;
+  margin-left: 75px;
+}
+
+.modal-contentForAppInfo .newFeatures h4 {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 16px;
+  color: #26A69A;
+  margin-bottom: 10px;
+}
+
+.modal-contentForAppInfo .newFeatures p, .newFeatures span {
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: normal;
+  color: rgba(0, 0, 0, 0.9);
+  margin-bottom: -3px;
+}
+
+.modal-contentForAppInfo .newFeatures .NFSupport {
+  margin-top: 20px;
+  margin-bottom: 5px;
+}
+
+.modal-contentForAppInfo .newFeatures span {
+  margin-bottom: unset;
+}
+
+.modal-contentForAppInfo .closeNewFeatureBtn {
+  margin-left: 247px;
+  font-family: SF;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 17px;
+  color: rgba(0, 0, 0, 0.9);
+  width: 107px;
+  height: 38px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding-top: 3em;
+  outline-color: white;
+  
+}
+
+.splitUPM {
+  height:100%;
+  width:100%;
+  margin:0 auto;
+}
+
+.splitUPMLeftt {
+  display:inline-block;
+  vertical-align:top;
+  background:#FAFAFA;;
+  height:100%;
+  width:25%;
+  overflow-y: scroll;
+} 
+
+.splitUPMLeftt:nth-child(2) {
+  background:#FFFFFF;
+  width:75%;
+  overflow-y: scroll;
+}
+
+.splitUPMLeftt .splitUPMLeftHeader {
+  height: 42px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.splitUPMLeftt .splitUPMLeftHeader img {
+  margin-top: 9px;
+}
+
+.splitUPMLeftt .splitUPMLeftHeader h4 {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  color: #26A69A;
+  margin-left: 32px;
+  margin-top: -25px;
+  margin-bottom: -10px;
+  
+}
+
+.splitUPMLeftt .splitUPMLeftHeader span {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 10px;
+  line-height: 12px;
+  color: #333333;
+  margin-left: 32px;
+}
+
+.splitUPMLeftt .splitUPMLeftContent {
+  width: 212px;
+  height: 53px;
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  margin-top: 23px;
+}
+.splitUPMLeftt .splitUPMLeftContent h5{
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 12px;
+  line-height: 14px;
+  color: rgba(0, 0, 0, 0.9);
+  margin-top: 8px;
+  margin-bottom: -1px;
+}
+
+.splitUPMLeftt .splitUPMLeftContent span {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 14px;
+  color: rgba(0, 0, 0, 0.5);
+  margin-left: unset;
+}
+
+.userHistories .userHistoryHead {
+  padding-top: 20px;
+  margin-bottom: 20px;
+}
+
+.userHistories .userHistoryHead h3 {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  color: #26A69A;
+}
+
+.userHistories .userHistoryTasks {
+  margin-top: 40px;
+}
+
+.userHistories .userHistoryTasks label:first-child {
+  margin-bottom: -20px;
+  padding-bottom: -20px;
+}
+
+.userHistories .userHistoryTasks label{
+  margin-top: -5px;
+  padding-top: -5px;
+}
+
+
+.userHistories .userHistoryTasks label {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.5);
+  margin-right: 5px;
+}
+
+.userHistories .userHistoryTasks .workID {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.userHistories .userHistoryTasks .status {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  margin-left: 14px;
+}
+
+.userHistories .userHistoryTasks .statusComplete {
+  color: #4DFFD4;
+}
+
+.userHistories .userHistoryTasks .statusNotCompleted {
+  color: #FF4D4D;
+}
+
+.userHistories .userHistoryTasks p {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 16px;
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.navbarr .projectsDropDown h4, .navbarr #sprintTab h4, .navbarr #slackTab h4, .navbarr #themeTab h4 {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: -5px;
+  margin-left: -45px;
+}
+
+.navbarr #themeTab h4 {
+  margin-left: -50px;
+}
+
+.navbarr .projectsDropDown .loggedProject, .navbarr #sprintTab .loggedSprint, .navbarr #slackTab .slackStatus {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: -10px;
+  margin-left: -15px;
+}
+
+.navbarr #slackTab .slackTi {
+  margin-left: -30px;
+}
+
+.navbarr #slackTab .slackStatus {
+  margin-left: -30px;
+}
+
+.projectsDropDown, .sprintDropDown, .themeDropDown {
+  position: relative;
+}
+
+.projectsDropDownContent, .sprintDropDownContent, .themeDropDownContent {
+  display: none;
+  position: absolute;
+  z-index: 2;
+  background: #FFFFFF;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 0px 0px 5px 5px;
+  width: 114px;
+  height: 93px;
+  cursor: default;
+  margin-top: 3.1em;
+  margin-left: 6.9em;
+}
+
+
+.sprintDropDown .sprintDropDownContent {
+  width: 244px;
+  height: 402px;
+  overflow-y: scroll;
+  margin-top: 3em;
+  margin-left: -1px;
+}
+
+.projectsDropDownContent p, .sprintDropDown .sprintDropDownContent p{
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 14px;
+  color: rgba(0, 0, 0, 0.2);
+  margin-left: 20px;
+  margin-top: 10px;
+  margin-bottom: -5px;
+}
+
+.themeDropDown .themeDropDownContent .imgContainer{
+  display: grid;
+  grid-template-columns: auto auto auto;
+  margin-left: -10px;
+  margin-top: 5px;
+  padding-left: 2.5px;
+  padding-right: 2.5px;
+}
+
+.themeDropDown .themeDropDownContent .imgGrid{
+  margin-left: -18px;
+  margin-top: 5px;
+  margin-bottom: 3px;
+ 
+  
+}
+
+.themeDropDown .themeDropDownContent .imgBtm {
+  width: 18px;
+  /* border-bottom: 1px solid rgba(0, 0, 0, 0.8); */
+  margin-left: 18px;
+}
+
+
+.themeDropDown .themeDropDownContent .imgGrid img{ 
+  width: 30px;
+  height: 30px;
+}
+
+
+.themeDropDown .themeDropDownContent {
+  margin-top: 3em;
+  margin-left: -1px;
+  padding-left: unset;
+}
+
+.sprintDropDown .sprintDropDownContent p {
+  margin-bottom: -9px;
+}
+
+.sprintDropDown .sprintDropDownContent label {
+  color: rgba(0, 0, 0, 0.5);
+  margin-right: 5px;
+}
+
+.sprintDropDown .sprintDropDownContent p .spanAct {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.sprintDropDown .sprintDropDownContent p .activ {
+  color: rgba(0, 0, 0, 0.9);
+}
+
+.projectsDropDownContent .icon-check, .sprintDropDownContent .icon-check {
+  font-weight: bold;
+  color: #000;
+  padding-right: 3px;
+  margin-left: 2px;
+}
+
+.sprintDropDownContent .icon-check {
+  margin-left: -15px;
+}
+
+.projectsDropDownContent p:first-child {
+  color: rgba(0, 0, 0, 0.9);
+  font-weight: bold;
+  margin-left: 2px;
+}
+
+.projectsDropDownAP, .sprintDropDownCS {
+  border-radius: 0px 0px 5px 5px;
+  border-top: 2px solid rgba(0, 0, 0, 0.25);
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 9px;
+  text-align: center;
+  text-transform: uppercase;
+  color: #26A69A;
+  margin-top: 7px;
+  padding-top: 6px;
+  cursor: pointer;
+}
+
+.projectsDropDownContent p, .projectsDropDownAP, .sprintDropDownContent p, .sprintDropDownCS {
+  display: block;
+}
+
+.ppDD{
+  display: block;
+  animation: dropdown 0.4s;
+  animation-direction: alternate;
+}
+
+.spDD{
+  display: block;
+  animation: dropdown 1s;
+  animation-direction: alternate;
+}
+
+.animateDD {
+  animation: slideup 1s;
+  animation-direction: reverse;
+  
+}
+
+
+@keyframes dropdown {
+  0%  {margin-top: -500px;}
+  100%  {margin-top: 3.1em;}
+}
+
+@keyframes slideup {
+  0%  {margin-top: -500px;}
+  100%  {margin-top: 3.1em;}
 }
