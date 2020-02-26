@@ -16,7 +16,7 @@ export class ScrumboardComponent implements OnInit {
     this.load()
     this.rose()
     this.close()
-    this.closeAllDropDown()
+    //this.closeAllDropDown()
     // this.imageName()
   }
 
@@ -177,6 +177,11 @@ export class ScrumboardComponent implements OnInit {
     let ttAddNote = document.getElementById("ttAddNoteBtn") as HTMLElement;
     let ttUserHistory = document.getElementById("ttUserHistoryBtn") as HTMLElement;
 
+    function hideDropDown(element, classToRemove, classToAdd) {
+      element.classList.remove(classToRemove)
+      element.classList.add(classToAdd)
+    }
+
     btnmod.onclick = function () {
       modal.style.display = "block";
     }
@@ -193,42 +198,67 @@ export class ScrumboardComponent implements OnInit {
       modal1.style.display = "block";
     }
 
-    window.onclick = function (event) {
-      if (event.target == modal) {
+    window.onclick = function (e) {
+
+      let projectDD = document.getElementById('projectsDDContent') as HTMLElement;
+      let themeDD = document.getElementById('themeDDContent') as HTMLElement;
+      let sprintDD = document.getElementById('sprintDDContent') as HTMLElement;
+      let target = e.target as HTMLElement
+      if (e.target == modal) {
         modal.style.display = 'none';
       }
 
-      if (event.target == modal1) {
+      if (e.target == modal1) {
         modal1.style.display = 'none';
         hides.style.overflowY = "scroll";
       }
 
-      if(event.target == openEditTaskModal) {
+      if(e.target == openEditTaskModal) {
         openEditTaskModal.style.display = "none";
       }
 
-      if (event.target == uploadImageModal) {
+      if (e.target == uploadImageModal) {
         uploadImageModal.style.display = "none";
       }
 
-      if (event.target == taskHistoryModal) {
+      if (e.target == taskHistoryModal) {
         taskHistoryModal.style.display = "none";
         hides.style.overflowY = "scroll";
       }
 
-      if (event.target == userProfileModal) {
+      if (e.target == userProfileModal) {
         userProfileModal.style.display = "none";
         hides.style.overflowY = "scroll";
       }
 
-      if (event.target == appInfoModal) {
+      if (e.target == appInfoModal) {
         appInfoModal.style.display = "none";
         hides.style.overflowY = "scroll";
       }
 
-      if (event.target == logoutModal) {
+      if (e.target == logoutModal) {
         logoutModal.style.display = "none";
         hides.style.overflowY = "scroll";
+      }
+
+      if (target.matches('a#themeTab') || target.matches('span#currentTheme')) {
+        hideDropDown(themeDD, undefined, 'ppDD')
+      } else if (target.matches('img.themeImg')) {
+        hideDropDown(themeDD, undefined, 'ppDD')
+      } else if (target.matches('a#sprintTab') || target.matches('span.loggedSprint')) {
+        hideDropDown(sprintDD, undefined, 'spDD')
+      } else if (target.matches('a#projectsTab') || target.matches('span.loggedProject')) {
+        hideDropDown(projectDD, undefined, 'ppDD')
+      } else {
+        document.getElementById('projectsDDContent').classList.add('animateDD');
+        document.getElementById('sprintDDContent').classList.add('animateDD');
+        document.getElementById('themeDDContent').classList.add('animateDD');
+        setTimeout("document.getElementById('projectsDDContent').classList.remove('ppDD')", 1000);
+        setTimeout("document.getElementById('sprintDDContent').classList.remove('spDD')", 1000);
+        setTimeout("document.getElementById('themeDDContent').classList.remove('ppDD')", 1000);
+        setTimeout("document.getElementById('projectsDDContent').classList.remove('animateDD')", 1000);
+        setTimeout("document.getElementById('sprintDDContent').classList.remove('animateDD')", 1000);
+        setTimeout("document.getElementById('themeDDContent').classList.remove('animateDD')", 1000);
       }
 
     }
@@ -328,37 +358,37 @@ export class ScrumboardComponent implements OnInit {
     sprintDropDown.classList.add("spDD");
   }
 
-  closeAllDropDown() {
-    function hideDropDown(element, classToRemove, classToAdd) {
-      element.classList.remove(classToRemove)
-      element.classList.add(classToAdd)
-    }
-    window.onclick = function (e) {
-      let projectDD = document.getElementById('projectsDDContent') as HTMLElement;
-      let themeDD = document.getElementById('themeDDContent') as HTMLElement;
-      let sprintDD = document.getElementById('sprintDDContent') as HTMLElement;
-      let target = e.target as HTMLElement
-      if (target.matches('a#themeTab') || target.matches('span#currentTheme')) {
-        hideDropDown(themeDD, undefined ,'ppDD')
-      } else if (target.matches('img.themeImg')) {
-        hideDropDown(themeDD, undefined,'ppDD')
-      } else if (target.matches('a#sprintTab') || target.matches('span.loggedSprint')) {
-        hideDropDown(sprintDD, undefined,'spDD')
-      } else if (target.matches('a#projectsTab') || target.matches('span.loggedProject')) {
-        hideDropDown(projectDD, undefined, 'ppDD')
-      } else {
-        document.getElementById('projectsDDContent').classList.add('animateDD');
-        document.getElementById('sprintDDContent').classList.add('animateDD');
-        document.getElementById('themeDDContent').classList.add('animateDD');
-        setTimeout("document.getElementById('projectsDDContent').classList.remove('ppDD')", 1000);
-        setTimeout("document.getElementById('sprintDDContent').classList.remove('spDD')", 1000);
-        setTimeout("document.getElementById('themeDDContent').classList.remove('ppDD')", 1000);
-        setTimeout("document.getElementById('projectsDDContent').classList.remove('animateDD')", 1000);
-        setTimeout("document.getElementById('sprintDDContent').classList.remove('animateDD')", 1000);
-        setTimeout("document.getElementById('themeDDContent').classList.remove('animateDD')", 1000);
-      }
-    }
-  }
+  // closeAllDropDown() {
+  //   function hideDropDown(element, classToRemove, classToAdd) {
+  //     element.classList.remove(classToRemove)
+  //     element.classList.add(classToAdd)
+  //   }
+  //   window.onclick = function (e) {
+  //     let projectDD = document.getElementById('projectsDDContent') as HTMLElement;
+  //     let themeDD = document.getElementById('themeDDContent') as HTMLElement;
+  //     let sprintDD = document.getElementById('sprintDDContent') as HTMLElement;
+  //     let target = e.target as HTMLElement
+  //     if (target.matches('a#themeTab') || target.matches('span#currentTheme')) {
+  //       hideDropDown(themeDD, undefined ,'ppDD')
+  //     } else if (target.matches('img.themeImg')) {
+  //       hideDropDown(themeDD, undefined,'ppDD')
+  //     } else if (target.matches('a#sprintTab') || target.matches('span.loggedSprint')) {
+  //       hideDropDown(sprintDD, undefined,'spDD')
+  //     } else if (target.matches('a#projectsTab') || target.matches('span.loggedProject')) {
+  //       hideDropDown(projectDD, undefined, 'ppDD')
+  //     } else {
+  //       document.getElementById('projectsDDContent').classList.add('animateDD');
+  //       document.getElementById('sprintDDContent').classList.add('animateDD');
+  //       document.getElementById('themeDDContent').classList.add('animateDD');
+  //       setTimeout("document.getElementById('projectsDDContent').classList.remove('ppDD')", 1000);
+  //       setTimeout("document.getElementById('sprintDDContent').classList.remove('spDD')", 1000);
+  //       setTimeout("document.getElementById('themeDDContent').classList.remove('ppDD')", 1000);
+  //       setTimeout("document.getElementById('projectsDDContent').classList.remove('animateDD')", 1000);
+  //       setTimeout("document.getElementById('sprintDDContent').classList.remove('animateDD')", 1000);
+  //       setTimeout("document.getElementById('themeDDContent').classList.remove('animateDD')", 1000);
+  //     }
+  //   }
+  // }
 
   useDefaultTheme(theme) {
     let imgBorder1 = document.getElementsByClassName('themeImg').item(0) as HTMLElement;

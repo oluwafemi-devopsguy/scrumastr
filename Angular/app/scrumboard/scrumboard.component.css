@@ -184,7 +184,7 @@ body {
   padding-top: 20px;
   color: rgba(0, 0, 0, 0.5);
   margin-bottom: 3px;
-  transition: ease-in 0.2s;
+  opacity: 1;
 }
 
 .ex .excontent  n {
@@ -195,7 +195,6 @@ body {
   font-size: 15px; 
   margin-right: 8px;
   transition: ease-in 0.2s;
-  
 }
 
 .ex .excontent .scrumtools i {
@@ -217,6 +216,10 @@ body {
 .excontent:hover .tools {
   transition: ease-in 0.2s;
   display: inline-block;
+  animation-name: fadeInScrumTools;
+	animation-iteration-count: 1;
+	animation-timing-function: ease-in;
+	animation-duration: 0.5s;
 }
 
 .excontent .tools:hover {
@@ -1104,6 +1107,7 @@ body {
 }
 
 
+
 .slackMsgSection {
   margin-top: 8em;
 }
@@ -1124,6 +1128,7 @@ body {
   
 }
 
+
 .nav-tabs .nav-link.active {
     background: rgba(255, 255, 255, 0.2);
     border-top: 5px solid #4DFFD4;
@@ -1138,6 +1143,7 @@ body {
 #home-tab {
   margin-left: 1.5em;
 }
+
 
 .nav-tabs .otherNavTools {
   float: left;
@@ -1154,6 +1160,7 @@ body {
   margin-left: 110px;
 }
 
+
 .nav-tabs #themeTab {
   width: 113px;
 }
@@ -1164,6 +1171,7 @@ body {
    padding: unset;
    cursor: pointer;
 }
+
 
 .nav-tabs #profileTab img{
   float: left;
@@ -1586,7 +1594,6 @@ body {
 
 .themeDropDown .themeDropDownContent .imgBtm {
   width: 18px;
-  /* border-bottom: 1px solid rgba(0, 0, 0, 0.8); */
   margin-left: 18px;
 }
 
@@ -1684,3 +1691,10 @@ body {
   0%  {margin-top: -500px;}
   100%  {margin-top: 3.1em;}
 }
+
+@keyframes fadeInScrumTools {
+	0% {opacity: 0;}
+	100% {opacity: 1;}
+}
+@media (max-width: 1280px) {.nav-tabs #logoutTab {max-width: 90px;}.nav-tabs #profileTab {max-width: 170px;}.nav-tabs #projectsTab {margin-left: 90px;} .nav-tabs .nav-link {max-width: 150px;} #home-tab {margin-left: 1.1em;} .nav-tabs .otherNavTools {max-width: 110px;} #themeDDContent {max-width: 110px;} .openAddNoteModalbtn {left: 14.5%;}}
+@media (max-width: 1280px) {.nav-tabs #logoutTab {max-width: 100px;} #themeDDContent .imgContainer {margin-right: -5px;}   #themeDDContent .imgBtm{margin-left: 15px;} .themeDropDown .themeDropDownContent .imgGrid{margin-left: -12px;} .projectsDropDownContent {margin-left: 5.6em; width: 110px;} .ex .excontent .scrumtools span {font-size: 12px;} .ex .excontent .scrumtools i {font-size: 14px;}}
