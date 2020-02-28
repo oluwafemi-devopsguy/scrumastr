@@ -1697,5 +1697,5 @@ body {
 	0% {opacity: 0;}
 	100% {opacity: 1;}
 }
-@media (max-width: 1280px) {.nav-tabs #logoutTab {max-width: 90px;}.nav-tabs #profileTab {max-width: 170px;}.nav-tabs #projectsTab {margin-left: 90px;} .nav-tabs .nav-link {max-width: 150px;} #home-tab {margin-left: 1.1em;} .nav-tabs .otherNavTools {max-width: 110px;} #themeDDContent {max-width: 110px;} .openAddNoteModalbtn {left: 14.5%;}}
-@media (max-width: 1280px) {.nav-tabs #logoutTab {max-width: 100px;} #themeDDContent .imgContainer {margin-right: -5px;}   #themeDDContent .imgBtm{margin-left: 15px;} .themeDropDown .themeDropDownContent .imgGrid{margin-left: -12px;} .projectsDropDownContent {margin-left: 5.6em; width: 110px;} .ex .excontent .scrumtools span {font-size: 12px;} .ex .excontent .scrumtools i {font-size: 14px;}}
+@media screen and (max-width: 1300px) {.nav-tabs #logoutTab {max-width: 90px;}.nav-tabs #profileTab {max-width: 170px;}.nav-tabs #projectsTab {margin-left: 90px;} .nav-tabs .nav-link {max-width: 150px;} #home-tab {margin-left: 1.1em;} .nav-tabs .otherNavTools {max-width: 110px;} #themeDDContent {max-width: 110px;} .openAddNoteModalbtn {left: 14.5%;}}
+@media screen and (max-width: 1300px) {.nav-tabs #logoutTab {max-width: 100px;} #themeDDContent .imgContainer {margin-right: -5px;}   #themeDDContent .imgBtm{margin-left: 15px;} .themeDropDown .themeDropDownContent .imgGrid{margin-left: -12px;} .projectsDropDownContent {margin-left: 5.6em; width: 110px;} .ex .excontent .scrumtools span {font-size: 12px;} .ex .excontent .scrumtools i {font-size: 14px;}}
