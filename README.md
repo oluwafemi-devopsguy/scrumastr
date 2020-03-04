@@ -39,11 +39,3 @@ Follow further instructions for materialize-css here:
 https://materializecss.com/getting-started.html
 
 
-
-
-
-jhghg
-hhh
-
-
-
