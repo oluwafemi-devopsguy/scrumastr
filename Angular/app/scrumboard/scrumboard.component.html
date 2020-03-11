@@ -16,20 +16,20 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
-                        aria-controls="profile" aria-selected="false" (click)="hideAddTaskandNoteBTN()">Team Tasks</a>
+                        aria-controls="profile" aria-selected="false" (click)="hideAddTaskandNoteBTN();">Team Tasks</a>
                 </li>
 
                 <li class="nav-item">
                     <div class="projectsDropDown" (click)="showProjectTabContents()">
                         <a class="nav-link otherNavTools" id="projectsTab" role="tab">
                             <h4>Project</h4>
-                            <span class="loggedProject">Linux Jobber</span>
+                            <span class="loggedProject">{{loggedProject}}</span>
                         </a>
                         
                         <div id="projectsDDContent" class="projectsDropDownContent">
-                            <p><span class="icon-check"></span>Linux Jobber</p>
-                            <p>ChatScrum</p>
-                            <p>AWS</p>
+                            <p><span class="icon-check"></span>{{loggedProject}}</p>
+                            <!-- <p>ChatScrum</p>
+                            <p>AWS</p> -->
                             <div class="projectsDropDownAP">
                                 ADD PROJECT
                             </div>
@@ -41,27 +41,13 @@
                 <li class="nav-item">
                     <div class="sprintDropDown" (click)="showSprintTabContents()">
                         <a class="nav-link otherNavTools" id="sprintTab" role="tab">
-                            <h4>Sprint 91</h4>
-                            <span class="loggedSprint">Jul 23 - Jul 30</span>
+                            <h4>Sprint {{loggedSprint['sprintID']}}</h4>
+                            <span class="loggedSprint">{{loggedSprint['dateCreated']| date: 'MMM dd'}} - {{loggedSprint['endDate']| date:'MMM dd'}}</span>
                         </a>
                         
                         <div id="sprintDDContent" class="sprintDropDownContent">
-                            <p><span class="icon-check"></span><label class="activ">Sprint 91:</label><span class="spanAct">Jul 23, 2019 - Jul 30, 2019</span></p>
-                            <p><label>Sprint 90:</label><span>Jul 23, 2019 - Jul 30, 2019</span></p>
-                            <p><label>Sprint 89:</label><span>Jul 23, 2019 - Jul 30, 2019</span></p>
-                            <p><label>Sprint 88:</label><span>Jul 23, 2019 - Jul 30, 2019</span></p>
-                            <p><label>Sprint 87:</label><span>Jul 23, 2019 - Jul 30, 2019</span></p>
-                            <p><label>Sprint 86:</label><span>Jul 23, 2019 - Jul 30, 2019</span></p>
-                            <p><label>Sprint 85:</label><span>Jul 23, 2019 - Jul 30, 2019</span></p>
-                            <p><label>Sprint 84:</label><span>Jul 23, 2019 - Jul 30, 2019</span></p>
-                            <p><label>Sprint 83:</label><span>Jul 23, 2019 - Jul 30, 2019</span></p>
-                            <p><label>Sprint 82:</label><span>Jul 23, 2019 - Jul 30, 2019</span></p>
-                            <p><label>Sprint 81:</label><span>Jul 23, 2019 - Jul 30, 2019</span></p>
-                            <p><label>Sprint 80:</label><span>Jul 23, 2019 - Jul 30, 2019</span></p>
-                            <p><label>Sprint 79:</label><span>Jul 23, 2019 - Jul 30, 2019</span></p>
-                            <p><label>Sprint 78:</label><span>Jul 23, 2019 - Jul 30, 2019</span></p>
-                            <p><label>Sprint 77:</label><span>Jul 23, 2019 - Jul 30, 2019</span></p>
-                            <p><label>Sprint 76:</label><span>Jul 23, 2019 - Jul 30, 2019</span></p>
+                            <p><span class="icon-check"></span><label class="activ">Sprint {{loggedSprint['sprintID']}}:</label><span class="spanAct">{{loggedSprint['dateCreated']| date}} - {{loggedSprint['endDate'] | date}}</span></p>
+                            <p *ngFor="let sprint of currentSprint"><label>Sprint {{sprint['sprintID']}}:</label><span>{{sprint['dateCreated'] | date}} - {{sprint['endDate'] | date}}</span></p>
                             <div class="sprintDropDownCS">
                                 NEW SPRINT
                             </div>
@@ -99,15 +85,17 @@
                 <li class="nav-item">
                     <a class="nav-link" id="profileTab" role="tab" (click)="userProfile ();hideslackchat()">
                         <img src="https://res.cloudinary.com/ros4eva/image/upload/v1581678144/Ellipse_6_z5snsi.png">
-                        <h4>Joshua Okwe</h4>
-                        <p>Developer</p>
+                        <!-- <h4>Joshua Okwe</h4>
+                        <p>Developer</p> -->
+                        <h4>{{loggedUser}}</h4>
+                        <p>{{loggedUserRole}}</p>
                     </a>
                 </li>
 
                 <li class="nav-item">
                     <a class="nav-link" id="logoutTab" role="tab">
                         <span class="icon-info-circle" (click)="appInfo()"></span>
-                        <span class="icon-Logout" (click)="logout()"></span>
+                        <span class="icon-Logout" (click)="logoutModal()"></span>
                     </a>
                 </li>
             </ul>
@@ -539,7 +527,7 @@
                             <span>Sign Out?</span>
                         </div>
                         <div class="submitSignOutRequest">
-                            <button type="button" id="signOutBtn" class="btn addTbtn" style="font-size: 14px;">SIGN OUT
+                            <button type="button" id="signOutBtn" class="btn addTbtn" style="font-size: 14px;" (click)="logout()">SIGN OUT
                             </button>
                             <button class="btn closebtn" id="cancelsignOutBtn" style="font-weight: bold;"
                                 (click)="close()">CANCEL</button>
@@ -555,44 +543,25 @@
                             <div class="col">
                                 <div class="ex" id="tfw">
                                     <h4>Tasks for the week</h4>
-                                    <div class="excontent" id="div1">
-                                        from itself gathering rule man void female let is creeping own.
-                                        <div class="scrumtools">
-                                            <n style="margin-right: 9px;">600</n>
-                                            <span class="icon-pencil tools" alt="edit" title="edit"
-                                                (click)="editTask()"></span>
-                                            <span class="icon-camera tools" alt="upload image" title="upload image"
-                                                (click)="uploadImage()"></span><i class="fas fa-clone tools" alt="copy"
-                                                title="copy" style="font-size: 15px;" (click)="copyToClipboard('div1')"></i>
-                                            <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i
-                                                class="fas fa-history tools" alt="history" title="history" id="taskHistory"
-                                                (click)="taskHistory (); hideslackchat()"></i>
-                                            <span class="icon-move tools" alt="move" title="move"></span>
-                                        </div>
-                                    </div>
-                                    <div class="excontent" id="div2">
-                                        <div class="notif">
-                                            <span class="icon-notification"><span class="path1"></span><span
-                                                    class="path2"></span></span>
-                                        </div>
-                                        Sea cattle. The moving together there don't two night our midst behold there
-                                        fill brought tree rule there from
-                                        firmament
-                                        night be female. Firmament he replenish third fruit him there grass beast. Very
-                                        wherein. Hath, them. Seas grass
-                                        shall
-                                        form had divide.
-                                        <div class="scrumtools">
-                                            <n style="margin-right: 9px;">600</n>
-                                            <span class="icon-pencil tools" alt="edit" title="edit"
-                                                (click)="editTask()"></span>
-                                            <span class="icon-camera tools" alt="upload image" title="upload image"
-                                                (click)="uploadImage()"></span><i class="fas fa-clone tools" alt="copy"
-                                                title="copy" style="font-size: 15px;" (click)="copyToClipboard('div1')"></i>
-                                            <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i
-                                                class="fas fa-history tools" alt="history" title="history" id="taskHistory"
-                                                (click)="taskHistory (); hideslackchat()"></i>
-                                            <span class="icon-move tools" alt="move" title="move"></span>
+                                    <div *ngFor="let item of TFTW">
+                                        <div
+                                            *ngIf="item['taskFor'] == loggedUserId && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
+                                            <div class="excontent">
+                                                <div>
+                                                    {{item['task']}}
+                                                </div>
+                                    
+                                                <div class="scrumtools">
+                                                    <n style="margin-right: 9px;">{{item['goalID']}}</n>
+                                                    <span class="icon-pencil tools" alt="edit" title="edit" (click)="editTask()"></span>
+                                                    <span class="icon-camera tools" alt="upload image" title="upload image"
+                                                        (click)="uploadImage()"></span><i class="fas fa-clone tools" alt="copy" title="copy"
+                                                        style="font-size: 15px;" (click)="copyToClipboard('div1')"></i>
+                                                    <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i class="fas fa-history tools"
+                                                        alt="history" title="history" id="taskHistory" (click)="taskHistory (); hideslackchat()"></i>
+                                                    <span class="icon-move tools" alt="move" title="move"></span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -601,107 +570,53 @@
                             <div class="col ">
                                 <div class="ex" id="tft">
                                     <h4>Todays Target</h4>
-                                    <div class="excontent" id="div3">
-                                        Brought all they're forth you appear wherein may. Make morning image created
-                                        Appear spirit darkness, seasons said have
-                                        together set. Sixth after behold also said make creature he, have.
-                                        <div class="scrumtools">
-                                            <n style="margin-right: 9px;">600</n>
-                                            <span class="icon-pencil tools" alt="edit" title="edit"
-                                                (click)="editTask()"></span>
-                                            <span class="icon-camera tools" alt="upload image" title="upload image"
-                                                (click)="uploadImage()"></span><i class="fas fa-clone tools" alt="copy"
-                                                title="copy" style="font-size: 15px;" (click)="copyToClipboard('div1')"></i>
-                                            <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i
-                                                class="fas fa-history tools" alt="history" title="history" id="taskHistory"
-                                                (click)="taskHistory (); hideslackchat()"></i>
-                                            <span class="icon-move tools" alt="move" title="move"></span>
+                                    <div *ngFor="let item of TFTD">
+                                        <div *ngIf="item['taskFor'] == loggedUserId && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
+                                            <div class="excontent">
+                                                <div>
+                                                    {{item['task']}}
+                                                </div>
+                                    
+                                                <div class="scrumtools">
+                                                    <n style="margin-right: 9px;">{{item['goalID']}}</n>
+                                                    <span class="icon-pencil tools" alt="edit" title="edit" (click)="editTask()"></span>
+                                                    <span class="icon-camera tools" alt="upload image" title="upload image"
+                                                        (click)="uploadImage()"></span><i class="fas fa-clone tools" alt="copy" title="copy"
+                                                        style="font-size: 15px;" (click)="copyToClipboard('div1')"></i>
+                                                    <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i class="fas fa-history tools"
+                                                        alt="history" title="history" id="taskHistory" (click)="taskHistory (); hideslackchat()"></i>
+                                                    <span class="icon-move tools" alt="move" title="move"></span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-    
-                                    <div class="excontent" id="div4">
-                                        Sea cattle.
-                                        <div class="scrumtools">
-                                            <n style="margin-right: 9px;">600</n>
-                                            <span class="icon-pencil tools" alt="edit" title="edit"
-                                                (click)="editTask()"></span>
-                                            <span class="icon-camera tools" alt="upload image" title="upload image"
-                                                (click)="uploadImage()"></span><i class="fas fa-clone tools" alt="copy"
-                                                title="copy" style="font-size: 15px;" (click)="copyToClipboard('div1')"></i>
-                                            <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i
-                                                class="fas fa-history tools" alt="history" title="history" id="taskHistory"
-                                                (click)="taskHistory (); hideslackchat()"></i>
-                                            <span class="icon-move tools" alt="move" title="move"></span>
-                                        </div>
-                                    </div>
-    
-                                    <div class="excontent" id="div5">
-                                        Good from itself gathering rule man void female let is creeping own. Isn't from
-                                        gathered were may above under. Gathering
-                                        it his us. Creature Shall had spirit herb. Signs. Sea cattle. The moving
-                                        together there don't two night our midst behold
-                                        there fill brought tree rule there from firmament night be female. Firmament he
-                                        replenish third fruit him there grass
-                                        beast. Very wherein. Hath, them. Seas grass shall form had divide.
-                                        <div class="scrumtools">
-                                            <n style="margin-right: 9px;">600</n>
-                                            <span class="icon-pencil tools" alt="edit" title="edit"
-                                                (click)="editTask()"></span>
-                                            <span class="icon-camera tools" alt="upload image" title="upload image"
-                                                (click)="uploadImage()"></span><i class="fas fa-clone tools" alt="copy"
-                                                title="copy" style="font-size: 15px;" (click)="copyToClipboard('div1')"></i>
-                                            <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i
-                                                class="fas fa-history tools" alt="history" title="history" id="taskHistory"
-                                                (click)="taskHistory (); hideslackchat()"></i>
-                                            <span class="icon-move tools" alt="move" title="move"></span>
-                                        </div>
-                                    </div>
-    
-                                    <div class="excontent" id="div6">
-                                        Good from itself gathering rule man void female let is creeping own. Isn't from
-                                        gathered were may above under. Gathering
-                                        it his us. Creature Shall had spirit herb. Signs. Sea cattle. The moving
-                                        together there don't two night our midst behold
-                                        there fill brought tree rule there from firmament night be female. Firmament he
-                                        replenish third fruit him there grass
-                                        beast. Very wherein. Hath, them. Seas grass shall form had divide.
-                                        <div class="scrumtools">
-                                            <n style="margin-right: 9px;">600</n>
-                                            <span class="icon-pencil tools" alt="edit" title="edit"
-                                                (click)="editTask()"></span>
-                                            <span class="icon-camera tools" alt="upload image" title="upload image"
-                                                (click)="uploadImage()"></span><i class="fas fa-clone tools" alt="copy"
-                                                title="copy" style="font-size: 15px;" (click)="copyToClipboard('div1')"></i>
-                                            <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i
-                                                class="fas fa-history tools" alt="history" title="history" id="taskHistory"
-                                                (click)="taskHistory (); hideslackchat()"></i>
-                                            <span class="icon-move tools" alt="move" title="move"></span>
-                                        </div>
-                                    </div>
-    
                                 </div>
                             </div>
                             <div class="col">
                                 <div class="ex" id="verify">
                                     <h4>Verify Task</h4>
-                                    <div class="excontent" id="div7">
-                                        Add image for the file.
-                                        <u
-                                            style="color: blue; cursor: pointer;">https://www.figma.com/<br>file/0jNee0sJiNxhnQq<br>Dn0b0Ngal/New-ChatScrum<br>?node-id=24%3A0</u>
-                                        <div class="scrumtools">
-                                            <n style="margin-right: 9px;">600</n>
-                                            <span class="icon-pencil tools" alt="edit" title="edit"
-                                                (click)="editTask()"></span>
-                                            <span class="icon-camera tools" alt="upload image" title="upload image"
-                                                (click)="uploadImage()"></span><i class="fas fa-clone tools" alt="copy"
-                                                title="copy" style="font-size: 15px;" (click)="copyToClipboard('div1')"></i>
-                                            <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i
-                                                class="fas fa-history tools" alt="history" title="history" id="taskHistory"
-                                                (click)="taskHistory (); hideslackchat()"></i>
-                                            <span class="icon-move tools" alt="move" title="move"></span>
+                                    <div *ngFor="let item of verify">
+                                        <div *ngIf="item['taskFor'] == loggedUserId && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
+                                            <div class="excontent">
+                                                <div>    
+                                                    {{item['task']}}
+                                                </div>
+                                                
+                                                <div class="scrumtools">
+                                                    <n style="margin-right: 9px;">{{item['goalID']}}</n>
+                                                    <span class="icon-pencil tools" alt="edit" title="edit"
+                                                        (click)="editTask()"></span>
+                                                    <span class="icon-camera tools" alt="upload image" title="upload image"
+                                                        (click)="uploadImage()"></span><i class="fas fa-clone tools" alt="copy"
+                                                        title="copy" style="font-size: 15px;" (click)="copyToClipboard('div1')"></i>
+                                                    <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i
+                                                        class="fas fa-history tools" alt="history" title="history" id="taskHistory"
+                                                        (click)="taskHistory (); hideslackchat()"></i>
+                                                    <span class="icon-move tools" alt="move" title="move"></span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-    
                                 </div>
                             </div>
                             <div class="col">
@@ -710,333 +625,195 @@
                                     <h4>Done</h4>
                                     <div class="child">
                                         <div style="margin-left: 10px;">
-                                            <div style="margin-left: -8em; margin-bottom: 8px;">
-                                                <span style="font-weight: bold;">SO85 </span><span class="int"><i
-                                                        class="fas fa-circle" style="font-size: 3px;"></i>Int</span>
-                                            </div>
-    
-                                            <div class="excontent fordone" id="div8">
-                                                Have own. Kind dominion, forth air waters won't, days whales fruitful
-                                                fruit give shall. Life their rule his. Over
-                                                first
-                                                The.
-                                                <img src="https://res.cloudinary.com/ros4eva/image/upload/v1576523821/Rectangle_1_mroyo4.png"
-                                                    style="margin-top: 5px;">
-                                                <div class="scrumtools">
-                                                    <n style="margin-right: 9px;">600</n>
-                                                    <span class="icon-pencil tools" alt="edit" title="edit"
-                                                        (click)="editTask()"></span>
-                                                    <span class="icon-camera tools" alt="upload image" title="upload image"
-                                                        (click)="uploadImage()"></span><i class="fas fa-clone tools"
-                                                        alt="copy" title="copy" style="font-size: 15px;"
-                                                        (click)="copyToClipboard('div1')"></i>
-                                                    <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
-                                                    <i class="fas fa-history tools" alt="history" title="history"
-                                                        id="taskHistory" (click)="taskHistory (); hideslackchat()"></i>
-                                                    <span class="icon-move tools" alt="move" title="move"></span>
+                                            <div *ngFor="let item of done">
+                                                <div *ngIf="item['taskFor'] == loggedUserId && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
+                                                   <div style="margin-left: -8em; margin-bottom: 8px;">
+                                                        <span style="font-weight: bold;">{{item['pushID']}}</span><!-- <span class="int"><i
+                                                                class="fas fa-circle" style="font-size: 3px;"></i>Int</span> -->
+                                                    </div>
+            
+                                                    <div class="excontent fordone">
+                                                        <div>
+                                                            {{item['task']}}
+                                                        </div>
+                                                        <div class="scrumtools">
+                                                            <n style="margin-right: 9px;">{{item['goalID']}}</n>
+                                                            <span class="icon-pencil tools" alt="edit" title="edit"
+                                                                (click)="editTask()"></span>
+                                                            <span class="icon-camera tools" alt="upload image" title="upload image"
+                                                                (click)="uploadImage()"></span><i class="fas fa-clone tools"
+                                                                alt="copy" title="copy" style="font-size: 15px;"
+                                                                (click)="copyToClipboard('div1')"></i>
+                                                            <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
+                                                            <i class="fas fa-history tools" alt="history" title="history"
+                                                                id="taskHistory" (click)="taskHistory (); hideslackchat()"></i>
+                                                            <span class="icon-move tools" alt="move" title="move"></span>
+                                                        </div>
+                                                    </div> 
                                                 </div>
+                                                
                                             </div>
-    
-                                            <div class="excontent" id="div9">
-                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                                                tempor incididunt ut labore et dolore magna
-                                                aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                                                eiusmod tempor incididunt ut labore et dolore
-                                                magna aliqua.
-                                                <div class="scrumtools">
-                                                    <n style="margin-right: 9px;">600</n>
-                                                    <span class="icon-pencil tools" alt="edit" title="edit"
-                                                        (click)="editTask()"></span>
-                                                    <span class="icon-camera tools" alt="upload image" title="upload image"
-                                                        (click)="uploadImage()"></span><i class="fas fa-clone tools"
-                                                        alt="copy" title="copy" style="font-size: 15px;"
-                                                        (click)="copyToClipboard('div1')"></i>
-                                                    <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
-                                                    <i class="fas fa-history tools" alt="history" title="history"
-                                                        id="taskHistory" (click)="taskHistory (); hideslackchat()"></i>
-                                                    <span class="icon-move tools" alt="move" title="move"></span>
-                                                </div>
-                                            </div>
+                                            
                                         </div>
                                     </div>
                                     <!-- </div> -->
                                 </div>
                             </div>
                         </div>
+                        
                     </div>
                 </div>
     
                 <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                     <div class="container">
-                        <div id="teamTaskDropDown">
-                            <div class="teamTaskDropDownMenu" id="teamTaskDropDownMenu" style="margin-top: -10px;">
-                                <div>
-                                    <img
-                                        src="https://res.cloudinary.com/ros4eva/image/upload/v1581417531/Ellipse_2_ithyej.png">
-                                    <ul>
-                                        <li><span class="teamTaskTitle firstOne">Azeem Animashaun</span></li>
-                                        <li class="ttTasksandTime">2 hours | 9 Tasks</li>
-                                    </ul>
-                                </div>
-                                <div style="float: right;">
-                                    <ul id="teamTaskTools">
-                                        <li><i class="fas fa-plus" id="ttAddTaskBtn"></i></li>
-                                        <li><i style="padding: 5.5px 8px;" id="ttAddNoteBtn" (click)="hideslackchat()"><span
-                                                    class="icon-Group-1" style="width: 25px; height: 25px;"></span></i></li>
-                                        <li><i class="fas fa-user" id="ttUserHistoryBtn"
-                                                (click)="taskHistory (); hideslackchat()"></i></li>
-                                        <li><i id="toggledUp" class="fas fa-chevron-up"
-                                                (click)="showTeamTaskDropDown()"></i></li>
-                                        <!-- <li id="toggledDown"><i class="fas fa-chevron-down" (click)="showTeamTaskDropDown()"></i></li> -->
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="ttDropDownContent" id="ttDropDown">
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="ex" id="tfw" style="border-color: #FF4C6D;">
-                                            <h4>Tasks for the week</h4>
-                                            <div class="excontent" id="div1"
-                                                style="border: 1px solid rgba(255, 76, 109, 0.25);">
-                                                from itself gathering rule man void female let is creeping own.
-                                                <div class="scrumtools">
-                                                    <n style="margin-right: 9px;">600</n>
-                                                    <span class="icon-pencil tools" alt="edit" title="edit"
-                                                        (click)="editTask()"></span>
-                                                    <span class="icon-camera tools" alt="upload image" title="upload image"
-                                                        (click)="uploadImage()"></span><i class="fas fa-clone tools"
-                                                        alt="copy" title="copy" style="font-size: 15px;"
-                                                        (click)="copyToClipboard('div1')"></i>
-                                                    <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
-                                                    <i class="fas fa-history tools" alt="history" title="history"
-                                                        id="taskHistory" (click)="taskHistory (); hideslackchat()"></i>
-                                                    <span class="icon-move tools" alt="move" title="move"></span>
-                                                </div>
-                                            </div>
-                                            <div class="excontent" id="div2"
-                                                style="border: 1px solid rgba(255, 76, 109, 0.25);">
-                                                <div class="notif">
-                                                    <span class="icon-notification"><span class="path1"></span><span
-                                                            class="path2"></span></span>
-                                                </div>
-                                                Sea cattle. The moving together there don't two night our midst behold
-                                                there fill brought tree rule
-                                                there from
-                                                firmament
-                                                night be female. Firmament he replenish third fruit him there grass
-                                                beast. Very wherein. Hath, them.
-                                                Seas grass
-                                                shall
-                                                form had divide.
-                                                <div class="scrumtools">
-                                                    <n style="margin-right: 9px;">600</n>
-                                                    <span class="icon-pencil tools" alt="edit" title="edit"
-                                                        (click)="editTask()"></span>
-                                                    <span class="icon-camera tools" alt="upload image" title="upload image"
-                                                        (click)="uploadImage()"></span><i class="fas fa-clone tools"
-                                                        alt="copy" title="copy" style="font-size: 15px;"
-                                                        (click)="copyToClipboard('div1')"></i>
-                                                    <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
-                                                    <i class="fas fa-history tools" alt="history" title="history"
-                                                        id="taskHistory" (click)="taskHistory (); hideslackchat()"></i>
-                                                    <span class="icon-move tools" alt="move" title="move"></span>
-                                                </div>
-                                            </div>
+                        <div  *ngFor="let user of users">
+                            <details #teamDetail id="teamTaskDropDown" class="teamTaskDetail" [attr.data-target]="user['userID']" (click)="borderRadious(teamDetail)">
+                                <summary >
+                                    <div class="teamTaskDropDownMenu" id="{{user['userID']}}">
+                                        <div>
+                                            <img src="https://res.cloudinary.com/ros4eva/image/upload/v1581417531/Ellipse_2_ithyej.png">
+                                            <ul>
+                                                <li><span class="teamTaskTitle firstOne">{{user['userName']}}</span></li>
+                                                <li class="ttTasksandTime">{{user['userTotalWeekHour']}} hours | {{user['scrumGoalSet']}} Tasks</li>
+                                            </ul>
                                         </div>
-    
-                                    </div>
-                                    <div class="col ">
-                                        <div class="ex" id="tft" style="border-color: #FF4C6D;">
-                                            <h4>Todays Target</h4>
-                                            <div class="excontent" id="div3"
-                                                style="border: 1px solid rgba(255, 76, 109, 0.25);">
-                                                Brought all they're forth you appear wherein may. Make morning image
-                                                created Appear spirit darkness,
-                                                seasons said have
-                                                together set. Sixth after behold also said make creature he, have.
-                                                <div class="scrumtools">
-                                                    <n style="margin-right: 9px;">600</n>
-                                                    <span class="icon-pencil tools" alt="edit" title="edit"
-                                                        (click)="editTask()"></span>
-                                                    <span class="icon-camera tools" alt="upload image" title="upload image"
-                                                        (click)="uploadImage()"></span><i class="fas fa-clone tools"
-                                                        alt="copy" title="copy" style="font-size: 15px;"
-                                                        (click)="copyToClipboard('div1')"></i>
-                                                    <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
-                                                    <i class="fas fa-history tools" alt="history" title="history"
-                                                        id="taskHistory" (click)="taskHistory (); hideslackchat()"></i>
-                                                    <span class="icon-move tools" alt="move" title="move"></span>
-                                                </div>
-                                            </div>
-    
-                                            <div class="excontent" id="div4"
-                                                style="border: 1px solid rgba(255, 76, 109, 0.25);">
-                                                Sea cattle.
-                                                <div class="scrumtools">
-                                                    <n style="margin-right: 9px;">600</n>
-                                                    <span class="icon-pencil tools" alt="edit" title="edit"
-                                                        (click)="editTask()"></span>
-                                                    <span class="icon-camera tools" alt="upload image" title="upload image"
-                                                        (click)="uploadImage()"></span><i class="fas fa-clone tools"
-                                                        alt="copy" title="copy" style="font-size: 15px;"
-                                                        (click)="copyToClipboard('div1')"></i>
-                                                    <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
-                                                    <i class="fas fa-history tools" alt="history" title="history"
-                                                        id="taskHistory" (click)="taskHistory (); hideslackchat()"></i>
-                                                    <span class="icon-move tools" alt="move" title="move"></span>
-                                                </div>
-                                            </div>
-    
-                                            <div class="excontent" id="div5"
-                                                style="border: 1px solid rgba(255, 76, 109, 0.25);">
-                                                Good from itself gathering rule man void female let is creeping own.
-                                                Isn't from gathered were may above
-                                                under. Gathering
-                                                it his us. Creature Shall had spirit herb. Signs. Sea cattle. The moving
-                                                together there don't two night
-                                                our midst behold
-                                                there fill brought tree rule there from firmament night be female.
-                                                Firmament he replenish third fruit
-                                                him there grass
-                                                beast. Very wherein. Hath, them. Seas grass shall form had divide.
-                                                <div class="scrumtools">
-                                                    <n style="margin-right: 9px;">600</n>
-                                                    <span class="icon-pencil tools" alt="edit" title="edit"
-                                                        (click)="editTask()"></span>
-                                                    <span class="icon-camera tools" alt="upload image" title="upload image"
-                                                        (click)="uploadImage()"></span><i class="fas fa-clone tools"
-                                                        alt="copy" title="copy" style="font-size: 15px;"
-                                                        (click)="copyToClipboard('div1')"></i>
-                                                    <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
-                                                    <i class="fas fa-history tools" alt="history" title="history"
-                                                        id="taskHistory" (click)="taskHistory (); hideslackchat()"></i>
-                                                    <span class="icon-move tools" alt="move" title="move"></span>
-                                                </div>
-                                            </div>
-    
-                                            <div class="excontent" id="div6"
-                                                style="border: 1px solid rgba(255, 76, 109, 0.25);">
-                                                Good from itself gathering rule man void female let is creeping own.
-                                                Isn't from gathered were may above
-                                                under. Gathering
-                                                it his us. Creature Shall had spirit herb. Signs. Sea cattle. The moving
-                                                together there don't two night
-                                                our midst behold
-                                                there fill brought tree rule there from firmament night be female.
-                                                Firmament he replenish third fruit
-                                                him there grass
-                                                beast. Very wherein. Hath, them. Seas grass shall form had divide.
-                                                <div class="scrumtools">
-                                                    <n style="margin-right: 9px;">600</n>
-                                                    <span class="icon-pencil tools" alt="edit" title="edit"
-                                                        (click)="editTask()"></span>
-                                                    <span class="icon-camera tools" alt="upload image" title="upload image"
-                                                        (click)="uploadImage()"></span><i class="fas fa-clone tools"
-                                                        alt="copy" title="copy" style="font-size: 15px;"
-                                                        (click)="copyToClipboard('div1')"></i>
-                                                    <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
-                                                    <i class="fas fa-history tools" alt="history" title="history"
-                                                        id="taskHistory" (click)="taskHistory (); hideslackchat()"></i>
-                                                    <span class="icon-move tools" alt="move" title="move"></span>
-                                                </div>
-                                            </div>
-    
+                                        <div style="float: right;">
+                                            <ul class="teamTaskTools">
+                                                <li><i class="fas fa-plus" (click)="addTaskModal('task');"></i></li>
+                                                <li><i style="padding: 5.5px 8px;" (click)="addTaskModal('note'); hideslackchat()"><span
+                                                            class="icon-Group-1" style="width: 25px; height: 25px;"></span></i></li>
+                                                <li><i class="fas fa-user" (click)="taskHistory (); hideslackchat()"></i></li>
+                                                <li><i id="toggledUp{{user['userID']}}" class="fas fa-chevron-up" ></i></li>
+                                            </ul>
                                         </div>
                                     </div>
-                                    <div class="col">
-                                        <div class="ex" id="verify" style="border-color: #FF4C6D;">
-                                            <h4>Verify Task</h4>
-                                            <div class="excontent" id="div7"
-                                                style="border: 1px solid rgba(255, 76, 109, 0.25);">
-                                                Add image for the file.
-                                                <u
-                                                    style="color: blue; cursor: pointer;">https://www.figma.com/<br>file/0jNee0sJiNxhnQq<br>Dn0b0Ngal/New-ChatScrum<br>?node-id=24%3A0</u>
-                                                <div class="scrumtools">
-                                                    <n style="margin-right: 9px;">600</n>
-                                                    <span class="icon-pencil tools" alt="edit" title="edit"
-                                                        (click)="editTask()"></span>
-                                                    <span class="icon-camera tools" alt="upload image" title="upload image"
-                                                        (click)="uploadImage()"></span><i class="fas fa-clone tools"
-                                                        alt="copy" title="copy" style="font-size: 15px;"
-                                                        (click)="copyToClipboard('div1')"></i>
-                                                    <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
-                                                    <i class="fas fa-history tools" alt="history" title="history"
-                                                        id="taskHistory" (click)="taskHistory (); hideslackchat()"></i>
-                                                    <span class="icon-move tools" alt="move" title="move"></span>
-                                                </div>
-                                            </div>
-    
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="ex" id="done" style="border-color: #FF4C6D;">
-                                            <!-- <div style="margin-left: 10px;"> -->
-                                            <h4>Done</h4>
-                                            <div class="child">
-                                                <div style="margin-left: 10px;">
-                                                    <div style="margin-left: -8em; margin-bottom: 8px;">
-                                                        <span style="font-weight: bold;">SO85 </span>
-                                                    </div>
-    
-                                                    <div class="excontent fordone" id="div8"
-                                                        style="border: 1px solid rgba(255, 76, 109, 0.25);">
-                                                        Have own. Kind dominion, forth air waters won't, days whales
-                                                        fruitful fruit give shall. Life
-                                                        their rule his. Over
-                                                        first
-                                                        The.
-                                                        <img src="https://res.cloudinary.com/ros4eva/image/upload/v1576523821/Rectangle_1_mroyo4.png"
-                                                            style="margin-top: 5px;">
-                                                        <div class="scrumtools">
-                                                            <n style="margin-right: 9px;">600</n>
-                                                            <span class="icon-pencil tools" alt="edit" title="edit"
-                                                                (click)="editTask()"></span>
-                                                            <span class="icon-camera tools" alt="upload image" title="upload image"
-                                                                (click)="uploadImage()"></span><i class="fas fa-clone tools"
-                                                                alt="copy" title="copy" style="font-size: 15px;"
-                                                                (click)="copyToClipboard('div1')"></i>
-                                                            <i class="fas fa-envelope tools" alt="task chat"
-                                                                title="task chat"></i> <i class="fas fa-history tools"
-                                                                alt="history" title="history" id="taskHistory"
-                                                                (click)="taskHistory (); hideslackchat()"></i>
-                                                            <span class="icon-move tools" alt="move" title="move"></span>
-                                                        </div>
-                                                    </div>
-    
-                                                    <div class="excontent" id="div9"
-                                                        style="border: 1px solid rgba(255, 76, 109, 0.25);">
-                                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                                                        eiusmod tempor incididunt ut
-                                                        labore et dolore magna
-                                                        aliqua.Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                                                        sed do eiusmod tempor incididunt
-                                                        ut labore et dolore
-                                                        magna aliqua.
-                                                        <div class="scrumtools">
-                                                            <n style="margin-right: 9px;">600</n>
-                                                            <span class="icon-pencil tools" alt="edit" title="edit"
-                                                                (click)="editTask()"></span>
-                                                            <span class="icon-camera tools" alt="upload image" title="upload image"
-                                                                (click)="uploadImage()"></span><i class="fas fa-clone tools"
-                                                                alt="copy" title="copy" style="font-size: 15px;"
-                                                                (click)="copyToClipboard('div1')"></i>
-                                                            <i class="fas fa-envelope tools" alt="task chat"
-                                                                title="task chat"></i> <i class="fas fa-history tools"
-                                                                alt="history" title="history" id="taskHistory"
-                                                                (click)="taskHistory (); hideslackchat()"></i>
-                                                            <span class="icon-move tools" alt="move" title="move"></span>
+                                </summary>
+                                
+                                <div class="ttDropDownContent" style="width: 100%;">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="ex" id="tfw" style="border-color: #FF4C6D;">
+                                                <h4>Tasks for the week</h4>
+                                                <div *ngFor="let item of TFTW">
+                                                    <div *ngIf="item['taskFor'] == user['userID'] && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
+                                                        <div class="excontent">
+                                                            <div>
+                                                                {{item['task']}}
+                                                            </div>
+                                                
+                                                            <div class="scrumtools">
+                                                                <n style="margin-right: 9px;">{{item['goalID']}}</n>
+                                                                <span class="icon-pencil tools" alt="edit" title="edit" (click)="editTask()"></span>
+                                                                <span class="icon-camera tools" alt="upload image" title="upload image"
+                                                                    (click)="uploadImage()"></span><i class="fas fa-clone tools" alt="copy" title="copy"
+                                                                    style="font-size: 15px;" (click)="copyToClipboard('div1')"></i>
+                                                                <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i class="fas fa-history tools"
+                                                                    alt="history" title="history" id="taskHistory" (click)="taskHistory (); hideslackchat()"></i>
+                                                                <span class="icon-move tools" alt="move" title="move"></span>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!-- </div> -->
+                                
+                                        </div>
+                                        <div class="col ">
+                                            <div class="ex" id="tft" style="border-color: #FF4C6D;">
+                                                <h4>Todays Target</h4>
+                                                <div *ngFor="let item of TFTD">
+                                                    <div *ngIf="item['taskFor'] == user['userID'] && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
+                                                        <div class="excontent">
+                                                            <div>
+                                                                {{item['task']}}
+                                                            </div>
+                                                
+                                                            <div class="scrumtools">
+                                                                <n style="margin-right: 9px;">{{item['goalID']}}</n>
+                                                                <span class="icon-pencil tools" alt="edit" title="edit" (click)="editTask()"></span>
+                                                                <span class="icon-camera tools" alt="upload image" title="upload image"
+                                                                    (click)="uploadImage()"></span><i class="fas fa-clone tools" alt="copy" title="copy"
+                                                                    style="font-size: 15px;" (click)="copyToClipboard('div1')"></i>
+                                                                <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i class="fas fa-history tools"
+                                                                    alt="history" title="history" id="taskHistory" (click)="taskHistory (); hideslackchat()"></i>
+                                                                <span class="icon-move tools" alt="move" title="move"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="ex" id="verify" style="border-color: #FF4C6D;">
+                                                <h4>Verify Task</h4>
+                                                <!-- <div style="margin-left: -8em; margin-bottom: 8px;" *ngFor="let item of done">
+                                                    <span style="font-weight: bold; margin-left: -1em;" *ngIf="item['taskFor'] == user['userID']">{{item['pushID']}}
+                                                    </span>
+                                                </div> -->
+                                                <div *ngFor="let item of verify">
+                                                    <div *ngIf="item['taskFor'] == user['userID'] && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
+                                                        <div class="excontent">
+                                                            <div>
+                                                                {{item['task']}}
+                                                            </div>
+                                                
+                                                            <div class="scrumtools">
+                                                                <n style="margin-right: 9px;">{{item['goalID']}}</n>
+                                                                <span class="icon-pencil tools" alt="edit" title="edit" (click)="editTask()"></span>
+                                                                <span class="icon-camera tools" alt="upload image" title="upload image"
+                                                                    (click)="uploadImage()"></span><i class="fas fa-clone tools" alt="copy" title="copy"
+                                                                    style="font-size: 15px;" (click)="copyToClipboard('div1')"></i>
+                                                                <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i class="fas fa-history tools"
+                                                                    alt="history" title="history" id="taskHistory" (click)="taskHistory (); hideslackchat()"></i>
+                                                                <span class="icon-move tools" alt="move" title="move"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="ex" id="done" style="border-color: #FF4C6D;">
+                                                <!-- <div style="margin-left: 10px;"> -->
+                                                <h4>Done</h4>
+                                                <div class="child">
+                                                    <div style="margin-left: 10px;">
+                                                        <div *ngFor="let item of done">
+                                                            <div *ngIf="item['taskFor'] == user['userID'] && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
+                                                                <div style="margin-left: -8.5em; margin-bottom: 8px;">
+                                                                    <span style="font-weight: bold;">{{item['pushID']}}</span><!-- <span class="int"><i class="fas fa-circle"
+                                                                            style="font-size: 3px;"></i>Int</span> -->
+                                                                </div>
+                                                
+                                                                <div class="excontent fordone">
+                                                                    <div>
+                                                                        {{item['task']}}
+                                                                    </div>
+                                                                    <div class="scrumtools">
+                                                                        <n style="margin-right: 9px;">{{item['goalID']}}</n>
+                                                                        <span class="icon-pencil tools" alt="edit" title="edit" (click)="editTask()"></span>
+                                                                        <span class="icon-camera tools" alt="upload image" title="upload image"
+                                                                            (click)="uploadImage()"></span><i class="fas fa-clone tools" alt="copy" title="copy"
+                                                                            style="font-size: 15px;" (click)="copyToClipboard('div1')"></i>
+                                                                        <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
+                                                                        <i class="fas fa-history tools" alt="history" title="history" id="taskHistory"
+                                                                            (click)="taskHistory (); hideslackchat()"></i>
+                                                                        <span class="icon-move tools" alt="move" title="move"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                
+                                                        </div>
+                                                
+                                                    </div>
+                                                </div>
+                                                <!-- </div> -->
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </details>
                         </div>
-    
-                        <div class="teamTaskDropDownMenu secondTeamtask" id="teamTaskDropDownMenu1"
+                        <!-- <div class="teamTaskDropDownMenu secondTeamtask" id="teamTaskDropDownMenu1"
                             style="background: rgba(89, 187, 30, 0.1);">
                             <div>
                                 <img src="https://res.cloudinary.com/ros4eva/image/upload/v1581553992/Ellipse_3_fb4kdi.svg">
@@ -1055,9 +832,9 @@
                                     <li><i class="fas fa-user" id="ttUserHistoryBtn"
                                             (click)="taskHistory (); hideslackchat()" style="background: #59BB1E;"></i>
                                     </li>
-                                    <li><i id="toggledUp" class="fas fa-chevron-up" (click)="showTeamTaskDropDown()"
+                                    <li><i id="toggledUp" class="fas fa-chevron-up" 
                                             style="background: #59BB1E;"></i></li>
-                                    <!-- <li id="toggledDown"><i class="fas fa-chevron-down" (click)="showTeamTaskDropDown()"></i></li> -->
+                                    
                                 </ul>
                             </div>
                         </div>
@@ -1080,7 +857,7 @@
                                     <li><i class="fas fa-user" id="ttUserHistoryBtn"
                                             (click)="taskHistory (); hideslackchat()" style="background:#DDA448;"></i>
                                     </li>
-                                    <li><i id="toggledUp" class="fas fa-chevron-up" (click)="showTeamTaskDropDown()"
+                                    <li><i id="toggledUp" class="fas fa-chevron-up" 
                                             style="background:#DDA448;"></i></li>
                                 </ul>
                             </div>
@@ -1104,9 +881,9 @@
                                     <li><i class="fas fa-user" id="ttUserHistoryBtn"
                                             (click)="taskHistory (); hideslackchat()" style="background:#8D6A9F;"></i>
                                     </li>
-                                    <li><i id="toggledUp" class="fas fa-chevron-up" (click)="showTeamTaskDropDown()"
+                                    <li><i id="toggledUp" class="fas fa-chevron-up" 
                                             style="background:#8D6A9F;"></i></li>
-                                    <!-- <li id="toggledDown"><i class="fas fa-chevron-down" (click)="showTeamTaskDropDown()"></i></li> -->
+                                    
                                 </ul>
                             </div>
                         </div>
@@ -1129,9 +906,9 @@
                                     <li><i class="fas fa-user" id="ttUserHistoryBtn"
                                             (click)="taskHistory (); hideslackchat()" style="background:#BB342F;"></i>
                                     </li>
-                                    <li><i id="toggledUp" class="fas fa-chevron-up" (click)="showTeamTaskDropDown()"
+                                    <li><i id="toggledUp" class="fas fa-chevron-up" 
                                             style="background:#BB342F;"></i></li>
-                                    <!-- <li id="toggledDown"><i class="fas fa-chevron-down" (click)="showTeamTaskDropDown()"></i></li> -->
+                                    
                                 </ul>
                             </div>
                         </div>
@@ -1154,9 +931,9 @@
                                     <li><i class="fas fa-user" id="ttUserHistoryBtn"
                                             (click)="taskHistory (); hideslackchat()" style="background:#83745B;"></i>
                                     </li>
-                                    <li><i id="toggledUp" class="fas fa-chevron-up" (click)="showTeamTaskDropDown()"
+                                    <li><i id="toggledUp" class="fas fa-chevron-up" 
                                             style="background:#83745B;"></i></li>
-                                    <!-- <li id="toggledDown"><i class="fas fa-chevron-down" (click)="showTeamTaskDropDown()"></i></li> -->
+                                    
                                 </ul>
                             </div>
                         </div>
@@ -1179,9 +956,9 @@
                                     <li><i class="fas fa-user" id="ttUserHistoryBtn"
                                             (click)="taskHistory (); hideslackchat()" style="background:#1034A6;"></i>
                                     </li>
-                                    <li><i id="toggledUp" class="fas fa-chevron-up" (click)="showTeamTaskDropDown()"
+                                    <li><i id="toggledUp" class="fas fa-chevron-up" 
                                             style="background:#1034A6;"></i></li>
-                                    <!-- <li id="toggledDown"><i class="fas fa-chevron-down" (click)="showTeamTaskDropDown()"></i></li> -->
+                                    
                                 </ul>
                             </div>
                         </div>
@@ -1204,9 +981,9 @@
                                     <li><i class="fas fa-user" id="ttUserHistoryBtn"
                                             (click)="taskHistory (); hideslackchat()" style="background:#852F64;"></i>
                                     </li>
-                                    <li><i id="toggledUp" class="fas fa-chevron-up" (click)="showTeamTaskDropDown()"
+                                    <li><i id="toggledUp" class="fas fa-chevron-up" 
                                             style="background:#852F64;"></i></li>
-                                    <!-- <li id="toggledDown"><i class="fas fa-chevron-down" (click)="showTeamTaskDropDown()"></i></li> -->
+                                    
                                 </ul>
                             </div>
                         </div>
@@ -1230,12 +1007,12 @@
                                     <li><i class="fas fa-user" id="ttUserHistoryBtn"
                                             (click)="taskHistory (); hideslackchat()" style="background:#26A69A;"></i>
                                     </li>
-                                    <li><i id="toggledUp" class="fas fa-chevron-up" (click)="showTeamTaskDropDown()"
+                                    <li><i id="toggledUp" class="fas fa-chevron-up" 
                                             style="background:#26A69A;"></i></li>
-                                    <!-- <li id="toggledDown"><i class="fas fa-chevron-down" (click)="showTeamTaskDropDown()"></i></li> -->
+                                    
                                 </ul>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>

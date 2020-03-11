@@ -17,7 +17,7 @@ const routes: Routes = [
     { path: "home", component: HomeComponent},
     { path: "login", component: LoginComponent },
     { path: "createuser", component: UserComponent },
-  { path: "scrumboard", component: ScrumboardComponent, canActivate: [AuthGuard] },
+    { path: "scrumboard/:project_id", component: ScrumboardComponent, canActivate: [AuthGuard] },
     { path: "profile", component: ProfileComponent },
     { path: "admin", component: AdminComponent },
     { path: "terms", component: TermsComponent },

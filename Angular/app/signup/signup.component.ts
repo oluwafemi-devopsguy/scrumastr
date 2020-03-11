@@ -13,6 +13,9 @@ export class SignupComponent implements OnInit {
   constructor(private router: Router, public dataservice: DataService) { }
 
   ngOnInit() {
+    if (sessionStorage.getItem('token')) {
+      this.router.navigate(['scrumboard'])
+    }
     const showProName = document.getElementById("c") as HTMLInputElement
     showProName.checked = true
     this.dataservice.createuser_usertype = 'user'

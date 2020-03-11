@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChildren, QueryList, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import {Title} from "@angular/platform-browser";
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { DataService } from '../data.service';
+
 
 @Component({
   selector: 'app-scrumboard',
@@ -9,20 +12,51 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
   styleUrls: ['./scrumboard.component.css']
 })
 export class ScrumboardComponent implements OnInit {
+  @ViewChildren('details') details: QueryList<any>;
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(
+    private http: HttpClient, 
+    private router: Router, 
+    private dataService: DataService, 
+    private pageTitle: Title,
+    private route: ActivatedRoute,
+    ) { }
 
   ngOnInit() {
     this.load()
     this.rose()
     this.close()
-    //this.closeAllDropDown()
-    // this.imageName()
+    this.pageTitle.setTitle('Scrumboard')
+    this.project_id = parseInt((this.route.snapshot.paramMap.get('project_id')))
+    this.getAllUsersGoals()
+    this.getAllSprints()
   }
+
+  // ngAfterViewInit(): void {
+    
+  // }
 
   public imgName = "No image selected";
   public alert;
+  public TFTW = [];
+  public TFTD = [];
+  public verify = [];
+  public done = [];
+  public users = [];
+  public participants = [];
+  public project_id = 0;
+  loggedUser = sessionStorage.getItem('realname')
+  loggedUserRole = sessionStorage.getItem('role');
+  public loggedUserId;
+  public sprints = [];
+  public currentSprint = [];
+  public loggedSprint = { sprintID: " ", dateCreated: "2020-03-03T16:33:59.817708Z", endDate: "2020-03-03T16:33:59.817708Z"};
+  public loggedProject;
+  public colors = ['255, 76, 109', '89, 187, 30', '221, 164, 72', '141, 106, 159', '187, 52, 47', '131, 116, 91', '16, 52, 166', '133, 47, 100','38, 166, 154']
+  //randomUserColors = this.color[Math.random() * this.color.length | 0]
+  //public colors = ['#ff4c6d', '#59bb1e', '#dda448', '#8d6a9f', '#bb342f', '#83745b', '#1034a6', '#852f64', '#26a69a']
   
+
   load(){
     if (window.localStorage) {
       if (!localStorage.getItem('firstLoad')) {
@@ -148,11 +182,20 @@ export class ScrumboardComponent implements OnInit {
     appInfoModal.style.display = "block"
   }
 
-  logout () {
+  logoutModal() {
     let logoutModal = document.getElementById("logoutModal") as HTMLElement;
     logoutModal.style.display = "block"
   }
 
+  addTaskModal(whichmodal) {
+    let modal = document.getElementById("addTaskModal") as HTMLElement;
+    let modal1 = document.getElementById("addNoteModal") as HTMLElement; 
+    if (whichmodal == 'task') {
+      modal.style.display = 'block';
+    } if (whichmodal == 'note') {
+      modal1.style.display = 'block';
+    }
+  }
 
   rose(){
     let modal = document.getElementById("addTaskModal") as HTMLElement;
@@ -173,9 +216,8 @@ export class ScrumboardComponent implements OnInit {
 
     let hides = document.getElementById("splitLeft") as HTMLElement;
 
-    let ttAddTask = document.getElementById("ttAddTaskBtn") as HTMLElement;
-    let ttAddNote = document.getElementById("ttAddNoteBtn") as HTMLElement;
-    let ttUserHistory = document.getElementById("ttUserHistoryBtn") as HTMLElement;
+    // let ttAddTask = document.getElementById("ttAddTaskBtn") as HTMLElement;
+    // let ttAddNote = document.getElementById("ttAddNoteBtn") as HTMLElement;
 
     function hideDropDown(element, classToRemove, classToAdd) {
       element.classList.remove(classToRemove)
@@ -186,17 +228,18 @@ export class ScrumboardComponent implements OnInit {
       modal.style.display = "block";
     }
 
-    ttAddTask.onclick = function () {
-      modal.style.display = "block";
-    }
+    // ttAddTask.onclick = function () {
+    //   modal.style.display = "block";
+    // }
 
     btnmod1.onclick = function () {
       modal1.style.display = "block";
     }
 
-    ttAddNote.onclick = function () {
-      modal1.style.display = "block";
-    }
+    // ttAddNote.onclick = function () {
+    //   modal1.style.display = "block";
+    // }
+
 
     window.onclick = function (e) {
 
@@ -265,6 +308,17 @@ export class ScrumboardComponent implements OnInit {
 
   }
 
+  borderRadious(user) {
+    let detail = user.getAttribute('data-target');
+    document.getElementById(detail).classList.toggle('teamTaskDropDownMenuToggle');
+    let toggledUp = document.getElementById(`toggledUp${detail}`).classList;
+    if (toggledUp.contains('fa-chevron-up')) {
+      toggledUp.replace('fa-chevron-up', 'fa-chevron-down')
+    } else if (toggledUp.contains('fa-chevron-down')) {
+      toggledUp.replace('fa-chevron-down', 'fa-chevron-up')
+    }
+  }
+
   hideslackchat() {
     let hideS = document.getElementById("splitRight") as HTMLElement;
     let hides = document.getElementById("splitLeft") as HTMLElement;
@@ -288,7 +342,6 @@ export class ScrumboardComponent implements OnInit {
     }
   }
 
-
   imageUploadAlert () {
     let name = document.getElementById('imgUpload') as HTMLInputElement;
     let uploadImageModal = document.getElementById("uploadImageModal") as HTMLElement;
@@ -308,28 +361,6 @@ export class ScrumboardComponent implements OnInit {
     this.NotificationBox("Copied to clipboard!")
   }
 
-  showTeamTaskDropDown() {
-    let dropDownCBtn = document.getElementById('ttDropDown');
-    let toggled = document.getElementById('toggledDown');
-    let untoggled = document.getElementById('toggledUp');
-    let ttDropDownMenu = document.getElementById('teamTaskDropDownMenu');
-    let ttDropDownMenu1 = document.getElementById('teamTaskDropDownMenu1');
-    
-    dropDownCBtn.classList.toggle('showDropDown');
-    ttDropDownMenu.classList.toggle('teamTaskDropDownMenuToggle');
-    
-    
-    if (untoggled.className == 'fas fa-chevron-up') {
-      untoggled.className = ('fas fa-chevron-down')
-      ttDropDownMenu1.style.marginTop = "1100px"
-
-    } else if (untoggled.className == 'fas fa-chevron-down') {
-      untoggled.className = ('fas fa-chevron-up')
-      ttDropDownMenu1.style.marginTop = "20px"
-    }
-    
-    
-  }
 
   hideAddTaskandNoteBTN() {
     document.getElementById('addTaskBtn').style.display = 'none';
@@ -518,5 +549,97 @@ export class ScrumboardComponent implements OnInit {
     }
 
   }
-   
+  
+  logout() {
+    this.dataService.logout();
+  }
+
+  getAllUsersGoals () {
+    this.dataService.allProjectGoals(this.project_id).subscribe(
+      data => {
+        this.loggedProject = data['project_name']
+        this.participants = data['data']
+        this.participants.forEach(element => {
+          this.users.push({
+            'userColor': " ",
+            'userName': element['user']['nickname'], 
+            'userID': element['user']['id'],
+            'userTotalWeekHour': element['total_week_hours'], 
+            'scrumGoalSet': element['scrumgoal_set'].length});
+          if (element['user']['nickname'] == this.loggedUser) {
+            this.loggedUserId = element['user']['id']
+          }
+            element['scrumgoal_set'].forEach(item => {
+            if (item['status'] == 0) {
+              this.TFTW.push({ 
+                'task': item['name'], 
+                'taskFor': element['user']['id'], 
+                'goalID': item['id'], 
+                'timeCreated': item['time_created']
+              })
+            } if (item['status'] == 1) {
+              this.TFTD.push({ 
+                'task': item['name'], 
+                'taskFor': element['user']['id'], 
+                'goalID': item['id'], 
+                'timeCreated': item['time_created']
+              })
+            } if (item['status'] == 2) {
+              this.verify.push({ 
+                'task': item['name'], 
+                'taskFor': element['user']['id'], 
+                'goalID': item['id'], 
+                'pushID': item['push_id'], 
+                'timeCreated': item['time_created']
+              })
+            } if (item['status'] == 3) {
+              this.done.push({ 
+                'task': item['name'], 
+                'taskFor': element['user']['id'], 
+                'goalID': item['id'], 
+                'pushID': item['push_id'], 
+                'timeCreated': item['time_created']
+              })
+            }
+          })
+        })
+        // this.users.forEach(user => {
+        //   for (let i = this.colors.length; i > 0; i--) {
+        //     user['userColor'] = this.colors[Math.random() * this.colors.length | 0]
+        //   }
+        // })
+      
+        this.users.forEach(user => {
+          user['userColor'] = this.colors[user.userID % this.colors.length]
+        })
+        console.log(this.users[0]['userColor'])
+      },
+  
+    error => {
+      console.log('error', Error)
+    }
+      )
+    }
+
+    // changeColor (){
+    //   this.users.forEach(user => {
+    //     console.log(user)
+    //     user['userColor']= this.colors[(user.userID % this.colors.length)]
+    //   })
+    // }
+
+  getAllSprints () {
+    this.dataService.allSprints(this.project_id).subscribe(
+      data => {
+        this.sprints = data
+        this.sprints.forEach(element => {
+          this.currentSprint.push({ 'sprintID': element['id'], 'dateCreated': element['created_on'], 'endDate': element['ends_on']})
+        });
+        this.loggedSprint = this.currentSprint[this.currentSprint.length-1]
+        
+      }, error => {
+        console.log('error', error)
+      }
+    )
+  }
 }

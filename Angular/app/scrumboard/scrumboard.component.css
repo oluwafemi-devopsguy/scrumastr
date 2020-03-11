@@ -115,14 +115,14 @@ body {
   position: fixed;
   z-index: 1;
   /* top: 10; */
-  overflow-x: hidden;
+  /* overflow-x: hidden; */
   padding-top: 22px;
 }
 
 .left {
   width: 76%;
   left: 0;
-  /* overflow-x: auto; */
+  overflow-x: scroll!important;
 }
 
 .right {
@@ -157,12 +157,12 @@ body {
   text-align: center!important;
   padding: 5px 10px 8px 8px;
   margin-left: -8px;
+  min-height: 223px;
 }
 
 .ex .excontent {
-  
+  border: 1px solid rgba(255, 76, 109, 0.25);
   background: #FFFFFF;
-  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 5px;
   padding: 7px;
   text-align: left;
@@ -229,6 +229,7 @@ body {
 .child{
    border-left: 9px solid #000;
    margin-left: -12px;
+   min-height: 113px;
    
 }
 
@@ -914,6 +915,7 @@ body {
     margin-left: 9.5em;
   }
 
+
   .modal-contentForImage .icon-cancel {
     font-size: 18px;
   }
@@ -926,13 +928,15 @@ body {
 }
 
 .teamTaskDropDownMenu {
-  height: 45px;
   left: 50px;
   background: rgba(255, 76, 109, 0.1);
+  padding-left: 9px;
+  margin-left: -3.1em;
+  height: 45px;
   border-radius: 10px;
-  padding-left: 10px;
-  margin-left: -9px;
-  margin-top: 20px;
+  width: 100%;
+  position: absolute;
+  margin-bottom: 1em;
 }
 
 .teamTaskDropDownMenuToggle {
@@ -973,30 +977,43 @@ body {
   color: #808080;
 }
 
-#teamTaskTools li{
+.teamTaskTools li{
   display: inline;
   color: white;
 }
 
-#teamTaskTools i {
+.teamTaskTools i {
   padding: 8px;
   background-color: #FF4C6D;
   margin-right: 10px;
   border-radius: 5px;
 }
 
-#teamTaskTools {
+#profile .teamTaskTools {
   margin-top: -3.1em;
 }
 
 #teamTaskDropDown {
   position: relative;
+  margin-bottom: 2.5em;
+  width: 100%;
+  padding-left: 10px;
 }
 
 .ttDropDownContent {
-  display: none;
-  position: absolute;
-  margin-top: -10px;
+  width: 100%;
+  margin-top: 2.8em;
+}
+
+summary::-webkit-details-marker {
+  background: none;
+  color: transparent;
+}
+
+summary:focus {
+  border: 1px solid transparent;
+  outline: none !important;
+  -moz-appearance: none !important;
 }
 
 .showDropDown {
@@ -1184,7 +1201,7 @@ body {
   font-size: 14px;
   color: #FFFFFF;
   float: left;
-  margin-top: 10px;
+  margin-top: 8px;
   margin-left: 2px;
 }
 
@@ -1195,8 +1212,8 @@ body {
   font-size: 12px;
   line-height: 14px;
   color: #4DFFD4;
-  margin-top: -8px;
-  margin-left: 2px;
+  margin-top: 25px;
+  margin-left: -31px;
   
 }
 
@@ -1512,7 +1529,7 @@ body {
   font-size: 12px;
   color: rgba(255, 255, 255, 0.9);
   margin-top: -5px;
-  margin-left: -45px;
+  margin-left: -40px;
 }
 
 .navbarr #themeTab h4 {
@@ -1528,6 +1545,10 @@ body {
   margin-top: -10px;
   margin-left: -15px;
 }
+
+/* .navbarr .projectsDropDown .loggedProject {
+  margin-left: -40px;
+} */
 
 .navbarr #slackTab .slackTi {
   margin-left: -30px;
@@ -1549,16 +1570,23 @@ body {
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 0px 0px 5px 5px;
   width: 114px;
-  height: 93px;
   cursor: default;
   margin-top: 3.1em;
   margin-left: 6.9em;
 }
 
+#themeTab .themeDropDownContent {
+  height: 93px;
+}
+
+#projectsTab .projectsDropDownContent {
+  min-height: 40px;
+}
+
 
 .sprintDropDown .sprintDropDownContent {
   width: 244px;
-  height: 402px;
+  max-height: 402px;
   overflow-y: scroll;
   margin-top: 3em;
   margin-left: -1px;
@@ -1657,6 +1685,7 @@ body {
   color: #26A69A;
   margin-top: 7px;
   padding-top: 6px;
+  padding-bottom: 3px;
   cursor: pointer;
 }
 

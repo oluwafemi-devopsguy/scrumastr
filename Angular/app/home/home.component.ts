@@ -14,6 +14,9 @@ export class HomeComponent implements OnInit {
    }
 
   ngOnInit() {
+    if (sessionStorage.getItem('token')) {
+      this.router.navigate(['scrumboard/:project_id'])
+    }
   }
   
   createDemo()

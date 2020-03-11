@@ -11,12 +11,10 @@ export class AuthGuard implements CanActivate {
   constructor(private dataService: DataService, private router: Router) { }
 
   canActivate(): boolean {
-    if (!this.dataService.loggedIn()) {
-      // console.log(true);
-      //this.router.navigate(['/scrumboard']);
+    if (this.dataService.loggedIn()) {
       return true;
     } else {
-      this.router.navigate(['/login']);
+      this.router.navigate(['login']);
       return false;
     }
   }
