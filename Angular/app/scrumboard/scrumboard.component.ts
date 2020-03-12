@@ -612,7 +612,6 @@ export class ScrumboardComponent implements OnInit {
         this.users.forEach(user => {
           user['userColor'] = this.colors[user.userID % this.colors.length]
         })
-        console.log(this.users[0]['userColor'])
       },
   
     error => {

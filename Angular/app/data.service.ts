@@ -188,8 +188,8 @@ export class DataService {
 
   login()
   {
-    this.http.post(this._loginurl, JSON.stringify({'username': this.login_username, 'password': this.login_password, 'project': this.login_project}), this.httpOptions).subscribe(
-    //this.http.post(this.domain_protocol + this.domain_name + '/scrum/api-token-auth/', JSON.stringify({'username': this.login_username, 'password': this.login_password, 'project': this.login_project}), this.httpOptions).subscribe(
+    //this.http.post(this._loginurl, JSON.stringify({'username': this.login_username, 'password': this.login_password, 'project': this.login_project}), this.httpOptions).subscribe(
+    this.http.post(this.domain_protocol + this.domain_name + '/scrum/api-token-auth/', JSON.stringify({'username': this.login_username, 'password': this.login_password, 'project': this.login_project}), this.httpOptions).subscribe(
         data => {
             sessionStorage.setItem('username', this.login_username);
             sessionStorage.setItem('realname', data['name']);
@@ -394,11 +394,13 @@ export class DataService {
   }
 
   allProjectGoals(project_id) {
-    return this.http.get<any>(this.scrumapi + project_id, this.httpOptions);
+   // return this.http.get<any>(this.scrumapi + project_id, this.httpOptions);
+    return this.http.get<any>(this.domain_protocol + this.domain_name + '/scrum/api/scrumprojects/' + project_id, this.httpOptions);
   }
 
   allSprints(project_id) {
-    return this.http.get<any>(this.sprint + project_id, this.httpOptions);
+   // return this.http.get<any>(this.sprint + project_id, this.httpOptions);
+    return this.http.get<any>(this.domain_protocol + this.domain_name + '/scrum/api/scrumsprint/?goal_project_id=' + project_id, this.httpOptions);
   }
 
 }
