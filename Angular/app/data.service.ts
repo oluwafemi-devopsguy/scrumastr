@@ -10,6 +10,7 @@ export class DataService {
   public _signUpurl = 'https://api.chatscrum.com/scrum/api/scrumusers/';
   public _loginurl = 'https://api.chatscrum.com/scrum/api-token-auth/';
   public sprint = 'https://api.chatscrum.com/scrum/api/scrumsprint/?goal_project_id=';
+  public createSprint = 'https://api.chatscrum.com/scrum/api/scrumsprint/';
 
   public domain_name = '127.0.0.1:8000';
   public domain_protocol = 'https://';
@@ -188,8 +189,8 @@ export class DataService {
 
   login()
   {
-    //this.http.post(this._loginurl, JSON.stringify({'username': this.login_username, 'password': this.login_password, 'project': this.login_project}), this.httpOptions).subscribe(
-    this.http.post(this.domain_protocol + this.domain_name + '/scrum/api-token-auth/', JSON.stringify({'username': this.login_username, 'password': this.login_password, 'project': this.login_project}), this.httpOptions).subscribe(
+    this.http.post(this._loginurl, JSON.stringify({'username': this.login_username, 'password': this.login_password, 'project': this.login_project}), this.httpOptions).subscribe(
+    //this.http.post(this.domain_protocol + this.domain_name + '/scrum/api-token-auth/', JSON.stringify({'username': this.login_username, 'password': this.login_password, 'project': this.login_project}), this.httpOptions).subscribe(
         data => {
             sessionStorage.setItem('username', this.login_username);
             sessionStorage.setItem('realname', data['name']);
@@ -212,13 +213,13 @@ export class DataService {
             this.project_slack = data['project_slack'];
             this.slack_username = data['slack_username'];
             this.message = 'Welcome!';
-            this.router.navigate(['scrumboard', data['project_id']]);
+            //this.router.navigate(['scrumboard', data['project_id']]);
             this.login_username = '';
             this.login_password = '';
             this.login_project = '';
             
             this.authOptions = {
-                headers: new HttpHeaders({'Content-Type': 'application/json', 'Authorization': 'JWT ' + data['token']})
+              headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'JWT' + data['token']})
             };
         },
         err => {
@@ -394,13 +395,19 @@ export class DataService {
   }
 
   allProjectGoals(project_id) {
-   // return this.http.get<any>(this.scrumapi + project_id, this.httpOptions);
-    return this.http.get<any>(this.domain_protocol + this.domain_name + '/scrum/api/scrumprojects/' + project_id, this.httpOptions);
+    return this.http.get<any>(this.scrumapi + project_id, this.httpOptions);
+    //return this.http.get<any>(this.domain_protocol + this.domain_name + '/scrum/api/scrumprojects/' + project_id, this.httpOptions);
   }
 
   allSprints(project_id) {
-   // return this.http.get<any>(this.sprint + project_id, this.httpOptions);
-    return this.http.get<any>(this.domain_protocol + this.domain_name + '/scrum/api/scrumsprint/?goal_project_id=' + project_id, this.httpOptions);
+    return this.http.get<any>(this.sprint + project_id, this.httpOptions);
+   //return this.http.get<any>(this.domain_protocol + this.domain_name + '/scrum/api/scrumsprint/?goal_project_id=' + project_id, this.httpOptions);
   }
 
+  startSprintRequest(project_id) {
+    let sprint_start_date = new Date(new Date().getTime());
+    let sprint_end_date = new Date(new Date().getTime() + (7 * 24 * 60 * 60 * 1000));
+  //this.http.post(this.dataservice.domain_protocol + this.dataservice.domain_name + '/scrum/api/scrumsprint/?goal_project_id=' + project_id, JSON.stringify({ 'project_id': project_id, 'created_on':sprint_start_date, 'ends_on': myDate }), this.dataservice.authOptions).subscribe
+    return this.http.post(this.sprint + project_id, JSON.stringify({goal_project_id: project_id, created_on: sprint_start_date, ends_on: sprint_end_date}), this.authOptions);
+  }
 }

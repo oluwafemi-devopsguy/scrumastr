@@ -27,7 +27,6 @@ export class ScrumboardComponent implements OnInit {
     this.rose()
     this.close()
     this.pageTitle.setTitle('Scrumboard')
-    this.project_id = parseInt((this.route.snapshot.paramMap.get('project_id')))
     this.getAllUsersGoals()
     this.getAllSprints()
   }
@@ -44,7 +43,7 @@ export class ScrumboardComponent implements OnInit {
   public done = [];
   public users = [];
   public participants = [];
-  public project_id = 0;
+  public project_id = sessionStorage.getItem('project_id');
   loggedUser = sessionStorage.getItem('realname')
   loggedUserRole = sessionStorage.getItem('role');
   public loggedUserId;
@@ -215,6 +214,7 @@ export class ScrumboardComponent implements OnInit {
     let appInfoModal = document.getElementById("appInfoModal") as HTMLElement;
 
     let hides = document.getElementById("splitLeft") as HTMLElement;
+    let createSprint = document.getElementById('createSprint') as HTMLElement;
 
     // let ttAddTask = document.getElementById("ttAddTaskBtn") as HTMLElement;
     // let ttAddNote = document.getElementById("ttAddNoteBtn") as HTMLElement;
@@ -228,6 +228,10 @@ export class ScrumboardComponent implements OnInit {
       modal.style.display = "block";
     }
 
+    if (this.loggedUserRole != "Owner" && this.loggedUserRole != "Admin") {
+      createSprint.style.display = 'none';
+    }
+
     // ttAddTask.onclick = function () {
     //   modal.style.display = "block";
     // }
@@ -239,6 +243,8 @@ export class ScrumboardComponent implements OnInit {
     // ttAddNote.onclick = function () {
     //   modal1.style.display = "block";
     // }
+
+    
 
 
     window.onclick = function (e) {
@@ -288,9 +294,29 @@ export class ScrumboardComponent implements OnInit {
         hideDropDown(themeDD, undefined, 'ppDD')
       } else if (target.matches('img.themeImg')) {
         hideDropDown(themeDD, undefined, 'ppDD')
-      } else if (target.matches('a#sprintTab') || target.matches('span.loggedSprint')) {
+      } else if (
+        target.matches('a#sprintTab') ||
+        target.matches('span.loggedSprint') ||
+        target.matches('a#sprintTab.nav-link.otherNavTools h4')
+        
+        ) {
         hideDropDown(sprintDD, undefined, 'spDD')
-      } else if (target.matches('a#projectsTab') || target.matches('span.loggedProject')) {
+      } else if (
+        target.matches('#sprintDDContent.sprintDropDownContent.spDD') || 
+        target.matches('#sprintDDContent.sprintDropDownContent.spDD p') ||
+        target.matches('#sprintDDContent.sprintDropDownContent.spDD p label') ||
+        target.matches('#sprintDDContent.sprintDropDownContent.spDD p label.activ') ||
+        target.matches('#sprintDDContent.sprintDropDownContent.spDD p span.spanAct') ||
+        target.matches('#sprintDDContent.sprintDropDownContent.spDD p span') ||
+        target.matches('#sprintDDContent.sprintDropDownContent.spDD #createSprint.sprintDropDownCS')
+
+        ) {
+        hideDropDown(sprintDD, undefined, 'spDD')
+      } else if (
+        target.matches('a#projectsTab') ||
+        target.matches('span.loggedProject') ||
+        target.matches('a#projectsTab.nav-link.otherNavTools h4')
+        ) {
         hideDropDown(projectDD, undefined, 'ppDD')
       } else {
         document.getElementById('projectsDDContent').classList.add('animateDD');
@@ -620,12 +646,14 @@ export class ScrumboardComponent implements OnInit {
       )
     }
 
-    // changeColor (){
-    //   this.users.forEach(user => {
-    //     console.log(user)
-    //     user['userColor']= this.colors[(user.userID % this.colors.length)]
-    //   })
-    // }
+  changeLoggedSprint(selectedSprintID, createDate, endDate) {
+    let sprint = selectedSprintID.getAttribute('sprintID');
+    let sprintCreateDate = createDate.getAttribute('sprint-create-date');
+    let sprintEndDate = endDate.getAttribute('sprint-end-date');
+    this.loggedSprint.sprintID = sprint
+    this.loggedSprint.dateCreated = sprintCreateDate
+    this.loggedSprint.endDate = sprintEndDate
+  }
 
   getAllSprints () {
     this.dataService.allSprints(this.project_id).subscribe(
@@ -640,5 +668,32 @@ export class ScrumboardComponent implements OnInit {
         console.log('error', error)
       }
     )
+  }
+
+  startSprint() {
+    this.dataService.startSprintRequest(this.project_id).subscribe(
+      data => {
+        console.log(data)
+
+      }, error => {
+          if (error['status'] == 401) {
+            this.NotificationBox('Session Invalid or Expired. Please Login!')
+            this.dataService.logout();
+          } else {
+            this.NotificationBox('Unexpected Error!')
+          }
+      }
+    )
+
+  }
+
+  startNewSprint() {
+    if (Date.parse(this.loggedSprint.endDate) > new Date().valueOf()) {
+      if (confirm(`Are You Sure You Want To End Sprint #${this.loggedSprint.sprintID} And Start A New Sprint?`)) {
+        this.startSprint()
+      }
+    } else {
+      this.startSprint()
+    }
   }
 }
