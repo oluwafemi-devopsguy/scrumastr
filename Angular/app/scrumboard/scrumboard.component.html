@@ -83,7 +83,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" id="profileTab" role="tab" (click)="userProfile ();hideslackchat()">
+                    <a class="nav-link" id="profileTab" role="tab" (click)="userProfileModal();hideslackchat()">
                         <img src="https://res.cloudinary.com/ros4eva/image/upload/v1581678144/Ellipse_6_z5snsi.png">
                         <!-- <h4>Joshua Okwe</h4>
                         <p>Developer</p> -->
@@ -123,30 +123,24 @@
                             <img src="https://res.cloudinary.com/ros4eva/image/upload/v1576618715/Ellipse_cxegyr.svg"><br>
                             <span
                                 style="margin-left:10px; margin-top:-7px; font-size: 14px ; font-weight: bold; color: #59BB1E;"
-                                class="headerUserTitle">Louis E</span>
-                            <p style="font-size: 10px; color: #333333; margin-top: 1em; margin-left: -4.5em;"
+                                class="headerUserTitle">{{loggedUser}}</span>
+                            <p style="font-size: 10px; color: #333333; margin-top: 1em; margin-left: -3em;"
                                 class="headerUserRole">
-                                Developer</p>
+                                {{loggedUserRole}}</p>
                             <span class="close " (click)="close()"><span class="icon-cancel"></span></span>
     
                         </div>
                         <div class="modal-bodyForTask">
-                            <span class="close ForMobile" (click)="close()"><span class="icon-cancel"></span></span>
-                            <span class="addT">Add A Task</span>
-                            <div class="insidemodalContentForTask">
-                                Sea cattle. The moving together there don't two night our midst behold there fill
-                                brought tree rule
-                                there from firmament
-                                night be female. Firmament he replenish third fruit him there grass beast. Very wherein.
-                                Hath, them.
-                                Seas grass shall
-                                form had divide.
-                            </div>
-                            <div class="submitTask">
-                                <button type="button" id="addTaskBtn" class="btn addTbtn">ADD TASK</button>
-                                <button class="btn closebtn" id="cancelAddTaskBtn" style="font-weight: bold;"
-                                    (click)="close()">CANCEL</button>
-                            </div>
+                            <form name="addTaskForm" id="addTaskForm" (ngSubmit)="addTask()">
+                                <span class="close ForMobile" (click)="close()"><span class="icon-cancel"></span></span>
+                                <span class="addT">Add A Task</span>
+                                <textarea #taskToAdd="ngModel" class="insidemodalContentForTask" name="goal_name" [(ngModel)]="dataService.goal_name" required></textarea>
+                                <div class="submitTask">
+                                    <button type="submit" id="addTaskBtn" class="btn addTbtn">ADD TASK</button>
+                                    <span class="btn closebtn" id="cancelAddTaskBtn" style="font-weight: bold;"
+                                        (click)="close()">CANCEL</span>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -261,30 +255,25 @@
                         <div class="modal-header">
                             <img src="https://res.cloudinary.com/ros4eva/image/upload/v1576618715/Ellipse_cxegyr.svg"><br>
                             <span
-                                style="margin-left:10px; margin-top:-7px; font-size: 14px ; font-weight: bold; color: #59BB1E;">Louis
-                                E</span>
-                            <p style="font-size: 10px; color: #333333; margin-left: -4.5em; margin-top: 1em;">Developer
+                                style="margin-left:10px; margin-top:-7px; font-size: 14px ; font-weight: bold; color: #59BB1E;">
+                                {{loggedUser}}</span>
+                            <p style="font-size: 10px; color: #333333; margin-left: -3em; margin-top: 1em;">{{loggedUserRole}}
                             </p>
                             <span class="close" (click)="close()"><span class="icon-cancel"></span></span>
     
                         </div>
                         <div class="modal-bodyForTask">
-                            <span class="addT">Edit Task</span>
-                            <div class="insidemodalContentForTask">
-                                Sea cattle. The moving together there don't two night our midst behold there fill
-                                brought tree rule
-                                there from firmament
-                                night be female. Firmament he replenish third fruit him there grass beast. Very wherein.
-                                Hath, them.
-                                Seas grass shall
-                                form had divide.
-                            </div>
-                            <div class="submitTask">
-                                <button type="button" id="editTaskBtn" class="btn addTbtn">EDIT
-                                    TASK</button>
-                                <button class="btn closebtn" id="cancelAddTaskBtn" style="font-weight: bold;"
-                                    (click)="close()">CANCEL</button>
-                            </div>
+                            <form #editTaskForm name="editTask" id="editUserTask" (ngSubmit)="editTask()">
+                                <span class="addT">Edit Task</span>
+                                <textarea class="insidemodalContentForTask" #taskToEdit="ngModel" aria-valuetext="dataService.taskToEdit" name="taskToEdit" [(ngModel)]="dataService.taskToEdit">
+                                </textarea>
+                                <div class="submitTask">
+                                    <button type="submit" id="editTaskBtn" class="btn addTbtn">EDIT
+                                        TASK</button>
+                                    <span class="btn closebtn" id="cancelAddTaskBtn" style="font-weight: bold;"
+                                        (click)="close()">CANCEL</span>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -298,15 +287,15 @@
                                 <span class="close" (click)="close()" style="margin-top: -8px;"><span
                                         class="icon-cancel"></span></span>
                             </div>
-                            <form>
+                            <form name="uploadImage" id="uploadImage" (ngSubmit)="imageUploadAlert()">
                                 <label for="imgUpload" class="insidemodalContentForImageUpload">
                                     <span class="imgMsg">{{imgName}}</span>
                                 </label>
                                 <div class="fileName">CHOOSE FILE</div>
-                                <input type="file" name="photo" id="imgUpload" accept="image/*" (change)="imageName()">
+                                <input type="file" name="image_uploaded" id="imgUpload" accept="image/*" (change)="imageName()">
                                 <div class="uploadImg">
                                     <button type="submit" id="uploadImageBtn" class="btn addTbtn"
-                                        (click)="imageUploadAlert()">UPLOAD</button>
+                                        >UPLOAD</button>
                                 </div>
     
                                 <div class="progressTrack">
@@ -535,6 +524,12 @@
     
                     </div>
                 </div>
+
+                <!--Modal Box For Upload Image View-->
+
+                <div id="uploadedImageModal" class="image_modal">
+                    <img class="modal-contentuploadedImage" id="imageToView">
+                </div>
     
                 <!-- <div>Modal Box Stops Here</div> -->
                 <div class="tab-pane fade show active " id="home" role="tabpanel" aria-labelledby="home-tab">
@@ -545,17 +540,20 @@
                                     <h4>Tasks for the week</h4>
                                     <div *ngFor="let item of TFTW">
                                         <div
-                                            *ngIf="item['taskFor'] == loggedUserId && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
+                                            *ngIf="item['taskFor'] == loggedUserId && item['task'] != '' && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
                                             <div class="excontent">
                                                 <div>
                                                     {{item['task']}}
+                                                </div><br>
+                                                <div class="uploadedImage" *ngIf="item['file']">
+                                                    <img #viewClickedImage [attr.image_to_view]="'image' + item['goalID']" src="{{dataService.imageApi}}{{item['file']}}" (click)="userImageModal(viewClickedImage); hideslackchat()">
                                                 </div>
                                     
                                                 <div class="scrumtools">
                                                     <n style="margin-right: 9px;">{{item['goalID']}}</n>
-                                                    <span class="icon-pencil tools" alt="edit" title="edit" (click)="editTask()"></span>
-                                                    <span class="icon-camera tools" alt="upload image" title="upload image"
-                                                        (click)="uploadImage()"></span><i class="fas fa-clone tools" alt="copy" title="copy"
+                                                    <span #loggedUserId [attr.task_to_edit]="item['task']" [attr.task_id_to_edit]="item['goalID']" class="icon-pencil tools" alt="edit" title="edit" (click)="editTaskModal(loggedUserId)"></span>
+                                                    <span #loggedUserUploadImage [attr.task_id_to_upload_img]="item['goalID']" class="icon-camera tools" alt="upload image" title="upload image"
+                                                        (click)="uploadImage(loggedUserUploadImage)"></span><i class="fas fa-clone tools" alt="copy" title="copy"
                                                         style="font-size: 15px;" (click)="copyToClipboard('div1')"></i>
                                                     <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i class="fas fa-history tools"
                                                         alt="history" title="history" id="taskHistory" (click)="taskHistory (); hideslackchat()"></i>
@@ -571,17 +569,21 @@
                                 <div class="ex" id="tft">
                                     <h4>Todays Target</h4>
                                     <div *ngFor="let item of TFTD">
-                                        <div *ngIf="item['taskFor'] == loggedUserId && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
+                                        <div *ngIf="item['taskFor'] == loggedUserId && item['task'] != '' && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
                                             <div class="excontent">
                                                 <div>
                                                     {{item['task']}}
+                                                </div><br>
+                                                <div class="uploadedImage" *ngIf="item['file']">
+                                                    <img #viewClickedImage [attr.image_to_view]="'image' + item['goalID']"
+                                                        src="{{dataService.imageApi}}{{item['file']}}" (click)="userImageModal(viewClickedImage); hideslackchat()">
                                                 </div>
                                     
                                                 <div class="scrumtools">
                                                     <n style="margin-right: 9px;">{{item['goalID']}}</n>
-                                                    <span class="icon-pencil tools" alt="edit" title="edit" (click)="editTask()"></span>
-                                                    <span class="icon-camera tools" alt="upload image" title="upload image"
-                                                        (click)="uploadImage()"></span><i class="fas fa-clone tools" alt="copy" title="copy"
+                                                    <span #loggedUserId [attr.task_to_edit]="item['task']" [attr.task_id_to_edit]="item['goalID']" class="icon-pencil tools" alt="edit" title="edit" (click)="editTaskModal(loggedUserId)"></span>
+                                                    <span #loggedUserUploadImage [attr.task_id_to_upload_img]="item['goalID']" class="icon-camera tools" alt="upload image" title="upload image"
+                                                        (click)="uploadImage(loggedUserUploadImage)"></span><i class="fas fa-clone tools" alt="copy" title="copy"
                                                         style="font-size: 15px;" (click)="copyToClipboard('div1')"></i>
                                                     <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i class="fas fa-history tools"
                                                         alt="history" title="history" id="taskHistory" (click)="taskHistory (); hideslackchat()"></i>
@@ -596,18 +598,22 @@
                                 <div class="ex" id="verify">
                                     <h4>Verify Task</h4>
                                     <div *ngFor="let item of verify">
-                                        <div *ngIf="item['taskFor'] == loggedUserId && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
+                                        <div *ngIf="item['taskFor'] == loggedUserId && item['task'] != '' && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
                                             <div class="excontent">
                                                 <div>    
                                                     {{item['task']}}
+                                                </div><br>
+                                                <div class="uploadedImage" *ngIf="item['file']">
+                                                    <img #viewClickedImage [attr.image_to_view]="'image' + item['goalID']"
+                                                        src="{{dataService.imageApi}}{{item['file']}}" (click)="userImageModal(viewClickedImage); hideslackchat()">
                                                 </div>
                                                 
                                                 <div class="scrumtools">
                                                     <n style="margin-right: 9px;">{{item['goalID']}}</n>
-                                                    <span class="icon-pencil tools" alt="edit" title="edit"
-                                                        (click)="editTask()"></span>
-                                                    <span class="icon-camera tools" alt="upload image" title="upload image"
-                                                        (click)="uploadImage()"></span><i class="fas fa-clone tools" alt="copy"
+                                                    <span #loggedUserId [attr.task_to_edit]="item['task']" [attr.task_id_to_edit]="item['goalID']" class="icon-pencil tools" alt="edit" title="edit"
+                                                        (click)="editTaskModal(loggedUserId)"></span>
+                                                    <span #loggedUserUploadImage [attr.task_id_to_upload_img]="item['goalID']" class="icon-camera tools" alt="upload image" title="upload image"
+                                                        (click)="uploadImage(loggedUserUploadImage)"></span><i class="fas fa-clone tools" alt="copy"
                                                         title="copy" style="font-size: 15px;" (click)="copyToClipboard('div1')"></i>
                                                     <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i
                                                         class="fas fa-history tools" alt="history" title="history" id="taskHistory"
@@ -626,7 +632,7 @@
                                     <div class="child">
                                         <div style="margin-left: 10px;">
                                             <div *ngFor="let item of done">
-                                                <div *ngIf="item['taskFor'] == loggedUserId && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
+                                                <div *ngIf="item['taskFor'] == loggedUserId && item['task'] != '' && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
                                                    <div style="margin-left: -8em; margin-bottom: 8px;">
                                                         <span style="font-weight: bold;">{{item['pushID']}}</span><!-- <span class="int"><i
                                                                 class="fas fa-circle" style="font-size: 3px;"></i>Int</span> -->
@@ -635,13 +641,17 @@
                                                     <div class="excontent fordone">
                                                         <div>
                                                             {{item['task']}}
+                                                        </div><br>
+                                                        <div class="uploadedImage" *ngIf="item['file']">
+                                                            <img #viewClickedImage [attr.image_to_view]="'image' + item['goalID']"
+                                                                src="{{dataService.imageApi}}{{item['file']}}" (click)="userImageModal(viewClickedImage); hideslackchat()">
                                                         </div>
                                                         <div class="scrumtools">
                                                             <n style="margin-right: 9px;">{{item['goalID']}}</n>
-                                                            <span class="icon-pencil tools" alt="edit" title="edit"
-                                                                (click)="editTask()"></span>
-                                                            <span class="icon-camera tools" alt="upload image" title="upload image"
-                                                                (click)="uploadImage()"></span><i class="fas fa-clone tools"
+                                                            <span #loggedUserId [attr.task_to_edit]="item['task']" [attr.task_id_to_edit]="item['goalID']" class="icon-pencil tools" alt="edit" title="edit"
+                                                                (click)="editTaskModal(loggedUserId)"></span>
+                                                            <span #loggedUserUploadImage [attr.task_id_to_upload_img]="item['goalID']" class="icon-camera tools" alt="upload image" title="upload image"
+                                                                (click)="uploadImage(loggedUserUploadImage)"></span><i class="fas fa-clone tools"
                                                                 alt="copy" title="copy" style="font-size: 15px;"
                                                                 (click)="copyToClipboard('div1')"></i>
                                                             <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
@@ -660,7 +670,9 @@
                                 </div>
                             </div>
                         </div>
-                        
+                        <div style="margin-top:5px; padding: 15px 0px;">
+                            </div>
+
                     </div>
                 </div>
     
@@ -695,17 +707,21 @@
                                             <div class="ex" id="tfw" style="border-color: #FF4C6D;">
                                                 <h4>Tasks for the week</h4>
                                                 <div *ngFor="let item of TFTW">
-                                                    <div *ngIf="item['taskFor'] == user['userID'] && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
+                                                    <div *ngIf="item['taskFor'] == user['userID'] && item['task'] != '' && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
                                                         <div class="excontent">
                                                             <div>
                                                                 {{item['task']}}
+                                                            </div><br>
+                                                            <div class="uploadedImage" *ngIf="item['file']">
+                                                                <img #viewClickedImage [attr.image_to_view]="'image' + item['goalID']"
+                                                                    src="{{dataService.imageApi}}{{item['file']}}" (click)="userImageModal(viewClickedImage); hideslackchat()">
                                                             </div>
                                                 
                                                             <div class="scrumtools">
                                                                 <n style="margin-right: 9px;">{{item['goalID']}}</n>
-                                                                <span class="icon-pencil tools" alt="edit" title="edit" (click)="editTask()"></span>
-                                                                <span class="icon-camera tools" alt="upload image" title="upload image"
-                                                                    (click)="uploadImage()"></span><i class="fas fa-clone tools" alt="copy" title="copy"
+                                                                <span #user [attr.task_to_edit]="item['task']" [attr.task_id_to_edit]="item['goalID']" class="icon-pencil tools" alt="edit" title="edit" (click)="editTaskModal(user)"></span>
+                                                                <span #userUploadImage [attr.task_id_to_upload_img]="item['goalID']" class="icon-camera tools" alt="upload image" title="upload image"
+                                                                    (click)="uploadImage(userUploadImage)"></span><i class="fas fa-clone tools" alt="copy" title="copy"
                                                                     style="font-size: 15px;" (click)="copyToClipboard('div1')"></i>
                                                                 <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i class="fas fa-history tools"
                                                                     alt="history" title="history" id="taskHistory" (click)="taskHistory (); hideslackchat()"></i>
@@ -721,17 +737,21 @@
                                             <div class="ex" id="tft" style="border-color: #FF4C6D;">
                                                 <h4>Todays Target</h4>
                                                 <div *ngFor="let item of TFTD">
-                                                    <div *ngIf="item['taskFor'] == user['userID'] && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
+                                                    <div *ngIf="item['taskFor'] == user['userID'] && item['task'] != '' && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
                                                         <div class="excontent">
                                                             <div>
                                                                 {{item['task']}}
+                                                            </div><br>
+                                                            <div class="uploadedImage" *ngIf="item['file']">
+                                                                <img #viewClickedImage [attr.image_to_view]="'image' + item['goalID']"
+                                                                    src="{{dataService.imageApi}}{{item['file']}}" (click)="userImageModal(viewClickedImage); hideslackchat()">
                                                             </div>
                                                 
                                                             <div class="scrumtools">
                                                                 <n style="margin-right: 9px;">{{item['goalID']}}</n>
-                                                                <span class="icon-pencil tools" alt="edit" title="edit" (click)="editTask()"></span>
-                                                                <span class="icon-camera tools" alt="upload image" title="upload image"
-                                                                    (click)="uploadImage()"></span><i class="fas fa-clone tools" alt="copy" title="copy"
+                                                                <span #user [attr.task_to_edit]="item['task']" [attr.task_id_to_edit]="item['goalID']" class="icon-pencil tools" alt="edit" title="edit" (click)="editTaskModal(user)"></span>
+                                                                <span #userUploadImage [attr.task_id_to_upload_img]="item['goalID']" class="icon-camera tools" alt="upload image" title="upload image"
+                                                                    (click)="uploadImage(userUploadImage)"></span><i class="fas fa-clone tools" alt="copy" title="copy"
                                                                     style="font-size: 15px;" (click)="copyToClipboard('div1')"></i>
                                                                 <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i class="fas fa-history tools"
                                                                     alt="history" title="history" id="taskHistory" (click)="taskHistory (); hideslackchat()"></i>
@@ -750,17 +770,21 @@
                                                     </span>
                                                 </div> -->
                                                 <div *ngFor="let item of verify">
-                                                    <div *ngIf="item['taskFor'] == user['userID'] && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
+                                                    <div *ngIf="item['taskFor'] == user['userID'] && item['task'] != '' && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
                                                         <div class="excontent">
                                                             <div>
                                                                 {{item['task']}}
+                                                            </div><br>
+                                                            <div class="uploadedImage" *ngIf="item['file']">
+                                                                <img #viewClickedImage [attr.image_to_view]="'image' + item['goalID']"
+                                                                    src="{{dataService.imageApi}}{{item['file']}}" (click)="userImageModal(viewClickedImage); hideslackchat()">
                                                             </div>
                                                 
                                                             <div class="scrumtools">
                                                                 <n style="margin-right: 9px;">{{item['goalID']}}</n>
-                                                                <span class="icon-pencil tools" alt="edit" title="edit" (click)="editTask()"></span>
-                                                                <span class="icon-camera tools" alt="upload image" title="upload image"
-                                                                    (click)="uploadImage()"></span><i class="fas fa-clone tools" alt="copy" title="copy"
+                                                                <span #user [attr.task_to_edit]="item['task']" [attr.task_id_to_edit]="item['goalID']" class="icon-pencil tools" alt="edit" title="edit" (click)="editTaskModal(user)"></span>
+                                                                <span #userUploadImage [attr.task_id_to_upload_img]="item['goalID']" class="icon-camera tools" alt="upload image" title="upload image"
+                                                                    (click)="uploadImage(userUploadImage)"></span><i class="fas fa-clone tools" alt="copy" title="copy"
                                                                     style="font-size: 15px;" (click)="copyToClipboard('div1')"></i>
                                                                 <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i class="fas fa-history tools"
                                                                     alt="history" title="history" id="taskHistory" (click)="taskHistory (); hideslackchat()"></i>
@@ -778,8 +802,8 @@
                                                 <div class="child">
                                                     <div style="margin-left: 10px;">
                                                         <div *ngFor="let item of done">
-                                                            <div *ngIf="item['taskFor'] == user['userID'] && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
-                                                                <div style="margin-left: -8.5em; margin-bottom: 8px;">
+                                                            <div *ngIf="item['taskFor'] == user['userID'] && item['task'] != '' && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
+                                                                <div style="margin-left: -8em; margin-bottom: 8px;">
                                                                     <span style="font-weight: bold;">{{item['pushID']}}</span><!-- <span class="int"><i class="fas fa-circle"
                                                                             style="font-size: 3px;"></i>Int</span> -->
                                                                 </div>
@@ -787,12 +811,16 @@
                                                                 <div class="excontent fordone">
                                                                     <div>
                                                                         {{item['task']}}
+                                                                    </div><br>
+                                                                    <div class="uploadedImage" *ngIf="item['file']">
+                                                                        <img #viewClickedImage [attr.image_to_view]="'image' + item['goalID']"
+                                                                            src="{{dataService.imageApi}}{{item['file']}}" (click)="userImageModal(viewClickedImage); hideslackchat()">
                                                                     </div>
                                                                     <div class="scrumtools">
                                                                         <n style="margin-right: 9px;">{{item['goalID']}}</n>
-                                                                        <span class="icon-pencil tools" alt="edit" title="edit" (click)="editTask()"></span>
-                                                                        <span class="icon-camera tools" alt="upload image" title="upload image"
-                                                                            (click)="uploadImage()"></span><i class="fas fa-clone tools" alt="copy" title="copy"
+                                                                        <span #user [attr.task_to_edit]="item['task']" [attr.task_id_to_edit]="item['goalID']" class="icon-pencil tools" alt="edit" title="edit" (click)="editTaskModal(user)"></span>
+                                                                        <span #userUploadImage [attr.task_id_to_upload_img]="item['goalID']" class="icon-camera tools" alt="upload image" title="upload image"
+                                                                            (click)="uploadImage(userUploadImage)"></span><i class="fas fa-clone tools" alt="copy" title="copy"
                                                                             style="font-size: 15px;" (click)="copyToClipboard('div1')"></i>
                                                                         <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
                                                                         <i class="fas fa-history tools" alt="history" title="history" id="taskHistory"
@@ -813,6 +841,7 @@
                                 </div>
                             </details>
                         </div>
+                        <div style="margin-top:5px; padding: 15px 0px;"></div>
                         <!-- <div class="teamTaskDropDownMenu secondTeamtask" id="teamTaskDropDownMenu1"
                             style="background: rgba(89, 187, 30, 0.1);">
                             <div>

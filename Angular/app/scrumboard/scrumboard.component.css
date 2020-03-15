@@ -176,6 +176,20 @@ body {
   transition: ease-in 0.5s;
 }
 
+.ex .excontent .uploadedImage img{
+  width: 70%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.ex .excontent .uploadedImage img:hover{
+  opacity: 0.7;
+}
+
 .ex .excontent .scrumtools {
   font-family: 'Roboto', sans-serif;
   font-style: normal;
@@ -247,7 +261,7 @@ body {
 
 /*MODAL CSS STARTS FROM HERE*/
 
-.modal {
+.modal,  .image_modal {
   display: none;
   position: fixed;
   z-index: 2;
@@ -260,6 +274,37 @@ body {
   background-color: rgba(0,0,0,0.4);
 }
 
+.image_modal {
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.9);
+}
+
+.modal-contentuploadedImage {
+  margin: auto;
+  display: block;
+  width: 80%;
+  max-width: 700px;
+  -webkit-animation-name: zoomImage;
+  -webkit-animation-duration: 0.6s;
+  animation-name: zoomImage;
+  animation-duration: 0.6s;
+}
+
+@-webkit-keyframes zoomImage {
+  from {-webkit-transform:scale(0)} 
+  to {-webkit-transform:scale(1)}
+}
+
+@keyframes zoomImage {
+  from {transform:scale(0)} 
+  to {transform:scale(1)}
+}
+
+@media only screen and (max-width: 700px){
+  .modal-contentuploadedImage {
+    width: 100%;
+  }
+}
 
 .modal-contentForTask {
   border-radius: 5px;
@@ -336,7 +381,13 @@ body {
   border: 1px solid rgba(0, 0, 0, 0.3);
   box-sizing: border-box;
   border-radius: 10px;
+  outline-color: transparent;
   padding: 8px;
+  resize: none;
+}
+
+.insidemodalContentForTask:focus {
+  border: 2px solid rgba(0, 0, 0, 0.4);
 }
 
 .insidemodalContentForImageUpload {
@@ -1006,8 +1057,13 @@ body {
 }
 
 summary::-webkit-details-marker {
-  background: none;
-  color: transparent;
+  background: none!important;
+  color: transparent!important;
+}
+
+summary::marker {
+  background: none!important;
+  color: transparent!important;
 }
 
 summary:focus {

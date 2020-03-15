@@ -615,8 +615,6 @@ export class ProfileComponent implements OnInit {
 
   onUser(the_user)  {
     this.on_user = "m" + the_user
-    console.log("onuser")
-    console.log(this.on_user)
   }
 
   getClicked(event)
@@ -668,42 +666,6 @@ export class ProfileComponent implements OnInit {
     this.chat_div_title = "Project Chat"
     this.show_project_chat = false;
   }
-
-
-  // imageUpload()  {
-  //   console.log(this.dataservice.authOptions)
-  //   console.log(this.image_upload)
-  //   let details = {
-  //       'mode': 1,
-  //       'goal_id': this.goal_id, 
-  //       'project_id': this.dataservice.project,
-  //       // 'file':this.image_upload
-  //     };
-  //   this.iData =  new FormData();
-    
-  //   this.iData.append('image', this.image_upload, this.image_upload.name);
-  //   console.log(this.iData)
-  //   this.http.put(this.dataservice.domain_protocol + this.dataservice.domain_name + '/scrum/api/scrumgoals/', this.iData,
-  //     this.dataservice.authOptions).subscribe(
-  //       data => {
-  //         this.dataservice.users = data['data'];
-  //         this.dataservice.message = data['message'];
-  //         this.filterSprint(this.dataservice.sprints)
-  //       },
-  //       err => {
-  //         console.error(err);
-  //         if(err['status'] == 401)
-  //          {
-  //           this.dataservice.message = 'Session Invalid or Expired. Please Login.';
-  //           this.dataservice.logout();
-  //          } else
-  //          {
-  //             this.dataservice.message = 'Unexpected Error!';    
-  //           }
-  //         }
-  //       );
-  // }
-
 
 
   addGoal()
@@ -1079,16 +1041,8 @@ export class ProfileComponent implements OnInit {
       console.log("No file selected!");
       return
     }
-    let details = {
-        'mode': 1,
-        'goal_id': this.goal_id, 
-        'project_id': this.dataservice.project,
-        
-      };
     let file: File = this.image_upload[0];
-    console.log(this.dataservice.imageAuthOptions)
-    console.log(file)
-
+    
     this.iData =  new FormData();
     
     this.iData.append('image', file, file.name);

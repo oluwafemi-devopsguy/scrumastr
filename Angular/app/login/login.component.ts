@@ -14,7 +14,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
   if (sessionStorage.getItem('token')) {
-    this.router.navigate(['scrumboard/:project_id'])
+    this.router.navigate(['scrumboard/' + sessionStorage.getItem('project_id')])
   }
   this.setTitle('Login')
   }
