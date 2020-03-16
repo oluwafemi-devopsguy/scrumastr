@@ -1040,6 +1040,10 @@ body {
   border-radius: 5px;
 }
 
+.main #myTabContent #profile {
+  margin-top: -1.4em;
+}
+
 #profile .teamTaskTools {
   margin-top: -3.1em;
 }

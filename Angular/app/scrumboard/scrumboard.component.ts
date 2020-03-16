@@ -53,9 +53,8 @@ export class ScrumboardComponent implements OnInit {
   public loggedSprint = { sprintID: " ", dateCreated: "2020-03-03T16:33:59.817708Z", endDate: "2020-03-03T16:33:59.817708Z"};
   public loggedProject;
   public colors = ['255, 76, 109', '89, 187, 30', '221, 164, 72', '141, 106, 159', '187, 52, 47', '131, 116, 91', '16, 52, 166', '133, 47, 100','38, 166, 154']
-  //randomUserColors = this.color[Math.random() * this.color.length | 0]
-  //public colors = ['#ff4c6d', '#59bb1e', '#dda448', '#8d6a9f', '#bb342f', '#83745b', '#1034a6', '#852f64', '#26a69a']
-  
+  public taskToEdit;
+  public goal_name;
 
   load(){
     if (window.localStorage) {
@@ -162,8 +161,8 @@ export class ScrumboardComponent implements OnInit {
   editTaskModal(edit) {
     let openEditTaskModal = document.getElementById("editTaskModal") as HTMLElement;
     openEditTaskModal.style.display = "block";
-    this.dataService.taskToEdit = edit.getAttribute('task_to_edit')
-    this.dataService.taskIdToEdit = 'g'+edit.getAttribute('task_id_to_edit')
+    this.taskToEdit = edit.getAttribute('task_to_edit');
+    this.dataService.taskIdToEdit = 'g'+edit.getAttribute('task_id_to_edit');
   }
 
   uploadImage(edit) {
@@ -344,12 +343,13 @@ export class ScrumboardComponent implements OnInit {
         document.getElementById('projectsDDContent').classList.add('animateDD');
         document.getElementById('sprintDDContent').classList.add('animateDD');
         document.getElementById('themeDDContent').classList.add('animateDD');
-        setTimeout("document.getElementById('projectsDDContent').classList.remove('ppDD')", 1000);
         setTimeout("document.getElementById('sprintDDContent').classList.remove('spDD')", 1000);
         setTimeout("document.getElementById('themeDDContent').classList.remove('ppDD')", 1000);
         setTimeout("document.getElementById('projectsDDContent').classList.remove('animateDD')", 1000);
         setTimeout("document.getElementById('sprintDDContent').classList.remove('animateDD')", 1000);
         setTimeout("document.getElementById('themeDDContent').classList.remove('animateDD')", 1000);
+        setTimeout("document.getElementById('projectsDDContent').classList.remove('ppDD')", 1000);
+
       }
 
     }
@@ -393,13 +393,16 @@ export class ScrumboardComponent implements OnInit {
 
   }
 
-  copyToClipboard(containerId) {
-    let range = document.createRange();
-    range.selectNode(document.getElementById(containerId));
-    window.getSelection().removeAllRanges();
-    window.getSelection().addRange(range);
+  copyToClipboard(taskToCopy) {
+    //let range = document.createRange();
+    let textToCopy = taskToCopy.getAttribute('task_to_edit').createTextRange();
+    //window.getSelection().removeAllRanges();
+    //window.getSelection().addRange(range);
+    //document.execCommand("copy");
+    //window.getSelection().removeAllRanges();
+    window.getSelection().addRange(textToCopy)
+    textToCopy.setSelectionRange(0, 99999)
     document.execCommand("copy");
-    window.getSelection().removeAllRanges();
     this.NotificationBox("Copied to clipboard!")
   }
 
@@ -653,9 +656,12 @@ export class ScrumboardComponent implements OnInit {
     this.loggedSprint.sprintID = sprint
     this.loggedSprint.dateCreated = sprintCreateDate
     this.loggedSprint.endDate = sprintEndDate
+    this.currentSprint.shift()
+    this.currentSprint.unshift({ 'sprintID': this.sprints[this.sprints.length - 1]['id'], 'dateCreated': this.sprints[this.sprints.length - 1]['created_on'], 'endDate': this.sprints[this.sprints.length - 1]['ends_on'] })
+    
   }
 
-  getAllSprints () {
+  getAllSprints() {
     this.dataService.allSprints(this.project_id).subscribe(
       data => {
         this.sprints = data
@@ -700,7 +706,8 @@ export class ScrumboardComponent implements OnInit {
   }
 
   addTask() {
-    if (this.dataService.goal_name != '') {
+    if (this.goal_name != '') {
+      this.dataService.goal_name = this.goal_name;
       this.dataService.addTaskRequest(this.project_id).subscribe(
         data => {
           this.NotificationBox(data['message'])
@@ -709,7 +716,10 @@ export class ScrumboardComponent implements OnInit {
           this.TFTW = []
           this.done = []
           this.verify = []
-          this.filterUsers(data['data'])
+          this.filterUsers(data['data']);
+          // if (data['message'] == "Goal created success.") {
+          //   this.close()
+          // }
 
         }, error => {
           if (error['status'] == 401) {
@@ -724,10 +734,11 @@ export class ScrumboardComponent implements OnInit {
     } else {
       this.close()
     }
-    this.dataService.goal_name = '';
+    this.goal_name = '';
   }
 
   editTask() {
+    this.dataService.taskToEdit = this.taskToEdit;
     this.dataService.editTaskRequest(this.project_id).subscribe(
       data => {
         this.NotificationBox(data['message'])

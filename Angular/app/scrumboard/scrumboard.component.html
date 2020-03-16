@@ -134,7 +134,7 @@
                             <form name="addTaskForm" id="addTaskForm" (ngSubmit)="addTask()">
                                 <span class="close ForMobile" (click)="close()"><span class="icon-cancel"></span></span>
                                 <span class="addT">Add A Task</span>
-                                <textarea #taskToAdd="ngModel" class="insidemodalContentForTask" name="goal_name" [(ngModel)]="dataService.goal_name" required></textarea>
+                                <textarea #taskToAdd="ngModel" class="insidemodalContentForTask" name="goal_name" [(ngModel)]="goal_name" required></textarea>
                                 <div class="submitTask">
                                     <button type="submit" id="addTaskBtn" class="btn addTbtn">ADD TASK</button>
                                     <span class="btn closebtn" id="cancelAddTaskBtn" style="font-weight: bold;"
@@ -265,7 +265,7 @@
                         <div class="modal-bodyForTask">
                             <form #editTaskForm name="editTask" id="editUserTask" (ngSubmit)="editTask()">
                                 <span class="addT">Edit Task</span>
-                                <textarea class="insidemodalContentForTask" #taskToEdit="ngModel" aria-valuetext="dataService.taskToEdit" name="taskToEdit" [(ngModel)]="dataService.taskToEdit">
+                                <textarea class="insidemodalContentForTask" #taskToEditModel="ngModel" aria-valuetext="taskToEdit" name="taskToEdit" [(ngModel)]="taskToEdit">
                                 </textarea>
                                 <div class="submitTask">
                                     <button type="submit" id="editTaskBtn" class="btn addTbtn">EDIT
@@ -554,7 +554,7 @@
                                                     <span #loggedUserId [attr.task_to_edit]="item['task']" [attr.task_id_to_edit]="item['goalID']" class="icon-pencil tools" alt="edit" title="edit" (click)="editTaskModal(loggedUserId)"></span>
                                                     <span #loggedUserUploadImage [attr.task_id_to_upload_img]="item['goalID']" class="icon-camera tools" alt="upload image" title="upload image"
                                                         (click)="uploadImage(loggedUserUploadImage)"></span><i class="fas fa-clone tools" alt="copy" title="copy"
-                                                        style="font-size: 15px;" (click)="copyToClipboard('div1')"></i>
+                                                        style="font-size: 15px;" (click)="copyToClipboard(loggedUserId)"></i>
                                                     <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i class="fas fa-history tools"
                                                         alt="history" title="history" id="taskHistory" (click)="taskHistory (); hideslackchat()"></i>
                                                     <span class="icon-move tools" alt="move" title="move"></span>
@@ -584,7 +584,7 @@
                                                     <span #loggedUserId [attr.task_to_edit]="item['task']" [attr.task_id_to_edit]="item['goalID']" class="icon-pencil tools" alt="edit" title="edit" (click)="editTaskModal(loggedUserId)"></span>
                                                     <span #loggedUserUploadImage [attr.task_id_to_upload_img]="item['goalID']" class="icon-camera tools" alt="upload image" title="upload image"
                                                         (click)="uploadImage(loggedUserUploadImage)"></span><i class="fas fa-clone tools" alt="copy" title="copy"
-                                                        style="font-size: 15px;" (click)="copyToClipboard('div1')"></i>
+                                                        style="font-size: 15px;" (click)="copyToClipboard(loggedUserId)"></i>
                                                     <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i class="fas fa-history tools"
                                                         alt="history" title="history" id="taskHistory" (click)="taskHistory (); hideslackchat()"></i>
                                                     <span class="icon-move tools" alt="move" title="move"></span>
@@ -614,7 +614,7 @@
                                                         (click)="editTaskModal(loggedUserId)"></span>
                                                     <span #loggedUserUploadImage [attr.task_id_to_upload_img]="item['goalID']" class="icon-camera tools" alt="upload image" title="upload image"
                                                         (click)="uploadImage(loggedUserUploadImage)"></span><i class="fas fa-clone tools" alt="copy"
-                                                        title="copy" style="font-size: 15px;" (click)="copyToClipboard('div1')"></i>
+                                                        title="copy" style="font-size: 15px;" (click)="copyToClipboard(loggedUserId)"></i>
                                                     <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i
                                                         class="fas fa-history tools" alt="history" title="history" id="taskHistory"
                                                         (click)="taskHistory (); hideslackchat()"></i>
@@ -653,7 +653,7 @@
                                                             <span #loggedUserUploadImage [attr.task_id_to_upload_img]="item['goalID']" class="icon-camera tools" alt="upload image" title="upload image"
                                                                 (click)="uploadImage(loggedUserUploadImage)"></span><i class="fas fa-clone tools"
                                                                 alt="copy" title="copy" style="font-size: 15px;"
-                                                                (click)="copyToClipboard('div1')"></i>
+                                                                (click)="copyToClipboard(loggedUserId)"></i>
                                                             <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
                                                             <i class="fas fa-history tools" alt="history" title="history"
                                                                 id="taskHistory" (click)="taskHistory (); hideslackchat()"></i>
@@ -722,7 +722,7 @@
                                                                 <span #user [attr.task_to_edit]="item['task']" [attr.task_id_to_edit]="item['goalID']" class="icon-pencil tools" alt="edit" title="edit" (click)="editTaskModal(user)"></span>
                                                                 <span #userUploadImage [attr.task_id_to_upload_img]="item['goalID']" class="icon-camera tools" alt="upload image" title="upload image"
                                                                     (click)="uploadImage(userUploadImage)"></span><i class="fas fa-clone tools" alt="copy" title="copy"
-                                                                    style="font-size: 15px;" (click)="copyToClipboard('div1')"></i>
+                                                                    style="font-size: 15px;" (click)="copyToClipboard(user)"></i>
                                                                 <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i class="fas fa-history tools"
                                                                     alt="history" title="history" id="taskHistory" (click)="taskHistory (); hideslackchat()"></i>
                                                                 <span class="icon-move tools" alt="move" title="move"></span>
@@ -752,7 +752,7 @@
                                                                 <span #user [attr.task_to_edit]="item['task']" [attr.task_id_to_edit]="item['goalID']" class="icon-pencil tools" alt="edit" title="edit" (click)="editTaskModal(user)"></span>
                                                                 <span #userUploadImage [attr.task_id_to_upload_img]="item['goalID']" class="icon-camera tools" alt="upload image" title="upload image"
                                                                     (click)="uploadImage(userUploadImage)"></span><i class="fas fa-clone tools" alt="copy" title="copy"
-                                                                    style="font-size: 15px;" (click)="copyToClipboard('div1')"></i>
+                                                                    style="font-size: 15px;" (click)="copyToClipboard(user)"></i>
                                                                 <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i class="fas fa-history tools"
                                                                     alt="history" title="history" id="taskHistory" (click)="taskHistory (); hideslackchat()"></i>
                                                                 <span class="icon-move tools" alt="move" title="move"></span>
@@ -785,7 +785,7 @@
                                                                 <span #user [attr.task_to_edit]="item['task']" [attr.task_id_to_edit]="item['goalID']" class="icon-pencil tools" alt="edit" title="edit" (click)="editTaskModal(user)"></span>
                                                                 <span #userUploadImage [attr.task_id_to_upload_img]="item['goalID']" class="icon-camera tools" alt="upload image" title="upload image"
                                                                     (click)="uploadImage(userUploadImage)"></span><i class="fas fa-clone tools" alt="copy" title="copy"
-                                                                    style="font-size: 15px;" (click)="copyToClipboard('div1')"></i>
+                                                                    style="font-size: 15px;" (click)="copyToClipboard(user)"></i>
                                                                 <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i class="fas fa-history tools"
                                                                     alt="history" title="history" id="taskHistory" (click)="taskHistory (); hideslackchat()"></i>
                                                                 <span class="icon-move tools" alt="move" title="move"></span>
@@ -821,7 +821,7 @@
                                                                         <span #user [attr.task_to_edit]="item['task']" [attr.task_id_to_edit]="item['goalID']" class="icon-pencil tools" alt="edit" title="edit" (click)="editTaskModal(user)"></span>
                                                                         <span #userUploadImage [attr.task_id_to_upload_img]="item['goalID']" class="icon-camera tools" alt="upload image" title="upload image"
                                                                             (click)="uploadImage(userUploadImage)"></span><i class="fas fa-clone tools" alt="copy" title="copy"
-                                                                            style="font-size: 15px;" (click)="copyToClipboard('div1')"></i>
+                                                                            style="font-size: 15px;" (click)="copyToClipboard(user)"></i>
                                                                         <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
                                                                         <i class="fas fa-history tools" alt="history" title="history" id="taskHistory"
                                                                             (click)="taskHistory (); hideslackchat()"></i>

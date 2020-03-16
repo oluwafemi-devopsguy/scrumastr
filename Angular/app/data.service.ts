@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { ScrumboardComponent } from './scrumboard/scrumboard.component';
 
 @Injectable({
   providedIn: 'root'
@@ -66,8 +67,8 @@ export class DataService {
   public user_notes;
   public off_today: boolean = true;
   public user_workid;
-  public taskToEdit;
   public taskIdToEdit;
+  public taskToEdit;
   public image_uploaded: File = null;
   public image_name;
   
