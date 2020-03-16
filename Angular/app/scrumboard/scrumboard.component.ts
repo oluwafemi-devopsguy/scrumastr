@@ -4,7 +4,6 @@ import {Title} from "@angular/platform-browser";
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DataService } from '../data.service';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 
 @Component({
@@ -394,16 +393,14 @@ export class ScrumboardComponent implements OnInit {
   }
 
   copyToClipboard(taskToCopy) {
-    //let range = document.createRange();
-    let textToCopy = taskToCopy.getAttribute('task_to_edit').createTextRange();
-    //window.getSelection().removeAllRanges();
-    //window.getSelection().addRange(range);
-    //document.execCommand("copy");
-    //window.getSelection().removeAllRanges();
-    window.getSelection().addRange(textToCopy)
-    textToCopy.setSelectionRange(0, 99999)
-    document.execCommand("copy");
-    this.NotificationBox("Copied to clipboard!")
+    let textToCopy = document.createElement('textarea');
+    textToCopy.value = taskToCopy.getAttribute('task_to_edit');
+    document.body.appendChild(textToCopy);
+    textToCopy.focus();
+    textToCopy.select();
+    document.execCommand('copy');
+    document.body.removeChild(textToCopy);
+    this.NotificationBox('Task Copied To Clipboard!')
   }
 
 
@@ -632,7 +629,9 @@ export class ScrumboardComponent implements OnInit {
     sprintFilter.forEach(element => {
       this.currentSprint.unshift({ 'sprintID': element['id'], 'dateCreated': element['created_on'], 'endDate': element['ends_on'] })
     });
-    this.loggedSprint = this.currentSprint[0]
+    if(this.currentSprint.length > 0) {
+      this.loggedSprint = this.currentSprint[0]
+    }
   }
 
   getAllUsersGoals () {
@@ -696,9 +695,11 @@ export class ScrumboardComponent implements OnInit {
   }
 
   startNewSprint() {
-    if (Date.parse(this.loggedSprint.endDate) > new Date().valueOf()) {
-      if (confirm(`Are You Sure You Want To End Sprint #${this.loggedSprint.sprintID} And Start A New Sprint?`)) {
-        this.startSprint()
+    if (this.loggedSprint.sprintID != null && this.loggedSprint.sprintID != 0) {
+      if (Date.parse(this.loggedSprint.endDate) > new Date().valueOf()) {
+        if (confirm(`Are You Sure You Want To End Sprint #${this.loggedSprint.sprintID} And Start A New Sprint?`)) {
+          this.startSprint()
+        }
       }
     } else {
       this.startSprint()
