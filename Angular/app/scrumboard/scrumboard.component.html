@@ -46,7 +46,7 @@
                         </a>
                         
                         <div id="sprintDDContent" class="sprintDropDownContent">
-                            <p><span class="icon-check"></span><label class="activ">Sprint {{loggedSprint['sprintID']}}:</label><span class="spanAct">{{loggedSprint['dateCreated']| date}} - {{loggedSprint['endDate'] | date}}</span></p>
+                            <p><span class="icon-check"></span><label class="activ" *ngIf="loggedSprint['sprintID'] != undefined && loggedSprint['sprintID'] &#62; 0">Sprint {{loggedSprint['sprintID']}}:</label><span class="spanAct">{{loggedSprint['dateCreated']| date}} - {{loggedSprint['endDate'] | date}}</span></p>
                             <p #selectSprint *ngFor="let sprint of currentSprint" [attr.sprintID]="sprint['sprintID']" (click)="changeLoggedSprint(selectSprint, sprintCreateDate, sprintEndDate)"><label #sprintCreateDate [attr.sprint-create-date]="sprint['dateCreated']">Sprint {{sprint['sprintID']}}:</label><span #sprintEndDate [attr.sprint-end-date]="sprint['endDate']">{{sprint['dateCreated'] | date}} - {{sprint['endDate'] | date}}</span></p>
                             <div class="sprintDropDownCS" id="createSprint" (click)="startNewSprint()">
                                 NEW SPRINT

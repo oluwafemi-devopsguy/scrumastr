@@ -695,7 +695,7 @@ export class ScrumboardComponent implements OnInit {
   }
 
   startNewSprint() {
-    if (this.loggedSprint.sprintID != null && this.loggedSprint.sprintID != 0) {
+    if (this.loggedSprint.sprintID != " ") {
       if (Date.parse(this.loggedSprint.endDate) > new Date().valueOf()) {
         if (confirm(`Are You Sure You Want To End Sprint #${this.loggedSprint.sprintID} And Start A New Sprint?`)) {
           this.startSprint()

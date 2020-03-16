@@ -119,7 +119,7 @@ export class DataService {
   
  createUser()
   {
-    console.log(this.add_slack)
+    //console.log(this.add_slack)
     //this.http.post(this.domain_protocol + this.domain_name + '/scrum/api/scrumusers/', JSON.stringify({'email': this.createuser_email, 'password': this.createuser_password, 'full_name': this.createuser_fullname, 'usertype': this.createuser_usertype, 'projname': this.createuser_projname}), this.httpOptions).subscribe(
     //console.log({'email': this.createuser_email, 'password': this.createuser_password, 'full_name': this.createuser_fullname, 'usertype': this.createuser_usertype, 'projname': this.createuser_projname})
     this.http.post(this.signUpurl, JSON.stringify({'email': this.createuser_email, 'password': this.createuser_password, 'full_name': this.createuser_fullname, 'usertype': this.createuser_usertype, 'projname': this.createuser_projname}), this.httpOptions).subscribe(
@@ -140,7 +140,7 @@ export class DataService {
               document.getElementById('alert-success').style.display = 'block';
               setTimeout(() => {
               this.router.navigate(['login']);
-              },  5000); 
+              },  3000); 
               
               
             } else {
@@ -165,7 +165,7 @@ export class DataService {
             
         },
         err => {
-            console.error(err);
+            //console.error(err);
             document.getElementById('lodr').style.display = 'none';
             document.getElementById('alert-error').style.display = 'block';
             this.message = 'User already exists or invalid data';
