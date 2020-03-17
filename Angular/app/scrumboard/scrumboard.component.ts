@@ -352,7 +352,6 @@ export class ScrumboardComponent implements OnInit {
       }
 
     }
-
   }
 
   borderRadious(user) {
@@ -639,7 +638,9 @@ export class ScrumboardComponent implements OnInit {
       data => {
         this.loggedProject = data['project_name']
         this.participants = data['data']
-        this.filterUsers(this.participants)
+        if (this.participants.length != 0) {
+          this.filterUsers(this.participants)
+        }
       },
   
     error => {
@@ -664,12 +665,26 @@ export class ScrumboardComponent implements OnInit {
     this.dataService.allSprints(this.project_id).subscribe(
       data => {
         this.sprints = data
-        this.filterSprints(this.sprints)
+        if (this.sprints.length > 0) {
+          this.filterSprints(this.sprints)
+          this.sprintAlertHidden()
+        } else {
+          if (this.loggedSprint.sprintID == " ") {
+            document.getElementById('sprintAlert').classList.add('sprintAlertVissible');
+          }
+        }
         
       }, error => {
         console.log('error', error)
       }
     )
+  }
+
+  sprintAlertHidden() {
+    if (document.getElementById('sprintAlert').classList.contains('sprintAlertVissible')) {
+      document.getElementById('sprintAlert').classList.replace('sprintAlertVissible', 'sprintAlertHidden')
+    }
+    setTimeout(() => { document.getElementById('sprintAlert').style.display = 'none' }, 300);  
   }
 
   startSprint() {

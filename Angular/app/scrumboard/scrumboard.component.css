@@ -1055,6 +1055,31 @@ body {
   padding-left: 10px;
 }
 
+#sprintAlert .sprintAlert {
+  color: rgba(0, 0, 0, 0.7);
+  font-size: 14px;
+  visibility: hidden;
+}
+
+.sprintAlertVissible {
+  visibility: visible;
+  opacity: 1;
+  transition: visibility 2s linear;
+}
+
+.sprintAlertHidden {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s 0.3s, opacity 0.3s linear;
+}
+
+#sprintAlert bold {
+  color: rgba(0, 0, 0, 0.9);
+  font-size: 14px;
+  cursor: pointer;
+  margin-left: 3px;
+}
+
 .ttDropDownContent {
   width: 100%;
   margin-top: 2.8em;

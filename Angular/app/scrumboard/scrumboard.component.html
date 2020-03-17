@@ -108,6 +108,7 @@
     <div class="main">
         <div class="split left" id="splitLeft">
             <span id="alert"></span>
+            
             <div class="tab-content card-body" id="myTabContent">
                 <!-- <div>Modal Box Start Here</div> -->
                 <div class="openModalForTaskandNote">
@@ -115,7 +116,7 @@
                     <button id="addNoteBtn" class="btn openAddNoteModalbtn" (click)="hideslackchat()"><span
                             class="icon-Group-1"></span></button>
                 </div>
-    
+                
                 <!-- <div>Modal Box For Adding Task </div> -->
                 <div id="addTaskModal" class="modal">
                     <div class="modal-contentForTask">
@@ -315,7 +316,6 @@
                             <div class="taskHistoryModalSplit taskHistoryModalLeft">
                                 <h1>Hello World</h1>
                                 <span>hello world</span>
-    
                             </div>
     
                             <div class="taskHistoryModalSplit taskHistoryModalRight">
@@ -532,6 +532,14 @@
                 </div>
     
                 <!-- <div>Modal Box Stops Here</div> -->
+                <div class="container">
+                    <div id="sprintAlert" class="sprintAlert" style="margin-top: -20px;margin-bottom: 10px;">
+                        <strong class="mr-auto">Hello! {{loggedUser}}, </strong>Would you like to Start a new Sprint? <bold
+                            (click)="startNewSprint(); sprintAlertHidden()">Yes </bold>
+                        <bold (click)="sprintAlertHidden()">No</bold>
+                    </div>
+                </div>
+                
                 <div class="tab-pane fade show active " id="home" role="tabpanel" aria-labelledby="home-tab">
                     <div class="container">
                         <div class="row">
@@ -671,8 +679,7 @@
                             </div>
                         </div>
                         <div style="margin-top:5px; padding: 15px 0px;">
-                            </div>
-
+                        </div>
                     </div>
                 </div>
     
