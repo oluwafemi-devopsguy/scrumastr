@@ -54,6 +54,7 @@ export class ScrumboardComponent implements OnInit {
   public colors = ['255, 76, 109', '89, 187, 30', '221, 164, 72', '141, 106, 159', '187, 52, 47', '131, 116, 91', '16, 52, 166', '133, 47, 100','38, 166, 154']
   public taskToEdit;
   public goal_name;
+  public addTaskTo = sessionStorage.getItem('role_id');
 
   load(){
     if (window.localStorage) {
@@ -80,41 +81,35 @@ export class ScrumboardComponent implements OnInit {
       let imgBtm5 = document.getElementsByClassName('imgBtm').item(4) as HTMLElement;
       let imgBtm6 = document.getElementsByClassName('imgBtm').item(5) as HTMLElement;
 
-      let currentTheme = document.getElementById('currentTheme');
+      //let currentTheme = document.getElementById('currentTheme');
       if (localStorage.getItem('w5tD6g7Z65evGCeKvCrgeDJpkk9zETRc7Vg3Cw4q') == 'Z556fbesgMPvm2U') {
         document.getElementById("splitLeft").style.backgroundImage = "url(https://res.cloudinary.com/ros4eva/image/upload/v1582211899/Rectangle_4_whcw4u.png)";
         document.getElementsByClassName('currentTheme')[0].innerHTML = "Automobile";
-        currentTheme.style.marginLeft = "-22px";
         imgBorder2.style.border = '1px solid rgba(0, 0, 0, 0.8)';
         imgBtm2.style.borderBottom = '1px solid rgba(0, 0, 0, 0.8)';
       } else if (localStorage.getItem('w5tD6g7Z65evGCeKvCrgeDJpkk9zETRc7Vg3Cw4q') == 'CArCK4Vm5hyRF5B') {
         document.getElementById("splitLeft").style.backgroundImage = "url(https://res.cloudinary.com/ros4eva/image/upload/v1582211925/Rectangle_5_kflvow.png)";
         document.getElementsByClassName('currentTheme')[0].innerHTML = "Dark Cloud";
-        currentTheme.style.marginLeft = "-22px";
         imgBorder3.style.border = '1px solid rgba(0, 0, 0, 0.8)';
         imgBtm3.style.borderBottom = '1px solid rgba(0, 0, 0, 0.8)';
       } else if (localStorage.getItem('w5tD6g7Z65evGCeKvCrgeDJpkk9zETRc7Vg3Cw4q') == '32J94BFgeC9zTNf') {
         document.getElementById("splitLeft").style.backgroundImage = "url(https://res.cloudinary.com/ros4eva/image/upload/v1582211929/Rectangle_6_bmdatg.png)";
         document.getElementsByClassName('currentTheme')[0].innerHTML = "Landmark";
-        currentTheme.style.marginLeft = "-30px";
         imgBorder4.style.border = '1px solid rgba(0, 0, 0, 0.8)';
         imgBtm4.style.borderBottom = '1px solid rgba(0, 0, 0, 0.8)';
       } else if (localStorage.getItem('w5tD6g7Z65evGCeKvCrgeDJpkk9zETRc7Vg3Cw4q') == 'ShFzC9vBEcFz8Rk') {
         document.getElementById("splitLeft").style.backgroundImage = "url(https://res.cloudinary.com/ros4eva/image/upload/v1582211924/Rectangle_7_dff7kq.png)";
         document.getElementsByClassName('currentTheme')[0].innerHTML = "City View";
-        currentTheme.style.marginLeft = "-30px";
         imgBorder5.style.border = '1px solid rgba(0, 0, 0, 0.8)';
         imgBtm5.style.borderBottom = '1px solid rgba(0, 0, 0, 0.8)';
       } else if (localStorage.getItem('w5tD6g7Z65evGCeKvCrgeDJpkk9zETRc7Vg3Cw4q') == 'XB8svCwGLr359na') {
         document.getElementById("splitLeft").style.backgroundImage = "url(https://res.cloudinary.com/ros4eva/image/upload/v1582211913/Rectangle_8_rieqnp.png)";
         document.getElementsByClassName('currentTheme')[0].innerHTML = "Blue Sky";
-        currentTheme.style.marginLeft = "-36px";
         imgBorder6.style.border = '1px solid rgba(0, 0, 0, 0.8)';
         imgBtm6.style.borderBottom = '1px solid rgba(0, 0, 0, 0.8)';
       } else {
         document.getElementById("splitLeft").style.background = "white";
         document.getElementsByClassName('currentTheme')[0].innerHTML = "Plain";
-        currentTheme.style.marginLeft = "-55px";
         imgBorder1.style.border = '1px solid rgba(0, 0, 0, 0.8)';
         imgBtm1.style.borderBottom = '1px solid rgba(0, 0, 0, 0.8)';
       }
@@ -197,14 +192,25 @@ export class ScrumboardComponent implements OnInit {
     logoutModal.style.display = "block"
   }
 
-  addTaskModal(whichmodal) {
+  addTaskModal(whichmodal, userRoleId) {
     let modal = document.getElementById("addTaskModal") as HTMLElement;
     let modal1 = document.getElementById("addNoteModal") as HTMLElement; 
-    if (whichmodal == 'task') {
-      modal.style.display = 'block';
-    } if (whichmodal == 'note') {
-      modal1.style.display = 'block';
+    if (userRoleId != undefined) {
+      let userRole = userRoleId.getAttribute("user_role_id")
+      this.addTaskTo = userRole
+      if (this.loggedUserRole == "Owner" || this.loggedUserRole == "Admin" || this.loggedUserId == this.addTaskTo) {
+        if (whichmodal == 'task') {
+          modal.style.display = 'block';
+        } if (whichmodal == 'note') {
+          modal1.style.display = 'block';
+        }
+      } else {
+        return
+      }
+      
+      
     }
+    
   }
 
   rose(){
@@ -472,7 +478,7 @@ export class ScrumboardComponent implements OnInit {
         localStorage.setItem('w5tD6g7Z65evGCeKvCrgeDJpkk9zETRc7Vg3Cw4q', 'Z556fbesgMPvm2U')
         document.getElementById("splitLeft").style.backgroundImage = "url(https://res.cloudinary.com/ros4eva/image/upload/v1582211899/Rectangle_4_whcw4u.png)"
         document.getElementsByClassName('currentTheme')[0].innerHTML = "Automobile";
-        currentTheme.style.marginLeft = "-22px";
+        //currentTheme.style.marginLeft = "-22px";
         clearBtmBorder()
         imgBorder2.style.border = '1px solid rgba(0, 0, 0, 0.8)';
         imgBtm2.style.borderBottom = '1px solid rgba(0, 0, 0, 0.8)';
@@ -488,7 +494,7 @@ export class ScrumboardComponent implements OnInit {
         localStorage.setItem('w5tD6g7Z65evGCeKvCrgeDJpkk9zETRc7Vg3Cw4q', 'CArCK4Vm5hyRF5B')
         document.getElementById("splitLeft").style.backgroundImage = "url(https://res.cloudinary.com/ros4eva/image/upload/v1582211925/Rectangle_5_kflvow.png)"
         document.getElementsByClassName('currentTheme')[0].innerHTML = "Dark Cloud";
-        currentTheme.style.marginLeft = "-22px";
+        //currentTheme.style.marginLeft = "-22px";
         clearBtmBorder()
         imgBorder3.style.border = '1px solid rgba(0, 0, 0, 0.8)';
         imgBtm3.style.borderBottom = '1px solid rgba(0, 0, 0, 0.8)';
@@ -504,7 +510,7 @@ export class ScrumboardComponent implements OnInit {
         localStorage.setItem('w5tD6g7Z65evGCeKvCrgeDJpkk9zETRc7Vg3Cw4q', '32J94BFgeC9zTNf')
         document.getElementById("splitLeft").style.backgroundImage = "url(https://res.cloudinary.com/ros4eva/image/upload/v1582211929/Rectangle_6_bmdatg.png)"
         document.getElementsByClassName('currentTheme')[0].innerHTML = "Landmark";
-        currentTheme.style.marginLeft = "-30px";
+        //currentTheme.style.marginLeft = "-30px";
         clearBtmBorder()
         imgBorder4.style.border = '1px solid rgba(0, 0, 0, 0.8)';
         imgBtm4.style.borderBottom = '1px solid rgba(0, 0, 0, 0.8)';
@@ -520,7 +526,7 @@ export class ScrumboardComponent implements OnInit {
         localStorage.setItem('w5tD6g7Z65evGCeKvCrgeDJpkk9zETRc7Vg3Cw4q', 'ShFzC9vBEcFz8Rk')
         document.getElementById("splitLeft").style.backgroundImage = "url(https://res.cloudinary.com/ros4eva/image/upload/v1582211924/Rectangle_7_dff7kq.png)"
         document.getElementsByClassName('currentTheme')[0].innerHTML = "City View";
-        currentTheme.style.marginLeft = "-30px";
+        //currentTheme.style.marginLeft = "-30px";
         clearBtmBorder()
         imgBorder5.style.border = '1px solid rgba(0, 0, 0, 0.8)';
         imgBtm5.style.borderBottom = '1px solid rgba(0, 0, 0, 0.8)';
@@ -536,7 +542,7 @@ export class ScrumboardComponent implements OnInit {
         localStorage.setItem('w5tD6g7Z65evGCeKvCrgeDJpkk9zETRc7Vg3Cw4q', 'XB8svCwGLr359na')
         document.getElementById("splitLeft").style.backgroundImage = "url(https://res.cloudinary.com/ros4eva/image/upload/v1582211913/Rectangle_8_rieqnp.png)"
         document.getElementsByClassName('currentTheme')[0].innerHTML = "Blue Sky";
-        currentTheme.style.marginLeft = "-36px";
+        //currentTheme.style.marginLeft = "-36px";
         clearBtmBorder()
         imgBorder6.style.border = '1px solid rgba(0, 0, 0, 0.8)';
         imgBtm6.style.borderBottom = '1px solid rgba(0, 0, 0, 0.8)';
@@ -551,7 +557,7 @@ export class ScrumboardComponent implements OnInit {
       localStorage.removeItem('w5tD6g7Z65evGCeKvCrgeDJpkk9zETRc7Vg3Cw4q')
       document.getElementById("splitLeft").style.background = "white";
       document.getElementsByClassName('currentTheme')[0].innerHTML = "Plain";
-      currentTheme.style.marginLeft = "-55px";
+      //currentTheme.style.marginLeft = "-55px";
       clearBtmBorder()
       imgBorder1.style.border = '1px solid rgba(0, 0, 0, 0.8)';
       imgBtm1.style.borderBottom = '1px solid rgba(0, 0, 0, 0.8)';
@@ -568,18 +574,18 @@ export class ScrumboardComponent implements OnInit {
       this.users.push({
         'userColor': " ",
         'userName': element['user']['nickname'],
-        'userID': element['user']['id'],
+        'userID': element['id'],
         'userTotalWeekHour': element['total_week_hours'],
         'scrumGoalSet': element['scrumgoal_set'].length
       });
       if (element['user']['nickname'] == this.loggedUser) {
-        this.loggedUserId = element['user']['id']
+        this.loggedUserId = element['id']
       }
       element['scrumgoal_set'].forEach(item => {
         if (item['status'] == 0) {
           this.TFTW.push({
             'task': item['name'],
-            'taskFor': element['user']['id'],
+            'taskFor': item['user'],
             'goalID': item['goal_project_id'],
             'timeCreated': item['time_created'],
             'file': item['file']
@@ -587,7 +593,7 @@ export class ScrumboardComponent implements OnInit {
         } if (item['status'] == 1) {
           this.TFTD.push({
             'task': item['name'],
-            'taskFor': element['user']['id'],
+            'taskFor': item['user'],
             'goalID': item['goal_project_id'],
             'timeCreated': item['time_created'],
             'file': item['file']
@@ -595,7 +601,7 @@ export class ScrumboardComponent implements OnInit {
         } if (item['status'] == 2) {
           this.verify.push({
             'task': item['name'],
-            'taskFor': element['user']['id'],
+            'taskFor': item['user'],
             'goalID': item['goal_project_id'],
             'pushID': item['push_id'],
             'timeCreated': item['time_created'],
@@ -604,7 +610,7 @@ export class ScrumboardComponent implements OnInit {
         } if (item['status'] == 3) {
           this.done.push({
             'task': item['name'],
-            'taskFor': element['user']['id'],
+            'taskFor': item['user'],
             'goalID': item['goal_project_id'],
             'pushID': item['push_id'],
             'timeCreated': item['time_created'],
@@ -613,12 +619,6 @@ export class ScrumboardComponent implements OnInit {
         }
       })
     })
-    // this.users.forEach(user => {
-    //   for (let i = this.colors.length; i > 0; i--) {
-    //     user['userColor'] = this.colors[Math.random() * this.colors.length | 0]
-    //   }
-    // })
-
     this.users.forEach(user => {
       user['userColor'] = this.colors[user.userID % this.colors.length]
     })
@@ -647,7 +647,7 @@ export class ScrumboardComponent implements OnInit {
       console.log('error', Error)
     }
       )
-    }
+  }
 
   changeLoggedSprint(selectedSprintID, createDate, endDate) {
     let sprint = selectedSprintID.getAttribute('sprintID');
@@ -670,7 +670,11 @@ export class ScrumboardComponent implements OnInit {
           this.sprintAlertHidden()
         } else {
           if (this.loggedSprint.sprintID == " ") {
-            document.getElementById('sprintAlert').classList.add('sprintAlertVissible');
+            if (this.loggedUserRole == "Owner" || this.loggedUserRole == "Admin") {
+              document.getElementById('sprintAlert').classList.add('sprintAlertVissible');
+            } else {
+              this.sprintAlertHidden()
+            }
           }
         }
         
@@ -710,45 +714,49 @@ export class ScrumboardComponent implements OnInit {
   }
 
   startNewSprint() {
-    if (this.loggedSprint.sprintID != " ") {
-      if (Date.parse(this.loggedSprint.endDate) > new Date().valueOf()) {
-        if (confirm(`Are You Sure You Want To End Sprint #${this.loggedSprint.sprintID} And Start A New Sprint?`)) {
-          this.startSprint()
+    if (this.loggedUserRole == "Owner" || this.loggedUserRole == "Admin") {
+      if (this.loggedSprint.sprintID != " ") {
+        if (Date.parse(this.loggedSprint.endDate) > new Date().valueOf()) {
+          if (confirm(`Are You Sure You Want To End Sprint #${this.loggedSprint.sprintID} And Start A New Sprint?`)) {
+            this.startSprint()
+          }
         }
+      } else {
+        this.startSprint()
       }
     } else {
-      this.startSprint()
+      this.NotificationBox('Only Admin and Owner Can Create Sprint')
     }
   }
 
   addTask() {
     if (this.goal_name != '') {
-      this.dataService.goal_name = this.goal_name;
-      this.dataService.addTaskRequest(this.project_id).subscribe(
-        data => {
-          this.NotificationBox(data['message'])
-          this.users = []
-          this.TFTD = []
-          this.TFTW = []
-          this.done = []
-          this.verify = []
-          this.filterUsers(data['data']);
-          // if (data['message'] == "Goal created success.") {
-          //   this.close()
-          // }
+      if (this.loggedUserRole == "Owner" || this.loggedUserRole == "Admin" || this.loggedUserId == this.addTaskTo) {
+        this.dataService.goal_name = this.goal_name;
+        this.dataService.addTaskRequest(this.project_id, this.addTaskTo).subscribe(
+          data => {
+            this.NotificationBox(data['message'])
+            this.users = []
+            this.TFTD = []
+            this.TFTW = []
+            this.done = []
+            this.verify = []
+            this.filterUsers(data['data']);
 
-        }, error => {
-          if (error['status'] == 401) {
-            this.NotificationBox('Session Invalid or Expired. Please Login!')
-            this.dataService.logout();
-          } else {
-            this.NotificationBox('Add Task Failed!')
-            this.close()
+          }, error => {
+            if (error['status'] == 401) {
+              this.NotificationBox('Session Invalid or Expired. Please Login!')
+              this.dataService.logout();
+            } else {
+              this.NotificationBox('Add Task Failed!')
+              this.close()
+            }
           }
-        }
-      )
-    } else {
-      this.close()
+        )
+      } else {
+        this.close()
+        this.NotificationBox(`You Can Only Add Task For ${this.loggedUser}`)
+      }
     }
     this.goal_name = '';
   }

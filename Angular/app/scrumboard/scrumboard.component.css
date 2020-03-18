@@ -483,7 +483,23 @@ body {
   width: 150px;
   font-weight: bold;
   font-size: 14px;
-  
+}
+
+#addTaskModal .modal-header .headerUserTitle, #editTaskModal .modal-header .headerUserTitle{
+  font-size: 14px;
+  font-weight: bold;
+  color: #59BB1E;
+  position: relative;
+  margin-left: 5px;
+  margin-top: -6px;
+}
+
+#addTaskModal .modal-header .headerUserRole, #editTaskModal .modal-header .headerUserRole{
+  font-size: 10px;
+  color: #333333;
+  position: absolute;
+  margin-top: 8px;
+  margin-left: 2.5em;
 }
 
 
@@ -887,6 +903,7 @@ body {
     font-size: 12px;
   }
 
+
   .openAddNoteModalbtn {
     width: 33px;
     left: 46%;
@@ -1271,8 +1288,8 @@ summary:focus {
 .nav-tabs #profileTab {
   width: 179px;
   border-right: 2px solid rgba(255, 255, 255, 0.3);
-   padding: unset;
-   cursor: pointer;
+  padding: unset;
+  cursor: pointer;
 }
 
 
@@ -1285,20 +1302,22 @@ summary:focus {
   font-weight: 500;
   font-size: 14px;
   color: #FFFFFF;
-  float: left;
+  position: relative;
   margin-top: 8px;
+  float:left;
   margin-left: 2px;
+  
 }
 
 .nav-tabs #profileTab p{
-  float: left;
   font-style: normal;
   font-weight: normal;
   font-size: 12px;
   line-height: 14px;
   color: #4DFFD4;
-  margin-top: 25px;
-  margin-left: -31px;
+  margin-left: 4.2em;
+  position: absolute;
+  margin-top: 2em;
   
 }
 
@@ -1321,10 +1340,8 @@ summary:focus {
   background-color: #fefefe;
   margin: auto;
   margin-top:-15vh;
-  /* margin-left: 15em; */
   padding: 0;
   border: 1px solid #888;
-  /* width: 50%; */
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
   -webkit-animation-name: animatetop;
   -webkit-animation-duration: 0.4s;
@@ -1613,34 +1630,25 @@ summary:focus {
   font-weight: 500;
   font-size: 12px;
   color: rgba(255, 255, 255, 0.9);
+  position: relative;
+  float:left;
+  margin-left: 2px;
   margin-top: -5px;
-  margin-left: -40px;
 }
 
-.navbarr #themeTab h4 {
-  margin-left: -50px;
-}
-
-.navbarr .projectsDropDown .loggedProject, .navbarr #sprintTab .loggedSprint, .navbarr #slackTab .slackStatus {
+.navbarr .projectsDropDown .loggedProject, .navbarr #sprintTab .loggedSprint, .navbarr #slackTab .slackStatus, .navbarr #themeTab .currentTheme {
   font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: normal;
   font-size: 12px;
   color: rgba(255, 255, 255, 0.8);
-  margin-top: -10px;
-  margin-left: -15px;
+  position: absolute;
+  margin-left: -5.2em;
+  margin-top: 12px;
 }
 
-/* .navbarr .projectsDropDown .loggedProject {
-  margin-left: -40px;
-} */
-
-.navbarr #slackTab .slackTi {
-  margin-left: -30px;
-}
-
-.navbarr #slackTab .slackStatus {
-  margin-left: -30px;
+.navbarr #sprintTab .loggedSprint, .navbarr #slackTab .slackStatus {
+  margin-left: -5.9em;
 }
 
 .projectsDropDown, .sprintDropDown, .themeDropDown {

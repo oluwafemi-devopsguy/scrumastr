@@ -322,8 +322,8 @@ export class DataService {
   }
 
   logout() {
-    sessionStorage.clear();
-    this.router.navigate(['home'])
+    sessionStorage.removeItem('token');
+    this.router.navigate(['home']);
   }
 
   moveGoal(goal_id, to_id, hours, push_id)
@@ -425,8 +425,8 @@ export class DataService {
     return this.http.post(this.sprint + project_id, JSON.stringify({"project_id": project_id, "created_on": sprint_start_date, "ends_on": sprint_end_date}), this.getHeader());
   }
 
-  addTaskRequest(project_id) {
-    let user_role_id = sessionStorage.getItem('role_id')
+  addTaskRequest(project_id, user_role_id) {
+    //let user_role_id = sessionStorage.getItem('role_id')
     // return this.http.post(this.domain_protocol + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({ "name": this.goal_name, "user": 'm' + user_role_id, "project_id": project_id }), this.getHeader());
     return this.http.post(this.createTaskUrl, JSON.stringify({ "name": this.goal_name, "user": 'm' + user_role_id, "project_id": project_id }), this.getHeader());
     this.goal_name = '';

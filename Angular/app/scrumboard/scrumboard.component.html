@@ -57,7 +57,7 @@
 
                 <li class="nav-item">
                     <a class="nav-link otherNavTools" id="slackTab" role="tab">
-                        <h4 class="slackTi">Slack <img src="https://res.cloudinary.com/ros4eva/image/upload/v1582046655/Group_jinais.png" width="12" height="12"></h4>
+                        <h4>Slack <img src="https://res.cloudinary.com/ros4eva/image/upload/v1582046655/Group_jinais.png" width="12" height="12"></h4>
                         <span class="slackStatus">Connected</span>
                     </a>
                 </li>
@@ -85,8 +85,6 @@
                 <li class="nav-item">
                     <a class="nav-link" id="profileTab" role="tab" (click)="userProfileModal();hideslackchat()">
                         <img src="https://res.cloudinary.com/ros4eva/image/upload/v1581678144/Ellipse_6_z5snsi.png">
-                        <!-- <h4>Joshua Okwe</h4>
-                        <p>Developer</p> -->
                         <h4>{{loggedUser}}</h4>
                         <p>{{loggedUserRole}}</p>
                     </a>
@@ -122,11 +120,8 @@
                     <div class="modal-contentForTask">
                         <div class="modal-header" style="margin-bottom: 7px;">
                             <img src="https://res.cloudinary.com/ros4eva/image/upload/v1576618715/Ellipse_cxegyr.svg"><br>
-                            <span
-                                style="margin-left:10px; margin-top:-7px; font-size: 14px ; font-weight: bold; color: #59BB1E;"
-                                class="headerUserTitle">{{loggedUser}}</span>
-                            <p style="font-size: 10px; color: #333333; margin-top: 1em; margin-left: -3em;"
-                                class="headerUserRole">
+                            <span class="headerUserTitle">{{loggedUser}}</span>
+                            <p class="headerUserRole">
                                 {{loggedUserRole}}</p>
                             <span class="close " (click)="close()"><span class="icon-cancel"></span></span>
     
@@ -255,11 +250,9 @@
                     <div class="modal-contentForTask">
                         <div class="modal-header">
                             <img src="https://res.cloudinary.com/ros4eva/image/upload/v1576618715/Ellipse_cxegyr.svg"><br>
-                            <span
-                                style="margin-left:10px; margin-top:-7px; font-size: 14px ; font-weight: bold; color: #59BB1E;">
-                                {{loggedUser}}</span>
-                            <p style="font-size: 10px; color: #333333; margin-left: -3em; margin-top: 1em;">{{loggedUserRole}}
-                            </p>
+                            <span class="headerUserTitle">{{loggedUser}}</span>
+                            <p class="headerUserRole">
+                                {{loggedUserRole}}</p>
                             <span class="close" (click)="close()"><span class="icon-cancel"></span></span>
     
                         </div>
@@ -697,9 +690,9 @@
                                             </ul>
                                         </div>
                                         <div style="float: right;">
-                                            <ul class="teamTaskTools">
-                                                <li><i class="fas fa-plus" (click)="addTaskModal('task');"></i></li>
-                                                <li><i style="padding: 5.5px 8px;" (click)="addTaskModal('note'); hideslackchat()"><span
+                                            <ul class="teamTaskTools" #getUserRoleId [attr.user_role_id]="user['userID']">
+                                                <li><i class="fas fa-plus" (click)="addTaskModal('task', getUserRoleId);"></i></li>
+                                                <li><i style="padding: 5.5px 8px;" (click)="addTaskModal('note', undefined); hideslackchat()"><span
                                                             class="icon-Group-1" style="width: 25px; height: 25px;"></span></i></li>
                                                 <li><i class="fas fa-user" (click)="taskHistory (); hideslackchat()"></i></li>
                                                 <li><i id="toggledUp{{user['userID']}}" class="fas fa-chevron-up" ></i></li>
