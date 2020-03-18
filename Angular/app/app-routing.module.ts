@@ -10,13 +10,14 @@ import { DragulaModule } from 'ng2-dragula';
 import { TermsComponent } from './terms/terms.component';
 import { SupportComponent } from './support/support.component';
 import { ScrumboardComponent } from './scrumboard/scrumboard.component';
+import { AuthGuard } from './auth.guard';
 
 const routes: Routes = [
     { path: "", redirectTo: "/home", pathMatch: "full" },
     { path: "home", component: HomeComponent},
     { path: "login", component: LoginComponent },
     { path: "createuser", component: UserComponent },
-    { path: "scrumboard", component: ScrumboardComponent },
+    { path: "scrumboard/:project_id", component: ScrumboardComponent, canActivate: [AuthGuard] },
     { path: "profile", component: ProfileComponent },
     { path: "admin", component: AdminComponent },
     { path: "terms", component: TermsComponent },

@@ -55,7 +55,7 @@ export class UserComponent implements OnInit {
   createUser()
   {
     let proField = document.getElementById("c") as HTMLInputElement
-    console.log(this.dataservice.add_slack)
+    //console.log(this.dataservice.add_slack)
     if (proField.checked == true) {
         this.dataservice.createuser_usertype = 'Owner'
      } else {
