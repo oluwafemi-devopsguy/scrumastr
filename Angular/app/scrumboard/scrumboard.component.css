@@ -114,8 +114,6 @@ body {
   height: 100%;
   position: fixed;
   z-index: 1;
-  /* top: 10; */
-  /* overflow-x: hidden; */
   padding-top: 22px;
 }
 
@@ -160,7 +158,7 @@ body {
   min-height: 223px;
 }
 
-.ex .excontent {
+.ex .excontent, .ex_taskHistory .excontent{
   border: 1px solid rgba(255, 76, 109, 0.25);
   background: #FFFFFF;
   border-radius: 5px;
@@ -176,7 +174,7 @@ body {
   transition: ease-in 0.5s;
 }
 
-.ex .excontent .uploadedImage img{
+.ex .excontent .uploadedImage img, .ex_taskHistory .excontent .uploadedImage img{
   width: 70%;
   display: block;
   margin-left: auto;
@@ -186,11 +184,11 @@ body {
   transition: 0.3s;
 }
 
-.ex .excontent .uploadedImage img:hover{
+.ex .excontent .uploadedImage img:hover, .ex_taskHistory .excontent .uploadedImage img:hover{
   opacity: 0.7;
 }
 
-.ex .excontent .scrumtools {
+.ex .excontent .scrumtools, .ex_taskHistory .excontent .scrumtools{
   font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: normal;
@@ -201,24 +199,24 @@ body {
   opacity: 1;
 }
 
-.ex .excontent  n {
+.ex .excontent  n, .ex_taskHistory .excontent n {
   font-size: 11px;
 }
 
-.ex .excontent .scrumtools span {
+.ex .excontent .scrumtools span, .ex_taskHistory .excontent .scrumtools span {
   font-size: 15px; 
   margin-right: 8px;
   transition: ease-in 0.2s;
 }
 
-.ex .excontent .scrumtools i {
+.ex .excontent .scrumtools i, .ex_taskHistory .excontent .scrumtools i {
   font-size: 16px; 
   margin-right: 8px;
   transition: ease-in 0.2s;
   
 }
 
-.ex .icon-move {
+.ex .icon-move, .ex_taskHistory .icon-move {
   font-size: 17px!important;
 }
 
@@ -447,14 +445,14 @@ body {
 }
 
 .closebtn {
-    background: none;
-    font-size: 14px;
-    line-height: 17px;
-    color: black;
-    font-weight: normal;
-    outline: none;
-    font-family: SF;
-    margin-left: 5px;
+  background: none;
+  font-size: 14px;
+  line-height: 17px;
+  color: black;
+  font-weight: normal;
+  outline: none;
+  font-family: SF;
+  margin-left: 5px;
 }
 
 
@@ -467,6 +465,9 @@ body {
   color: black;
 }
 
+.addTbtn:focus {
+  outline-color: transparent!important;
+}
 
 .openAddTaskModalBtn {
   height: 35px;
@@ -485,7 +486,7 @@ body {
   font-size: 14px;
 }
 
-#addTaskModal .modal-header .headerUserTitle, #editTaskModal .modal-header .headerUserTitle{
+#addTaskModal .modal-header .headerUserTitle, #editTaskModal .modal-header .headerUserTitle {
   font-size: 14px;
   font-weight: bold;
   color: #59BB1E;
@@ -494,12 +495,31 @@ body {
   margin-top: -6px;
 }
 
-#addTaskModal .modal-header .headerUserRole, #editTaskModal .modal-header .headerUserRole{
+#addTaskModal .modal-header .headerUserRole, #editTaskModal .modal-header .headerUserRole {
   font-size: 10px;
   color: #333333;
   position: absolute;
   margin-top: 8px;
   margin-left: 2.5em;
+}
+
+#addNoteModal .modal-header .headerUserTitle{
+  font-size: 14px;
+  font-weight: bold;
+  color: #59BB1E;
+  position: absolute;
+  margin-top: -7px;
+  margin-left: 1.7em;
+  
+}
+
+#addNoteModal .modal-header .headerUserRole{
+  font-size: 10px;
+  color: #333333;
+  position: absolute;
+  margin-top: 7px;
+  margin-left: 2.5em;
+  
 }
 
 
@@ -519,33 +539,60 @@ body {
   font-weight: bold;
 }
 
-.insidemodalContentForNote {
+#addNoteModal .modal-contentForNote .insidemodalContentForNote {
   width: 954px;
   height: 142px;
   margin-top:15px;
   border: 1px solid rgba(0, 0, 0, 0.3);
   box-sizing: border-box;
   border-radius: 10px;
+  outline-color: transparent;
   padding: 8px;
+  resize: none;
 }
 
-.modal-contentForNote {
-  
+#addNoteModal .modal-contentForNote {
   background-color: #fefefe;
   margin: auto;
   margin-top:-15vh;
-  /* margin-left: 15em; */
   padding: 0;
   border: 1px solid #888;
-  /* width: 50%; */
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
   -webkit-animation-name: animatetop;
   -webkit-animation-duration: 0.4s;
   animation-name: animatetop;
   animation-duration: 0.4s;
   width: 994px;
-  height: 833px;
+  height: 100%;
+  
 }
+
+#addNoteModal .splitNoteModal {
+  width: 994px;
+  position: fixed;
+  z-index: 1;
+  overflow-x: hidden;
+}
+
+#addNoteModal .upside {
+  top: 0;
+  background: #FAFAFA;
+  height: 50%;
+  border-radius: 8px 0px 8px 0px;
+}
+
+#addNoteModal .upside .modal-header {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 8px 8px 0px 0px;
+}
+
+#addNoteModal .downside {
+  bottom: 0;
+  background: #FFFFFF;
+  height: 50%;
+}
+
+
 
 
 .priorityI input[type=radio]{
@@ -706,51 +753,131 @@ body {
 }
 
 
-.modal-contentForTaskHistory { 
+#taskHistoryModal .modal-contentForTaskHistory {
   background-color: #fefefe;
   margin: auto;
   margin-top:-15vh;
-  /* margin-left: 15em; */
   padding: 0;
   border: 1px solid #888;
-  /* width: 50%; */
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
   -webkit-animation-name: animatetop;
   -webkit-animation-duration: 0.4s;
   animation-name: animatetop;
   animation-duration: 0.4s;
-  width: 994px;
-  /* height: 833px; */
+  max-width: 994px;
+  height: 733px;
+  border-radius: 10px;
+  overflow-y: hidden; 
 }
 
-/*.taskHistoryModalMain {
-  padding: 16px;
-  margin-top: 37px;
+#taskHistoryModal .taskHistoryModalSplit {
+  height:100%;
+  width:100%;
+  margin:0 auto;
+  border-radius: 10px;
 }
 
-.taskHistoryModalSplit {
-  background: #fff;
-  height: 100%;
-  position: fixed;
-  z-index: 1;
-  /* top: 10; 
-  overflow-x: hidden;
-  padding-top: 20px;
+#taskHistoryModal .taskHistorySide{
+  display:inline-block;
+  vertical-align:top;
+  background:#FAFAFA;
+  height:100%;
+  width:25%;
+  overflow-y: scroll; 
+  border-radius: 10px;
+  border-right: 1px solid transparent;
 }
 
-.taskHistoryModalLeft {
-  width: 24%;
-  left: 10;
-  background-color: #111;
-  overflow-y: hidden;
+#taskHistoryModal .taskHistorySide:nth-child(2) {
+  background:#FFFFFF;
+  width:75%;
+  overflow-y: scroll;
+  border-radius: 10px;
 }
 
-.taskHistoryModalRight {
-  background: greenyellow;
-  width: 76%;
-  right:0;
+#taskHistoryModal .taskHistorySide .singleTask{
+  padding: 20px 0px 0px 25px;
 }
-*/
+
+#taskHistoryModal .taskHistorySide .singleTask h4 {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  color: #26A69A;
+  margin-left: -7px;
+  padding-bottom: 10px;
+}
+
+#taskHistoryModal .taskHistorySide .singleTask .allTaskContainer {
+  padding: 10px 20px 20px 20px;
+  border-left: 1.5px solid rgba(51, 51, 51, 0.2);
+}
+
+#taskHistoryModal .taskHistorySide .singleTask .allTaskContainer .fa-circle {
+  margin-left: -29px;
+  margin-right: 12px;
+  color: #26A69A;
+}
+
+
+/* #taskHistoryModal .taskHistorySide .singleTask .allTaskContainer .goal_moved{
+  
+} */
+
+/* #taskHistoryModal .taskHistorySide .singleTask .allTaskContainer .goal_moved:nth-child(1) {
+  margin-top: 0px;
+} */
+
+#taskHistoryModal .taskHistorySide .singleTask .allTaskContainer .move_heading {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: rgba(0, 0, 0);
+  position: relative;
+}
+
+#taskHistoryModal .taskHistorySide .singleTask .allTaskContainer .goal_moved_head .label {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+#taskHistoryModal .taskHistorySide .singleTask .allTaskContainer .move_info .status_container {
+  /* border: 1px solid rgba(0, 0, 0, 0.1); */
+  width: 150px;
+  height: 40px;
+  margin-top: 5px;
+  margin-right: 10px;
+  display: inline-block;
+}
+
+#taskHistoryModal .taskHistorySide .singleTask .allTaskContainer .move_info .status_and_time {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.5);
+  border-left: 2px solid rgba(0, 0, 0, 0.1);
+  padding-left: 4px;
+}
+
+#taskHistoryModal .taskHistorySide .singleTask .allTaskContainer .move_info .status_container p{
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  border-left: 2px solid rgba(0, 0, 0, 0.1);
+  color: rgba(0, 0, 0, 0.9);
+  padding-left: 4px;
+  margin-top: -3px;
+}
+
+
+
+
 
 .ForMobile {
   display: none;
@@ -827,8 +954,12 @@ body {
   .insidemodalContentForNote {
     width: 343px;
     height: 128px;
-    box-sizing: border-box;
     border: 1px solid rgba(0, 0, 0, 0.3);
+    box-sizing: border-box;
+    border-radius: 10px;
+    outline-color: transparent;
+    padding: 6px;
+    resize: none;
   }
 
   .close {
@@ -1336,7 +1467,6 @@ summary:focus {
 
 
 .modal-contentForUserProfile {
-  
   background-color: #fefefe;
   margin: auto;
   margin-top:-15vh;
@@ -1821,3 +1951,43 @@ summary:focus {
 }
 @media screen and (max-width: 1300px) {.nav-tabs #logoutTab {max-width: 90px;}.nav-tabs #profileTab {max-width: 170px;}.nav-tabs #projectsTab {margin-left: 90px;} .nav-tabs .nav-link {max-width: 150px;} #home-tab {margin-left: 1.1em;} .nav-tabs .otherNavTools {max-width: 110px;} #themeDDContent {max-width: 110px;} .openAddNoteModalbtn {left: 14.5%;}}
 @media screen and (max-width: 1300px) {.nav-tabs #logoutTab {max-width: 100px;} #themeDDContent .imgContainer {margin-right: -5px;}   #themeDDContent .imgBtm{margin-left: 15px;} .themeDropDown .themeDropDownContent .imgGrid{margin-left: -12px;} .projectsDropDownContent {margin-left: 5.6em; width: 110px;} .ex .excontent .scrumtools span {font-size: 12px;} .ex .excontent .scrumtools i {font-size: 14px;}}
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 2px;
+  border: 1px solid rgba(255, 76, 109, 0.25);
+  background: #FFFFFF;
+  border-radius: 5px;
+  padding: 7px;
+  text-align: left;
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 18px;
+  color: rgba(0, 0, 0, 0.9);
+}
+
+.example-list {
+  min-height: 60px;
+  background: transparent;
+  border-radius: 4px;
+  overflow: hidden;
+  display: block;
+}
+
+/* .example-list:hover {
+  min-height: 150px;
+} */
+
+.cdk-drop-placeholder {
+  opacity: 0;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.example-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}

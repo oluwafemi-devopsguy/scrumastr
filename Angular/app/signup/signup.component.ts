@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-
-import { DataService } from '../data.service';
 import { Router } from '@angular/router';
+import { DataService } from '../data.service';
+import * as $ from 'jquery/dist/jquery.min.js';
+import { Title } from "@angular/platform-browser";
 
 @Component({
   selector: 'app-signup',
@@ -9,43 +10,48 @@ import { Router } from '@angular/router';
   styleUrls: ['./signup.component.css']
 })
 export class SignupComponent implements OnInit {
+  public create_new_project: boolean = false;
 
-  constructor(private router: Router, public dataservice: DataService) { }
+  constructor(private router: Router, public dataService: DataService, private titleService: Title) {
+
+  }
 
   ngOnInit() {
-    if (sessionStorage.getItem('token')) {
-      this.router.navigate(['scrumboard/'+sessionStorage.getItem('project_id')])
-    }
     const showProName = document.getElementById("c") as HTMLInputElement
-    showProName.checked = true
-    this.dataservice.createuser_usertype = 'user'
-    this.showProField()
+    showProName.checked = false;
+    this.showProField();
+    this.titleService.setTitle('Scrum | Signup');
+    if (sessionStorage.getItem('token')) {
+      this.router.navigate(['scrumboard/' + sessionStorage.getItem('project_id')])
+    }
+  }
+
+  sgnBTN() {
+    $('#btn-one').html('<span id="lodr" class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>SIGN UP').addClass('disabled');
   }
 
 
   showProField() {
     let proField = document.getElementById("c") as HTMLInputElement
-    if (!proField.checked) {
-      document.getElementById('ownerField').style.display = 'block'
+    let disInput = document.getElementById('ownerField') as HTMLInputElement
+    if (proField.checked) {
+      disInput.disabled = false
+      document.getElementById('owner-Field').style.opacity = '1'
     } else {
-       document.getElementById('ownerField').style.display = 'none'
+      disInput.disabled = true
+      document.getElementById('owner-Field').style.opacity = '0.4'
     }
   }
 
-  // userModel = new Scrumuser ('','','','','');
-
-  feedback = ""
-
-  rose(message) {
-    var x = document.getElementById("alert");
-    document.getElementById('alert').innerHTML = message;
-    x.className = "show";
-    setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+  createUser() {
+    let proField = document.getElementById("c") as HTMLInputElement
+    if (proField.checked == true) {
+      this.dataService.createuser_usertype = 'Owner'
+    } else {
+      this.dataService.createuser_usertype = 'User'
+    }
+    document.getElementById('alert-error').style.display = 'none';
+    this.dataService.createUser();
   }
-
-  createUser(){
-    this.dataservice.createUser(); 
-  }
-  
 
 }

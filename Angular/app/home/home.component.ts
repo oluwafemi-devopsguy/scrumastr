@@ -10,18 +10,14 @@ import { DataService } from '../data.service';
 export class HomeComponent implements OnInit {
 
   constructor(private router: Router, public dataservice: DataService) {
-    
-   }
+
+  }
 
   ngOnInit() {
     if (sessionStorage.getItem('token')) {
       this.router.navigate(['scrumboard/:project_id'])
     }
   }
-  
-  createDemo()
-  {
-    this.dataservice.createDemo();
-  }
+
 
 }
