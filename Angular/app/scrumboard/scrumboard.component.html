@@ -123,7 +123,7 @@
         <li class="nav-item">
           <a class="nav-link" id="profileTab" role="tab" (click)="userProfileModal();hideslackchat()">
             <img src="https://res.cloudinary.com/ros4eva/image/upload/v1581678144/Ellipse_6_z5snsi.png">
-            <h4>{{loggedUser}}</h4>
+            <h4>{{loggedUserProfile}}</h4>
             <p>{{loggedUserRole}}</p>
           </a>
         </li>
@@ -184,19 +184,19 @@
         <div id="addNoteModal" class="modal">
           <div class="modal-contentForNote">
             <div class="splitNoteModal upside">
-              <div class="modal-header" style="margin-bottom: 10px;">
+              <div class="modal-header" style="margin-bottom: 5px;">
                 <i class="fas fa-arrow-left ForMobile" (click)="close()"></i>
                 <img src="https://res.cloudinary.com/ros4eva/image/upload/v1576618715/Ellipse_cxegyr.svg"><br>
                 <span class="headerUserTitle">{{loggedUser}}</span>
                 <p class="headerUserRole">{{loggedUserRole}}</p>
-                <span (click)="close()"><span class="icon-cancel" style="font-size: 16px;"></span></span>
+                <span (click)="close()"><span class="icon-cancel" style="font-size: 18px;"></span></span>
               </div>
 
-              <div style="padding: 2px 12px;">
-                <span class="addT">Add Notes</span>
+              <div style="padding: 0px 12px;">
+                <span class="addT addNT">Add Notes</span>
                 <form #addNoteForm name="addNote" id="addNote" (ngSubmit)="addNote()">
                   <textarea #noteToAdd="ngModel" [(ngModel)]="note_to_add" name="noteToAdd"
-                    class="insidemodalContentForNote" style="margin-bottom: 1em;">
+                    class="insidemodalContentForNote" style="margin-bottom: 15px;">
 
                                     </textarea>
                   <div class="addT" style="margin-top: 0px;">
@@ -211,7 +211,7 @@
                       value="low"><span>Low</span>
                   </div>
 
-                  <div class="submitNote" style="margin-bottom: 15px; margin-top: -15px;">
+                  <div class="submitNote" style="margin-bottom: 12px; margin-top: -15px;">
                     <button type="submit" id="addNoteBtn" class="btn addTbtn">ADD NOTE</button>
                     <span class="btn closebtn" id="cancelAddNote" style="font-weight: bold;"
                       (click)="close()">CANCEL</span>
@@ -220,11 +220,12 @@
               </div>
             </div>
             <div class="splitNoteModal downside">
-              <div style="padding: 20px 16px 2px 16px; background-color: white;">
+              <div style="padding: 0px 16px 2px 16px; background-color: white;">
                 <div class="userNoteHistory">
-                  <div class="addT">
+                  <div class="addT" style="position: fixed;margin-left: -10px;  background-color: white; padding: 12px; width: 50%;">
                     <span class="addN">All Notes</span>
                   </div>
+                  <div style="padding: 10px;"></div>
                   <div *ngFor="let note of notes">
                     <div *ngIf="note['noteFor'] == addToUser">
                       <div class="tasks" style="margin-top: 15px;">
@@ -570,7 +571,33 @@
           <img class="modal-contentuploadedImage" id="imageToView">
         </div>
 
+        <!-- Modal Box For Push Id -->
+        <div id="dialog" title="Please Confirm?" style="display: none;">
+          <div class="container">
+            <form #push_id_form="ngForm" (ngSubmit)="processMoveGoalRequest(); closeDialog()">
+              <label for="push_id"
+                style="font-size: 12px; color: rgba(0, 0, 0, 0.8); font-family: 'roboto' sans-serif; margin-bottom: -5px; margin-top: -5px;">Push
+                ID:</label>
+              <input maxlength="10" #push_id_for_verify="ngModel" [(ngModel)]="push_id" type="text" name="push_id"
+                style="width: 100%; padding: 3px 14px; border-radius: 4px; border: 1px solid transparent; background-color: rgba(0, 0, 0, 0.1); outline-color:transparent; font-size: 14px;">
+              <small style="color: rgba(0, 0, 0, 0.4); font-size: 12px;" *ngIf="push_id_form.value['push_id']">Max 10
+                Characters: {{push_id_form.value['push_id'].length || 0}}/10</small>
+              <br>
+              <label for="hours"
+                style="font-size: 12px; color: rgba(0, 0, 0, 0.8); font-family: 'roboto' sans-serif; margin-bottom: -5px;">Hours
+                Spent:</label>
+              <input type="number" name="hours" [(ngModel)]="hours"
+                style="width: 100%; padding: 3px 14px; border-radius: 4px; border: 1px solid transparent; background-color: rgba(0, 0, 0, 0.1); outline-color: transparent; font-size: 14px;">
+              <button type="submit"
+                style="padding: 4px 7px; border: none; background: rgba(0, 0, 0, 0.1); margin-top: 5px; font-size: 12px; outline-color: rgba(0, 0, 0, 0.1); border-radius: 4px;">Move
+                Goal</button>
+            </form>
+        
+          </div>
+        </div>
+
         <!-- <div>Modal Box Stops Here</div> -->
+        
         <div class="container">
           <div id="sprintAlert" class="sprintAlert" style="margin-top: -20px;margin-bottom: 10px;">
             <strong class="mr-auto">Hello! {{loggedUser}}, </strong>Would you like to Start a new Sprint? <bold
@@ -593,10 +620,10 @@
                     (cdkDropListDropped)="drop($event)"
                     id="0"
                   >
-                    <div *ngFor="let item of TFTW">
+                    <div *ngFor="let item of TFTW"  cdkDrag [cdkDragData]="item">
                       <div
                         *ngIf="item['taskFor'] == loggedUserId && item['task'] != '' && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
-                        <div class="excontent" style="border: 1px solid rgba(0, 0, 0, 0.1);" cdkDrag [cdkDragData]="item">
+                        <div class="excontent" style="border: 1px solid rgba(0, 0, 0, 0.1);">
                           <div style="cursor: move;">
                             {{item['task']}}
                           </div><br>
@@ -639,10 +666,10 @@
                     (cdkDropListDropped)="drop($event)"
                     id="1"
                   >
-                    <div *ngFor="let item of TFTD">
+                    <div *ngFor="let item of TFTD"  cdkDrag [cdkDragData]="item">
                       <div
                         *ngIf="item['taskFor'] == loggedUserId && item['task'] != '' && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
-                        <div class="excontent" style="border: 1px solid rgba(0, 0, 0, 0.1);" cdkDrag [cdkDragData]="item">
+                        <div class="excontent" style="border: 1px solid rgba(0, 0, 0, 0.1);">
                           <div style="cursor: move;">
                             {{item['task']}}
                           </div><br>
@@ -684,10 +711,10 @@
                     (cdkDropListDropped)="drop($event)"
                     id="2"
                   >
-                    <div *ngFor="let item of verify">
+                    <div *ngFor="let item of verify" cdkDrag [cdkDragData]="item">
                       <div
                         *ngIf="item['taskFor'] == loggedUserId && item['task'] != '' && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
-                        <div class="excontent" style="border: 1px solid rgba(0, 0, 0, 0.1);" cdkDrag [cdkDragData]="item">
+                        <div class="excontent" style="border: 1px solid rgba(0, 0, 0, 0.1);">
                           <div style="cursor: move;">
                             {{item['task']}}
                           </div><br>
@@ -729,7 +756,7 @@
                         (cdkDropListDropped)="drop($event)"
                         id="3"
                       >
-                        <div *ngFor="let item of done">
+                        <div *ngFor="let item of done"  cdkDrag [cdkDragData]="item">
                           <div
                             *ngIf="item['taskFor'] == loggedUserId && item['task'] != '' && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
                             <div style="margin-left: -8em; margin-bottom: 8px;">
@@ -738,7 +765,7 @@
                                                                                         class="fas fa-circle" style="font-size: 3px;"></i>Int</span> -->
                             </div>
                         
-                            <div class="excontent fordone" style="border: 1px solid rgba(0, 0, 0, 0.1);" cdkDrag [cdkDragData]="item">
+                            <div class="excontent fordone" style="border: 1px solid rgba(0, 0, 0, 0.1);">
                               <div style="cursor: move;">
                                 {{item['task']}}
                               </div><br>
@@ -817,10 +844,10 @@
                           (cdkDropListDropped)="drop($event)"
                           id="0"
                         >
-                          <div *ngFor="let item of TFTW">
+                          <div *ngFor="let item of TFTW" cdkDrag [cdkDragData]="item">
                             <div
                               *ngIf="item['taskFor'] == user['userID'] && item['task'] != '' && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
-                              <div class="excontent" cdkDrag [cdkDragData]="item">
+                              <div class="excontent">
                                 <div style="cursor: move;">
                                   {{item['task']}}
                                 </div><br>
@@ -860,10 +887,10 @@
                           (cdkDropListDropped)="drop($event)"
                           id="1"
                         >
-                          <div *ngFor="let item of TFTD">
+                          <div *ngFor="let item of TFTD" cdkDrag [cdkDragData]="item">
                             <div
                               *ngIf="item['taskFor'] == user['userID'] && item['task'] != '' && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
-                              <div class="excontent" cdkDrag [cdkDragData]="item">
+                              <div class="excontent">
                                 <div style="cursor: move;">
                                   {{item['task']}}
                                 </div><br>
@@ -906,10 +933,10 @@
                           (cdkDropListDropped)="drop($event)"
                           id="2"
                         >
-                          <div *ngFor="let item of verify">
+                          <div *ngFor="let item of verify" cdkDrag [cdkDragData]="item">
                             <div
                               *ngIf="item['taskFor'] == user['userID'] && item['task'] != '' && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
-                              <div class="excontent" cdkDrag [cdkDragData]="item">
+                              <div class="excontent">
                                 <div style="cursor: move;">
                                   {{item['task']}}
                                 </div><br>
@@ -951,7 +978,7 @@
                               (cdkDropListDropped)="drop($event)"
                               id="3"
                             >
-                              <div *ngFor="let item of done">
+                              <div *ngFor="let item of done" cdkDrag [cdkDragData]="item">
                                 <div
                                   *ngIf="item['taskFor'] == user['userID'] && item['task'] != '' && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
                                   <div style="margin-left: -8em; margin-bottom: 8px;">
@@ -960,7 +987,7 @@
                                                                                                           style="font-size: 3px;"></i>Int</span> -->
                                   </div>
                               
-                                  <div class="excontent fordone" cdkDrag [cdkDragData]="item">
+                                  <div class="excontent fordone">
                                     <div style="cursor: move;">
                                       {{item['task']}}
                                     </div><br>

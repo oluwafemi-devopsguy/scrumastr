@@ -420,14 +420,17 @@ body {
     
   }
 
-.addT {
+.addT, .addNT {
   color:#26A69A;
   font-size: 14px;
   font-weight: bold;
   font-family: 'Roboto', sans-serif;
   line-height: 16px;
-  
 }
+
+/* #addNoteModal .addNT {
+  margin-top: -20px!important;
+} */
 
 .submitTask {
   margin-top: 20px;
@@ -435,7 +438,7 @@ body {
 }
 
 .submitNote {
-  margin-top: 4em!important;
+  margin-top: 3em!important;
   margin-left: 361px;
 }
 
@@ -541,7 +544,7 @@ body {
 
 #addNoteModal .modal-contentForNote .insidemodalContentForNote {
   width: 954px;
-  height: 142px;
+  height: 132px;
   margin-top:15px;
   border: 1px solid rgba(0, 0, 0, 0.3);
   box-sizing: border-box;
@@ -549,6 +552,7 @@ body {
   outline-color: transparent;
   padding: 8px;
   resize: none;
+  margin-top: 6px;
 }
 
 #addNoteModal .modal-contentForNote {
@@ -577,19 +581,18 @@ body {
 #addNoteModal .upside {
   top: 0;
   background: #FAFAFA;
-  height: 50%;
-  border-radius: 8px 0px 8px 0px;
+  height: 55%;
+  overflow: hidden;
 }
 
 #addNoteModal .upside .modal-header {
   background: rgba(0, 0, 0, 0.1);
-  border-radius: 8px 8px 0px 0px;
 }
 
 #addNoteModal .downside {
   bottom: 0;
   background: #FFFFFF;
-  height: 50%;
+  height: 45%;
 }
 
 
@@ -1969,7 +1972,7 @@ summary:focus {
 }
 
 .example-list {
-  min-height: 60px;
+  min-height: 150px;
   background: transparent;
   border-radius: 4px;
   overflow: hidden;

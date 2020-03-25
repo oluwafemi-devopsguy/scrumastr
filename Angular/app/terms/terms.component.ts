@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Title } from "@angular/platform-browser";
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-terms',
@@ -13,6 +13,7 @@ export class TermsComponent implements OnInit {
   }
 
   ngOnInit() {
-  }
+  } 
+
 
 }

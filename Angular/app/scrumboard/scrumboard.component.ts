@@ -5,7 +5,7 @@ import { Title } from "@angular/platform-browser";
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DataService } from '../data.service';
-import * as $ from 'jquery';
+import * as $AB from 'jquery';
 
 
 @Component({
@@ -33,6 +33,7 @@ export class ScrumboardComponent implements OnInit {
     this.getAllSprints()
   }
 
+
   // ngAfterViewInit(): void {
   //   this.dataService.deleteNoteRequest(this.project_id, 203).subscribe(
   //     data => {
@@ -52,7 +53,8 @@ export class ScrumboardComponent implements OnInit {
   public users = [];
   public participants = [];
   public project_id = sessionStorage.getItem('project_id');
-  loggedUser = sessionStorage.getItem('realname')
+  public loggedUser = sessionStorage.getItem('realname')
+  public loggedUserProfile = this.loggedUser.slice(0, this.loggedUser.indexOf(' '))
   loggedUserRole = sessionStorage.getItem('role');
   public loggedUserId;
   public sprints = [];
@@ -69,6 +71,10 @@ export class ScrumboardComponent implements OnInit {
   public addToUser = sessionStorage.getItem('role_id');
   public note_to_add;
   public notePriority;
+  public push_id;
+  public hours = 0;
+  public to_id;
+  public goal_id;
 
   load() {
     if (window.localStorage) {
@@ -656,7 +662,7 @@ export class ScrumboardComponent implements OnInit {
           'historyHours': item['hours'],
           'historyStatus': item['status'],
           'historyMovedBy': item['done_by'],
-          'historyMessage': item['message'],
+          'historyMessage': item['message'].slice(0, item['message'].indexOf('by')),
           'historyProjectID': item['goal_project_id'],
           'timeCreated': item['time_created'],
           'file': item['file']
@@ -957,36 +963,59 @@ export class ScrumboardComponent implements OnInit {
     }
   }
 
-  drop(event: CdkDragDrop<string[]>) {
-    let to_id = event.container.id;
-    let goal_id = 'm'+ event.item.data.goalID;
-    let hours = -1;
-    let push_id = undefined;
-    if (event.previousContainer === event.container) {
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    } else {
-      // this.dataService.moveGoalRequest(goal_id, to_id, hours, push_id, this.project_id).subscribe(
-      //   data => {
-      //     this.NotificationBox(data['message']);
-      //     this.users = [];
-      //     this.TFTD = [];
-      //     this.TFTW = [];
-      //     this.done = [];
-      //     this.verify = [];
-      //     this.filterUsers(data['data']);
+  processMoveGoalRequest() {
+    this.dataService.moveGoalRequest(this.goal_id, this.to_id, this.hours, this.push_id, this.project_id).subscribe(
+      data => {
+        this.NotificationBox(data['message']);
+        this.users = [];
+        this.TFTD = [];
+        this.TFTW = [];
+        this.done = [];
+        this.verify = [];
+        this.filterUsers(data['data']);
 
-      //   },
-      //   error => {
-      //     console.log(error)
-      //     this.NotificationBox('Unexpected error!, please try move the task again.')
-      //   }
-      // )
-      transferArrayItem(event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex);
-      
-    }
+      },
+      error => {
+        console.log(error)
+        this.NotificationBox('Unexpected error!, please try move the task again.')
+      }
+    )
   }
 
+  drop(event: CdkDragDrop<string[]>) {
+    this.to_id = event.container.id;
+    this.goal_id = 'm' + event.item.data.goalID;
+    let from_id = event.previousContainer.id
+    let goal_for = event.item.data.taskFor
+    if (this.loggedUserRole == "Owner" || this.loggedUserRole == "Admin" || this.loggedUserRole == "Quality Analyst" || goal_for == this.addToUser) {
+      if (event.previousContainer === event.container) {
+        moveItemInArray(event.container.data, 
+          event.previousIndex, 
+          event.currentIndex);
+
+      }else if (this.loggedUserRole == 'Developer' && this.to_id == '3') {
+        this.NotificationBox('Permission Denied!')
+      } else {
+        if (this.to_id == '2' && from_id != '3') {
+          this.push_id_form();
+        } else {
+          this.processMoveGoalRequest();
+        }
+        transferArrayItem(event.previousContainer.data,
+          event.container.data,
+          event.previousIndex,
+          event.currentIndex);
+      }
+    }else {
+      this.NotificationBox(`Permission Denied! You Can Only Move Task For ${this.loggedUser}`)
+    }
+  }
+  
+  push_id_form() {
+    (<any>$("div#dialog")).dialog();
+  }
+
+  closeDialog() {
+    (<any>$("div#dialog")).dialog('close');
+  }
 }

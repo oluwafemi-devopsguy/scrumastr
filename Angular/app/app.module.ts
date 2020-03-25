@@ -24,7 +24,8 @@ import { HttpClientModule } from '@angular/common/http';
     SignupComponent,
     SupportComponent,
     TermsComponent,
-    HomeComponent
+    HomeComponent,
+    
   ],
   
   imports: [
