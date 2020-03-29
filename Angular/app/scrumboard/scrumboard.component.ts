@@ -1,5 +1,5 @@
 import { Component, OnInit, ElementRef, ViewChildren, QueryList, ViewChild } from '@angular/core';
-import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { CdkDragStart, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { ActivatedRoute } from '@angular/router';
 import { Title } from "@angular/platform-browser";
 import { Router } from '@angular/router';
@@ -53,8 +53,8 @@ export class ScrumboardComponent implements OnInit {
   public users = [];
   public participants = [];
   public project_id = sessionStorage.getItem('project_id');
-  public loggedUser = sessionStorage.getItem('realname')
-  public loggedUserProfile = this.loggedUser.slice(0, this.loggedUser.indexOf(' '))
+  public loggedUser = sessionStorage.getItem('realname');
+  public loggedUserProfile = sessionStorage.getItem('realname');
   loggedUserRole = sessionStorage.getItem('role');
   public loggedUserId;
   public sprints = [];
@@ -135,6 +135,10 @@ export class ScrumboardComponent implements OnInit {
       }
     };
 
+    if (this.loggedUser.includes(' ')) {
+      this.loggedUserProfile = this.loggedUser.slice(0, this.loggedUser.indexOf(' '))
+    }
+    this.autoHideDialog()
   }
 
   NotificationBox(alert) {
@@ -983,9 +987,9 @@ export class ScrumboardComponent implements OnInit {
   }
 
   drop(event: CdkDragDrop<string[]>) {
-    this.to_id = event.container.id;
+    this.to_id = event.container.id[event.container.id.length-1];
     this.goal_id = 'm' + event.item.data.goalID;
-    let from_id = event.previousContainer.id
+    let from_id = event.previousContainer.id[event.previousContainer.id.length-1];
     let goal_for = event.item.data.taskFor
     if (this.loggedUserRole == "Owner" || this.loggedUserRole == "Admin" || this.loggedUserRole == "Quality Analyst" || goal_for == this.addToUser) {
       if (event.previousContainer === event.container) {
@@ -998,6 +1002,25 @@ export class ScrumboardComponent implements OnInit {
       } else {
         if (this.to_id == '2' && from_id != '3') {
           this.push_id_form();
+        } else if (goal_for != event.container.id.slice(0, event.container.id.indexOf('e')) && this.loggedUserRole == "Owner" || this.loggedUserRole == "Admin" || this.loggedUserRole == "Quality Analyst") {
+          this.dataService.changeGoalOwner(this.goal_id, 'u'+event.container.id.slice(0, event.container.id.indexOf('e')), this.project_id).subscribe(
+            data => {
+              this.NotificationBox(data['message']);
+              this.users = [];
+              this.TFTD = [];
+              this.TFTW = [];
+              this.done = [];
+              this.verify = [];
+              this.filterUsers(data['data']);
+
+            },
+            error => {
+              console.log(error)
+              this.NotificationBox('Unexpected error!, please try move the task again.')
+            }
+          )
+          event.item.data['taskFor'] = event.container.id.slice(0, event.container.id.indexOf('e'));
+
         } else {
           this.processMoveGoalRequest();
         }
@@ -1010,9 +1033,15 @@ export class ScrumboardComponent implements OnInit {
       this.NotificationBox(`Permission Denied! You Can Only Move Task For ${this.loggedUser}`)
     }
   }
-  
+
+  autoHideDialog() {
+    (<any>$("div#dialog")).dialog({
+      autoOpen: false
+    })
+  };
+
   push_id_form() {
-    (<any>$("div#dialog")).dialog();
+    (<any>$("div#dialog")).dialog('open');
   }
 
   closeDialog() {

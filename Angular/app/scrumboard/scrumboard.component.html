@@ -333,9 +333,11 @@
               </div>
 
               <div class="taskHistorySide">
-                <span class="close" (click)="close()" style="margin: 10px;"><span class="icon-cancel"></span></span>
                 <div class="container singleTask">
-                  <h4>Single Task History</h4>
+                  <div class="header">
+                    <h4>Single Task History</h4>
+                    <span class="close" (click)="close()" style="margin-right: -10px; margin-top: -10px;"><span style="font-size: 25px;" class="icon-cancel"></span></span>
+                  </div>
                   <div class="allTaskContainer">
                     <div *ngFor="let history of goal_history">
                       <div *ngIf="history">
@@ -364,6 +366,8 @@
                         </div>
                       </div>
                     </div>
+
+                    <!-- <div style="padding: 10px;"></div> -->
                   </div>
                 </div>
               </div>
@@ -572,7 +576,7 @@
         </div>
 
         <!-- Modal Box For Push Id -->
-        <div id="dialog" title="Please Confirm?" style="display: none;">
+        <div id="dialog" title="Please Confirm?" >
           <div class="container">
             <form #push_id_form="ngForm" (ngSubmit)="processMoveGoalRequest(); closeDialog()">
               <label for="push_id"
@@ -618,11 +622,12 @@
                     [cdkDropListData]="TFTW"
                     [cdkDropListConnectedTo]="[tftdList, verifyList, doneList]" 
                     (cdkDropListDropped)="drop($event)"
-                    id="0"
+                    id="{{loggedUserId}}e0"
                   >
                     <div *ngFor="let item of TFTW"  cdkDrag [cdkDragData]="item">
                       <div
                         *ngIf="item['taskFor'] == loggedUserId && item['task'] != '' && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
+                        <div class="dragged_item_placeholder" *cdkDragPlaceholder><span class="icon-plus-symbol" style="font-size: 32px;"></span></div>
                         <div class="excontent" style="border: 1px solid rgba(0, 0, 0, 0.1);">
                           <div style="cursor: move;">
                             {{item['task']}}
@@ -664,11 +669,12 @@
                     [cdkDropListData]="TFTD"
                     [cdkDropListConnectedTo]="[tftwList, verifyList, doneList]"
                     (cdkDropListDropped)="drop($event)"
-                    id="1"
+                    id="{{loggedUserId}}e1"
                   >
                     <div *ngFor="let item of TFTD"  cdkDrag [cdkDragData]="item">
                       <div
                         *ngIf="item['taskFor'] == loggedUserId && item['task'] != '' && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
+                        <div class="dragged_item_placeholder" *cdkDragPlaceholder><span class="icon-plus-symbol" style="font-size: 32px;"></span></div>
                         <div class="excontent" style="border: 1px solid rgba(0, 0, 0, 0.1);">
                           <div style="cursor: move;">
                             {{item['task']}}
@@ -709,11 +715,12 @@
                     [cdkDropListData]="verify"
                     [cdkDropListConnectedTo]="[tftwList, tftdList, doneList]"
                     (cdkDropListDropped)="drop($event)"
-                    id="2"
+                    id="{{loggedUserId}}e2"
                   >
                     <div *ngFor="let item of verify" cdkDrag [cdkDragData]="item">
                       <div
                         *ngIf="item['taskFor'] == loggedUserId && item['task'] != '' && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
+                        <div class="dragged_item_placeholder" *cdkDragPlaceholder><span class="icon-plus-symbol" style="font-size: 32px;"></span></div>
                         <div class="excontent" style="border: 1px solid rgba(0, 0, 0, 0.1);">
                           <div style="cursor: move;">
                             {{item['task']}}
@@ -754,11 +761,12 @@
                         [cdkDropListData]="done"
                         [cdkDropListConnectedTo]="[tftwList, tftdList, verifyList]"
                         (cdkDropListDropped)="drop($event)"
-                        id="3"
+                        id="{{loggedUserId}}e3"
                       >
                         <div *ngFor="let item of done"  cdkDrag [cdkDragData]="item">
                           <div
                             *ngIf="item['taskFor'] == loggedUserId && item['task'] != '' && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
+                            <div class="dragged_item_placeholder" *cdkDragPlaceholder><span class="icon-plus-symbol" style="font-size: 32px;"></span></div>
                             <div style="margin-left: -8em; margin-bottom: 8px;">
                               <span style="font-weight: bold;">{{item['pushID']}}</span>
                               <!-- <span class="int"><i
@@ -805,424 +813,209 @@
 
         <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
           <div class="container">
-            <div *ngFor="let user of users">
-              <details #teamDetail id="teamTaskDropDown" class="teamTaskDetail" [attr.data-target]="user['userID']"
-                (click)="borderRadious(teamDetail)">
-                <summary>
-                  <div class="teamTaskDropDownMenu" id="{{user['userID']}}">
-                    <div>
-                      <img src="https://res.cloudinary.com/ros4eva/image/upload/v1581417531/Ellipse_2_ithyej.png">
-                      <ul>
-                        <li><span class="teamTaskTitle firstOne">{{user['userName']}}</span></li>
-                        <li class="ttTasksandTime">{{user['userTotalWeekHour']}} hours | {{user['scrumGoalSet']}} Tasks
-                        </li>
-                      </ul>
-                    </div>
-                    <div style="float: right;">
-                      <ul class="teamTaskTools" #getUserRoleId [attr.user_role_id]="user['userID']">
-                        <li><i class="fas fa-plus" (click)="addTaskModal('task', getUserRoleId);"></i></li>
-                        <li><i style="padding: 5.5px 8px;"
-                            (click)="addTaskModal('note', getUserRoleId); hideslackchat()"><span class="icon-Group-1"
-                              style="width: 25px; height: 25px;"></span></i></li>
-                        <li><i class="fas fa-user" (click)="taskHistory (); hideslackchat()"></i></li>
-                        <li><i id="toggledUp{{user['userID']}}" class="fas fa-chevron-up"></i></li>
-                      </ul>
-                    </div>
-                  </div>
-                </summary>
-
-                <div class="ttDropDownContent" style="width: 100%;">
-                  <div class="row">
-                    <div class="col">
-                      <div class="ex" id="tfw" style="border-color: #FF4C6D;">
-                        <h4>Tasks for the week</h4>
-                        <div
-                          class="example-list"
-                          cdkDropList #tftwList="cdkDropList"
-                          [cdkDropListData]="TFTW"
-                          [cdkDropListConnectedTo]="[tftdList, verifyList, doneList]"
-                          (cdkDropListDropped)="drop($event)"
-                          id="0"
-                        >
-                          <div *ngFor="let item of TFTW" cdkDrag [cdkDragData]="item">
-                            <div
-                              *ngIf="item['taskFor'] == user['userID'] && item['task'] != '' && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
-                              <div class="excontent">
-                                <div style="cursor: move;">
-                                  {{item['task']}}
-                                </div><br>
-                                <div class="uploadedImage" *ngIf="item['file']">
-                                  <img #viewClickedImage [attr.image_to_view]="'image' + item['goalID']"
-                                    src="{{dataService.imageApi}}{{item['file']}}" (click)="userImageModal(viewClickedImage); hideslackchat()">
-                                </div>
-                          
-                                <div class="scrumtools">
-                                  <n style="margin-right: 9px;">{{item['goalID']}}</n>
-                                  <span #user [attr.task_to_edit]="item['task']" [attr.task_id_to_edit]="item['goalID']" class="icon-pencil tools"
-                                    alt="edit" title="edit" (click)="editTaskModal(user)"></span>
-                                  <span #userUploadImage [attr.task_id_to_upload_img]="item['goalID']" class="icon-camera tools"
-                                    alt="upload image" title="upload image" (click)="uploadImage(userUploadImage)"></span><i
-                                    class="fas fa-clone tools" alt="copy" title="copy" style="font-size: 15px;"
-                                    (click)="copyToClipboard(user)"></i>
-                                  <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i class="fas fa-history tools"
-                                    alt="history" title="history" id="taskHistory"
-                                    (click)="taskHistory(); viewTaskHistory(item['goalID']); hideslackchat()"></i>
-                                  <span class="icon-move tools" alt="move" title="move"></span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+            <div cdkDropListGroup>
+              <div *ngFor="let user of users">
+                <details open #teamDetail id="teamTaskDropDown" class="teamTaskDetail" [attr.data-target]="user['userID']"
+                  (click)="borderRadious(teamDetail)">
+                  <summary>
+                    <div class="teamTaskDropDownMenu" id="{{user['userID']}}">
+                      <div>
+                        <img src="https://res.cloudinary.com/ros4eva/image/upload/v1581417531/Ellipse_2_ithyej.png">
+                        <ul>
+                          <li><span class="teamTaskTitle firstOne">{{user['userName']}}</span></li>
+                          <li class="ttTasksandTime">{{user['userTotalWeekHour']}} hours | {{user['scrumGoalSet']}} Tasks
+                          </li>
+                        </ul>
                       </div>
-
-                    </div>
-                    <div class="col ">
-                      <div class="ex" id="tft" style="border-color: #FF4C6D;">
-                        <h4>Todays Target</h4>
-                        <div
-                          class="example-list"
-                          cdkDropList #tftdList="cdkDropList"
-                          [cdkDropListData]="TFTD"
-                          [cdkDropListConnectedTo]="[tftwList, verifyList, doneList]"
-                          (cdkDropListDropped)="drop($event)"
-                          id="1"
-                        >
-                          <div *ngFor="let item of TFTD" cdkDrag [cdkDragData]="item">
-                            <div
-                              *ngIf="item['taskFor'] == user['userID'] && item['task'] != '' && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
-                              <div class="excontent">
-                                <div style="cursor: move;">
-                                  {{item['task']}}
-                                </div><br>
-                                <div class="uploadedImage" *ngIf="item['file']">
-                                  <img #viewClickedImage [attr.image_to_view]="'image' + item['goalID']"
-                                    src="{{dataService.imageApi}}{{item['file']}}" (click)="userImageModal(viewClickedImage); hideslackchat()">
-                                </div>
-                          
-                                <div class="scrumtools">
-                                  <n style="margin-right: 9px;">{{item['goalID']}}</n>
-                                  <span #user [attr.task_to_edit]="item['task']" [attr.task_id_to_edit]="item['goalID']" class="icon-pencil tools"
-                                    alt="edit" title="edit" (click)="editTaskModal(user)"></span>
-                                  <span #userUploadImage [attr.task_id_to_upload_img]="item['goalID']" class="icon-camera tools"
-                                    alt="upload image" title="upload image" (click)="uploadImage(userUploadImage)"></span><i
-                                    class="fas fa-clone tools" alt="copy" title="copy" style="font-size: 15px;"
-                                    (click)="copyToClipboard(user)"></i>
-                                  <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i class="fas fa-history tools"
-                                    alt="history" title="history" id="taskHistory"
-                                    (click)="taskHistory(); viewTaskHistory(item['goalID']); hideslackchat()"></i>
-                                  <span class="icon-move tools" alt="move" title="move"></span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                      <div style="float: right;">
+                        <ul class="teamTaskTools" #getUserRoleId [attr.user_role_id]="user['userID']">
+                          <li><i class="fas fa-plus" (click)="addTaskModal('task', getUserRoleId);"></i></li>
+                          <li><i style="padding: 5.5px 8px;" (click)="addTaskModal('note', getUserRoleId); hideslackchat()"><span
+                                class="icon-Group-1" style="width: 25px; height: 25px;"></span></i></li>
+                          <li><i class="fas fa-user" (click)="taskHistory (); hideslackchat()"></i></li>
+                          <li><i id="toggledUp{{user['userID']}}" class="fas fa-chevron-up"></i></li>
+                        </ul>
                       </div>
                     </div>
-                    <div class="col">
-                      <div class="ex" id="verify" style="border-color: #FF4C6D;">
-                        <h4>Verify Task</h4>
-                        <!-- <div style="margin-left: -8em; margin-bottom: 8px;" *ngFor="let item of done">
-                                                    <span style="font-weight: bold; margin-left: -1em;" *ngIf="item['taskFor'] == user['userID']">{{item['pushID']}}
-                                                    </span>
-                                                </div> -->
-                        <div
-                          class="example-list"
-                          cdkDropList #verifyList="cdkDropList"
-                          [cdkDropListData]="verify"
-                          [cdkDropListConnectedTo]="[tftwList, tftdList, doneList]"
-                          (cdkDropListDropped)="drop($event)"
-                          id="2"
-                        >
-                          <div *ngFor="let item of verify" cdkDrag [cdkDragData]="item">
-                            <div
-                              *ngIf="item['taskFor'] == user['userID'] && item['task'] != '' && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
-                              <div class="excontent">
-                                <div style="cursor: move;">
-                                  {{item['task']}}
-                                </div><br>
-                                <div class="uploadedImage" *ngIf="item['file']">
-                                  <img #viewClickedImage [attr.image_to_view]="'image' + item['goalID']"
-                                    src="{{dataService.imageApi}}{{item['file']}}" (click)="userImageModal(viewClickedImage); hideslackchat()">
-                                </div>
-                          
-                                <div class="scrumtools">
-                                  <n style="margin-right: 9px;">{{item['goalID']}}</n>
-                                  <span #user [attr.task_to_edit]="item['task']" [attr.task_id_to_edit]="item['goalID']" class="icon-pencil tools"
-                                    alt="edit" title="edit" (click)="editTaskModal(user)"></span>
-                                  <span #userUploadImage [attr.task_id_to_upload_img]="item['goalID']" class="icon-camera tools"
-                                    alt="upload image" title="upload image" (click)="uploadImage(userUploadImage)"></span><i
-                                    class="fas fa-clone tools" alt="copy" title="copy" style="font-size: 15px;"
-                                    (click)="copyToClipboard(user)"></i>
-                                  <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i class="fas fa-history tools"
-                                    alt="history" title="history" id="taskHistory"
-                                    (click)="taskHistory(); viewTaskHistory(item['goalID']); hideslackchat()"></i>
-                                  <span class="icon-move tools" alt="move" title="move"></span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col">
-                      <div class="ex" id="done" style="border-color: #FF4C6D;">
-                        <!-- <div style="margin-left: 10px;"> -->
-                        <h4>Done</h4>
-                        <div class="child">
-                          <div style="margin-left: 10px;">
-                            <div
-                              class="example-list"
-                              cdkDropList #doneList="cdkDropList"
-                              [cdkDropListData]="done"
-                              [cdkDropListConnectedTo]="[tftwList, tftdList, verifyList]"
-                              (cdkDropListDropped)="drop($event)"
-                              id="3"
-                            >
-                              <div *ngFor="let item of done" cdkDrag [cdkDragData]="item">
-                                <div
-                                  *ngIf="item['taskFor'] == user['userID'] && item['task'] != '' && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
-                                  <div style="margin-left: -8em; margin-bottom: 8px;">
-                                    <span style="font-weight: bold;">{{item['pushID']}}</span>
-                                    <!-- <span class="int"><i class="fas fa-circle"
-                                                                                                          style="font-size: 3px;"></i>Int</span> -->
+                  </summary>
+                  <div class="ttDropDownContent" style="width: 100%;">
+                    <div class="row">
+                      <div class="col">
+                        <div class="ex" id="tfw" style="border-color: #FF4C6D;">
+                          <h4>Tasks for the week</h4>
+                          <div class="example-list" cdkDropList  [cdkDropListData]="TFTW"
+                             (cdkDropListDropped)="drop($event)" id="{{user.userID}}e0">
+                            <div *ngFor="let item of TFTW" cdkDrag [cdkDragData]="item" >
+                              <div
+                                *ngIf="item['taskFor'] == user['userID'] && item['task'] != '' && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
+                                <div class="dragged_item_placeholder" *cdkDragPlaceholder><span class="icon-plus-symbol" style="font-size: 32px;"></span></div>
+                                <div class="excontent">
+                                  <div style="cursor: move;">
+                                    {{item['task']}}
+                                  </div><br>
+                                  <div class="uploadedImage" *ngIf="item['file']">
+                                    <img #viewClickedImage [attr.image_to_view]="'image' + item['goalID']"
+                                      src="{{dataService.imageApi}}{{item['file']}}"
+                                      (click)="userImageModal(viewClickedImage); hideslackchat()">
                                   </div>
-                              
-                                  <div class="excontent fordone">
-                                    <div style="cursor: move;">
-                                      {{item['task']}}
-                                    </div><br>
-                                    <div class="uploadedImage" *ngIf="item['file']">
-                                      <img #viewClickedImage [attr.image_to_view]="'image' + item['goalID']"
-                                        src="{{dataService.imageApi}}{{item['file']}}" (click)="userImageModal(viewClickedImage); hideslackchat()">
-                                    </div>
-                                    <div class="scrumtools">
-                                      <n style="margin-right: 9px;">{{item['goalID']}}</n>
-                                      <span #user [attr.task_to_edit]="item['task']" [attr.task_id_to_edit]="item['goalID']" class="icon-pencil tools"
-                                        alt="edit" title="edit" (click)="editTaskModal(user)"></span>
-                                      <span #userUploadImage [attr.task_id_to_upload_img]="item['goalID']" class="icon-camera tools"
-                                        alt="upload image" title="upload image" (click)="uploadImage(userUploadImage)"></span><i
-                                        class="fas fa-clone tools" alt="copy" title="copy" style="font-size: 15px;"
-                                        (click)="copyToClipboard(user)"></i>
-                                      <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
-                                      <i class="fas fa-history tools" alt="history" title="history" id="taskHistory"
-                                        (click)="taskHistory(); viewTaskHistory(item['goalID']); hideslackchat()"></i>
-                                      <span class="icon-move tools" alt="move" title="move"></span>
-                                    </div>
+              
+                                  <div class="scrumtools">
+                                    <n style="margin-right: 9px;">{{item['goalID']}}</n>
+                                    <span #user [attr.task_to_edit]="item['task']" [attr.task_id_to_edit]="item['goalID']"
+                                      class="icon-pencil tools" alt="edit" title="edit" (click)="editTaskModal(user)"></span>
+                                    <span #userUploadImage [attr.task_id_to_upload_img]="item['goalID']" class="icon-camera tools"
+                                      alt="upload image" title="upload image" (click)="uploadImage(userUploadImage)"></span><i
+                                      class="fas fa-clone tools" alt="copy" title="copy" style="font-size: 15px;"
+                                      (click)="copyToClipboard(user)"></i>
+                                    <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i
+                                      class="fas fa-history tools" alt="history" title="history" id="taskHistory"
+                                      (click)="taskHistory(); viewTaskHistory(item['goalID']); hideslackchat()"></i>
+                                    <span class="icon-move tools" alt="move" title="move"></span>
                                   </div>
                                 </div>
                               </div>
                             </div>
-
                           </div>
                         </div>
-                        <!-- </div> -->
+              
+                      </div>
+                      <div class="col ">
+                        <div class="ex" id="tft" style="border-color: #FF4C6D;">
+                          <h4>Todays Target</h4>
+                          <div class="example-list" cdkDropList [cdkDropListData]="TFTD"
+                             (cdkDropListDropped)="drop($event)" id="{{user.userID}}e1">
+                            <div *ngFor="let item of TFTD" cdkDrag [cdkDragData]="item" >
+                              <div
+                                *ngIf="item['taskFor'] == user['userID'] && item['task'] != '' && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
+                                <div class="dragged_item_placeholder" *cdkDragPlaceholder><span class="icon-plus-symbol" style="font-size: 32px;"></span></div>
+                                <div class="excontent">
+                                  <div style="cursor: move;">
+                                    {{item['task']}}
+                                  </div><br>
+                                  <div class="uploadedImage" *ngIf="item['file']">
+                                    <img #viewClickedImage [attr.image_to_view]="'image' + item['goalID']"
+                                      src="{{dataService.imageApi}}{{item['file']}}"
+                                      (click)="userImageModal(viewClickedImage); hideslackchat()">
+                                  </div>
+              
+                                  <div class="scrumtools">
+                                    <n style="margin-right: 9px;">{{item['goalID']}}</n>
+                                    <span #user [attr.task_to_edit]="item['task']" [attr.task_id_to_edit]="item['goalID']"
+                                      class="icon-pencil tools" alt="edit" title="edit" (click)="editTaskModal(user)"></span>
+                                    <span #userUploadImage [attr.task_id_to_upload_img]="item['goalID']" class="icon-camera tools"
+                                      alt="upload image" title="upload image" (click)="uploadImage(userUploadImage)"></span><i
+                                      class="fas fa-clone tools" alt="copy" title="copy" style="font-size: 15px;"
+                                      (click)="copyToClipboard(user)"></i>
+                                    <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i
+                                      class="fas fa-history tools" alt="history" title="history" id="taskHistory"
+                                      (click)="taskHistory(); viewTaskHistory(item['goalID']); hideslackchat()"></i>
+                                    <span class="icon-move tools" alt="move" title="move"></span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col">
+                        <div class="ex" id="verify" style="border-color: #FF4C6D;">
+                          <h4>Verify Task</h4>
+                          <!-- <div style="margin-left: -8em; margin-bottom: 8px;" *ngFor="let item of done">
+                                                                  <span style="font-weight: bold; margin-left: -1em;" *ngIf="item['taskFor'] == user['userID']">{{item['pushID']}}
+                                                                  </span>
+                                                              </div> -->
+                          <div class="example-list" cdkDropList [cdkDropListData]="verify"
+                             (cdkDropListDropped)="drop($event)" id="{{user.userID}}e2">
+                            <div *ngFor="let item of verify" cdkDrag [cdkDragData]="item" >
+                              <div
+                                *ngIf="item['taskFor'] == user['userID'] && item['task'] != '' && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
+                                  <div class="dragged_item_placeholder" *cdkDragPlaceholder><span class="icon-plus-symbol" style="font-size: 32px;"></span></div>
+                                <div class="excontent">
+                                  <div style="cursor: move;">
+                                    {{item['task']}}
+                                  </div><br>
+                                  <div class="uploadedImage" *ngIf="item['file']">
+                                    <img #viewClickedImage [attr.image_to_view]="'image' + item['goalID']"
+                                      src="{{dataService.imageApi}}{{item['file']}}"
+                                      (click)="userImageModal(viewClickedImage); hideslackchat()">
+                                  </div>
+              
+                                  <div class="scrumtools">
+                                    <n style="margin-right: 9px;">{{item['goalID']}}</n>
+                                    <span #user [attr.task_to_edit]="item['task']" [attr.task_id_to_edit]="item['goalID']"
+                                      class="icon-pencil tools" alt="edit" title="edit" (click)="editTaskModal(user)"></span>
+                                    <span #userUploadImage [attr.task_id_to_upload_img]="item['goalID']" class="icon-camera tools"
+                                      alt="upload image" title="upload image" (click)="uploadImage(userUploadImage)"></span><i
+                                      class="fas fa-clone tools" alt="copy" title="copy" style="font-size: 15px;"
+                                      (click)="copyToClipboard(user)"></i>
+                                    <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i
+                                      class="fas fa-history tools" alt="history" title="history" id="taskHistory"
+                                      (click)="taskHistory(); viewTaskHistory(item['goalID']); hideslackchat()"></i>
+                                    <span class="icon-move tools" alt="move" title="move"></span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col">
+                        <div class="ex" id="done" style="border-color: #FF4C6D;">
+                          <!-- <div style="margin-left: 10px;"> -->
+                          <h4>Done</h4>
+                          <div class="child">
+                            <div style="margin-left: 10px;">
+                              <div class="example-list" cdkDropList [cdkDropListData]="done"
+                                (cdkDropListDropped)="drop($event)"
+                                id="{{user.userID}}e3">
+                                <div *ngFor="let item of done" cdkDrag [cdkDragData]="item">
+                                  <div
+                                    *ngIf="item['taskFor'] == user['userID'] && item['task'] != '' && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
+                                    <div class="dragged_item_placeholder" *cdkDragPlaceholder><span class="icon-plus-symbol" style="font-size: 32px;"></span></div>
+                                    <div style="margin-left: -8em; margin-bottom: 8px;">
+                                      <span style="font-weight: bold;">{{item['pushID']}}</span>
+                                      <!-- <span class="int"><i class="fas fa-circle"
+                                                                                                                        style="font-size: 3px;"></i>Int</span> -->
+                                    </div>
+                                    
+                                    <div class="excontent fordone">
+                                      <div style="cursor: move;">
+                                        {{item['task']}}
+                                      </div><br>
+                                      <div class="uploadedImage" *ngIf="item['file']">
+                                        <img #viewClickedImage [attr.image_to_view]="'image' + item['goalID']"
+                                          src="{{dataService.imageApi}}{{item['file']}}"
+                                          (click)="userImageModal(viewClickedImage); hideslackchat()">
+                                      </div>
+                                      <div class="scrumtools">
+                                        <n style="margin-right: 9px;">{{item['goalID']}}</n>
+                                        <span #user [attr.task_to_edit]="item['task']" [attr.task_id_to_edit]="item['goalID']"
+                                          class="icon-pencil tools" alt="edit" title="edit" (click)="editTaskModal(user)"></span>
+                                        <span #userUploadImage [attr.task_id_to_upload_img]="item['goalID']" class="icon-camera tools"
+                                          alt="upload image" title="upload image" (click)="uploadImage(userUploadImage)"></span><i
+                                          class="fas fa-clone tools" alt="copy" title="copy" style="font-size: 15px;"
+                                          (click)="copyToClipboard(user)"></i>
+                                        <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
+                                        <i class="fas fa-history tools" alt="history" title="history" id="taskHistory"
+                                          (click)="taskHistory(); viewTaskHistory(item['goalID']); hideslackchat()"></i>
+                                        <span class="icon-move tools" alt="move" title="move"></span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+              
+                            </div>
+                          </div>
+                          <!-- </div> -->
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </details>
+                </details>
+              </div>
+              <div style="margin-top:5px; padding: 15px 0px;"></div>
             </div>
-            <div style="margin-top:5px; padding: 15px 0px;"></div>
-            <!-- <div class="teamTaskDropDownMenu secondTeamtask" id="teamTaskDropDownMenu1"
-                            style="background: rgba(89, 187, 30, 0.1);">
-                            <div>
-                                <img src="https://res.cloudinary.com/ros4eva/image/upload/v1581553992/Ellipse_3_fb4kdi.svg">
-                                <ul>
-                                    <li><span class="teamTaskTitle firstOne" style="color: #59BB1E;">Louis E</span></li>
-                                    <li class="ttTasksandTime">2 hours | 9 Tasks</li>
-                                </ul>
-                            </div>
-                            <div style="float: right;">
-                                <ul id="teamTaskTools">
-                                    <li><i class="fas fa-plus" id="ttAddTaskBtn" style="background: #59BB1E;"></i></li>
-                                    <li><i id="ttAddNoteBtn" (click)="hideslackchat()"
-                                            style="background: #59BB1E; padding: 5.5px 8px;"><span class="icon-Group-1"
-                                                style="width: 25px; height: 25px;" style="background: #59BB1E;"></span></i>
-                                    </li>
-                                    <li><i class="fas fa-user" id="ttUserHistoryBtn"
-                                            (click)="taskHistory (); hideslackchat()" style="background: #59BB1E;"></i>
-                                    </li>
-                                    <li><i id="toggledUp" class="fas fa-chevron-up" 
-                                            style="background: #59BB1E;"></i></li>
-                                    
-                                </ul>
-                            </div>
-                        </div>
-    
-                        <div class="teamTaskDropDownMenu" id="teamTaskDropDownMenu"
-                            style="background: rgba(221, 164, 72, 0.1);">
-                            <div>
-                                <img src="https://res.cloudinary.com/ros4eva/image/upload/v1581417531/Ellipse_2_ithyej.png">
-                                <ul>
-                                    <li><span class="teamTaskTitle firstOne" style="color:#DDA448;">Loius E</span></li>
-                                    <li class="ttTasksandTime">2 hours | 9 Tasks</li>
-                                </ul>
-                            </div>
-                            <div style="float: right;">
-                                <ul id="teamTaskTools">
-                                    <li><i class="fas fa-plus" id="ttAddTaskBtn" style="background:#DDA448;"></i></li>
-                                    <li><i id="ttAddNoteBtn" (click)="hideslackchat()"
-                                            style="background:#DDA448; padding: 5.5px 8px;"><span class="icon-Group-1"
-                                                style="width: 25px; height: 25px;"></span></i></li>
-                                    <li><i class="fas fa-user" id="ttUserHistoryBtn"
-                                            (click)="taskHistory (); hideslackchat()" style="background:#DDA448;"></i>
-                                    </li>
-                                    <li><i id="toggledUp" class="fas fa-chevron-up" 
-                                            style="background:#DDA448;"></i></li>
-                                </ul>
-                            </div>
-                        </div>
-    
-                        <div class="teamTaskDropDownMenu" id="teamTaskDropDownMenu"
-                            style="background:rgba(141, 106, 159, 0.1);">
-                            <div>
-                                <img src="https://res.cloudinary.com/ros4eva/image/upload/v1581417531/Ellipse_2_ithyej.png">
-                                <ul>
-                                    <li><span class="teamTaskTitle firstOne" style="color:#8D6A9F;">Loius E</span></li>
-                                    <li class="ttTasksandTime">2 hours | 9 Tasks</li>
-                                </ul>
-                            </div>
-                            <div style="float: right;">
-                                <ul id="teamTaskTools">
-                                    <li><i class="fas fa-plus" id="ttAddTaskBtn" style="background:#8D6A9F;"></i></li>
-                                    <li><i id="ttAddNoteBtn" (click)="hideslackchat()"
-                                            style="background:#8D6A9F; padding: 5.5px 8px;"><span class="icon-Group-1"
-                                                style="width: 25px; height: 25px;"></span></i></li>
-                                    <li><i class="fas fa-user" id="ttUserHistoryBtn"
-                                            (click)="taskHistory (); hideslackchat()" style="background:#8D6A9F;"></i>
-                                    </li>
-                                    <li><i id="toggledUp" class="fas fa-chevron-up" 
-                                            style="background:#8D6A9F;"></i></li>
-                                    
-                                </ul>
-                            </div>
-                        </div>
-    
-                        <div class="teamTaskDropDownMenu" id="teamTaskDropDownMenu"
-                            style="background: rgba(187, 52, 47, 0.1);">
-                            <div>
-                                <img src="https://res.cloudinary.com/ros4eva/image/upload/v1581417531/Ellipse_2_ithyej.png">
-                                <ul>
-                                    <li><span class="teamTaskTitle firstOne" style="color:#BB342F;">Loius E</span></li>
-                                    <li class="ttTasksandTime">2 hours | 9 Tasks</li>
-                                </ul>
-                            </div>
-                            <div style="float: right;">
-                                <ul id="teamTaskTools">
-                                    <li><i class="fas fa-plus" id="ttAddTaskBtn" style="background:#BB342F;"></i></li>
-                                    <li><i id="ttAddNoteBtn" (click)="hideslackchat()"
-                                            style="background:#BB342F; padding: 5.5px 8px;"><span class="icon-Group-1"
-                                                style="width: 25px; height: 25px;"></span></i></li>
-                                    <li><i class="fas fa-user" id="ttUserHistoryBtn"
-                                            (click)="taskHistory (); hideslackchat()" style="background:#BB342F;"></i>
-                                    </li>
-                                    <li><i id="toggledUp" class="fas fa-chevron-up" 
-                                            style="background:#BB342F;"></i></li>
-                                    
-                                </ul>
-                            </div>
-                        </div>
-    
-                        <div class="teamTaskDropDownMenu" id="teamTaskDropDownMenu"
-                            style="background: rgba(131, 116, 91, 0.1);">
-                            <div>
-                                <img src="https://res.cloudinary.com/ros4eva/image/upload/v1581417531/Ellipse_2_ithyej.png">
-                                <ul>
-                                    <li><span class="teamTaskTitle firstOne" style="color:#83745B;">Loius E</span></li>
-                                    <li class="ttTasksandTime">2 hours | 9 Tasks</li>
-                                </ul>
-                            </div>
-                            <div style="float: right;">
-                                <ul id="teamTaskTools">
-                                    <li><i class="fas fa-plus" id="ttAddTaskBtn" style="background:#83745B;"></i></li>
-                                    <li><i id="ttAddNoteBtn" (click)="hideslackchat()"
-                                            style="background:#83745B; padding: 5.5px 8px;"><span class="icon-Group-1"
-                                                style="width: 25px; height: 25px;"></span></i></li>
-                                    <li><i class="fas fa-user" id="ttUserHistoryBtn"
-                                            (click)="taskHistory (); hideslackchat()" style="background:#83745B;"></i>
-                                    </li>
-                                    <li><i id="toggledUp" class="fas fa-chevron-up" 
-                                            style="background:#83745B;"></i></li>
-                                    
-                                </ul>
-                            </div>
-                        </div>
-    
-                        <div class="teamTaskDropDownMenu" id="teamTaskDropDownMenu"
-                            style="background: rgba(16, 52, 166, 0.1);;">
-                            <div>
-                                <img src="https://res.cloudinary.com/ros4eva/image/upload/v1581417531/Ellipse_2_ithyej.png">
-                                <ul>
-                                    <li><span class="teamTaskTitle firstOne" style="color:#1034A6;">Loius E</span></li>
-                                    <li class="ttTasksandTime">2 hours | 9 Tasks</li>
-                                </ul>
-                            </div>
-                            <div style="float: right;">
-                                <ul id="teamTaskTools">
-                                    <li><i class="fas fa-plus" id="ttAddTaskBtn" style="background:#1034A6;"></i></li>
-                                    <li><i id="ttAddNoteBtn" (click)="hideslackchat()"
-                                            style="background:#1034A6; padding: 5.5px 8px;"><span class="icon-Group-1"
-                                                style="width: 25px; height: 25px;"></span></i></li>
-                                    <li><i class="fas fa-user" id="ttUserHistoryBtn"
-                                            (click)="taskHistory (); hideslackchat()" style="background:#1034A6;"></i>
-                                    </li>
-                                    <li><i id="toggledUp" class="fas fa-chevron-up" 
-                                            style="background:#1034A6;"></i></li>
-                                    
-                                </ul>
-                            </div>
-                        </div>
-    
-                        <div class="teamTaskDropDownMenu" id="teamTaskDropDownMenu"
-                            style="background: rgba(133, 47, 100, 0.1);">
-                            <div>
-                                <img src="https://res.cloudinary.com/ros4eva/image/upload/v1581417531/Ellipse_2_ithyej.png">
-                                <ul>
-                                    <li><span class="teamTaskTitle firstOne" style="color:#852F64;">Loius E</span></li>
-                                    <li class="ttTasksandTime">2 hours | 9 Tasks</li>
-                                </ul>
-                            </div>
-                            <div style="float: right;">
-                                <ul id="teamTaskTools">
-                                    <li><i class="fas fa-plus" id="ttAddTaskBtn" style="background:#852F64;"></i></li>
-                                    <li><i id="ttAddNoteBtn" (click)="hideslackchat()"
-                                            style="background:#852F64; padding: 5.5px 8px;"><span class="icon-Group-1"
-                                                style="width: 25px; height: 25px;"></span></i></li>
-                                    <li><i class="fas fa-user" id="ttUserHistoryBtn"
-                                            (click)="taskHistory (); hideslackchat()" style="background:#852F64;"></i>
-                                    </li>
-                                    <li><i id="toggledUp" class="fas fa-chevron-up" 
-                                            style="background:#852F64;"></i></li>
-                                    
-                                </ul>
-                            </div>
-                        </div>
-    
-                        <div class="teamTaskDropDownMenu" id="teamTaskDropDownMenu"
-                            style="background: rgba(38, 166, 154, 0.1);">
-                            <div>
-                                <img src="https://res.cloudinary.com/ros4eva/image/upload/v1581554201/Ellipse_5_rzifrh.png">
-                                <ul>
-                                    <li><span class="teamTaskTitle firstOne" style="color:#26A69A;">Joshua Okwe</span>
-                                    </li>
-                                    <li class="ttTasksandTime">2 hours | 9 Tasks</li>
-                                </ul>
-                            </div>
-                            <div style="float: right;">
-                                <ul id="teamTaskTools">
-                                    <li><i class="fas fa-plus" id="ttAddTaskBtn" style="background:#26A69A;"></i></li>
-                                    <li><i id="ttAddNoteBtn" (click)="hideslackchat()"
-                                            style="background:#26A69A; padding: 5.5px 8px;"><span class="icon-Group-1"
-                                                style="width: 25px; height: 25px;"></span></i></li>
-                                    <li><i class="fas fa-user" id="ttUserHistoryBtn"
-                                            (click)="taskHistory (); hideslackchat()" style="background:#26A69A;"></i>
-                                    </li>
-                                    <li><i id="toggledUp" class="fas fa-chevron-up" 
-                                            style="background:#26A69A;"></i></li>
-                                    
-                                </ul>
-                            </div>
-                        </div> -->
           </div>
         </div>
       </div>

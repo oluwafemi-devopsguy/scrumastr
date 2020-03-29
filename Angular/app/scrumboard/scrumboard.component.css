@@ -596,8 +596,6 @@ body {
 }
 
 
-
-
 .priorityI input[type=radio]{
   box-shadow: none;
   margin-right: 3px;
@@ -767,10 +765,10 @@ body {
   -webkit-animation-duration: 0.4s;
   animation-name: animatetop;
   animation-duration: 0.4s;
-  max-width: 994px;
+  width: 994px;
   height: 733px;
   border-radius: 10px;
-  overflow-y: hidden; 
+  /* overflow-y: hidden; */
 }
 
 #taskHistoryModal .taskHistoryModalSplit {
@@ -802,19 +800,32 @@ body {
   padding: 20px 0px 0px 25px;
 }
 
-#taskHistoryModal .taskHistorySide .singleTask h4 {
+#taskHistoryModal .taskHistorySide .singleTask .header {
+  margin-left: -21px;
+  margin-top: -20px;
+  position: fixed;
+  padding: 16px;
+  background-color: white;
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  width: 735px;
+
+}
+
+#taskHistoryModal .taskHistorySide .singleTask .header h4 {
   font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: bold;
   font-size: 14px;
   color: #26A69A;
-  margin-left: -7px;
-  padding-bottom: 10px;
+  margin-left: -5px;
 }
 
 #taskHistoryModal .taskHistorySide .singleTask .allTaskContainer {
   padding: 10px 20px 20px 20px;
   border-left: 1.5px solid rgba(51, 51, 51, 0.2);
+  margin-top: 25px;
 }
 
 #taskHistoryModal .taskHistorySide .singleTask .allTaskContainer .fa-circle {
@@ -1134,16 +1145,16 @@ body {
   background: rgba(255, 76, 109, 0.1);
   padding-left: 9px;
   margin-left: -3.1em;
-  height: 45px;
-  border-radius: 10px;
+  border-radius: 10px 10px 0px 0px;
+  height: 55px;
   width: 100%;
   position: absolute;
   margin-bottom: 1em;
 }
 
 .teamTaskDropDownMenuToggle {
-  height: 55px;
-  border-radius: 10px 10px 0px 0px;
+  height: 45px;
+  border-radius: 10px;
 }
 
 .teamTaskDropDownMenu img {
@@ -1993,4 +2004,18 @@ summary:focus {
 
 .example-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.dragged_item_placeholder {
+  width: 212px;
+  height: 106px;
+  text-align: center;
+  line-height: 111px;
+  background: linear-gradient(to right, #C4C4C4 50%, rgba(255, 255, 255, 0) 0%), linear-gradient(#C4C4C4 50%, rgba(255, 255, 255, 0) 0%), linear-gradient(to right, #C4C4C4 50%, rgba(255, 255, 255, 0) 0%), linear-gradient(#C4C4C4 50%, rgba(255, 255, 255, 0) 0%);
+  background-position: top, right, bottom, left;
+  background-repeat: repeat-x, repeat-y;
+  background-size: 16px 3px, 3px 16px;
+  border-radius: 10px;
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+  margin-bottom: 15px;
 }

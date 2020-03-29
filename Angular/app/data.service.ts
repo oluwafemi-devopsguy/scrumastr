@@ -248,4 +248,8 @@ export class DataService {
     return this.http.patch(this.imageApi + '/scrum/api/scrumgoals/', JSON.stringify({ 'goal_id': goal_id, 'to_id': to_id, 'hours': hours, 'project_id': project_id, 'push_id': push_id }), this.getHeader());
   } 
 
+  changeGoalOwner(goal_id, to_id, project_id) {
+    return this.http.put(this.imageApi + '/scrum/api/scrumgoals/', JSON.stringify({ 'mode': 0, 'goal_id': goal_id, 'to_id': to_id, 'project_id': project_id }), this.getHeader());
+  }
+
 }
