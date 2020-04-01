@@ -28,9 +28,12 @@
 
             <div id="projectsDDContent" class="projectsDropDownContent">
               <p><span class="icon-check"></span>{{loggedProject}}</p>
-              <!-- <p>ChatScrum</p>
-                            <p>AWS</p> -->
-              <div class="projectsDropDownAP">
+              <p class="clear_tft" style="padding-left: 5px;" [hidden]="loggedUserRole != 'Owner'">Auto Clear <bold style="font-weight: bold;">TFT</bold></p>
+              <p style="padding-left: 5px; font-size: 12px;" [hidden]="loggedUserRole != 'Owner'">off<label class="switch">
+                <input id="auto_clear_tft" type="checkbox" (click)="autoClearTft()">
+                <span class="slider round"></span>
+              </label>on</p>
+              <div class="projectsDropDownAP" (click)="createNewProject()">
                 ADD PROJECT
               </div>
             </div>
@@ -121,7 +124,7 @@
         </li>
 
         <li class="nav-item">
-          <a class="nav-link" id="profileTab" role="tab" (click)="userProfileModal();hideslackchat()">
+          <a class="nav-link" id="profileTab" role="tab" (click)="userProfileModal(addToUser, loggedUser, loggedUserRole);hideslackchat()">
             <img src="https://res.cloudinary.com/ros4eva/image/upload/v1581678144/Ellipse_6_z5snsi.png">
             <h4>{{loggedUserProfile}}</h4>
             <p>{{loggedUserRole}}</p>
@@ -171,7 +174,7 @@
                 <textarea #taskToAdd="ngModel" class="insidemodalContentForTask" name="goal_name"
                   [(ngModel)]="goal_name" required></textarea>
                 <div class="submitTask">
-                  <button type="submit" id="addTaskBtn" class="btn addTbtn">ADD TASK</button>
+                  <button type="submit" id="submitaddTaskBtn" class="btn addTbtn">ADD TASK</button>
                   <span class="btn closebtn" id="cancelAddTaskBtn" style="font-weight: bold;"
                     (click)="close()">CANCEL</span>
                 </div>
@@ -385,132 +388,50 @@
                   <div class="container">
                     <img src="https://res.cloudinary.com/ros4eva/image/upload/v1581554201/Ellipse_5_rzifrh.png"
                       width="22" height="22">
-                    <h4>Joshua Okwe</h4>
-                    <span>Developer</span>
+                    <span class="headerUserTitle">{{historyForUser}}</span>
+                    <p class="headerUserRole">
+                      {{historyForUserRole}}</p>
                   </div>
-                  <div class="container">
-                    <div class="splitUPMLeftContent" style="border: 2px solid #26A69A;">
-                      <div class="container">
-                        <h5>Sprint 91:</h5>
-                        <span>Jul 23, 2019 - Jul 30, 2019</span>
-                      </div>
-                    </div>
-                    <div class="splitUPMLeftContent">
-                      <div class="container">
-                        <h5>Sprint 90:</h5>
-                        <span>Jul 23, 2019 - Jul 30, 2019</span>
-                      </div>
-                    </div>
-                    <div class="splitUPMLeftContent">
-                      <div class="container">
-                        <h5>Sprint 89:</h5>
-                        <span>Jul 23, 2019 - Jul 30, 2019</span>
-                      </div>
-                    </div>
-                    <div class="splitUPMLeftContent">
-                      <div class="container">
-                        <h5>Sprint 88:</h5>
-                        <span>Jul 23, 2019 - Jul 30, 2019</span>
-                      </div>
-                    </div>
-                    <div class="splitUPMLeftContent">
-                      <div class="container">
-                        <h5>Sprint 87:</h5>
-                        <span>Jul 23, 2019 - Jul 30, 2019</span>
-                      </div>
-                    </div>
-                    <div class="splitUPMLeftContent">
-                      <div class="container">
-                        <h5>Sprint 86:</h5>
-                        <span>Jul 23, 2019 - Jul 30, 2019</span>
-                      </div>
-                    </div>
-                    <div class="splitUPMLeftContent">
-                      <div class="container">
-                        <h5>Sprint 85:</h5>
-                        <span>Jul 23, 2019 - Jul 30, 2019</span>
-                      </div>
-                    </div>
-                    <div class="splitUPMLeftContent">
-                      <div class="container">
-                        <h5>Sprint 84:</h5>
-                        <span>Jul 23, 2019 - Jul 30, 2019</span>
-                      </div>
-                    </div>
-                    <div class="splitUPMLeftContent">
-                      <div class="container">
-                        <h5>Sprint 83:</h5>
-                        <span>Jul 23, 2019 - Jul 30, 2019</span>
-                      </div>
-                    </div>
-                    <div class="splitUPMLeftContent">
-                      <div class="container">
-                        <h5>Sprint 82:</h5>
-                        <span>Jul 23, 2019 - Jul 30, 2019</span>
-                      </div>
-                    </div>
-                    <div class="splitUPMLeftContent">
-                      <div class="container">
-                        <h5>Sprint 81:</h5>
-                        <span>Jul 23, 2019 - Jul 30, 2019</span>
+                </div>
+                <div class="container">
+                  <div style="padding:25px;"></div>
+                  <div *ngFor="let userSprint of currentSprint">
+                    <div *ngIf="userSprint">
+                      <div class="splitUPMLeftContent">
+                        <div class="container" (click)="userTaskHistoryForSprint(userSprint['sprintID'], addToUser)">
+                          <h5>Sprint {{userSprint['sprintID']}}:</h5>
+                          <span>{{userSprint['dateCreated']| date: 'MMM dd, yyy'}} -
+                            {{userSprint['endDate']| date:'MMM dd, yyy'}}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
+                  <div style="padding: 10px"></div>
                 </div>
               </div>
               <div class="splitUPMLeftt">
-                <span class="close" (click)="close()" style="margin: 10px;"><span class="icon-cancel"></span></span>
                 <div class="container">
                   <div class="userHistories">
                     <div class="userHistoryHead">
                       <h3>User Task Histories</h3>
+                      <span style="font-size: 28px; margin-right: -5px;" (click)="close()" class="icon-cancel"></span>
                     </div>
-                    <div class="userHistoryTasks">
-                      <label>Work ID: </label><span class="workID">S3084</span><br>
-                      <label>Status: </label><span class="status statusComplete">Completed</span>
-                      <p>Good from itself gathering rule man void female let is creeping own.</p>
-                    </div>
-                    <div class="userHistoryTasks">
-                      <label>Work ID: </label><span class="workID">S3084</span><br>
-                      <label>Status: </label><span class="status statusNotCompleted">Not
-                        Completed</span>
-                      <p>Sea cattle. The moving together there don't two night our midst behold
-                        there fill brought tree rule there from firmament
-                        night be female. Firmament he replenish third fruit him there grass
-                        beast. Very wherein. Hath, them. Seas grass shall
-                        form had divide.</p>
-                    </div>
-                    <div class="userHistoryTasks">
-                      <label>Work ID: </label><span class="workID">S3084</span><br>
-                      <label>Status: </label><span class="status statusComplete">Completed</span>
-                      <p>Brought all they're forth you appear wherein may. Make morning image
-                        created Appear spirit darkness, seasons said have
-                        together set. Sixth after behold also said make creature he, have.</p>
-                    </div>
-                    <div class="userHistoryTasks">
-                      <label>Work ID: </label><span class="workID">S3084</span><br>
-                      <label>Status: </label><span class="status statusNotCompleted">Not
-                        Completed</span>
-                      <p>Sea cattle.</p>
-                    </div>
-                    <div class="userHistoryTasks">
-                      <label>Work ID: </label><span class="workID">S3084</span><br>
-                      <label>Status: </label><span class="status statusComplete">Completed</span>
-                      <p>Good from itself gathering rule man void female let is creeping own.
-                        Isn't from gathered were may above under. Gathering
-                        it his us. Creature Shall had spirit herb. Signs. Sea cattle. The moving
-                        together there don't two night our midst behold
-                        there fill brought tree rule there from firmament night be female.
-                        Firmament he replenish third fruit him there grass
-                        beast. Very wherein. Hath, them. Seas grass shall form had divide.</p>
-                    </div>
-                    <div class="userHistoryTasks">
-                      <label>Work ID: </label><span class="workID">S3084</span><br>
-                      <label>Status: </label><span class="status statusNotCompleted">Not
-                        Completed</span>
-                      <p>Add image for the file. <br><a
-                          href="#">https://www.figma.com/file/0jNee0sJiNxhnQqDn0b0Ngal/New-ChatScrum?node-id=24%3A0</a>
-                      </p>
+                    <div *ngFor="let thisSprintTask of clicked_task_history">
+                      <div *ngIf="thisSprintTask">
+                        <div class="userHistoryTasks">
+                          <div>
+                            <span class="labelForWorkID">Work ID: </span>
+                            <span class="workID" *ngIf="thisSprintTask['pushID'] != 'Null Value'">{{thisSprintTask['pushID']}}</span>
+                            <span class="workID" *ngIf="thisSprintTask['pushID'] == 'Null Value'">None</span>
+                          </div>
+                          <div style="margin-top: -7px!important;">
+                            <span class="labelForWorkIDStatus">Status: </span><span class="status statusNotCompleted" *ngIf="thisSprintTask['status'] != '3'" style="color: #FF4D4D;">Not
+                              Completed</span><span class="status statusNotCompleted" *ngIf="thisSprintTask['status'] == '3'" style="color:#4DFFD4;">Completed</span>
+                            
+                          </div>
+                          <p>{{thisSprintTask['task']}}</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -600,6 +521,37 @@
           </div>
         </div>
 
+        <!-- Modal Box For Changing User Role -->
+
+        <div id="changeUserRoleModal" class="modal">
+          <div class="modal-contentForTask">
+            <div class="modal-header" style="margin-bottom: 7px;">
+              <img src="https://res.cloudinary.com/ros4eva/image/upload/v1576618715/Ellipse_cxegyr.svg"><br>
+              <span class="headerUserTitle">{{loggedUser}}</span>
+              <p class="headerUserRole">
+                {{loggedUserRole}}</p>
+              <span class="close " (click)="close()"><span class="icon-cancel"></span></span>
+        
+            </div>
+            <div class="modal-bodyForTask" style="background: #FAFAFA; margin-top: -6px; padding-bottom: 20px;">
+              <form name="changeUserRoleForm" id="changeUserRoleForm" (ngSubmit)="submitchangeUserRole()">
+                <span class="close ForMobile" (click)="close()"><span class="icon-cancel"></span></span>
+                <span class="addT">Change User Role</span>
+                <p class="choose_role">Choose between Developer, Admin, Quality Analyst or Owner.</p>
+                <textarea placeholder="Developer" class="insidemodalContentForChangeRole" name="role_name" [(ngModel)]="new_role"
+                  required></textarea>
+                <div class="submitTask">
+                  <button type="submit" id="changeUserRoleBtn" class="btn addTbtn" style="width: 165px;">CHANGE</button>
+                  <span class="btn closebtn" id="cancelAddTaskBtn" style="font-weight: bold;" (click)="close()">CANCEL</span>
+                </div>
+              </form>
+            </div>
+            <div class="remove_user">
+              REMOVE USER
+            </div>
+          </div>
+        </div>
+
         <!-- <div>Modal Box Stops Here</div> -->
         
         <div class="container">
@@ -648,9 +600,8 @@
                               (click)="uploadImage(loggedUserUploadImage)"></span><i class="fas fa-clone tools"
                               alt="copy" title="copy" style="font-size: 15px;"
                               (click)="copyToClipboard(loggedUserId)"></i>
-                            <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i
-                              class="fas fa-history tools" alt="history" title="history" id="taskHistory"
-                              (click)="taskHistory(); viewTaskHistory(item['goalID']); hideslackchat()"></i>
+                            <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
+                            <span alt="history" title="history" id="taskHistory" class="icon-history-clock-button tools" (click)="taskHistory(); viewTaskHistory(item['goalID']); hideslackchat()"></span>
                             <span class="icon-move tools" alt="move" title="move"></span>
                           </div>
                         </div>
@@ -695,9 +646,9 @@
                               (click)="uploadImage(loggedUserUploadImage)"></span><i class="fas fa-clone tools"
                               alt="copy" title="copy" style="font-size: 15px;"
                               (click)="copyToClipboard(loggedUserId)"></i>
-                            <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i
-                              class="fas fa-history tools" alt="history" title="history" id="taskHistory"
-                              (click)="taskHistory(); viewTaskHistory(item['goalID']); hideslackchat()"></i>
+                            <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
+                            <span alt="history" title="history" id="taskHistory" class="icon-history-clock-button tools"
+                              (click)="taskHistory(); viewTaskHistory(item['goalID']); hideslackchat()"></span>
                             <span class="icon-move tools" alt="move" title="move"></span>
                           </div>
                         </div>
@@ -738,9 +689,9 @@
                               alt="upload image" title="upload image" (click)="uploadImage(loggedUserUploadImage)"></span><i
                               class="fas fa-clone tools" alt="copy" title="copy" style="font-size: 15px;"
                               (click)="copyToClipboard(loggedUserId)"></i>
-                            <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i class="fas fa-history tools"
-                              alt="history" title="history" id="taskHistory"
-                              (click)="taskHistory (); viewTaskHistory(item['goalID']); hideslackchat()"></i>
+                            <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
+                            <span alt="history" title="history" id="taskHistory" class="icon-history-clock-button tools"
+                              (click)="taskHistory(); viewTaskHistory(item['goalID']); hideslackchat()"></span>
                             <span class="icon-move tools" alt="move" title="move"></span>
                           </div>
                         </div>
@@ -790,9 +741,10 @@
                                   class="fas fa-clone tools" alt="copy" title="copy" style="font-size: 15px;"
                                   (click)="copyToClipboard(loggedUserId)"></i>
                                 <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
-                                <i class="fas fa-history tools" alt="history" title="history" id="taskHistory"
-                                  (click)="taskHistory (); viewTaskHistory(item['goalID']); hideslackchat()"></i>
+                                <span alt="history" title="history" id="taskHistory" class="icon-history-clock-button tools"
+                                  (click)="taskHistory(); viewTaskHistory(item['goalID']); hideslackchat()"></span>
                                 <span class="icon-move tools" alt="move" title="move"></span>
+                                <i class="fas fa-trash tools" alt="delete" title="delete" (click)="deleteTask(item['goalID'], item['task'])"></i>
                               </div>
                             </div>
                           </div>
@@ -820,7 +772,7 @@
                   <summary>
                     <div class="teamTaskDropDownMenu" id="{{user['userID']}}">
                       <div>
-                        <img src="https://res.cloudinary.com/ros4eva/image/upload/v1581417531/Ellipse_2_ithyej.png">
+                        <img (click)="userProfileModal(user['userID'], user['userName'], user['userRole']);hideslackchat()" src="https://res.cloudinary.com/ros4eva/image/upload/v1581417531/Ellipse_2_ithyej.png">
                         <ul>
                           <li><span class="teamTaskTitle firstOne">{{user['userName']}}</span></li>
                           <li class="ttTasksandTime">{{user['userTotalWeekHour']}} hours | {{user['scrumGoalSet']}} Tasks
@@ -829,10 +781,11 @@
                       </div>
                       <div style="float: right;">
                         <ul class="teamTaskTools" #getUserRoleId [attr.user_role_id]="user['userID']">
-                          <li><i class="fas fa-plus" (click)="addTaskModal('task', getUserRoleId);"></i></li>
-                          <li><i style="padding: 5.5px 8px;" (click)="addTaskModal('note', getUserRoleId); hideslackchat()"><span
+                          <li><i class="fas fa-user-cog" alt="Change Role" title="Change Role" (click)="changeUserRoleModal(user['userID'])"></i></li>
+                          <li><i class="fas fa-plus" alt="Add Task" title="Add Task" (click)="addTaskModal('task', getUserRoleId);"></i></li>
+                          <li><i style="padding: 5.5px 8px;" alt="Add Note" title="Add Note" (click)="addTaskModal('note', getUserRoleId); hideslackchat()"><span
                                 class="icon-Group-1" style="width: 25px; height: 25px;"></span></i></li>
-                          <li><i class="fas fa-user" (click)="taskHistory (); hideslackchat()"></i></li>
+                          <li><i class="fas fa-user" alt="Task History" title="Task History" (click)="taskHistory (); hideslackchat()"></i></li>
                           <li><i id="toggledUp{{user['userID']}}" class="fas fa-chevron-up"></i></li>
                         </ul>
                       </div>
@@ -867,9 +820,9 @@
                                       alt="upload image" title="upload image" (click)="uploadImage(userUploadImage)"></span><i
                                       class="fas fa-clone tools" alt="copy" title="copy" style="font-size: 15px;"
                                       (click)="copyToClipboard(user)"></i>
-                                    <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i
-                                      class="fas fa-history tools" alt="history" title="history" id="taskHistory"
-                                      (click)="taskHistory(); viewTaskHistory(item['goalID']); hideslackchat()"></i>
+                                    <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
+                                    <span alt="history" title="history" id="taskHistory" class="icon-history-clock-button tools"
+                                      (click)="taskHistory(); viewTaskHistory(item['goalID']); hideslackchat()"></span>
                                     <span class="icon-move tools" alt="move" title="move"></span>
                                   </div>
                                 </div>
@@ -906,9 +859,9 @@
                                       alt="upload image" title="upload image" (click)="uploadImage(userUploadImage)"></span><i
                                       class="fas fa-clone tools" alt="copy" title="copy" style="font-size: 15px;"
                                       (click)="copyToClipboard(user)"></i>
-                                    <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i
-                                      class="fas fa-history tools" alt="history" title="history" id="taskHistory"
-                                      (click)="taskHistory(); viewTaskHistory(item['goalID']); hideslackchat()"></i>
+                                    <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
+                                    <span alt="history" title="history" id="taskHistory" class="icon-history-clock-button tools"
+                                      (click)="taskHistory(); viewTaskHistory(item['goalID']); hideslackchat()"></span>
                                     <span class="icon-move tools" alt="move" title="move"></span>
                                   </div>
                                 </div>
@@ -948,9 +901,9 @@
                                       alt="upload image" title="upload image" (click)="uploadImage(userUploadImage)"></span><i
                                       class="fas fa-clone tools" alt="copy" title="copy" style="font-size: 15px;"
                                       (click)="copyToClipboard(user)"></i>
-                                    <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i> <i
-                                      class="fas fa-history tools" alt="history" title="history" id="taskHistory"
-                                      (click)="taskHistory(); viewTaskHistory(item['goalID']); hideslackchat()"></i>
+                                    <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
+                                    <span alt="history" title="history" id="taskHistory" class="icon-history-clock-button tools"
+                                      (click)="taskHistory(); viewTaskHistory(item['goalID']); hideslackchat()"></span>
                                     <span class="icon-move tools" alt="move" title="move"></span>
                                   </div>
                                 </div>
@@ -996,9 +949,11 @@
                                           class="fas fa-clone tools" alt="copy" title="copy" style="font-size: 15px;"
                                           (click)="copyToClipboard(user)"></i>
                                         <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
-                                        <i class="fas fa-history tools" alt="history" title="history" id="taskHistory"
-                                          (click)="taskHistory(); viewTaskHistory(item['goalID']); hideslackchat()"></i>
+                                        
+                                          <span alt="history" title="history" id="taskHistory" class="icon-history-clock-button tools"
+                                            (click)="taskHistory(); viewTaskHistory(item['goalID']); hideslackchat()"></span>
                                         <span class="icon-move tools" alt="move" title="move"></span>
+                                        <i class="fas fa-trash tools" alt="delete" title="delete" (click)="deleteTask(item['goalID'], item['task'])" [hidden]="loggedUserRole == 'Developer'"></i>
                                       </div>
                                     </div>
                                   </div>

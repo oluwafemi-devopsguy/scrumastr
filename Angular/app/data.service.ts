@@ -37,30 +37,8 @@ export class DataService {
   public slack_username
   public slack_app_id;
   public realname;
-  public role;
-  public role_id;
   public project;
-  public project_name;
-  public project_id;
-  public to_clear_board;
-  public users;
-  public proj_log;
-  public work_IDs = [];
-  public users_done = [];
-  public users_TFT = [];
-  // public users_id = [];
-  public workID_goal_array;
-  public sprints;
-  public sprint_start;
-  public sprint_end;
-  selected_sprint: any;
 
-  public sprint_goals;
-  public _user_sprint_goals;
-  public user_goal_history;
-  public user_notes;
-  public off_today: boolean = true;
-  public user_workid;
   public taskIdToEdit;
   public taskToEdit;
   public image_uploaded: File = null;
@@ -143,13 +121,9 @@ export class DataService {
         sessionStorage.setItem('user_slack', data['user_slack']);
         sessionStorage.setItem('project_slack', data['project_slack']);
         sessionStorage.setItem('slack_username', data['slack_username']);
-        sessionStorage.setItem('proj_log', data['proj_log']);
+        localStorage.setItem('sessiontf', data['to_clear_board']);
         this.username = this.login_username;
-        this.role = data['role'];
-        this.role_id = data['role_id'];
         this.realname = data['name'];
-        this.project = data['project_id'];
-        this.to_clear_board = data['to_clear_board'];
         this.user_slack = data['user_slack'];
         this.project_slack = data['project_slack'];
         this.slack_username = data['slack_username'];
@@ -244,12 +218,24 @@ export class DataService {
   }
 
   moveGoalRequest(goal_id, to_id, hours, push_id, project_id) {
-    //return this.http.patch(this.imageApi + '/scrum/api/scrumgoals/', JSON.stringify({ 'goal_id': goal_id, 'to_id': to_id, 'hours': hours, 'project_id': this.project, 'push_id': push_id }), this.getHeader());
+    //return this.http.patch(this.imageApi + '/scrum/api/scrumgoals/', JSON.stringify({ 'goal_id': goal_id, 'to_id': to_id, 'hours': hours, 'project_id': project_id, 'push_id': push_id }), this.getHeader());
     return this.http.patch(this.imageApi + '/scrum/api/scrumgoals/', JSON.stringify({ 'goal_id': goal_id, 'to_id': to_id, 'hours': hours, 'project_id': project_id, 'push_id': push_id }), this.getHeader());
   } 
 
   changeGoalOwner(goal_id, to_id, project_id) {
     return this.http.put(this.imageApi + '/scrum/api/scrumgoals/', JSON.stringify({ 'mode': 0, 'goal_id': goal_id, 'to_id': to_id, 'project_id': project_id }), this.getHeader());
+  }
+
+  autoClearTftRequest(project_id) {
+    return this.http.put(this.imageApi + '/scrum/api/scrumgoals/', JSON.stringify({ 'mode': 3, 'project_id': project_id }), this.getHeader());
+  }
+
+  deleteTaskRequest(goal_id, goal_name, project_id) {
+    return this.http.put(this.imageApi + '/scrum/api/scrumgoals/', JSON.stringify({ 'mode': 2, 'goal_id': 'm'+goal_id, 'new_name': goal_name, 'project_id': project_id }), this.getHeader());
+  }
+
+  changeUserRoleRequest(user_id, role, project_id) {
+    return this.http.patch(this.imageApi + '/scrum/api/scrumprojectroles/', JSON.stringify({ 'role': role, 'id': 'm'+user_id, 'project_id': project_id }), this.getHeader());
   }
 
 }

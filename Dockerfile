@@ -62,7 +62,7 @@ RUN cd /web/Chatscrum-Angular/src && rm -r styles.css;
 RUN cd /web/Chatscrum-Angular/ && sed -i 's/127.0.0.1:8000/54.185.254.239:5000/' src/app/data.service.ts;
 #RUN ls /web/Chatsrum-Angular
 #RUN cat /web/Chatscrum-Angular/src/app/profile/profile.component.html
-RUN cd /web/Chatscrum-Angular && . $HOME/.nvm/nvm.sh && npm install ngx-materialize materialize-css@next ng2-dragula rxjs && ng build --prod --aot
+RUN cd /web/Chatscrum-Angular && . $HOME/.nvm/nvm.sh && npm install  @angular/material@7.3.7 @angular/cdk@7.3.7 rxjs && ng build --prod --aot
 RUN yes | cp -r /web/Chatscrum-Angular/dist/Chatscrum-Angular/assets/ /web/Chatscrum-Angular/dist/Chatscrum-Angular/src/
 RUN yes | cp -r /web/Chatscrum-Angular/dist/Chatscrum-Angular/* /usr/share/nginx/web/Chatscrum-Angular
 

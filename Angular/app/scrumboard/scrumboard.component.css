@@ -210,8 +210,8 @@ body {
 }
 
 .ex .excontent .scrumtools i, .ex_taskHistory .excontent .scrumtools i {
-  font-size: 16px; 
-  margin-right: 8px;
+  font-size: 14px; 
+  margin-right: 6px;
   transition: ease-in 0.2s;
   
 }
@@ -235,13 +235,13 @@ body {
 }
 
 .excontent .tools:hover {
-  color: #4DFFD4;
+  color: #4DFFD4!important;
 }
 
 .child{
-   border-left: 9px solid #000;
-   margin-left: -12px;
-   min-height: 113px;
+  border-left: 9px solid #000;
+  margin-left: -12px;
+  min-height: 113px;
    
 }
 
@@ -372,16 +372,51 @@ body {
   background: #FAFAFA;
 }
 
-.insidemodalContentForTask {
-  width: 581px;
+.insidemodalContentForTask, #changeUserRoleModal .insidemodalContentForChangeRole{
+  width: 100%;
   height: 142px;
-  margin-top:15px;
+  margin-top: 15px;
   border: 1px solid rgba(0, 0, 0, 0.3);
   box-sizing: border-box;
   border-radius: 10px;
   outline-color: transparent;
   padding: 8px;
   resize: none;
+}
+
+#changeUserRoleModal .insidemodalContentForChangeRole{
+  height: 38px;
+  overflow: hidden;
+  padding: 5px 22px;
+  font-size: 14px;
+  font-weight: normal;
+  font-family: 'roboto', sans-serif;
+  color: rgba(0, 0, 0);
+  margin-top: 0px;
+  background: #FAFAFA;
+}
+
+#changeUserRoleModal #changeUserRoleForm .choose_role{
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 13px;
+  line-height: 14px;
+  color: rgba(0, 0, 0, 0.6);
+
+}
+
+#changeUserRoleModal .remove_user {
+  font-family: SF;
+  font-size: 14px;
+  line-height: 80px;
+  align-items: center;
+  text-align: center;
+  color: #FF3A38;
+  font-weight: bold;
+  width: 100%;
+  background: #FFFFFF;
+  cursor: pointer;
 }
 
 .insidemodalContentForTask:focus {
@@ -489,16 +524,16 @@ body {
   font-size: 14px;
 }
 
-#addTaskModal .modal-header .headerUserTitle, #editTaskModal .modal-header .headerUserTitle {
+#addTaskModal .modal-header .headerUserTitle, #editTaskModal .modal-header .headerUserTitle, #changeUserRoleModal .modal-header .headerUserTitle, #userProfileModal .headerUserTitle{
   font-size: 14px;
   font-weight: bold;
   color: #59BB1E;
   position: relative;
-  margin-left: 5px;
+  margin-left: 7px;
   margin-top: -6px;
 }
 
-#addTaskModal .modal-header .headerUserRole, #editTaskModal .modal-header .headerUserRole {
+#addTaskModal .modal-header .headerUserRole, #editTaskModal .modal-header .headerUserRole, #changeUserRoleModal .modal-header .headerUserRole {
   font-size: 10px;
   color: #333333;
   position: absolute;
@@ -510,7 +545,6 @@ body {
   font-size: 14px;
   font-weight: bold;
   color: #59BB1E;
-  position: absolute;
   margin-top: -7px;
   margin-left: 1.7em;
   
@@ -519,10 +553,15 @@ body {
 #addNoteModal .modal-header .headerUserRole{
   font-size: 10px;
   color: #333333;
-  position: absolute;
   margin-top: 7px;
   margin-left: 2.5em;
   
+}
+
+#userProfileModal .headerUserRole {
+  margin-top: -10px;
+  font-size: 11px;
+  margin-left: 2.7em;
 }
 
 
@@ -1394,15 +1433,15 @@ summary:focus {
 
 
 .nav-tabs .nav-link.active {
-    background: rgba(255, 255, 255, 0.2);
-    border-top: 5px solid #4DFFD4;
-    padding-top: 9px!important;
-    color: #4DFFD4;
+  background: rgba(255, 255, 255, 0.2);
+  border-top: 5px solid #4DFFD4;
+  padding-top: 9px!important;
+  color: #4DFFD4;
 }
 
 
 .nav-tabs .nav-link:hover {
-    background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.3);
 }
 
 #home-tab {
@@ -1483,7 +1522,7 @@ summary:focus {
 .modal-contentForUserProfile {
   background-color: #fefefe;
   margin: auto;
-  margin-top:-15vh;
+  margin-top:-16vh;
   padding: 0;
   border: 1px solid #888;
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
@@ -1626,7 +1665,7 @@ summary:focus {
 .splitUPMLeftt {
   display:inline-block;
   vertical-align:top;
-  background:#FAFAFA;;
+  background:#FAFAFA;
   height:100%;
   width:25%;
   overflow-y: scroll;
@@ -1636,46 +1675,30 @@ summary:focus {
   background:#FFFFFF;
   width:75%;
   overflow-y: scroll;
+  padding-top: 20px;
 }
 
 .splitUPMLeftt .splitUPMLeftHeader {
   height: 42px;
-  background: rgba(0, 0, 0, 0.1);
+  background: rgb(237, 237, 237);
+  position: fixed;
+  width: 248px;
+
 }
 
 .splitUPMLeftt .splitUPMLeftHeader img {
   margin-top: 9px;
 }
 
-.splitUPMLeftt .splitUPMLeftHeader h4 {
-  font-family: 'Roboto', sans-serif;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 14px;
-  color: #26A69A;
-  margin-left: 32px;
-  margin-top: -25px;
-  margin-bottom: -10px;
-  
-}
-
-.splitUPMLeftt .splitUPMLeftHeader span {
-  font-family: 'Roboto', sans-serif;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 10px;
-  line-height: 12px;
-  color: #333333;
-  margin-left: 32px;
-}
-
 .splitUPMLeftt .splitUPMLeftContent {
   width: 212px;
-  height: 53px;
+  height: 55px;
   background: #FFFFFF;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 5px;
-  margin-top: 23px;
+  margin-top: 10px;
+  cursor: pointer;
+
 }
 .splitUPMLeftt .splitUPMLeftContent h5{
   font-family: 'Roboto', sans-serif;
@@ -1699,8 +1722,14 @@ summary:focus {
 }
 
 .userHistories .userHistoryHead {
-  padding-top: 20px;
-  margin-bottom: 20px;
+  position: fixed;
+  display: inline-flex;
+  justify-content: space-between;
+  width: 720px;
+  background-color: white;
+  padding: 10px;
+  margin-top: -3.5em;
+
 }
 
 .userHistories .userHistoryHead h3 {
@@ -1709,31 +1738,24 @@ summary:focus {
   font-weight: bold;
   font-size: 14px;
   color: #26A69A;
+  margin-left: -10px;
+  margin-top: 10px;
 }
 
 .userHistories .userHistoryTasks {
   margin-top: 40px;
 }
 
-.userHistories .userHistoryTasks label:first-child {
-  margin-bottom: -20px;
-  padding-bottom: -20px;
-}
-
-.userHistories .userHistoryTasks label{
-  margin-top: -5px;
-  padding-top: -5px;
-}
-
-
-.userHistories .userHistoryTasks label {
+.userHistories .userHistoryTasks .labelForWorkID, .userHistories .userHistoryTasks .labelForWorkIDStatus{
   font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: bold;
   font-size: 14px;
   color: rgba(0, 0, 0, 0.5);
   margin-right: 5px;
+  margin-bottom: 0px;
 }
+
 
 .userHistories .userHistoryTasks .workID {
   font-family: 'Roboto', sans-serif;
@@ -1748,7 +1770,7 @@ summary:focus {
   font-style: normal;
   font-weight: normal;
   font-size: 14px;
-  margin-left: 14px;
+  margin-left: 10px;
 }
 
 .userHistories .userHistoryTasks .statusComplete {
@@ -1764,8 +1786,8 @@ summary:focus {
   font-style: normal;
   font-weight: normal;
   font-size: 14px;
-  line-height: 16px;
   color: rgba(0, 0, 0, 0.8);
+  margin-top: 5px;
 }
 
 .navbarr .projectsDropDown h4, .navbarr #sprintTab h4, .navbarr #slackTab h4, .navbarr #themeTab h4 {
@@ -2018,4 +2040,65 @@ summary:focus {
   border-radius: 10px;
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
   margin-bottom: 15px;
+}
+
+.projectsDropDownContent .switch {
+  position: relative;
+  display: inline-block;
+  width: 20px;
+  height: 11px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.projectsDropDownContent .switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.projectsDropDownContent .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,1);
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.projectsDropDownContent .slider:before {
+  position: absolute;
+  content: "";
+  height: 7px;
+  width: 7px;
+  left: 1.5px;
+  bottom: 2px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.projectsDropDownContent input:checked + .slider {
+  background-color: rgba(0,0,0,1);
+}
+
+.projectsDropDownContent input:focus + .slider {
+  box-shadow: 0 0 1px white;
+}
+
+.projectsDropDownContent input:checked + .slider:before {
+  -webkit-transform: translateX(9px);
+  -ms-transform: translateX(9px);
+  transform: translateX(9px);
+}
+
+.projectsDropDownContent .slider.round {
+  border-radius: 34px;
+}
+
+.projectsDropDownContent .slider.round:before {
+  border-radius: 50%;
 }
