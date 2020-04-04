@@ -538,8 +538,12 @@
                 <span class="close ForMobile" (click)="close()"><span class="icon-cancel"></span></span>
                 <span class="addT">Change User Role</span>
                 <p class="choose_role">Choose between Developer, Admin, Quality Analyst or Owner.</p>
-                <textarea placeholder="Developer" class="insidemodalContentForChangeRole" name="role_name" [(ngModel)]="new_role"
-                  required></textarea>
+                <select [(ngModel)]="new_role" name="new_role" class="custom-select" placeholder="Choose Role">
+                  <option value="admin">Admin</option>
+                  <option value="developer">Developer</option>
+                  <option value="owner">Owner</option>
+                  <option value="quality analyst">Quality Analyst</option>
+                </select>
                 <div class="submitTask">
                   <button type="submit" id="changeUserRoleBtn" class="btn addTbtn" style="width: 165px;">CHANGE</button>
                   <span class="btn closebtn" id="cancelAddTaskBtn" style="font-weight: bold;" (click)="close()">CANCEL</span>

@@ -1130,14 +1130,18 @@ export class ScrumboardComponent implements OnInit {
   }
 
   autoClearTft() {
-    this.dataService.autoClearTftRequest(this.project_id).subscribe(
-      data => {
-        this.NotificationBox(data['message'])
-        localStorage.setItem('sessiontf', data['to_clear_board'])
-      }, error => {
-        console.log('An error occured, please try again!')
-      }
-    )
+    if (this.loggedUserRole == "Owner") {
+      this.dataService.autoClearTftRequest(this.project_id).subscribe(
+        data => {
+          this.NotificationBox(data['message'])
+          localStorage.setItem('sessiontf', data['to_clear_board'])
+        }, error => {
+          console.log('An error occured, please try again!')
+        }
+      )
+    } else {
+      this.NotificationBox('Permission denied!')
+    }
   }
 
   deleteTask(taskid, taskname) {
