@@ -195,7 +195,7 @@
                 <span (click)="close()" class="icon-cancel close" style="font-size: 26px; margin-top: -22px;"></span>
               </div>
 
-              <div style="padding: 0px 12px;">
+              <div style="padding: 0px 12px; padding-left: 20px;">
                 <span class="addT addNT">Add Notes</span>
                 <form #addNoteForm name="addNote" id="addNote" (ngSubmit)="addNote()">
                   <textarea #noteToAdd="ngModel" [(ngModel)]="note_to_add" name="noteToAdd"
@@ -530,7 +530,7 @@
               <span class="headerUserTitle">{{loggedUser}}</span>
               <p class="headerUserRole">
                 {{loggedUserRole}}</p>
-              <span class="close " (click)="close()"><span class="icon-cancel"></span></span>
+              <span class="close " (click)="close()" style="margin-top: -20px;"><span class="icon-cancel"></span></span>
         
             </div>
             <div class="modal-bodyForTask" style="background: #FAFAFA; margin-top: -6px; padding-bottom: 20px;">
@@ -538,8 +538,8 @@
                 <span class="close ForMobile" (click)="close()"><span class="icon-cancel"></span></span>
                 <span class="addT">Change User Role</span>
                 <p class="choose_role">Choose between Developer, Admin, Quality Analyst or Owner.</p>
-                <select [(ngModel)]="new_role" name="new_role" class="custom-select" placeholder="Choose Role">
-                  <option value="admin">Admin</option>
+                <select [(ngModel)]="new_role" name="new_role" class="custom-select">
+                  <option value="admin" [selected]="true">Admin</option>
                   <option value="developer">Developer</option>
                   <option value="owner">Owner</option>
                   <option value="quality analyst">Quality Analyst</option>
