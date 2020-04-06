@@ -153,8 +153,7 @@ body {
   border-top: 10px solid #E5E5E5;
   align-items: center!important;
   text-align: center!important;
-  padding: 5px 10px 8px 8px;
-  margin-left: -8px;
+  /* padding: 5px 10px 8px 8px; */
   min-height: 223px;
 }
 
@@ -170,8 +169,11 @@ body {
   font-size: 14px;
   line-height: 18px;
   color: rgba(0, 0, 0, 0.9);
-  margin-bottom: 1.6em;
+  margin-bottom: 1.5em;
   transition: ease-in 0.5s;
+  margin-left: 8px;
+  margin-right: 8px;
+  margin-top: 5px;
 }
 
 .ex .excontent .uploadedImage img, .ex_taskHistory .excontent .uploadedImage img{
@@ -240,7 +242,7 @@ body {
 
 .child{
   border-left: 9px solid #000;
-  margin-left: -12px;
+  margin-left: -4px;
   min-height: 113px;
    
 }
@@ -621,6 +623,22 @@ body {
   position: fixed;
   z-index: 1;
   overflow-x: hidden;
+}
+
+.ex .excontent .task_days_failed {
+  background: #C90000;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  color: white;
+  font-size: 9px;
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  text-align: center;
+  line-height: 15px;
+  margin-left: -13px;
+  margin-top: -13px;
 }
 
 #addNoteModal .upside {
