@@ -1,33 +1,4 @@
-#Dockerfile basev3 (building on top of basev1)
-FROM docker.io/showpopulous/chatscrum_img_base2:basev2
-#FROM docker.io/showpopulous/chatscrum_img_base3:basev3
-
-############################# HOLD ON  ##########################################
-# If all you need to do is to run chatscrum,
-# then you do not need to build a new image, just run existing image with the following
-# docker pull docker.io/showpopulous/chatscrum_img_base3:basev3 
-# NOTE: edit chatscrum_img:basevi to fit the latest version for your use
-# If you don't already have a database, install mysql and create a database called chatscrum
-# mkdir /web && cd /web
-# copy chatscrum artifacts to /web, untar it there
-# mkdir /web/www && cd /web/www
-# git init .
-# git remote add origin https://gitlab.com/showpopulous/scrumastr.git
-# git pull
-# cd /web/www/Django/ScrumMaster
-# python3.6 manage.py makemigrations
-# python3.6 manage.py migrate
-# run chatscrum with this: docker run -p 5000:5000 --name chatscrum_ci local/chatscrum_img_base2
-# type the ip address of your server into your browser and you should see chatscrum
-
-########Troubleshooting Tips
-# to test mysql connection problems if you are using mysql.connect.django: 
-# -- from container, import mysql.connector, then conn = mysql.connector.connect(host='xx',database='xx',password='xx')
-# 
-
-####### If you rebuild the chatscrum image 
-# in the even that you have rebuilt the image, make sure db user linuxjobber can access your database, then run the command below:
-# docker run -d -p 5000:5000 -p 5100:5100 -e "DATABASE_URL=mysql://linuxjobber:8iu7*IU&@lj_db" -e "SESSION_DEFAULTS=database" --link lj_db --name history_image   
+FROM centos:7
 
 MAINTAINER The CentOS Project <cloud-ops@centos.org>
 
@@ -35,41 +6,81 @@ LABEL Vendor="CentOS" \
       License=GPLv2 \
       Version=2.4.6-40
 
+RUN yum -y install wget epel-release
+RUN yum -y --setopt=tsflags=nodocs update && \
+      yum -y --setopt=tsflags=nodocs install httpd && \
+      yum clean all
+
+RUN yum -y update && yum -y install git
+
+
+RUN yum -y install httpd-devel \
+      zlib-devel \
+      bzip2-devel \
+      openssl-devel \
+      ncurses-devel \
+      sqlite-devel \
+      readline \
+      https://centos7.iuscommunity.org/ius-release.rpm \
+      python36u \
+      python36u-pip \
+      python36u-devel \
+      uwsgi \
+      uwsgi-plugin-python36u \
+      nginx \
+      python-pip \
+      mysql-devel
+
+RUN yum -y group install "Development Tools"
+
+RUN  yum clean all;
+
+RUN yum -y install gcc
+
+RUN pip install --upgrade pip && pip install boto && pip install boto3
+RUN yum -y install https://centos7.iuscommunity.org/ius-release.rpm python36u python36u-devel python36u-pip
+RUN pip install pathlib
+
+
+RUN /bin/pip3.6 install django==2.1
+RUN /bin/pip3.6 install channels==2.2.0
+RUN /bin/pip3.6 install djangorestframework==3.10.2
+RUN /bin/pip3.6 install django-cors-headers==3.1.0
+RUN /bin/pip3.6 install mysqlclient
+RUN /bin/pip3.6 install mysql-connector-python
+RUN /bin/pip3.6 install djangorestframework-jwt==1.11.0
+RUN /bin/pip3.6 install Pillow channels_redis==2.4.0 slackclient==1.3.0 pymysql
+RUN /bin/pip3.6 install boto3==1.11.0
+RUN /bin/pip3.6 install django==2.1
 
 RUN mkdir -p /web/
 COPY www/ /web/www/
 COPY nginx.conf /etc/nginx/
-COPY package.json /web
 COPY start.sh /start.sh
 COPY settings.py /web/www/Django/ScrumMaster/ScrumMaster/settings.py
+COPY settings.ini /web/www/Django/ScrumMaster/settings.ini
+COPY Chatscrum-Angular/ /web/Chatscrum-Angular/
+
 RUN chmod +x /start.sh
 
-RUN rm -rf /web/Chatscrum-Angular
-RUN yum install -y nodejs && yum install -y gcc-c++ make 
-RUN cd /web && npm install
+RUN yum install -y uwsgi-logger-file uwsgi-plugin-python36u --skip-broken
+
+RUN wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+ENV NVM_DIR=/root/.nvm
+RUN . $HOME/.nvm/nvm.sh && nvm install stable
+RUN . $HOME/.nvm/nvm.sh && npm install -g @angular/cli@7.3.9
 RUN git config --global user.email "prosper.sopuruchi@gmail.com"
-RUN git config --global user.name "Prosper Sopuruchi"
-RUN cd /web && . $HOME/.nvm/nvm.sh && ng new Chatscrum-Angular --routing
-RUN pip3.6 install Pillow
-RUN pip3.6 install slackclient==1.3.0 pymysql
+RUN git config --global user.name "Prosper Ndubueze"
 
-RUN . $HOME/.nvm/nvm.sh && yes | cp -r /web/www/Angular/* /web/Chatscrum-Angular/src
-#RUN cd /web/Chatscrum-Angular/ && sed -i '26s/.*/"src\/styles.css","node_modules\/materialize-css\/dist\/css\/materialize.min.css"/' angular.json; 
-#RUN cd /web/Chatscrum-Angular/ && sed -i '28s/.*/"scripts": ["node_modules\/jquery\/dist\/jquery.min.js","node_modules\/materialize-css\/dist\/js\/materialize.min.js"]/' angular.json; sed -i '19s/.*/],"types": ["jquery","materialize-css"]/' tsconfig.json;
-RUN cd /web/Chatscrum-Angular/ && sed -i 's/styles.css/styles.scss/g' angular.json;
-RUN cd /web/Chatscrum-Angular/src && ls;
-RUN cd /web/Chatscrum-Angular/src && rm -r styles.css;
-RUN cd /web/Chatscrum-Angular/ && sed -i 's/127.0.0.1:8000/54.185.254.239:5000/' src/app/data.service.ts;
-#RUN ls /web/Chatsrum-Angular
-#RUN cat /web/Chatscrum-Angular/src/app/profile/profile.component.html
-RUN cd /web/Chatscrum-Angular && . $HOME/.nvm/nvm.sh && npm install ngx-materialize materialize-css@next ng2-dragula rxjs && ng build --prod --aot
-RUN yes | cp -r /web/Chatscrum-Angular/dist/Chatscrum-Angular/assets/ /web/Chatscrum-Angular/dist/Chatscrum-Angular/src/
-RUN yes | cp -r /web/Chatscrum-Angular/dist/Chatscrum-Angular/* /usr/share/nginx/web/Chatscrum-Angular
+RUN cd /web/Chatscrum-Angular && . $HOME/.nvm/nvm.sh && npm install
+RUN cd /web/Chatscrum-Angular && . $HOME/.nvm/nvm.sh && ng build --prod --aot
 
-#RUN cd /web/www/Django/ScrumMaster/ && /bin/python3.6 manage.py makemigrations && /bin/python3.6 manage.py migrate
-#RUN cd /web/www/Django/ScrumMaster/ && /bin/python3.6 manage.py ruserver 0.0.0.0:5000
+RUN mkdir -p /web/Chatscrum-Angular/dist/chatscrum/src/assets/
+RUN yes | cp -r /web/Chatscrum-Angular/dist/chatscrum/assets/ /web/Chatscrum-Angular/dist/chatscrum/src/
+RUN mkdir -p /usr/share/nginx/web/Chatscrum-Angular
+RUN yes | cp -r /web/Chatscrum-Angular/dist/chatscrum/* /usr/share/nginx/web/Chatscrum-Angular
 
-RUN touch /etc/uwsgi.d/chatscrum.ini 
+RUN touch /etc/uwsgi.d/chatscrum.ini
 RUN echo "[uwsgi]" > /etc/uwsgi.d/chatscrum.ini
 RUN echo "socket = /run/chatscrumuwsgi/uwsgi.sock" >> /etc/uwsgi.d/chatscrum.ini
 RUN echo "chmod-socket = 775" >> /etc/uwsgi.d/chatscrum.ini
@@ -87,8 +98,11 @@ RUN chgrp nginx /run/chatscrumuwsgi
 RUN chmod 2775 /run/chatscrumuwsgi
 RUN touch /run/chatscrumuwsgi/uwsgi.sock
 
-#for basev2, container nginx should be running on port 5000 so that host nginx can run on 80
+#RUN rm -rf /web/www/Django/ScrumMaster/Scrum/migrations/00*
+
+RUN chgrp -R 0 /web/www/Django/ScrumMaster/* /start.sh /run /run/chatscrumuwsgi/* /etc /usr/share/nginx /var/lib /var/log /usr/sbin/uwsgi \
+      && chmod -R g=u /web/www/Django/ScrumMaster/* /start.sh /run /run/chatscrumuwsgi/* /etc /usr/share/nginx /usr/sbin/uwsgi  /var/lib /var/log
+
 EXPOSE 5000 5100
 
 CMD ["/start.sh"]
-

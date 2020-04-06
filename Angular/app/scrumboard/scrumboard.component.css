@@ -114,8 +114,6 @@ body {
   height: 100%;
   position: fixed;
   z-index: 1;
-  /* top: 10; */
-  /* overflow-x: hidden; */
   padding-top: 22px;
 }
 
@@ -160,7 +158,7 @@ body {
   min-height: 223px;
 }
 
-.ex .excontent {
+.ex .excontent, .ex_taskHistory .excontent{
   border: 1px solid rgba(255, 76, 109, 0.25);
   background: #FFFFFF;
   border-radius: 5px;
@@ -176,7 +174,7 @@ body {
   transition: ease-in 0.5s;
 }
 
-.ex .excontent .uploadedImage img{
+.ex .excontent .uploadedImage img, .ex_taskHistory .excontent .uploadedImage img{
   width: 70%;
   display: block;
   margin-left: auto;
@@ -186,11 +184,11 @@ body {
   transition: 0.3s;
 }
 
-.ex .excontent .uploadedImage img:hover{
+.ex .excontent .uploadedImage img:hover, .ex_taskHistory .excontent .uploadedImage img:hover{
   opacity: 0.7;
 }
 
-.ex .excontent .scrumtools {
+.ex .excontent .scrumtools, .ex_taskHistory .excontent .scrumtools{
   font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: normal;
@@ -201,24 +199,24 @@ body {
   opacity: 1;
 }
 
-.ex .excontent  n {
+.ex .excontent  n, .ex_taskHistory .excontent n {
   font-size: 11px;
 }
 
-.ex .excontent .scrumtools span {
+.ex .excontent .scrumtools span, .ex_taskHistory .excontent .scrumtools span {
   font-size: 15px; 
   margin-right: 8px;
   transition: ease-in 0.2s;
 }
 
-.ex .excontent .scrumtools i {
-  font-size: 16px; 
-  margin-right: 8px;
+.ex .excontent .scrumtools i, .ex_taskHistory .excontent .scrumtools i {
+  font-size: 14px; 
+  margin-right: 6px;
   transition: ease-in 0.2s;
   
 }
 
-.ex .icon-move {
+.ex .icon-move, .ex_taskHistory .icon-move {
   font-size: 17px!important;
 }
 
@@ -237,13 +235,13 @@ body {
 }
 
 .excontent .tools:hover {
-  color: #4DFFD4;
+  color: #4DFFD4!important;
 }
 
 .child{
-   border-left: 9px solid #000;
-   margin-left: -12px;
-   min-height: 113px;
+  border-left: 9px solid #000;
+  margin-left: -12px;
+  min-height: 113px;
    
 }
 
@@ -374,16 +372,51 @@ body {
   background: #FAFAFA;
 }
 
-.insidemodalContentForTask {
-  width: 581px;
+.insidemodalContentForTask, #changeUserRoleModal .insidemodalContentForChangeRole{
+  width: 100%;
   height: 142px;
-  margin-top:15px;
+  margin-top: 15px;
   border: 1px solid rgba(0, 0, 0, 0.3);
   box-sizing: border-box;
   border-radius: 10px;
   outline-color: transparent;
   padding: 8px;
   resize: none;
+}
+
+#changeUserRoleModal .insidemodalContentForChangeRole{
+  height: 38px;
+  overflow: hidden;
+  padding: 5px 22px;
+  font-size: 14px;
+  font-weight: normal;
+  font-family: 'roboto', sans-serif;
+  color: rgba(0, 0, 0);
+  margin-top: 0px;
+  background: #FAFAFA;
+}
+
+#changeUserRoleModal #changeUserRoleForm .choose_role{
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 13px;
+  line-height: 14px;
+  color: rgba(0, 0, 0, 0.6);
+
+}
+
+#changeUserRoleModal .remove_user {
+  font-family: SF;
+  font-size: 14px;
+  line-height: 80px;
+  align-items: center;
+  text-align: center;
+  color: #FF3A38;
+  font-weight: bold;
+  width: 100%;
+  background: #FFFFFF;
+  cursor: pointer;
 }
 
 .insidemodalContentForTask:focus {
@@ -422,14 +455,17 @@ body {
     
   }
 
-.addT {
+.addT, .addNT {
   color:#26A69A;
   font-size: 14px;
   font-weight: bold;
   font-family: 'Roboto', sans-serif;
   line-height: 16px;
-  
 }
+
+/* #addNoteModal .addNT {
+  margin-top: -20px!important;
+} */
 
 .submitTask {
   margin-top: 20px;
@@ -437,7 +473,7 @@ body {
 }
 
 .submitNote {
-  margin-top: 4em!important;
+  margin-top: 3em!important;
   margin-left: 361px;
 }
 
@@ -447,14 +483,14 @@ body {
 }
 
 .closebtn {
-    background: none;
-    font-size: 14px;
-    line-height: 17px;
-    color: black;
-    font-weight: normal;
-    outline: none;
-    font-family: SF;
-    margin-left: 5px;
+  background: none;
+  font-size: 14px;
+  line-height: 17px;
+  color: black;
+  font-weight: normal;
+  outline: none;
+  font-family: SF;
+  margin-left: 5px;
 }
 
 
@@ -467,6 +503,9 @@ body {
   color: black;
 }
 
+.addTbtn:focus {
+  outline-color: transparent!important;
+}
 
 .openAddTaskModalBtn {
   height: 35px;
@@ -485,21 +524,44 @@ body {
   font-size: 14px;
 }
 
-#addTaskModal .modal-header .headerUserTitle, #editTaskModal .modal-header .headerUserTitle{
+#addTaskModal .modal-header .headerUserTitle, #editTaskModal .modal-header .headerUserTitle, #changeUserRoleModal .modal-header .headerUserTitle, #userProfileModal .headerUserTitle{
   font-size: 14px;
   font-weight: bold;
   color: #59BB1E;
   position: relative;
-  margin-left: 5px;
+  margin-left: 7px;
   margin-top: -6px;
 }
 
-#addTaskModal .modal-header .headerUserRole, #editTaskModal .modal-header .headerUserRole{
+#addTaskModal .modal-header .headerUserRole, #editTaskModal .modal-header .headerUserRole, #changeUserRoleModal .modal-header .headerUserRole {
   font-size: 10px;
   color: #333333;
   position: absolute;
   margin-top: 8px;
   margin-left: 2.5em;
+}
+
+#addNoteModal .modal-header .headerUserTitle{
+  font-size: 14px;
+  font-weight: bold;
+  color: #59BB1E;
+  margin-top: -7px;
+  margin-left: 1.7em;
+  
+}
+
+#addNoteModal .modal-header .headerUserRole{
+  font-size: 10px;
+  color: #333333;
+  margin-top: 7px;
+  margin-left: 2.5em;
+  
+}
+
+#userProfileModal .headerUserRole {
+  margin-top: -10px;
+  font-size: 11px;
+  margin-left: 2.7em;
 }
 
 
@@ -519,32 +581,57 @@ body {
   font-weight: bold;
 }
 
-.insidemodalContentForNote {
+#addNoteModal .modal-contentForNote .insidemodalContentForNote {
   width: 954px;
-  height: 142px;
+  height: 132px;
   margin-top:15px;
   border: 1px solid rgba(0, 0, 0, 0.3);
   box-sizing: border-box;
   border-radius: 10px;
+  outline-color: transparent;
   padding: 8px;
+  resize: none;
+  margin-top: 6px;
 }
 
-.modal-contentForNote {
-  
+#addNoteModal .modal-contentForNote {
   background-color: #fefefe;
   margin: auto;
   margin-top:-15vh;
-  /* margin-left: 15em; */
   padding: 0;
   border: 1px solid #888;
-  /* width: 50%; */
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
   -webkit-animation-name: animatetop;
   -webkit-animation-duration: 0.4s;
   animation-name: animatetop;
   animation-duration: 0.4s;
   width: 994px;
-  height: 833px;
+  height: 100%;
+  
+}
+
+#addNoteModal .splitNoteModal {
+  width: 994px;
+  position: fixed;
+  z-index: 1;
+  overflow-x: hidden;
+}
+
+#addNoteModal .upside {
+  top: 0;
+  background: #FAFAFA;
+  height: 55%;
+  overflow: hidden;
+}
+
+#addNoteModal .upside .modal-header {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+#addNoteModal .downside {
+  bottom: 0;
+  background: #FFFFFF;
+  height: 45%;
 }
 
 
@@ -706,51 +793,144 @@ body {
 }
 
 
-.modal-contentForTaskHistory { 
+#taskHistoryModal .modal-contentForTaskHistory {
   background-color: #fefefe;
   margin: auto;
   margin-top:-15vh;
-  /* margin-left: 15em; */
   padding: 0;
   border: 1px solid #888;
-  /* width: 50%; */
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
   -webkit-animation-name: animatetop;
   -webkit-animation-duration: 0.4s;
   animation-name: animatetop;
   animation-duration: 0.4s;
   width: 994px;
-  /* height: 833px; */
+  height: 733px;
+  border-radius: 10px;
+  /* overflow-y: hidden; */
 }
 
-/*.taskHistoryModalMain {
-  padding: 16px;
-  margin-top: 37px;
+#taskHistoryModal .taskHistoryModalSplit {
+  height:100%;
+  width:100%;
+  margin:0 auto;
+  border-radius: 10px;
 }
 
-.taskHistoryModalSplit {
-  background: #fff;
-  height: 100%;
+#taskHistoryModal .taskHistorySide{
+  display:inline-block;
+  vertical-align:top;
+  background:#FAFAFA;
+  height:100%;
+  width:25%;
+  overflow-y: scroll; 
+  border-radius: 10px;
+  border-right: 1px solid transparent;
+}
+
+#taskHistoryModal .taskHistorySide:nth-child(2) {
+  background:#FFFFFF;
+  width:75%;
+  overflow-y: scroll;
+  border-radius: 10px;
+}
+
+#taskHistoryModal .taskHistorySide .singleTask{
+  padding: 20px 0px 0px 25px;
+}
+
+#taskHistoryModal .taskHistorySide .singleTask .header {
+  margin-left: -21px;
+  margin-top: -20px;
   position: fixed;
-  z-index: 1;
-  /* top: 10; 
-  overflow-x: hidden;
-  padding-top: 20px;
+  padding: 16px;
+  background-color: white;
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  width: 735px;
+
 }
 
-.taskHistoryModalLeft {
-  width: 24%;
-  left: 10;
-  background-color: #111;
-  overflow-y: hidden;
+#taskHistoryModal .taskHistorySide .singleTask .header h4 {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  color: #26A69A;
+  margin-left: -5px;
 }
 
-.taskHistoryModalRight {
-  background: greenyellow;
-  width: 76%;
-  right:0;
+#taskHistoryModal .taskHistorySide .singleTask .allTaskContainer {
+  padding: 10px 20px 20px 20px;
+  border-left: 1.5px solid rgba(51, 51, 51, 0.2);
+  margin-top: 25px;
 }
-*/
+
+#taskHistoryModal .taskHistorySide .singleTask .allTaskContainer .fa-circle {
+  margin-left: -29px;
+  margin-right: 12px;
+  color: #26A69A;
+}
+
+
+/* #taskHistoryModal .taskHistorySide .singleTask .allTaskContainer .goal_moved{
+  
+} */
+
+/* #taskHistoryModal .taskHistorySide .singleTask .allTaskContainer .goal_moved:nth-child(1) {
+  margin-top: 0px;
+} */
+
+#taskHistoryModal .taskHistorySide .singleTask .allTaskContainer .move_heading {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: rgba(0, 0, 0);
+  position: relative;
+}
+
+#taskHistoryModal .taskHistorySide .singleTask .allTaskContainer .goal_moved_head .label {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+#taskHistoryModal .taskHistorySide .singleTask .allTaskContainer .move_info .status_container {
+  /* border: 1px solid rgba(0, 0, 0, 0.1); */
+  width: 150px;
+  height: 40px;
+  margin-top: 5px;
+  margin-right: 10px;
+  display: inline-block;
+}
+
+#taskHistoryModal .taskHistorySide .singleTask .allTaskContainer .move_info .status_and_time {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.5);
+  border-left: 2px solid rgba(0, 0, 0, 0.1);
+  padding-left: 4px;
+}
+
+#taskHistoryModal .taskHistorySide .singleTask .allTaskContainer .move_info .status_container p{
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  border-left: 2px solid rgba(0, 0, 0, 0.1);
+  color: rgba(0, 0, 0, 0.9);
+  padding-left: 4px;
+  margin-top: -3px;
+}
+
+
+
+
 
 .ForMobile {
   display: none;
@@ -827,8 +1007,12 @@ body {
   .insidemodalContentForNote {
     width: 343px;
     height: 128px;
-    box-sizing: border-box;
     border: 1px solid rgba(0, 0, 0, 0.3);
+    box-sizing: border-box;
+    border-radius: 10px;
+    outline-color: transparent;
+    padding: 6px;
+    resize: none;
   }
 
   .close {
@@ -1000,16 +1184,16 @@ body {
   background: rgba(255, 76, 109, 0.1);
   padding-left: 9px;
   margin-left: -3.1em;
-  height: 45px;
-  border-radius: 10px;
+  border-radius: 10px 10px 0px 0px;
+  height: 55px;
   width: 100%;
   position: absolute;
   margin-bottom: 1em;
 }
 
 .teamTaskDropDownMenuToggle {
-  height: 55px;
-  border-radius: 10px 10px 0px 0px;
+  height: 45px;
+  border-radius: 10px;
 }
 
 .teamTaskDropDownMenu img {
@@ -1249,15 +1433,15 @@ summary:focus {
 
 
 .nav-tabs .nav-link.active {
-    background: rgba(255, 255, 255, 0.2);
-    border-top: 5px solid #4DFFD4;
-    padding-top: 9px!important;
-    color: #4DFFD4;
+  background: rgba(255, 255, 255, 0.2);
+  border-top: 5px solid #4DFFD4;
+  padding-top: 9px!important;
+  color: #4DFFD4;
 }
 
 
 .nav-tabs .nav-link:hover {
-    background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.3);
 }
 
 #home-tab {
@@ -1336,10 +1520,9 @@ summary:focus {
 
 
 .modal-contentForUserProfile {
-  
   background-color: #fefefe;
   margin: auto;
-  margin-top:-15vh;
+  margin-top:-16vh;
   padding: 0;
   border: 1px solid #888;
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
@@ -1482,7 +1665,7 @@ summary:focus {
 .splitUPMLeftt {
   display:inline-block;
   vertical-align:top;
-  background:#FAFAFA;;
+  background:#FAFAFA;
   height:100%;
   width:25%;
   overflow-y: scroll;
@@ -1492,46 +1675,30 @@ summary:focus {
   background:#FFFFFF;
   width:75%;
   overflow-y: scroll;
+  padding-top: 20px;
 }
 
 .splitUPMLeftt .splitUPMLeftHeader {
   height: 42px;
-  background: rgba(0, 0, 0, 0.1);
+  background: rgb(237, 237, 237);
+  position: fixed;
+  width: 248px;
+
 }
 
 .splitUPMLeftt .splitUPMLeftHeader img {
   margin-top: 9px;
 }
 
-.splitUPMLeftt .splitUPMLeftHeader h4 {
-  font-family: 'Roboto', sans-serif;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 14px;
-  color: #26A69A;
-  margin-left: 32px;
-  margin-top: -25px;
-  margin-bottom: -10px;
-  
-}
-
-.splitUPMLeftt .splitUPMLeftHeader span {
-  font-family: 'Roboto', sans-serif;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 10px;
-  line-height: 12px;
-  color: #333333;
-  margin-left: 32px;
-}
-
 .splitUPMLeftt .splitUPMLeftContent {
   width: 212px;
-  height: 53px;
+  height: 55px;
   background: #FFFFFF;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 5px;
-  margin-top: 23px;
+  margin-top: 10px;
+  cursor: pointer;
+
 }
 .splitUPMLeftt .splitUPMLeftContent h5{
   font-family: 'Roboto', sans-serif;
@@ -1555,8 +1722,14 @@ summary:focus {
 }
 
 .userHistories .userHistoryHead {
-  padding-top: 20px;
-  margin-bottom: 20px;
+  position: fixed;
+  display: inline-flex;
+  justify-content: space-between;
+  width: 720px;
+  background-color: white;
+  padding: 10px;
+  margin-top: -3.5em;
+
 }
 
 .userHistories .userHistoryHead h3 {
@@ -1565,31 +1738,24 @@ summary:focus {
   font-weight: bold;
   font-size: 14px;
   color: #26A69A;
+  margin-left: -10px;
+  margin-top: 10px;
 }
 
 .userHistories .userHistoryTasks {
   margin-top: 40px;
 }
 
-.userHistories .userHistoryTasks label:first-child {
-  margin-bottom: -20px;
-  padding-bottom: -20px;
-}
-
-.userHistories .userHistoryTasks label{
-  margin-top: -5px;
-  padding-top: -5px;
-}
-
-
-.userHistories .userHistoryTasks label {
+.userHistories .userHistoryTasks .labelForWorkID, .userHistories .userHistoryTasks .labelForWorkIDStatus{
   font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: bold;
   font-size: 14px;
   color: rgba(0, 0, 0, 0.5);
   margin-right: 5px;
+  margin-bottom: 0px;
 }
+
 
 .userHistories .userHistoryTasks .workID {
   font-family: 'Roboto', sans-serif;
@@ -1604,7 +1770,7 @@ summary:focus {
   font-style: normal;
   font-weight: normal;
   font-size: 14px;
-  margin-left: 14px;
+  margin-left: 10px;
 }
 
 .userHistories .userHistoryTasks .statusComplete {
@@ -1620,8 +1786,8 @@ summary:focus {
   font-style: normal;
   font-weight: normal;
   font-size: 14px;
-  line-height: 16px;
   color: rgba(0, 0, 0, 0.8);
+  margin-top: 5px;
 }
 
 .navbarr .projectsDropDown h4, .navbarr #sprintTab h4, .navbarr #slackTab h4, .navbarr #themeTab h4 {
@@ -1821,3 +1987,118 @@ summary:focus {
 }
 @media screen and (max-width: 1300px) {.nav-tabs #logoutTab {max-width: 90px;}.nav-tabs #profileTab {max-width: 170px;}.nav-tabs #projectsTab {margin-left: 90px;} .nav-tabs .nav-link {max-width: 150px;} #home-tab {margin-left: 1.1em;} .nav-tabs .otherNavTools {max-width: 110px;} #themeDDContent {max-width: 110px;} .openAddNoteModalbtn {left: 14.5%;}}
 @media screen and (max-width: 1300px) {.nav-tabs #logoutTab {max-width: 100px;} #themeDDContent .imgContainer {margin-right: -5px;}   #themeDDContent .imgBtm{margin-left: 15px;} .themeDropDown .themeDropDownContent .imgGrid{margin-left: -12px;} .projectsDropDownContent {margin-left: 5.6em; width: 110px;} .ex .excontent .scrumtools span {font-size: 12px;} .ex .excontent .scrumtools i {font-size: 14px;}}
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 2px;
+  border: 1px solid rgba(255, 76, 109, 0.25);
+  background: #FFFFFF;
+  border-radius: 5px;
+  padding: 7px;
+  text-align: left;
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 18px;
+  color: rgba(0, 0, 0, 0.9);
+}
+
+.example-list {
+  min-height: 150px;
+  background: transparent;
+  border-radius: 4px;
+  overflow: hidden;
+  display: block;
+}
+
+/* .example-list:hover {
+  min-height: 150px;
+} */
+
+.cdk-drop-placeholder {
+  opacity: 0;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.example-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.dragged_item_placeholder {
+  width: 212px;
+  height: 106px;
+  text-align: center;
+  line-height: 111px;
+  background: linear-gradient(to right, #C4C4C4 50%, rgba(255, 255, 255, 0) 0%), linear-gradient(#C4C4C4 50%, rgba(255, 255, 255, 0) 0%), linear-gradient(to right, #C4C4C4 50%, rgba(255, 255, 255, 0) 0%), linear-gradient(#C4C4C4 50%, rgba(255, 255, 255, 0) 0%);
+  background-position: top, right, bottom, left;
+  background-repeat: repeat-x, repeat-y;
+  background-size: 16px 3px, 3px 16px;
+  border-radius: 10px;
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+  margin-bottom: 15px;
+}
+
+.projectsDropDownContent .switch {
+  position: relative;
+  display: inline-block;
+  width: 20px;
+  height: 11px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.projectsDropDownContent .switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.projectsDropDownContent .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,1);
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.projectsDropDownContent .slider:before {
+  position: absolute;
+  content: "";
+  height: 7px;
+  width: 7px;
+  left: 1.5px;
+  bottom: 2px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.projectsDropDownContent input:checked + .slider {
+  background-color: rgba(0,0,0,1);
+}
+
+.projectsDropDownContent input:focus + .slider {
+  box-shadow: 0 0 1px white;
+}
+
+.projectsDropDownContent input:checked + .slider:before {
+  -webkit-transform: translateX(9px);
+  -ms-transform: translateX(9px);
+  transform: translateX(9px);
+}
+
+.projectsDropDownContent .slider.round {
+  border-radius: 34px;
+}
+
+.projectsDropDownContent .slider.round:before {
+  border-radius: 50%;
+}

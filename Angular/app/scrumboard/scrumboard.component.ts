@@ -1,9 +1,12 @@
 import { Component, OnInit, ElementRef, ViewChildren, QueryList, ViewChild } from '@angular/core';
+import { CdkDragStart, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { ActivatedRoute } from '@angular/router';
-import {Title} from "@angular/platform-browser";
+import { Title } from "@angular/platform-browser";
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DataService } from '../data.service';
+import * as $AB from 'jquery';
+import { element } from 'protractor';
 
 
 @Component({
@@ -12,28 +15,6 @@ import { DataService } from '../data.service';
   styleUrls: ['./scrumboard.component.css']
 })
 export class ScrumboardComponent implements OnInit {
-  @ViewChildren('details') details: QueryList<any>;
-
-  constructor(
-    private http: HttpClient, 
-    private router: Router, 
-    private dataService: DataService, 
-    private pageTitle: Title,
-    private route: ActivatedRoute,
-    ) { }
-
-  ngOnInit() {
-    this.load()
-    this.rose()
-    this.close()
-    this.pageTitle.setTitle('Scrumboard')
-    this.getAllUsersGoals()
-    this.getAllSprints()
-  }
-
-  // ngAfterViewInit(): void {
-    
-  // }
 
   public imgName = "No image selected";
   public alert;
@@ -44,19 +25,65 @@ export class ScrumboardComponent implements OnInit {
   public users = [];
   public participants = [];
   public project_id = sessionStorage.getItem('project_id');
-  loggedUser = sessionStorage.getItem('realname')
-  loggedUserRole = sessionStorage.getItem('role');
+  public loggedUser = sessionStorage.getItem('realname');
+  public loggedUserProfile = sessionStorage.getItem('realname');
+  public loggedUserRole = sessionStorage.getItem('role');
   public loggedUserId;
   public sprints = [];
   public currentSprint = [];
-  public loggedSprint = { sprintID: " ", dateCreated: "2020-03-03T16:33:59.817708Z", endDate: "2020-03-03T16:33:59.817708Z"};
+  public notes = [];
+  public history_for = [];
+  public goal_history = [];
+  public scrumhistory_set = [];
+  public personal_tasks_history = [];
+  public clicked_task_history = [];
+  public loggedSprint = { sprintID: " ", dateCreated: "2020-03-03T16:33:59.817708Z", endDate: "2020-03-03T16:33:59.817708Z" };
   public loggedProject;
-  public colors = ['255, 76, 109', '89, 187, 30', '221, 164, 72', '141, 106, 159', '187, 52, 47', '131, 116, 91', '16, 52, 166', '133, 47, 100','38, 166, 154']
+  public colors = ['255, 76, 109', '89, 187, 30', '221, 164, 72', '141, 106, 159', '187, 52, 47', '131, 116, 91', '16, 52, 166', '133, 47, 100', '38, 166, 154']
   public taskToEdit;
   public goal_name;
-  public addTaskTo = sessionStorage.getItem('role_id');
+  public addToUser = sessionStorage.getItem('role_id');
+  public note_to_add;
+  public notePriority;
+  public push_id;
+  public hours = 0;
+  public to_id;
+  public goal_id;
+  public new_role;
+  public historyForUser;
+  public historyForUserRole;
 
-  load(){
+  @ViewChildren('details') details: QueryList<any>;
+
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private dataService: DataService,
+    private pageTitle: Title,
+    private route: ActivatedRoute,
+  ) { }
+
+  ngOnInit() {
+    this.load()
+    this.rose()
+    this.close()
+    this.pageTitle.setTitle('Scrumboard')
+    this.getAllUsersGoals()
+    this.getAllSprints()
+  }
+
+
+  // ngAfterViewInit(): void {
+  //   this.dataService.deleteNoteRequest(this.project_id, 203).subscribe(
+  //     data => {
+  //       console.log(data)
+  //     }, error => {
+  //       console.log(error)
+  //     }
+  //   )
+  // }
+
+  load() {
     if (window.localStorage) {
       if (!localStorage.getItem('firstLoad')) {
         localStorage['firstLoad'] = true;
@@ -65,7 +92,7 @@ export class ScrumboardComponent implements OnInit {
       else
         localStorage.removeItem('firstLoad');
     }
-    window.onload = function() {
+    window.onload = function () {
       $(".preloader").slideUp(1300);
       let imgBorder1 = document.getElementsByClassName('themeImg').item(0) as HTMLElement;
       let imgBorder2 = document.getElementsByClassName('themeImg').item(1) as HTMLElement;
@@ -114,7 +141,11 @@ export class ScrumboardComponent implements OnInit {
         imgBtm1.style.borderBottom = '1px solid rgba(0, 0, 0, 0.8)';
       }
     };
-  
+
+    if (this.loggedUser.includes(' ')) {
+      this.loggedUserProfile = this.loggedUser.slice(0, this.loggedUser.indexOf(' '))
+    }
+    this.autoHideDialog()
   }
 
   NotificationBox(alert) {
@@ -126,8 +157,7 @@ export class ScrumboardComponent implements OnInit {
     }, 3000);
   }
 
-  
-  close(){
+  close() {
     let hides = document.getElementById("splitLeft") as HTMLElement;
     let moda = document.getElementById("addTaskModal") as HTMLElement;
     let moda1 = document.getElementById("addNoteModal") as HTMLElement;
@@ -138,6 +168,7 @@ export class ScrumboardComponent implements OnInit {
     let appInfoModal = document.getElementById("appInfoModal") as HTMLElement;
     let userProfileModal = document.getElementById("userProfileModal") as HTMLElement;
     let viewUploadedImageModal = document.getElementById("uploadedImageModal") as HTMLElement;
+    let changeRoleModal = document.getElementById("changeUserRoleModal") as HTMLElement;
     moda.style.display = "none";
     moda1.style.display = "none";
     hides.style.overflowY = "scroll";
@@ -148,15 +179,16 @@ export class ScrumboardComponent implements OnInit {
     appInfoModal.style.display = "none";
     userProfileModal.style.display = "none";
     viewUploadedImageModal.style.display = "none";
+    changeRoleModal.style.display = "none";
 
-    
+
   }
 
   editTaskModal(edit) {
     let openEditTaskModal = document.getElementById("editTaskModal") as HTMLElement;
     openEditTaskModal.style.display = "block";
     this.taskToEdit = edit.getAttribute('task_to_edit');
-    this.dataService.taskIdToEdit = 'g'+edit.getAttribute('task_id_to_edit');
+    this.dataService.taskIdToEdit = 'g' + edit.getAttribute('task_id_to_edit');
   }
 
   uploadImage(edit) {
@@ -165,24 +197,35 @@ export class ScrumboardComponent implements OnInit {
     this.dataService.taskIdToEdit = 'G' + edit.getAttribute('task_id_to_upload_img')
   }
 
-  taskHistory () {
+  taskHistory() {
     let taskHistoryModal = document.getElementById("taskHistoryModal") as HTMLElement;
     taskHistoryModal.style.display = "block";
   }
 
-  userProfileModal() {
+  userProfileModal(forUser, historyForUser, historyForUserRole) {
+    this.clicked_task_history = [];
+    this.addToUser = forUser;
+    this.historyForUser = historyForUser;
+    this.historyForUserRole = historyForUserRole;
+    
     let userProfileModal = document.getElementById("userProfileModal") as HTMLElement;
     userProfileModal.style.display = "block"
+
+    this.personal_tasks_history.forEach(sprint => {
+      if (sprint['timeCreated'] >= this.loggedSprint['dateCreated'] && this.loggedSprint['endDate'] >= sprint['timeCreated'] && sprint['task'] != '' && sprint['taskFor'] == this.addToUser) {
+        this.clicked_task_history.unshift(sprint)
+      }
+    });
   }
 
-  userImageModal (imageToView) {
+  userImageModal(imageToView) {
     let imageModal = document.getElementById('imageToView') as HTMLImageElement;
     let viewUploadedImageModal = document.getElementById("uploadedImageModal") as HTMLElement;
     viewUploadedImageModal.style.display = "block";
     imageModal.src = imageToView.src;
   }
 
-  appInfo () {
+  appInfo() {
     let appInfoModal = document.getElementById("appInfoModal") as HTMLElement;
     appInfoModal.style.display = "block"
   }
@@ -194,26 +237,21 @@ export class ScrumboardComponent implements OnInit {
 
   addTaskModal(whichmodal, userRoleId) {
     let modal = document.getElementById("addTaskModal") as HTMLElement;
-    let modal1 = document.getElementById("addNoteModal") as HTMLElement; 
-    if (userRoleId != undefined) {
-      let userRole = userRoleId.getAttribute("user_role_id")
-      this.addTaskTo = userRole
-      if (this.loggedUserRole == "Owner" || this.loggedUserRole == "Admin" || this.loggedUserId == this.addTaskTo) {
-        if (whichmodal == 'task') {
-          modal.style.display = 'block';
-        } if (whichmodal == 'note') {
-          modal1.style.display = 'block';
-        }
-      } else {
-        return
+    let modal1 = document.getElementById("addNoteModal") as HTMLElement;
+    let userRole = userRoleId.getAttribute("user_role_id")
+    this.addToUser = userRole
+    if (whichmodal == 'task') {
+      if (this.loggedUserRole == "Owner" || this.loggedUserRole == "Admin" || this.loggedUserId == this.addToUser) {
+        modal.style.display = 'block';
       }
-      
-      
+    } if (whichmodal == 'note') {
+      modal1.style.display = 'block';
     }
-    
   }
 
-  rose(){
+  rose() {
+    let cleartft = document.getElementById('auto_clear_tft') as HTMLInputElement;
+    localStorage.getItem('sessiontf') == 'true' ? cleartft.checked = true : cleartft.checked = false;
     let modal = document.getElementById("addTaskModal") as HTMLElement;
     let btnmod = document.getElementById("addTaskBtn") as HTMLElement;
 
@@ -231,6 +269,8 @@ export class ScrumboardComponent implements OnInit {
     let logoutModal = document.getElementById("logoutModal") as HTMLElement;
     let appInfoModal = document.getElementById("appInfoModal") as HTMLElement;
 
+    let changeRoleModal = document.getElementById('changeUserRoleModal') as HTMLElement;
+
     let hides = document.getElementById("splitLeft") as HTMLElement;
     let createSprint = document.getElementById('createSprint') as HTMLElement;
 
@@ -238,8 +278,10 @@ export class ScrumboardComponent implements OnInit {
     // let ttAddNote = document.getElementById("ttAddNoteBtn") as HTMLElement;
 
     function hideDropDown(element, classToRemove, classToAdd) {
-      element.classList.remove(classToRemove)
-      element.classList.add(classToAdd)
+      if (element != null) {
+        element.classList.remove(classToRemove)
+        element.classList.add(classToAdd)
+      }
     }
 
     btnmod.onclick = function () {
@@ -262,7 +304,7 @@ export class ScrumboardComponent implements OnInit {
     //   modal1.style.display = "block";
     // }
 
-    
+
 
 
     window.onclick = function (e) {
@@ -280,7 +322,11 @@ export class ScrumboardComponent implements OnInit {
         hides.style.overflowY = "scroll";
       }
 
-      if(e.target == openEditTaskModal) {
+      if (e.target == changeRoleModal) {
+        changeRoleModal.style.display = "none";
+      }
+
+      if (e.target == openEditTaskModal) {
         openEditTaskModal.style.display = "none";
       }
 
@@ -314,21 +360,31 @@ export class ScrumboardComponent implements OnInit {
       }
 
       if (
-        target.matches('a#themeTab') || 
+        target.matches('a#themeTab') ||
         target.matches('span#currentTheme') ||
         target.matches('a#themeTab.nav-link.otherNavTools h4')
-        ) {
+      ) {
         hideDropDown(themeDD, undefined, 'ppDD')
+
       } else if (target.matches('img.themeImg')) {
         hideDropDown(themeDD, undefined, 'ppDD')
+
       } else if (
         target.matches('a#sprintTab') ||
         target.matches('span.loggedSprint') ||
         target.matches('a#sprintTab.nav-link.otherNavTools h4')
-        ) {
+      ) {
         hideDropDown(sprintDD, undefined, 'spDD')
       } else if (
-        target.matches('#sprintDDContent.sprintDropDownContent.spDD') || 
+        target.matches('#projectsDDContent.projectsDropDownContent.ppDD') ||
+        target.matches('#projectsDDContent.projectsDropDownContent.ppDD p') ||
+        target.matches('#projectsDDContent.projectsDropDownContent.ppDD div.projectsDropDownAP') ||
+        target.matches('#projectsDDContent.projectsDropDownContent.ppDD p label.switch span.slider.round')
+        ) {
+        hideDropDown(projectDD, undefined, 'ppDD')
+
+      } else if (
+        target.matches('#sprintDDContent.sprintDropDownContent.spDD') ||
         target.matches('#sprintDDContent.sprintDropDownContent.spDD p') ||
         target.matches('#sprintDDContent.sprintDropDownContent.spDD p label') ||
         target.matches('#sprintDDContent.sprintDropDownContent.spDD p label.activ') ||
@@ -336,28 +392,49 @@ export class ScrumboardComponent implements OnInit {
         target.matches('#sprintDDContent.sprintDropDownContent.spDD p span') ||
         target.matches('#sprintDDContent.sprintDropDownContent.spDD #createSprint.sprintDropDownCS')
 
-        ) {
+      ) {
         hideDropDown(sprintDD, undefined, 'spDD')
+
       } else if (
         target.matches('a#projectsTab') ||
         target.matches('span.loggedProject') ||
         target.matches('a#projectsTab.nav-link.otherNavTools h4')
-        ) {
+      ) {
         hideDropDown(projectDD, undefined, 'ppDD')
+
+      } else if (
+        target.matches('button#signOutBtn.btn.addTbtn')
+      ) {
+        hideDropDown(projectDD, undefined, undefined)
       } else {
-        document.getElementById('projectsDDContent').classList.add('animateDD');
-        document.getElementById('sprintDDContent').classList.add('animateDD');
-        document.getElementById('themeDDContent').classList.add('animateDD');
-        setTimeout("document.getElementById('sprintDDContent').classList.remove('spDD')", 1000);
-        setTimeout("document.getElementById('themeDDContent').classList.remove('ppDD')", 1000);
-        setTimeout("document.getElementById('projectsDDContent').classList.remove('animateDD')", 1000);
-        setTimeout("document.getElementById('sprintDDContent').classList.remove('animateDD')", 1000);
-        setTimeout("document.getElementById('themeDDContent').classList.remove('animateDD')", 1000);
-        setTimeout("document.getElementById('projectsDDContent').classList.remove('ppDD')", 1000);
+        if (
+          document.getElementById('projectsDDContent') != null &&
+          document.getElementById('sprintDDContent') != null &&
+          document.getElementById('themeDDContent') !=null
+        ) {
+          document.getElementById('projectsDDContent').classList.add('animateDD');
+          document.getElementById('sprintDDContent').classList.add('animateDD');
+          document.getElementById('themeDDContent').classList.add('animateDD');
+
+          setTimeout("document.getElementById('sprintDDContent').classList.remove('spDD')", 1000);
+          setTimeout("document.getElementById('themeDDContent').classList.remove('ppDD')", 1000);
+          setTimeout("document.getElementById('projectsDDContent').classList.remove('animateDD')", 1000);
+          setTimeout("document.getElementById('sprintDDContent').classList.remove('animateDD')", 1000);
+          setTimeout("document.getElementById('themeDDContent').classList.remove('animateDD')", 1000);
+          setTimeout("document.getElementById('projectsDDContent').classList.remove('ppDD')", 1000);
+        }
+        
+        
 
       }
 
     }
+
+  }
+
+  createNewProject() {
+    this.router.navigate(['signup']);
+    sessionStorage.removeItem('token');
   }
 
   borderRadious(user) {
@@ -408,11 +485,20 @@ export class ScrumboardComponent implements OnInit {
     this.NotificationBox('Task Copied To Clipboard!')
   }
 
+  changeUserRoleModal(user) {
+    document.getElementById('changeUserRoleModal').style.display = 'block';
+    this.addToUser = user
+  }
 
   hideAddTaskandNoteBTN() {
     document.getElementById('addTaskBtn').style.display = 'none';
     document.getElementById('addNoteBtn').style.display = 'none';
-
+    let hideChangeRole = document.querySelectorAll('.fa-user-cog');
+    if (this.loggedUserRole == 'Developer') {
+      for (let index = 0; index < hideChangeRole.length; index++) {
+        hideChangeRole[index].setAttribute('hidden', 'true')
+      }
+    }
   }
 
   showAddTaskandNoteBTN() {
@@ -564,7 +650,7 @@ export class ScrumboardComponent implements OnInit {
     }
 
   }
-  
+
   logout() {
     this.dataService.logout();
   }
@@ -575,6 +661,7 @@ export class ScrumboardComponent implements OnInit {
         'userColor': " ",
         'userName': element['user']['nickname'],
         'userID': element['id'],
+        'userRole': element['role'],
         'userTotalWeekHour': element['total_week_hours'],
         'scrumGoalSet': element['scrumgoal_set'].length
       });
@@ -582,12 +669,20 @@ export class ScrumboardComponent implements OnInit {
         this.loggedUserId = element['id']
       }
       element['scrumgoal_set'].forEach(item => {
+        this.personal_tasks_history.push({
+          'task': item['name'],
+          'taskFor': item['user'],
+          'pushID': item['push_id'],
+          'status' :item['status'],
+          'timeCreated': item['time_created']
+        })
         if (item['status'] == 0) {
           this.TFTW.push({
             'task': item['name'],
             'taskFor': item['user'],
             'goalID': item['goal_project_id'],
             'timeCreated': item['time_created'],
+            'days_failed': item['days_failed'],
             'file': item['file']
           })
         } if (item['status'] == 1) {
@@ -596,6 +691,7 @@ export class ScrumboardComponent implements OnInit {
             'taskFor': item['user'],
             'goalID': item['goal_project_id'],
             'timeCreated': item['time_created'],
+            'days_failed': item['days_failed'],
             'file': item['file']
           })
         } if (item['status'] == 2) {
@@ -605,6 +701,7 @@ export class ScrumboardComponent implements OnInit {
             'goalID': item['goal_project_id'],
             'pushID': item['push_id'],
             'timeCreated': item['time_created'],
+            'days_failed': item['days_failed'],
             'file': item['file']
           })
         } if (item['status'] == 3) {
@@ -614,9 +711,11 @@ export class ScrumboardComponent implements OnInit {
             'goalID': item['goal_project_id'],
             'pushID': item['push_id'],
             'timeCreated': item['time_created'],
+            'days_failed': item['days_failed'],
             'file': item['file']
           })
         }
+        this.filterUserHistory(item)
       })
     })
     this.users.forEach(user => {
@@ -624,29 +723,75 @@ export class ScrumboardComponent implements OnInit {
     })
   }
 
+  filterUserNotes(user_notes) {
+    user_notes.forEach(element => {
+      element['scrumnote_set'].forEach(note => {
+        this.notes.push({
+          'note': note['note'],
+          'noteFor': note['user'],
+          'noteID': note['id'],
+          'priority': note['priority'],
+          'timeCreated': note['time_created']
+        })
+      });
+    });
+  }
+
+  filterUserHistory(user_history) {
+    if (user_history['scrumgoalhistory_set'].length > 0) {
+      user_history['scrumgoalhistory_set'].forEach(item => {
+        this.scrumhistory_set.push({
+          'history': item['name'],
+          'historyID': item['id'],
+          'historyFor': item['user'],
+          'historyHours': item['hours'],
+          'historyStatus': item['status'],
+          'historyMovedBy': item['done_by'],
+          'historyMessage': item['message'].slice(0, item['message'].indexOf('by')),
+          'historyProjectID': item['goal_project_id'],
+          'timeCreated': item['time_created'],
+          'file': item['file']
+        })
+      });
+    }
+  }
+
+  viewTaskHistory(thisTask) {
+    this.goal_history = [];
+    this.history_for = [];
+    this.scrumhistory_set.forEach(item => {
+      if (thisTask == item['historyProjectID']) {
+        this.goal_history.unshift(item)
+      }
+    })
+    this.history_for.push(this.goal_history.find(id => id.historyProjectID == thisTask))
+    
+  }
+
   filterSprints(sprintFilter) {
     sprintFilter.forEach(element => {
       this.currentSprint.unshift({ 'sprintID': element['id'], 'dateCreated': element['created_on'], 'endDate': element['ends_on'] })
     });
-    if(this.currentSprint.length > 0) {
+    if (this.currentSprint.length > 0) {
       this.loggedSprint = this.currentSprint[0]
     }
   }
 
-  getAllUsersGoals () {
+  getAllUsersGoals() {
     this.dataService.allProjectGoals(this.project_id).subscribe(
       data => {
         this.loggedProject = data['project_name']
         this.participants = data['data']
         if (this.participants.length != 0) {
           this.filterUsers(this.participants)
+          this.filterUserNotes(this.participants)
         }
       },
-  
-    error => {
-      console.log('error', Error)
-    }
-      )
+
+      error => {
+        console.log(error)
+      }
+    )
   }
 
   changeLoggedSprint(selectedSprintID, createDate, endDate) {
@@ -658,7 +803,7 @@ export class ScrumboardComponent implements OnInit {
     this.loggedSprint.endDate = sprintEndDate
     this.currentSprint.shift()
     this.currentSprint.unshift({ 'sprintID': this.sprints[this.sprints.length - 1]['id'], 'dateCreated': this.sprints[this.sprints.length - 1]['created_on'], 'endDate': this.sprints[this.sprints.length - 1]['ends_on'] })
-    
+
   }
 
   getAllSprints() {
@@ -677,7 +822,7 @@ export class ScrumboardComponent implements OnInit {
             }
           }
         }
-        
+
       }, error => {
         console.log('error', error)
       }
@@ -688,7 +833,7 @@ export class ScrumboardComponent implements OnInit {
     if (document.getElementById('sprintAlert').classList.contains('sprintAlertVissible')) {
       document.getElementById('sprintAlert').classList.replace('sprintAlertVissible', 'sprintAlertHidden')
     }
-    setTimeout(() => { document.getElementById('sprintAlert').style.display = 'none' }, 300);  
+    setTimeout(() => { document.getElementById('sprintAlert').style.display = 'none' }, 300);
   }
 
   startSprint() {
@@ -700,14 +845,14 @@ export class ScrumboardComponent implements OnInit {
         this.sprints = []
         this.filterSprints(data['data'])
         this.filterUsers(data['users'])
-        
+
       }, error => {
-          if (error['status'] == 401) {
-            this.NotificationBox('Session Invalid or Expired. Please Login!')
-            this.dataService.logout();
-          } else {
-            this.NotificationBox('Unexpected Error!')
-          }
+        if (error['status'] == 401) {
+          this.NotificationBox('Session Invalid or Expired. Please Login!')
+          this.dataService.logout();
+        } else {
+          this.NotificationBox('Unexpected Error!')
+        }
       }
     )
 
@@ -720,6 +865,8 @@ export class ScrumboardComponent implements OnInit {
           if (confirm(`Are You Sure You Want To End Sprint #${this.loggedSprint.sprintID} And Start A New Sprint?`)) {
             this.startSprint()
           }
+        } else {
+          this.startSprint()
         }
       } else {
         this.startSprint()
@@ -730,35 +877,45 @@ export class ScrumboardComponent implements OnInit {
   }
 
   addTask() {
-    if (this.goal_name != '') {
-      if (this.loggedUserRole == "Owner" || this.loggedUserRole == "Admin" || this.loggedUserId == this.addTaskTo) {
-        this.dataService.goal_name = this.goal_name;
-        this.dataService.addTaskRequest(this.project_id, this.addTaskTo).subscribe(
-          data => {
-            this.NotificationBox(data['message'])
-            this.users = []
-            this.TFTD = []
-            this.TFTW = []
-            this.done = []
-            this.verify = []
-            this.filterUsers(data['data']);
+    if (this.loggedUserRole == "Owner" || this.loggedUserRole == "Admin" || this.loggedUserId == this.addToUser) {
+      this.dataService.addTaskRequest(this.project_id, this.addToUser).subscribe(
+        data => {
+          this.NotificationBox(data['message'])
+          this.users = []
+          this.TFTD = []
+          this.TFTW = []
+          this.done = []
+          this.verify = []
+          this.filterUsers(data['data']);
 
-          }, error => {
-            if (error['status'] == 401) {
-              this.NotificationBox('Session Invalid or Expired. Please Login!')
-              this.dataService.logout();
-            } else {
-              this.NotificationBox('Add Task Failed!')
-              this.close()
-            }
+        }, error => {
+          if (error['status'] == 401) {
+            this.NotificationBox('Session Invalid or Expired. Please Login!')
+            this.dataService.logout();
+          } else {
+            this.NotificationBox('Add Task Failed!')
+            this.close()
           }
-        )
-      } else {
-        this.close()
-        this.NotificationBox(`You Can Only Add Task For ${this.loggedUser}`)
-      }
+        }
+      )
+    } else {
+      this.close()
+      this.NotificationBox(`You Can Only Add Task For ${this.loggedUser}`)
     }
     this.goal_name = '';
+  }
+
+  submitAddTask() {
+    if (this.goal_name != '' && this.goal_name != undefined) {
+      if (this.goal_name.length >= 4) {
+        this.dataService.goal_name = this.goal_name;
+        this.addTask()
+      } else {
+        this.NotificationBox('Please, describe the goal in details')
+      }
+    } else {
+      this.NotificationBox('Goal name cannot be empty!')
+    }
   }
 
   editTask() {
@@ -801,6 +958,7 @@ export class ScrumboardComponent implements OnInit {
           this.TFTW = []
           this.done = []
           this.verify = []
+          this.imgName = "No image selected";
           this.filterUsers(data['data'])
 
           if (data['message'] == 'Goal Name Changed!') {
@@ -821,5 +979,226 @@ export class ScrumboardComponent implements OnInit {
     }
     uploadImageModal.style.display = 'none';
   }
-  
+
+  addNote() {
+    if (this.note_to_add != '' && this.notePriority != undefined) {
+      this.dataService.addNoteRequest(this.project_id, this.addToUser, this.note_to_add, this.notePriority).subscribe(
+        data => {
+          // this.users = []
+          // this.TFTD = []
+          // this.TFTW = []
+          // this.done = []
+          // this.verify = []
+          this.notes = []
+          this.filterUserNotes(data['data']);
+          this.NotificationBox(data['message']);
+          this.note_to_add = '';
+          this.notePriority = undefined;
+
+        }, error => {
+          if (error['status'] == 401) {
+            this.NotificationBox('Session Invalid or Expired. Please Login!')
+            this.dataService.logout();
+          } else {
+            this.NotificationBox('Add Note Failed!')
+            this.close()
+          }
+        }
+      )
+    } else {
+      this.NotificationBox('Please Fill Out All Fields!')
+      return
+    }
+  }
+
+  deleteNote(note_id) {
+    if (this.loggedUserRole == "Owner" || this.loggedUserRole == "Admin" || this.loggedUserId == this.addToUser) {
+      this.dataService.deleteNoteRequest(this.project_id, note_id).subscribe(
+        data => {
+          this.notes = []
+          this.filterUserNotes(data['data']);
+          this.NotificationBox(data['message']);
+
+        }, error => {
+          if (error['status'] == 401) {
+            this.NotificationBox('Session Invalid or Expired. Please Login!')
+            this.dataService.logout();
+          } else {
+            this.NotificationBox('Delete Note Failed!')
+            this.close()
+          }
+        }
+      )
+    }
+  }
+
+  addNoteToUserTask(note_to_user) {
+    let noteToTask = note_to_user.getAttribute('note_to_task');
+    let noteID = note_to_user.getAttribute('note_id');
+    if (noteToTask != '' && noteToTask != undefined) {
+      if (noteToTask.length >= 4) {
+        this.dataService.goal_name = noteToTask;
+        this.addTask()
+        this.deleteNote(noteID)
+      } else {
+        this.NotificationBox('Please, describe the goal in details')
+      }
+    } else {
+      this.NotificationBox('Goal name cannot be empty!')
+    }
+  }
+
+  processMoveGoalRequest() {
+    this.dataService.moveGoalRequest(this.goal_id, this.to_id, this.hours, this.push_id, this.project_id).subscribe(
+      data => {
+        this.NotificationBox(data['message']);
+        this.users = [];
+        this.TFTD = [];
+        this.TFTW = [];
+        this.done = [];
+        this.verify = [];
+        this.filterUsers(data['data']);
+
+      },
+      error => {
+        console.log(error)
+        this.NotificationBox('Unexpected error!, please try move the task again.')
+      }
+    )
+  }
+
+  drop(event: CdkDragDrop<string[]>) {
+    this.to_id = event.container.id[event.container.id.length-1];
+    this.goal_id = 'm' + event.item.data.goalID;
+    let from_id = event.previousContainer.id[event.previousContainer.id.length-1];
+    let goal_for = event.item.data.taskFor
+    if (this.loggedUserRole == "Owner" || this.loggedUserRole == "Admin" || this.loggedUserRole == "Quality Analyst" || goal_for == this.addToUser) {
+      if (event.previousContainer === event.container) {
+        moveItemInArray(event.container.data, 
+          event.previousIndex, 
+          event.currentIndex);
+
+      }else if (this.loggedUserRole == 'Developer' && this.to_id == '3') {
+        this.NotificationBox('Permission Denied!')
+      } else {
+        if (this.to_id == '2' && from_id != '3') {
+          this.push_id_form();
+        } else if (goal_for != event.container.id.slice(0, event.container.id.indexOf('e')) && this.loggedUserRole == "Owner" || this.loggedUserRole == "Admin" || this.loggedUserRole == "Quality Analyst") {
+          this.dataService.changeGoalOwner(this.goal_id, 'u'+event.container.id.slice(0, event.container.id.indexOf('e')), this.project_id).subscribe(
+            data => {
+              this.NotificationBox(data['message']);
+              this.users = [];
+              this.TFTD = [];
+              this.TFTW = [];
+              this.done = [];
+              this.verify = [];
+              this.filterUsers(data['data']);
+
+            },
+            error => {
+              console.log(error)
+              this.NotificationBox('Unexpected error!, please try move the task again.')
+            }
+          )
+          event.item.data['taskFor'] = event.container.id.slice(0, event.container.id.indexOf('e'));
+
+        } else {
+          this.processMoveGoalRequest();
+        }
+        transferArrayItem(event.previousContainer.data,
+          event.container.data,
+          event.previousIndex,
+          event.currentIndex);
+      }
+    }else {
+      this.NotificationBox(`Permission Denied! You Can Only Move Task For ${this.loggedUser}`)
+    }
+  }
+
+  autoHideDialog() {
+    (<any>$("div#dialog")).dialog({
+      autoOpen: false
+    })
+  }
+
+  push_id_form() {
+    (<any>$("div#dialog")).dialog('open');
+  }
+
+  closeDialog() {
+    (<any>$("div#dialog")).dialog('close');
+  }
+
+  autoClearTft() {
+    this.dataService.autoClearTftRequest(this.project_id).subscribe(
+      data => {
+        this.NotificationBox(data['message'])
+        localStorage.setItem('sessiontf', data['to_clear_board'])
+      }, error => {
+        console.log('An error occured, please try again!')
+      }
+    )
+  }
+
+  deleteTask(taskid, taskname) {
+    if (this.loggedUserRole == "Owner" || this.loggedUserRole == "Admin" || this.loggedUserRole == "Quality Analyst") {
+      this.dataService.deleteTaskRequest(taskid, taskname, this.project_id).subscribe(
+        data => {
+          this.NotificationBox(data['message'])
+          this.users = []
+          this.TFTD = []
+          this.TFTW = []
+          this.done = []
+          this.verify = []
+          this.filterUsers(data['data']);
+
+        }, error => {
+          if (error['status'] == 401) {
+            this.NotificationBox('Session Invalid or Expired. Please Login!')
+            this.dataService.logout();
+          } else {
+            this.NotificationBox('Delete Task Failed!')
+          }
+        }
+      )
+    } else {
+      this.NotificationBox('Permision Denied!')
+    }
+  }
+
+  submitchangeUserRole() {
+    if (this.loggedUserRole == "Owner" || this.loggedUserRole == "Admin") {
+      this.dataService.changeUserRoleRequest(this.addToUser, this.new_role, this.project_id).subscribe(
+        data => {
+          this.NotificationBox(data['message'])
+          // this.users = [];
+          // this.TFTD = [];
+          // this.TFTW = [];
+          // this.done = [];
+          // this.verify = [];
+          // this.filterUsers(data['data']);
+        }, error => {
+          this.NotificationBox('Cannot process your request at this time!')
+        }
+      )
+    } else {
+      this.NotificationBox('Permission Denied!')
+    }
+    this.close()
+    this.new_role = ''
+  }
+
+  userTaskHistoryForSprint(sprintClicked, user) {
+    this.clicked_task_history = [];
+    this.currentSprint.forEach(element =>{
+      if (element['sprintID'] == sprintClicked) {
+        this.personal_tasks_history.forEach(sprint => {
+          if (sprint['timeCreated'] >= element['dateCreated'] && element['endDate'] >= sprint['timeCreated'] && sprint['task'] != '' && sprint['taskFor'] == user) {
+            this.clicked_task_history.unshift(sprint)
+          }
+        });
+      }
+    })
+  }
+
 }
