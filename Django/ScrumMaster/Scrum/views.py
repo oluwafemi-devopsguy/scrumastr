@@ -19,7 +19,7 @@ from django.core import serializers
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
-from slackclient import SlackClient
+from slack import WebClient
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 import random
@@ -48,6 +48,7 @@ def _parse_body(body):
 def connect(request):
     body = _parse_body(request.body)
     connection_id = body['connectionId']
+    print('connect successful')
     # Connection(connection_id=connection_id, project_name="TestProj").save()
 
     return JsonResponse(

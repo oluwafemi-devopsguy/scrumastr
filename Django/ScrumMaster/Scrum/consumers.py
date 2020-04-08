@@ -3,7 +3,7 @@ from channels.db import database_sync_to_async
 from .models import *
 import json
 import hashlib
-from slackclient import SlackClient
+from slack import WebClient
 import datetime
 from django.core.serializers.json import DjangoJSONEncoder
 
