@@ -33,6 +33,7 @@ Angular
 Use npm to install these:
 
 * ng2-dragula
+* sass
 * materialize-css
 
 Follow further instructions for materialize-css here:
