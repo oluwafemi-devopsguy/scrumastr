@@ -26,6 +26,7 @@
 body {
   background: white;
   color: black;
+  height:100%;
 }
 
 .preloader {
@@ -1391,47 +1392,49 @@ summary:focus {
 }
 
 #inputSlackMsg {
-  position: fixed; 
-  bottom: 0; 
-  width: 100%; 
+  position: fixed;
+  bottom: 0;
+  width: 100%;
   background-color: white;
-  padding: 12px;
+  padding: 10px;
+  height: 50px;
   background: rgba(255, 255, 255, 0.2);
   border: none;
   color: white;
-}
-
-#inputSlackMsg::focus {
+  resize: none;
+  }
+  
+  #inputSlackMsg::focus {
   border-color: none;
   border: none;
-}
-
-#inputSlackMsg::placeholder {
+  }
+  
+  #inputSlackMsg::placeholder {
   font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: normal;
   font-size: 14px;
   line-height: 16px;
   color: rgba(255, 255, 255, 0.5);
-}
-
-#inputSlackMsg::-webkit-input-placeholder {
+  }
+  
+  #inputSlackMsg::-webkit-input-placeholder {
   font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: normal;
   font-size: 14px;
   line-height: 16px;
   color: rgba(255, 255, 255, 0.5);
-}
-
-#inputSlackMsg:-ms-input-placeholder {
+  }
+  
+  #inputSlackMsg:-ms-input-placeholder {
   font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: normal;
   font-size: 14px;
   line-height: 16px;
   color: rgba(255, 255, 255, 0.5);
-}
+  }
 
 
 
