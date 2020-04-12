@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 export class WebsocketService {
 
   public ws: any;
-  public ws_url: String = 'wss://9zvbc650m4.execute-api.us-east-2.amazonaws.com/chatscrum/';
+  public ws_url = 'wss://9zvbc650m4.execute-api.us-east-2.amazonaws.com/chatscrum/';
   public messages = [];
   public chat_text:String;
   full_data = localStorage.getItem('full_data');
@@ -14,7 +14,7 @@ export class WebsocketService {
   
   
   constructor() { 
-    this.ws = new WebSocket('wss://9zvbc650m4.execute-api.us-east-2.amazonaws.com/chatscrum/');
+    this.ws = new WebSocket(this.ws_url);
   }
 
 
