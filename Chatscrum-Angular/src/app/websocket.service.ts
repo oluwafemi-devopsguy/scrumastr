@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import {formatDate} from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -57,7 +58,9 @@ export class WebsocketService {
   }
 
   getCurrentTime() {
-    return new Date().toLocaleTimeString().replace(/([\d]+:[\d]{2})(:[\d]{2})(.*)/, "$1$3");
+    let currentDate = new Date();
+    return formatDate(currentDate, "h:mm a . dd-MM-yyyy", 'en-US');
+    //return new Date().toLocaleTimeString().replace(/([\d]+:[\d]{2})(:[\d]{2})(.*)/, "$1$3");
   }
 
   sendMessage() {

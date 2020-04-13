@@ -75,6 +75,7 @@ export class ScrumboardComponent implements OnInit {
     this.getAllUsersGoals()
     this.getAllSprints()
     this.wsService.getMessages()
+    
   }
 
 
