@@ -73,6 +73,8 @@ export class WebsocketService {
         "message": this.chat_text
 
       }
+      let elem = document.getElementById('conn')
+      elem.scrollTop = elem.scrollHeight;
       console.log(this.getCurrentTime());
       this.ws.send(JSON.stringify(context));
       this.chat_text = '';
