@@ -131,6 +131,7 @@ def send_message(request):
     message = body['body']['message']
     timestamp = body['body']['timestamp']
 
+    
     #Save message sent in the database
     ChatMessage(username=username, project_name=project_name, message=message, timestamp=timestamp).save()
 
