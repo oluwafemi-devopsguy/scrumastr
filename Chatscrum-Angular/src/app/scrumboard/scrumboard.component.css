@@ -136,7 +136,7 @@ body {
   font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 16px;
   margin-top: 10px;
   margin-bottom: 18px;
@@ -157,8 +157,8 @@ body {
   min-height: 223px;
 }
 
-.ex .excontent, .ex_taskHistory .excontent{
-  border: 1px solid rgba(255, 76, 109, 0.25);
+.ex .excontent, .ex_taskHistory .excontent{ 
+  border: 1px solid rgba(0, 0, 0, 0.1);
   background: #FFFFFF;
   border-radius: 5px;
   padding: 7px;
@@ -166,7 +166,7 @@ body {
   font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: normal;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 18px;
   color: rgba(0, 0, 0, 0.9);
   margin-bottom: 1.5em;
@@ -202,7 +202,7 @@ body {
 }
 
 .ex .excontent  n, .ex_taskHistory .excontent n {
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .ex .excontent .scrumtools span, .ex_taskHistory .excontent .scrumtools span {
@@ -244,6 +244,7 @@ body {
   border-left: 9px solid #000;
   margin-left: -4px;
   min-height: 113px;
+  margin-bottom: 10px
    
 }
 
@@ -384,13 +385,14 @@ body {
   outline-color: transparent;
   padding: 8px;
   resize: none;
+  font-size: 13px;
 }
 
 #changeUserRoleModal .insidemodalContentForChangeRole{
   height: 38px;
   overflow: hidden;
   padding: 5px 22px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: normal;
   font-family: 'roboto', sans-serif;
   color: rgba(0, 0, 0);
@@ -516,18 +518,42 @@ body {
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
   border-radius: 5px;
   border: none;
-  position: fixed;
-  left: 2%;
-  right: 86.11%;
-  bottom: 4%;
-  z-index: 5;
   width: 150px;
   font-weight: bold;
   font-size: 14px;
+  /* left: 2%;
+  right: 86.11%;
+  bottom: 4%; */
+  
+}
+
+.openAddNoteModalbtn {
+  width: 35px;
+  height: 34px;
+  cursor: pointer;
+  background: #4DFFD4;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+  border-radius: 5px;
+  border: none;
+  font-weight: bold;
+  padding: 5px;
+  margin-left: 10px;
+  /* position: fixed;
+  left: 13.5%;
+  bottom: 4%; */
+  
+}
+
+.openModalForTaskandNote {
+  position: absolute;
+  z-index: 5;
+  bottom: -80%;
+  margin-left: 20px;
+  display: inline;
 }
 
 #addTaskModal .modal-header .headerUserTitle, #editTaskModal .modal-header .headerUserTitle, #changeUserRoleModal .modal-header .headerUserTitle, #userProfileModal .headerUserTitle{
-  font-size: 14px;
+  font-size: 13px;
   font-weight: bold;
   color: #59BB1E;
   position: relative;
@@ -550,7 +576,7 @@ body {
 
 #addNoteModal .modal-header .headerUserTitle{
   position: relative;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: bold;
   color: #59BB1E;
   margin-top: -10px;
@@ -559,7 +585,7 @@ body {
 }
 
 #addNoteModal .modal-header .headerUserRole{
-  font-size: 11px;
+  font-size: 10px;
   color: #333333;
   margin-left: 3em;
   margin-top: 5px;
@@ -568,25 +594,8 @@ body {
 
 #userProfileModal .headerUserRole {
   margin-top: -10px;
-  font-size: 11px;
-  margin-left: 2.7em;
-}
-
-
-.openAddNoteModalbtn {
-  width: 35px;
-  height: 34px;
-  cursor: pointer;
-  background: #4DFFD4;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
-  border-radius: 5px;
-  border: none;
-  position: fixed;
-  left: 13.5%;
-  padding: 5px;
-  bottom: 4%;
-  z-index: 5;
-  font-weight: bold;
+  font-size: 10px;
+  margin-left: 2.8em;
 }
 
 #addNoteModal .modal-contentForNote .insidemodalContentForNote {
@@ -710,7 +719,7 @@ body {
   font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: normal;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 16px;
   color: rgba(0, 0, 0, 0.8);
 }
@@ -737,7 +746,7 @@ body {
 }
 
 .modal-contentForImage .imgMsg {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: normal;
   color: #000000;
   font-family: 'Roboto', sans-serif;
@@ -749,7 +758,7 @@ body {
   margin-top: 1.6em;
   font-style: normal;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 13px;
   font-family: 'Roboto', sans-serif;
   color: #000000;
   
@@ -935,7 +944,7 @@ body {
   font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: normal;
-  font-size: 12px;
+  font-size: 11px;
   color: rgba(0, 0, 0, 0.5);
   border-left: 2px solid rgba(0, 0, 0, 0.1);
   padding-left: 4px;
@@ -945,7 +954,7 @@ body {
   font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: normal;
-  font-size: 14px;
+  font-size: 13px;
   border-left: 2px solid rgba(0, 0, 0, 0.1);
   color: rgba(0, 0, 0, 0.9);
   padding-left: 4px;
@@ -1205,7 +1214,7 @@ body {
 
 .teamTaskDropDownMenu {
   left: 50px;
-  background: rgba(255, 76, 109, 0.1);
+  /* background: rgba(255, 76, 109, 0.1); */
   padding-left: 9px;
   margin-left: -3.1em;
   border-radius: 10px 10px 0px 0px;
@@ -1223,13 +1232,14 @@ body {
 .teamTaskDropDownMenu img {
   left: 60px;
   margin-top: 10px;
+  border-radius: 50%;
 }
 
 .teamTaskDropDownMenu .teamTaskTitle {
   font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 16px;
 }
 
@@ -1237,19 +1247,26 @@ body {
   color: #FF4D6D;
 }
 
-.teamTaskDropDownMenu ul {
+.teamTaskDropDownMenu .ttUserProfile {
   list-style-type: none;
   margin-left: 5px;
   margin-top: -2em;
   margin-left: -5px;
 }
 
+.teamTaskDropDownMenu .teamTaskTools{
+  list-style-type: none;
+  margin-left: 5px;
+  margin-left: -5px;
+  margin-top: -2.7em!important;
+}
+
 .teamTaskDropDownMenu .ttTasksandTime {
   font-family:'Roboto', sans-serif;
   font-style: normal;
   font-weight: normal;
-  font-size: 12px;
-  line-height: 14px;
+  font-size: 11px;
+  line-height: 12px;
   color: #808080;
 }
 
@@ -1259,8 +1276,7 @@ body {
 }
 
 .teamTaskTools i {
-  padding: 8px;
-  background-color: #FF4C6D;
+  padding: 7px;
   margin-right: 10px;
   border-radius: 5px;
 }
@@ -1372,7 +1388,7 @@ summary:focus {
   font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: normal;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 17px;
   color: #FFFFFF;
   margin-top: 12px;
@@ -1410,7 +1426,7 @@ summary:focus {
   font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: normal;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 16px;
   color: rgba(255, 255, 255, 0.5);
 }
@@ -1419,7 +1435,7 @@ summary:focus {
   font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: normal;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 16px;
   color: rgba(255, 255, 255, 0.5);
 }
@@ -1428,7 +1444,7 @@ summary:focus {
   font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: normal;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 16px;
   color: rgba(255, 255, 255, 0.5);
 }
@@ -1774,7 +1790,7 @@ summary:focus {
   font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 13px;
   color: rgba(0, 0, 0, 0.5);
   margin-right: 5px;
   margin-bottom: 0px;
@@ -1785,7 +1801,7 @@ summary:focus {
   font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: normal;
-  font-size: 14px;
+  font-size: 13px;
   color: rgba(0, 0, 0, 0.5);
 }
 
@@ -1793,7 +1809,7 @@ summary:focus {
   font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: normal;
-  font-size: 14px;
+  font-size: 13px;
   margin-left: 10px;
 }
 
@@ -1809,7 +1825,7 @@ summary:focus {
   font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: normal;
-  font-size: 14px;
+  font-size: 13px;
   color: rgba(0, 0, 0, 0.8);
   margin-top: 5px;
 }
@@ -2023,7 +2039,7 @@ summary:focus {
   font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: normal;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 18px;
   color: rgba(0, 0, 0, 0.9);
 }
@@ -2053,7 +2069,7 @@ summary:focus {
 }
 
 .dragged_item_placeholder {
-  width: 212px;
+  width: 200px;
   height: 106px;
   text-align: center;
   line-height: 111px;
@@ -2064,6 +2080,7 @@ summary:focus {
   border-radius: 10px;
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
   margin-bottom: 15px;
+  margin-left: 10px;
 }
 
 .projectsDropDownContent .switch {
