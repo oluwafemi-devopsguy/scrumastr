@@ -104,10 +104,10 @@ WSGI_APPLICATION = 'ScrumMaster.wsgi.application'
 '''
 DATABASES = {
     'default': {
-        'ENGINE': 'mysql.connector.django',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'chatscrum',
-        'USER': 'root',
-        'PASSWORD': '',
+        'USER': 'usman',
+        'PASSWORD': 'usman123',
         'OPTIONS': {
             'raise_on_warnings': False,
             'use_pure': True
@@ -119,8 +119,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'chatscrum',
-        'USER': 'root',
-        'PASSWORD': '',
+        'USER': 'usman',
+        'PASSWORD': 'usman123',
         'HOST': 'localhost',
         'PORT': ''
 
@@ -209,14 +209,14 @@ SECURE_SSL_REDIRECT = False
 # AWS_ACCESS_KEY_ID = 'AKIA6RSO4E74JYIVHGEC'
 # AWS_SECRET_ACCESS_KEY = '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'
 
-AWS_ACCESS_KEY_ID = 'AKIA6RSO4E74OGDWW6Z3'
-AWS_SECRET_ACCESS_KEY = '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'
+AWS_ACCESS_KEY_ID = 'AKIAI2URT47SJF4N763Q'
+AWS_SECRET_ACCESS_KEY = '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'
 
 # AWS_ACCESS_KEY_ID = 'AKIA6RSO4E74CJCKMJ7T'
 # AWS_SECRET_ACCESS_KEY = 'LEOXPqG6hOwqneYGVJuBzOmg3leyBsuUExkuPk/0C'
 
 # REGION = 'us-west-2'
-REGION = 'us-west-2'
+REGION = 'us-east-2'
 
-AWS_WS_GATEWAY = 'https://6vpxcuvqe4.execute-api.us-west-2.amazonaws.com/dev/'
+AWS_WS_GATEWAY = 'https://9zvbc650m4.execute-api.us-east-2.amazonaws.com/chatscrum/'
 

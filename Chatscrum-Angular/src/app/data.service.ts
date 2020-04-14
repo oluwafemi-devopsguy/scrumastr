@@ -108,6 +108,7 @@ export class DataService {
   login() {
     this.http.post(this.domain_protocol + this.domain_name + '/scrum/api-token-auth/', JSON.stringify({'username': this.login_username, 'password': this.login_password, 'project': this.login_project}), this.httpOptions).subscribe(
       data => {
+        localStorage.setItem('full_data', JSON.stringify(data));
         sessionStorage.setItem('username', this.login_username);
         sessionStorage.setItem('realname', data['name']);
         sessionStorage.setItem('role', data['role']);

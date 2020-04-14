@@ -14,6 +14,7 @@ import { HomeComponent } from './home/home.component';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { WebsocketService } from './websocket.service';
 
 
 @NgModule({
@@ -36,7 +37,11 @@ import { HttpClientModule } from '@angular/common/http';
     DragDropModule
   ],
   schemas: [NO_ERRORS_SCHEMA],
-  providers: [DataService],
+  providers: [
+    DataService,
+    WebsocketService
+  
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -3,8 +3,10 @@ import { CdkDragStart, CdkDragDrop, moveItemInArray, transferArrayItem } from '@
 import { ActivatedRoute } from '@angular/router';
 import { Title } from "@angular/platform-browser";
 import { Router } from '@angular/router';
+import { WebsocketService } from '../websocket.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DataService } from '../data.service';
+
 import * as $AB from 'jquery';
 import { element } from 'protractor';
 
@@ -52,6 +54,7 @@ export class ScrumboardComponent implements OnInit {
   public new_role;
   public historyForUser;
   public historyForUserRole;
+  public messages = [];
 
   @ViewChildren('details') details: QueryList<any>;
 
@@ -61,6 +64,7 @@ export class ScrumboardComponent implements OnInit {
     private dataService: DataService,
     private pageTitle: Title,
     private route: ActivatedRoute,
+    public wsService: WebsocketService,
   ) { }
 
   ngOnInit() {
@@ -70,6 +74,8 @@ export class ScrumboardComponent implements OnInit {
     this.pageTitle.setTitle('Scrumboard')
     this.getAllUsersGoals()
     this.getAllSprints()
+    this.wsService.getMessages()
+    
   }
 
 
@@ -77,9 +83,9 @@ export class ScrumboardComponent implements OnInit {
     
   // }
 
-  addInput(input) {
-    console.log('enter key')
-    input.value = ""
+  sendAMessage(input) {
+    this.wsService.sendMessage();
+    input.value = ''
   }
 
   load() {
@@ -781,6 +787,7 @@ export class ScrumboardComponent implements OnInit {
     this.dataService.allProjectGoals(this.project_id).subscribe(
       data => {
         this.loggedProject = data['project_name']
+        sessionStorage.setItem('proj_name', data['project_name'])
         this.participants = data['data']
         if (this.participants.length != 0) {
           this.filterUsers(this.participants)

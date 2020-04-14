@@ -986,10 +986,46 @@
       </div>
     </div>
 
-    <div class="split right" id="splitRight">
-      <div class="container">
-        <div class="slackChat">
-          <div class="slackNotification">
+    <div class="split right pb-5" id="splitRight" >
+      <div class="container" id="conn" style=" overflow:scroll;">
+        <div *ngFor="let message of wsService.messages">
+          <div class="slackChat">
+            <div class="container slackMessage" >
+              <div class="userName">
+               
+                <h3>{{message.username}}</h3>
+              </div>
+              <div class="userMsg">
+                <span>{{message.message}}</span>
+              </div>
+              <div class="msgTime">
+                <p>{{message.timestamp}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        
+      </div>
+      <div class="slackMsgSection">
+         
+        <form>
+          <textarea #sendSlackMsg (keyup.enter)="sendAMessage(sendSlackMsg)" placeholder="Send a message" class="inputMsg" #chat_text= "ngModel" [(ngModel)]= "wsService.chat_text" name=chat_text id="inputSlackMsg">
+            </textarea>
+        </form>
+
+      </div>
+    </div>
+    
+  </div>
+
+</div>
+
+
+<!-- 
+
+
+  <div class="slackNotification">
             <span>Joshua Okwe has joined the chat</span>
           </div>
           <div class="container slackMessage">
@@ -1067,14 +1103,4 @@
               <p>10:02 am • 9-07-2019</p>
             </div>
           </div>
-        </div>
-
-      </div>
-
-      <div class="slackMsgSection">
-        <input #sendMessage type="text" (keyup.enter)="addInput(sendMessage)" placeholder="Send a message" name="userChat" class="inputMsg" id="inputSlackMsg">
-      </div>
-    </div>
-  </div>
-
-</div>
+-->
