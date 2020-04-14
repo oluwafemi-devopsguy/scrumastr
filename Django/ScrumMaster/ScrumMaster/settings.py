@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 
 import os
 import datetime
+from decouple import config, Csv
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -203,20 +204,13 @@ FRONTEND = 'http://localhost:4200/home/'
 
 SECURE_SSL_REDIRECT = False
 
-# AWS_ACCESS_KEY_ID = 'AKIA3TZ6IUIDQJSPSYN3'
-# AWS_SECRET_ACCESS_KEY = '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'
 
-# AWS_ACCESS_KEY_ID = 'AKIA6RSO4E74JYIVHGEC'
-# AWS_SECRET_ACCESS_KEY = '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'
 
-AWS_ACCESS_KEY_ID = 'AKIAI2URT47SJF4N763Q'
-AWS_SECRET_ACCESS_KEY = '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'
+AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID', '')
+AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY', '')
 
-# AWS_ACCESS_KEY_ID = 'AKIA6RSO4E74CJCKMJ7T'
-# AWS_SECRET_ACCESS_KEY = 'LEOXPqG6hOwqneYGVJuBzOmg3leyBsuUExkuPk/0C'
 
-# REGION = 'us-west-2'
-REGION = 'us-east-2'
+REGION = config('REGION', '')
 
-AWS_WS_GATEWAY = 'https://9zvbc650m4.execute-api.us-east-2.amazonaws.com/chatscrum/'
+AWS_WS_GATEWAY = config('AWS_WS_GATEWAY', '')
 
