@@ -80,13 +80,7 @@ export class ScrumboardComponent implements OnInit {
 
 
   // ngAfterViewInit(): void {
-  //   this.dataService.deleteNoteRequest(this.project_id, 203).subscribe(
-  //     data => {
-  //       console.log(data)
-  //     }, error => {
-  //       console.log(error)
-  //     }
-  //   )
+    
   // }
 
   sendAMessage(input) {
@@ -513,8 +507,8 @@ export class ScrumboardComponent implements OnInit {
   }
 
   showAddTaskandNoteBTN() {
-    document.getElementById('addTaskBtn').style.display = 'block';
-    document.getElementById('addNoteBtn').style.display = 'block';
+    document.getElementById('addTaskBtn').style.display = 'inline';
+    document.getElementById('addNoteBtn').style.display = 'inline';
 
   }
 
@@ -729,9 +723,10 @@ export class ScrumboardComponent implements OnInit {
         this.filterUserHistory(item)
       })
     })
-    this.users.forEach(user => {
-      user['userColor'] = this.colors[user.userID % this.colors.length]
-    })
+
+    for (let i = 0; i < this.users.length; i++) {
+      this.users[i].userColor = this.colors[this.users.indexOf(this.users[i]) % this.colors.length]
+    }
   }
 
   filterUserNotes(user_notes) {
