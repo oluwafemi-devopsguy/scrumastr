@@ -1,7 +1,7 @@
 import MySQLdb
 
 
-db = MySQLdb.connect("localhost", "root", "8iu7*IU&", "chat")
+db = MySQLdb.connect("localhost", "usman", "usman123", "chatscrum")
 
 cursor = db.cursor()
 sql ="UPDATE scrum_scrumgoal SET status=0 WHERE status=1 AND moveable = 1 AND visible = 1 AND project_id = 2 "

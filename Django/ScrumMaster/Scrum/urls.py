@@ -33,4 +33,11 @@ urlpatterns = [
     url(r'^api-token-auth/', obtain_jwt_token),
     path(r'create-demo/', views.createDemoUser),
     url(r'^events/', views.Events.as_view()), 
+
+    path('test/', views.test, name='test'),
+    path('connect/', views.connect, name='connect'),
+    path('disconnect/', views.disconnect, name='disconnect'),
+    path('send_message/', views.send_message, name='sendmessage'),
+    path('get_recentmessages/', views.get_recentmessages, name='get_recentmessages'),
+    path('connect_to_project/', views.connect_to_project, name='connecttoproject'),
 ]

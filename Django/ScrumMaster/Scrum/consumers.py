@@ -3,7 +3,7 @@ from channels.db import database_sync_to_async
 from .models import *
 import json
 import hashlib
-from slackclient import SlackClient
+from slack import WebClient
 import datetime
 from django.core.serializers.json import DjangoJSONEncoder
 
@@ -133,7 +133,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 
 
-        print("USER IDENTITY VIA PROJECT_ID =============================" + self.project_id)
+        print("USER IDENTITY VIA PROJECT_ID =============================" , self.project_id)
         print(self.user)
         # self.scrum_user = ScrumProjectRole.objects.get(user = self.user, project_id=self.project_id)
         self.scrum_user = ScrumUser.objects.get(nickname = self.user).scrumprojectrole_set.get(project_id=self.project_id)
@@ -199,6 +199,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await database_sync_to_async(self.generate_message)(self.room_object, self.user, message)
 
     async def chat_message(self, event):
+        print("TEST CLIENT UPDATE WEBSOCKET")
         user = event['user']
         message = event['message'] 
         date_Time = (datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H:%M:%S"))

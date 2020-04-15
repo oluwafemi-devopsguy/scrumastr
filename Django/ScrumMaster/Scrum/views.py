@@ -18,7 +18,8 @@ from rest_framework.response import Response
 from django.core import serializers
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
-from slackclient import SlackClient
+from django.views.decorators.csrf import csrf_exempt
+from slack import WebClient
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 import random
@@ -26,11 +27,164 @@ import datetime
 import re
 import json
 import hashlib
+import boto3
 
 from Scrum.initials import *
 
 
 from time import sleep
+
+
+@csrf_exempt
+def test(request):
+    return JsonResponse({'message': 'hello Daud'}, status=200)
+
+@csrf_exempt
+def _parse_body(body):
+    body_unicode = body.decode('utf-8')
+    return json.loads(body_unicode)
+
+@csrf_exempt
+def connect(request):
+    body = _parse_body(request.body)
+    connection_id = body['connectionId']
+    print('connect successful')
+    # Connection(connection_id=connection_id, project_name="TestProj").save()
+
+    return JsonResponse(
+        {'message': 'connect successfully'}, status=200
+    )
+
+
+@csrf_exempt
+def connect_to_project(request):
+    body = _parse_body(request.body)
+    connection_id = body['connectionId']
+    project_name = body['body']['project_name']
+
+    proj = ScrumProject.objects.get(name=project_name)
+    print("Connecting to project ", project_name, " with connect id ", connection_id )  
+    Connection(connection_id=connection_id, project=proj).save()
+    
+
+    return JsonResponse(
+        {'message': 'connect successfully'}, status=200
+    )    
+
+
+@csrf_exempt
+def disconnect(request):
+    body = _parse_body(request.body)
+    connection_id = body['connectionId']
+
+    Connection.objects.filter(connection_id=connection_id).delete()
+    return JsonResponse(
+        {'message': 'disconnect successfully'}, status=200
+    )
+
+def _send_to_connection(connection_id, data):
+    gatewayapi = boto3.client(
+        "apigatewaymanagementapi",
+        endpoint_url=str(settings.AWS_WS_GATEWAY),
+        region_name=str(settings.REGION),
+        aws_access_key_id=str(settings.AWS_ACCESS_KEY_ID),
+        aws_secret_access_key=str(settings.AWS_SECRET_ACCESS_KEY),
+    )
+    return gatewayapi.post_to_connection(
+        ConnectionId=connection_id,
+        Data=json.dumps(data).encode('utf-8')
+    )
+
+
+
+# @csrf_exempt
+# def send_message(project_id):
+#     filtered_usr1 = filtered_users(project_id)
+#     filtered_usr = json.dumps({'body': filtered_usr1})
+#     print("Filter user 1:::::::::::::::::::::::::::::", filtered_usr1)
+#     print("Filter user #########################", filtered_usr)
+#     # # Get all current connections
+#     connections = Connection.objects.filter(project=project_id)
+
+#     output = {
+#         'Message': "This is websocket",
+#         'data':filtered_usr1
+#     }
+
+#     data = {'messages':output}
+#     # # Send the message data to all connections
+#     for connection in connections:
+#         _send_to_connection(
+#             connection.connection_id, data
+#         )
+    
+#     return JsonResponse(
+#         {'message': 'successfully send'}, status=200
+#     )
+
+
+@csrf_exempt
+def send_message(request):
+    body = _parse_body(request.body)
+    username = body['body']['username']
+    project_name = body['body']['project_name']
+    message = body['body']['message']
+    timestamp = body['body']['timestamp']
+
+    
+    #Save message sent in the database
+    ChatMessage(username=username, project_name=project_name, message=message, timestamp=timestamp).save()
+
+   
+    proj = ScrumProject.objects.get(name=project_name)
+
+    print("Project name :::::::", project_name)
+    connections = Connection.objects.filter(project=proj)
+    
+    my_message = {"username":username, "project_name":project_name, "message":message, "timestamp":timestamp}
+
+    data = {'messages':[my_message]}
+    print(connections)
+
+    # # Send the message data to all connections; one connection a time
+    for connection in connections:
+        _send_to_connection(
+            connection.connection_id, data
+        )
+    
+    return JsonResponse(
+        {'message': 'successfully send'}, status=200
+    )
+
+
+    #Fetch all recent Messages for a particular project in the database
+@csrf_exempt
+def get_recentmessages(request):
+    body = _parse_body(request.body)
+    connectionId = body['connectionId']
+    project_name = body['body']['project_name']
+
+    #Fetch all recent messages by their project name
+    all_messages = ChatMessage.objects.filter(project_name=project_name)[:30]
+    result_list = (list(all_messages.values('username', 'project_name', 'message', 'timestamp')))
+
+    data = {"messages":result_list}
+    print(data)
+
+    _send_to_connection(
+        connectionId,
+        data
+    )
+
+    return JsonResponse(
+        {"message":"all recent messages gotten"},
+        status = 200
+    )
+    
+
+
+
+#     )
 
 # Create your views here.
 
@@ -318,10 +472,10 @@ class ScrumProjectRoleViewSet(viewsets.ModelViewSet):
             
             if scrum_project_role.role == "Owner":
                 self.perform_destroy(instance)
-                return JsonResponse({'message': 'User Removed from project', 'data': filtered_users(instance.project.id)})
+                return JsonResponse({'message': 'User Removed from project'})
             else:
                 print(instance.role)
-                return JsonResponse({'message': 'Permission Denied: Unauthorized to Delete User.', 'data': filtered_users(instance.project.id)})
+                return JsonResponse({'message': 'Permission Denied: Unauthorized to Delete User.'})
 
         except:
             return JsonResponse({'message': 'User Do not exist'})
@@ -341,7 +495,7 @@ class ScrumProjectRoleViewSet(viewsets.ModelViewSet):
             author.role = 'Quality Analyst'
         author.save()
         
-        return JsonResponse({'message': 'User Role Changed!', 'data': filtered_users(request.data['project_id'])})
+        return JsonResponse({'message': 'User Role Changed!'})
 
 class ScrumGoalViewSet(viewsets.ModelViewSet):
     queryset = ScrumGoal.objects.all()
@@ -377,8 +531,8 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
                 "time_created": datetime.datetime.now(),
                 "goal_project_id":scrum_project.project_count,
             } )
-        print("Test ::::::::::::::::::: Goal")
-        print(request.data['name'])
+
+        # send_message(request.data['project_id'])
         if created:
             return JsonResponse({'message': 'Goal created success.', 'data': filtered_users(request.data['project_id'])})
 
@@ -404,7 +558,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             del_goal.visible = False
             del_goal.save()         
             self.createHistory(goal_item.name, goal_item.status, goal_item.goal_project_id, goal_item.hours, goal_item.time_created, goal_item.user, goal_item.project, goal_item.file, goal_item.id, 'Goal Removed Successfully by')
-            return JsonResponse({'message': 'Goal Removed Successfully!', 'data': filtered_users(request.data['project_id'])})
+            return JsonResponse({'message': 'Goal Removed Successfully!'})
         else:           
             group = scrum_project_a.role
             from_allowed = []
@@ -527,9 +681,9 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
                 goal.visible = 0
                 goal.save()
                 print(request.user.id)
-                return JsonResponse({'message': 'Goal Deleted Successfully!', 'data': filtered_users(request.data['project_id'])})
+                return JsonResponse({'message': 'Goal Deleted Successfully!'})
             else:
-                return JsonResponse({'message': 'Permission Denied: Unauthorized Deletion of Goal.', 'data': filtered_users(request.data['project_id'])})
+                return JsonResponse({'message': 'Permission Denied: Unauthorized Deletion of Goal.'})
         elif request.data['mode'] == 3:
             print(scrum_project.id)
             if scrum_project.to_clear_TFT == True:
@@ -541,20 +695,20 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
                 scrum_project.to_clear_TFT = True
             scrum_project.save() 
             print(scrum_project.to_clear_TFT)
-            return JsonResponse({'message': message, 'to_clear_board':scrum_project.to_clear_TFT, 'data': filtered_users(request.data['project_id'])})
+            return JsonResponse({'message': message, 'to_clear_board':scrum_project.to_clear_TFT})
         else:
             scrum_project_b = scrum_project.scrumgoal_set.get(goal_project_id=request.data['goal_id'][1:], moveable=True).user
             if scrum_project_role.role != 'Owner' and request.user != scrum_project_b.user.user:
-                return JsonResponse({'message': 'Permission Denied: Unauthorized Name Change of Goal.', 'data': filtered_users(request.data['project_id'])})
+                return JsonResponse({'message': 'Permission Denied: Unauthorized Name Change of Goal.'})
             
             goal = scrum_project.scrumgoal_set.get(goal_project_id=request.data['goal_id'][1:], moveable=True)
             if goal.moveable == True:            
                 goal.name = request.data['new_name']
                 self.createHistory(goal.name, goal.status, goal.goal_project_id, goal.hours, goal.time_created, goal.user, goal.project, goal.file, goal.id,  'Goal Name Changed by')
                 goal.save()
-                return JsonResponse({'message': 'Goal Name Changed!', 'data': filtered_users(request.data['project_id'])})
+                return JsonResponse({'message': 'Goal Name Changed!'})
             else:
-                 return JsonResponse({'message': 'Permission Denied: Sprint Period Elapsed!!!', 'data': filtered_users(request.data['project_id'])})
+                 return JsonResponse({'message': 'Permission Denied: Sprint Period Elapsed!!!'})
     def createHistory(self, name, status, goal_project_id, hours, time_created, user, project, file, goal, message):
         concat_message = message + self.request.user.username
         print(concat_message)
@@ -658,11 +812,11 @@ class SprintViewSet(viewsets.ModelViewSet):
                     sprint.save()
                     self.change_goal_moveability(sprint_goal_carry, scrum_project, scrum_project_role)
                     queryset = self.get_project_sprint()
-                    return JsonResponse({'message': 'Sprint Created Successfully.', 'data':queryset,  'users': filtered_users(request.data['project_id'])})
+                    return JsonResponse({'message': 'Sprint Created Successfully.', 'data':queryset})
                 else:
                     if (last_sprint.created_on.replace(tzinfo=None) + datetime.timedelta(seconds=20) > now_time):
                         queryset = self.get_project_sprint() 
-                        return JsonResponse({'message': 'Not Allowed: Minimum Allowed Sprint Run is 60secs.', 'data':queryset, 'users': filtered_users(request.data['project_id'])})
+                        return JsonResponse({'message': 'Not Allowed: Minimum Allowed Sprint Run is 60secs.', 'data':queryset})
                     elif (datetime.datetime.strftime(last_sprint.ends_on,  "%Y-%m-%d %H-%M-%S")) > datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d"): 
                         last_sprint.ends_on = datetime.datetime.now()
                         last_sprint.save()                        
@@ -670,7 +824,7 @@ class SprintViewSet(viewsets.ModelViewSet):
                         sprint.save()                    
                         self.change_goal_moveability(sprint_goal_carry, scrum_project, scrum_project_role)
                         queryset = self.get_project_sprint()
-                        return JsonResponse({'message': 'Last Sprint Ended and New Sprint Created Successfully.', 'data':queryset, 'users': filtered_users(request.data['project_id'])})  
+                        return JsonResponse({'message': 'Last Sprint Ended and New Sprint Created Successfully.', 'data':queryset})  
                     else:
                         pass            
             else: 
@@ -679,10 +833,10 @@ class SprintViewSet(viewsets.ModelViewSet):
                 self.change_goal_moveability(sprint_goal_carry, scrum_project, scrum_project_role)
                 print(self.get_project_sprint())
                 queryset = self.get_project_sprint()
-                return JsonResponse({'message': 'Sprint Created Successfully.', 'data':queryset, 'users': filtered_users(request.data['project_id'])})            
+                return JsonResponse({'message': 'Sprint Created Successfully.', 'data':queryset})            
 
         else:
-            return JsonResponse({'message': 'Permission Denied: Unauthorized Permission to Create New Sprint.', 'users': filtered_users(request.data['project_id'])})
+            return JsonResponse({'message': 'Permission Denied: Unauthorized Permission to Create New Sprint.'})
 
 
     def change_goal_status(self,sprint_goal_carry):
@@ -719,14 +873,9 @@ class SprintViewSet(viewsets.ModelViewSet):
                         project_id=self.request.data['project_id'],
                         moveable = True,
                         goal_project_id=each_goal.goal_project_id)
-                        print("inside if:::::: count")    
-                        print(scrum_project.project_count)
-                        scrum_project.project_count = scrum_project.project_count + 1 
-                        print(scrum_project.project_count)                     
+                        scrum_project.project_count = scrum_project.project_count + 1                     
                         goal.save()
-
-
-            print("Outside if:::::: count")    
+ 
             # # Save Total number of project goals
             print(scrum_project.project_count)
             scrum_project.save()
@@ -893,7 +1042,7 @@ class Events(APIView):
                             print(match.group(1))
                             try:
                                 a = ScrumProjectRole.objects.get(slack_user_id=match.group(1))
-                                slack_message = slack_message.replace(each_word, slack_name.user.nickname)
+                                slack_message = slack_message.replace(each_word, a.user.nickname)
                                 print(slack_message)
                                 print("pattern matched")
                             except ScrumProjectRole.DoesNotExist as e:
@@ -939,14 +1088,14 @@ class ScrumNoteViewSet(viewsets.ModelViewSet):
         try:
             note = ScrumNote(user=author, note=request.data['note'], priority=request.data['priority'], time_created=self.now_time, project_id=request.data['project_id'])
             note.save()
-            return JsonResponse({'message': 'Note Created Successfully!', 'data': filtered_users(request.data['project_id'])})
+            return JsonResponse({'message': 'Note Created Successfully!'})
         except KeyError as error:
-             return JsonResponse({'message': 'Priority or notes cannot be an empty field', 'data': filtered_users(request.data['project_id'])})
+             return JsonResponse({'message': 'Priority or notes cannot be an empty field'})
     def put(self, request):
         print("This is note deleting")
         note = ScrumNote.objects.get(id=request.data['id'])
         note.delete()
-        return JsonResponse({'message': 'Goal Added and note deleted Successfully!', 'data': filtered_users(request.data['project_id'])})
+        return JsonResponse({'message': 'Goal Added and note deleted Successfully!'})
             
 
 class ScrumWorkIdViewSet(viewsets.ModelViewSet):
@@ -961,9 +1110,9 @@ class ScrumWorkIdViewSet(viewsets.ModelViewSet):
         try:
             workid = ScrumWorkId(user=author, workid=request.data['workid'], branch=request.data['branch'], project_id=request.data['project_id'])
             workid.save()
-            return JsonResponse({'message': 'Workid added Successfully!', 'data': filtered_users(request.data['project_id'])})
+            return JsonResponse({'message': 'Workid added Successfully!'})
         except KeyError as error:
-             return JsonResponse({'message': 'Error adding workid', 'data': filtered_users(request.data['project_id'])}) 
+             return JsonResponse({'message': 'Error adding workid'}) 
 
     
     def patch(self, request):
@@ -980,7 +1129,7 @@ class ScrumWorkIdViewSet(viewsets.ModelViewSet):
         print("This is WorkId deleting")
         workid = ScrumWorkId.objects.get(id=request.data['id'])
         workid.delete()
-        return JsonResponse({'message': 'WorkId deleted Successfully!', 'data': filtered_users(request.data['project_id'])})        
+        return JsonResponse({'message': 'WorkId deleted Successfully!'})        
 
 class ScrumLogViewSet(viewsets.ModelViewSet):
     queryset = ScrumLog.objects.all()
@@ -998,11 +1147,11 @@ class ScrumLogViewSet(viewsets.ModelViewSet):
             log.save()
             return JsonResponse({'message': 'Created Successfully!', 'data': filtered_users(request.data['project_id'])})
         except KeyError as error:
-             return JsonResponse({'message': 'Priority or feature/bug cannot be an empty field', 'data': filtered_users(request.data['project_id'])})    
+             return JsonResponse({'message': 'Priority or feature/bug cannot be an empty field'})    
 
 
     def put(self, request):
         print("This is log deleting")
         log = ScrumLog.objects.get(id=request.data['id'])
         log.delete()
-        return JsonResponse({'message': 'Goal Assigned and log deleted Successfully!', 'data': filtered_users(request.data['project_id'])})        
+        return JsonResponse({'message': 'Goal Assigned and log deleted Successfully!'})        
