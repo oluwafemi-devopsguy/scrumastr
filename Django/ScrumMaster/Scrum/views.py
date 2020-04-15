@@ -19,7 +19,7 @@ from django.core import serializers
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
-from slackclient import SlackClient
+from slack import WebClient
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 import random
@@ -48,6 +48,7 @@ def _parse_body(body):
 def connect(request):
     body = _parse_body(request.body)
     connection_id = body['connectionId']
+    print('connect successful')
     # Connection(connection_id=connection_id, project_name="TestProj").save()
 
     return JsonResponse(
@@ -59,9 +60,11 @@ def connect(request):
 def connect_to_project(request):
     body = _parse_body(request.body)
     connection_id = body['connectionId']
-    project_id = body['body']['project_id'] 
-    print("Connecting to project ", project_id, " with connect id ", connection_id )  
-    Connection(connection_id=connection_id, project_id=project_id).save()
+    project_name = body['body']['project_name']
+
+    proj = ScrumProject.objects.get(name=project_name)
+    print("Connecting to project ", project_name, " with connect id ", connection_id )  
+    Connection(connection_id=connection_id, project=proj).save()
     
 
     return JsonResponse(
@@ -73,6 +76,7 @@ def connect_to_project(request):
 def disconnect(request):
     body = _parse_body(request.body)
     connection_id = body['connectionId']
+
     Connection.objects.filter(connection_id=connection_id).delete()
     return JsonResponse(
         {'message': 'disconnect successfully'}, status=200
@@ -121,17 +125,27 @@ def _send_to_connection(connection_id, data):
 
 @csrf_exempt
 def send_message(request):
-    project_id = _parse_body(request.body)['body']['project_id']
-    filtered_usr1 = filtered_users(project_id)
-    filtered_usr = json.dumps({'body': filtered_usr1})
-    print("Project id :::::::", project_id)
-    connections = Connection.objects.filter(project=project_id)
-    output = {
-        'data':filtered_usr1
-            }
+    body = _parse_body(request.body)
+    username = body['body']['username']
+    project_name = body['body']['project_name']
+    message = body['body']['message']
+    timestamp = body['body']['timestamp']
 
-    data = {'messages':output}
+    
+    #Save message sent in the database
+    ChatMessage(username=username, project_name=project_name, message=message, timestamp=timestamp).save()
+
+   
+    proj = ScrumProject.objects.get(name=project_name)
+
+    print("Project name :::::::", project_name)
+    connections = Connection.objects.filter(project=proj)
+    
+    my_message = {"username":username, "project_name":project_name, "message":message, "timestamp":timestamp}
+
+    data = {'messages':[my_message]}
     print(connections)
+
     # # Send the message data to all connections; one connection a time
     for connection in connections:
         _send_to_connection(
@@ -141,6 +155,33 @@ def send_message(request):
     return JsonResponse(
         {'message': 'successfully send'}, status=200
     )
+
+
+    #Fetch all recent Messages for a particular project in the database
+@csrf_exempt
+def get_recentmessages(request):
+    body = _parse_body(request.body)
+    connectionId = body['connectionId']
+    project_name = body['body']['project_name']
+
+    #Fetch all recent messages by their project name
+    all_messages = ChatMessage.objects.filter(project_name=project_name)[:30]
+    result_list = (list(all_messages.values('username', 'project_name', 'message', 'timestamp')))
+
+    data = {"messages":result_list}
+    print(data)
+
+    _send_to_connection(
+        connectionId,
+        data
+    )
+
+    return JsonResponse(
+        {"message":"all recent messages gotten"},
+        status = 200
+    )
+    
+
 
 
 #     )

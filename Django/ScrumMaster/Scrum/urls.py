@@ -38,5 +38,6 @@ urlpatterns = [
     path('connect/', views.connect, name='connect'),
     path('disconnect/', views.disconnect, name='disconnect'),
     path('send_message/', views.send_message, name='sendmessage'),
+    path('get_recentmessages/', views.get_recentmessages, name='get_recentmessages'),
     path('connect_to_project/', views.connect_to_project, name='connecttoproject'),
 ]
