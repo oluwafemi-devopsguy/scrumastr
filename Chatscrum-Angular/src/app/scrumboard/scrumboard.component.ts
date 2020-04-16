@@ -92,10 +92,10 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
      mutations.forEach((mutation) => {
       
       if (mutation.type == 'childList') {
-        console.log(mutation);
+        
         let elem = document.getElementById('splitRight');
         elem.scrollTop = elem.scrollHeight;
-        console.log(elem);
+        
       }
      });
 
