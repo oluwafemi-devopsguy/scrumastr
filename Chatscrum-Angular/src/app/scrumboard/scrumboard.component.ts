@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChildren, QueryList, ViewChild } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChildren, QueryList, ViewChild, AfterViewInit, AfterViewChecked } from '@angular/core';
 import { CdkDragStart, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { ActivatedRoute } from '@angular/router';
 import { Title } from "@angular/platform-browser";
@@ -16,7 +16,9 @@ import { element } from 'protractor';
   templateUrl: './scrumboard.component.html',
   styleUrls: ['./scrumboard.component.css']
 })
-export class ScrumboardComponent implements OnInit {
+export class ScrumboardComponent implements OnInit, AfterViewInit{
+  @ViewChild('con') cont: ElementRef;
+  @ViewChild('conn', {read: ElementRef})  elem: ElementRef;
 
   public imgName = "No image selected";
   public alert;
@@ -65,7 +67,9 @@ export class ScrumboardComponent implements OnInit {
     private pageTitle: Title,
     private route: ActivatedRoute,
     public wsService: WebsocketService,
-  ) { }
+  ) { 
+   
+  }
 
   ngOnInit() {
     this.load()
@@ -76,12 +80,37 @@ export class ScrumboardComponent implements OnInit {
     this.getAllSprints()
     this.wsService.getMessages()
     
+    
   }
 
 
-  // ngAfterViewInit(): void {
-    
-  // }
+
+   ngAfterViewInit(): void {
+     
+   
+    let observer = new MutationObserver((mutations) => {
+     mutations.forEach((mutation) => {
+      
+      if (mutation.type == 'childList') {
+        console.log(mutation);
+        let elem = document.getElementById('splitRight');
+        elem.scrollTop = elem.scrollHeight;
+        console.log(elem);
+      }
+     });
+
+     
+
+    });
+    observer.observe(this.elem.nativeElement, {
+      childList: true,
+      subtree: true
+    });
+   }
+
+   
+
+ 
 
   sendAMessage(input) {
     this.wsService.sendMessage();

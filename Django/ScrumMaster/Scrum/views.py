@@ -12,7 +12,9 @@ from .models import *
 from .serializer import *
 from rest_framework import viewsets, status
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework.serializers import ValidationError
 from rest_framework.response import Response
 from django.core import serializers
@@ -124,12 +126,15 @@ def _send_to_connection(connection_id, data):
 
 
 @csrf_exempt
+@permission_classes((IsAuthenticated, ))
+@authentication_classes((JSONWebTokenAuthentication,))
 def send_message(request):
     body = _parse_body(request.body)
     username = body['body']['username']
     project_name = body['body']['project_name']
     message = body['body']['message']
     timestamp = body['body']['timestamp']
+    token = body['body']['token']
 
     
     #Save message sent in the database
@@ -159,10 +164,13 @@ def send_message(request):
 
     #Fetch all recent Messages for a particular project in the database
 @csrf_exempt
+@permission_classes((IsAuthenticated, ))
+@authentication_classes((JSONWebTokenAuthentication,))
 def get_recentmessages(request):
     body = _parse_body(request.body)
     connectionId = body['connectionId']
     project_name = body['body']['project_name']
+    token = body['body']['token']
 
     #Fetch all recent messages by their project name
     all_messages = ChatMessage.objects.filter(project_name=project_name)[:30]

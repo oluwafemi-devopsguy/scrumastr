@@ -987,12 +987,11 @@
     </div>
 
     <div class="split right pb-5" id="splitRight" >
-      <div class="container" id="conn" style=" overflow:scroll;">
-        <div *ngFor="let message of wsService.messages">
-          <div class="slackChat">
-            <div class="container slackMessage" >
+      <div class="container"  #con id='con' style="overflow-y:scroll">
+        <div class="slackChat" #conn id="conn">
+          <div *ngFor="let message of wsService.messages">
+            <div class="container slackMessage">
               <div class="userName">
-               
                 <h3>{{message.username}}</h3>
               </div>
               <div class="userMsg">
@@ -1004,8 +1003,6 @@
             </div>
           </div>
         </div>
-        
-        
       </div>
       <div class="slackMsgSection">
          
