@@ -66,7 +66,7 @@ export class WebsocketService {
           })
         }
     }
-    let elem = document.getElementById('conn');
+   
     
   
     
