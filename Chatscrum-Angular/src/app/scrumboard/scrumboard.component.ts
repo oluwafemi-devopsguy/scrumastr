@@ -117,6 +117,10 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
     input.value = ''
   }
 
+  connectSlack() {
+    this.dataService.connectToSlack();
+  }
+
   load() {
     if (window.localStorage) {
       if (!localStorage.getItem('firstLoad')) {

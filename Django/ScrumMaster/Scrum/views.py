@@ -22,6 +22,7 @@ from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from slack import WebClient
+
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 import random
@@ -38,7 +39,7 @@ from time import sleep
 
 
 @csrf_exempt
-def test(request):
+def test(request): 
     return JsonResponse({'message': 'hello Daud'}, status=200)
 
 @csrf_exempt
@@ -896,7 +897,6 @@ class SprintViewSet(viewsets.ModelViewSet):
 
  
 
-
 class Events(APIView):
     print("Testing from slack=================")
     channel_layer = get_channel_layer()
@@ -907,7 +907,7 @@ class Events(APIView):
     
     def get(self, request, *args, **kwargs):
         # Return code in Url parameter or empty string if no code
-        sc = SlackClient("")
+        sc = WebClient(settings.SLACK_APP_TOKEN)
         auth_code = request.GET.get('code', '')
         the_state = request.GET.get('state', '')
         splitter = the_state.find(">>>") 
@@ -919,17 +919,22 @@ class Events(APIView):
 
 # =================================Get Auth code response from slack==============================================
         print("====================================auth code=================" + auth_code)
+        print(auth_code)
         print(project_id)
         print(user_email)
-        print(self.slack_app.CLIENT_ID)
-        print("====================================auth code=================" + self.slack_app.CLIENT_ID)
+        
+        print("====================================auth code=================" )
         if auth_code:
-            auth_response = sc.api_call(
-                "oauth.access",
-                client_id=self.slack_app.CLIENT_ID,
-                client_secret=self.slack_app.CLIENT_SECRET,
-                code=auth_code,
-                scope="identity.basic identity.email"
+            encoding = {"Content-Type":"text/html", "charset":"utf-8"}
+            print(encoding)
+            client = WebClient("")
+            auth_response = client.oauth_v2_access(
+
+                client_id=settings.SLACK_CLIENT_ID,
+                client_secret= settings.SLACK_CLIENT_SECRET,
+                code=auth_code
+                
+                
               )
 
 
@@ -937,7 +942,7 @@ class Events(APIView):
                 print("====================Get usermail etc==========================")
                 print(auth_response)
                 print(auth_response["access_token"])
-                user_sc = SlackClient(auth_response["access_token"])
+                user_sc = WebClient(auth_response["access_token"])
                 user_response = user_sc.api_call(
                     "users.identity" 
                                  )

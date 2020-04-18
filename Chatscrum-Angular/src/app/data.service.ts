@@ -104,6 +104,18 @@ export class DataService {
 
   }
 
+  connectToSlack() {
+    let usertype = String(sessionStorage.getItem('role'));
+    let email = String(sessionStorage.getItem('username'));
+    let project_name = String(sessionStorage.getItem('proj_name'));
+
+
+    if(usertype == "Owner") {
+      window.location.replace("https://slack.com/oauth/v2/authorize?client_id=1047148162967.1067254009940" + "&state=main_chat_" + project_name + ">>>" + email + "&scope=channels:history,channels:read,chat:write,emoji:read,files:read,groups:read,im:history,im:read,incoming-webhook,mpim:read,reactions:read,team:read,users.profile:read,users:read,mpim:history,groups:history&user_scope=channels:history,channels:read,channels:write,chat:write,emoji:read,files:read,groups:history,groups:read,im:history,im:read,mpim:history,mpim:read,reactions:read,search:read,stars:read,team:read,users:read&redirect_uri=https://856b844e.ngrok.io/scrum/events")
+      console.log(project_name);
+    }
+  }
+
 
   login() {
     this.http.post(this.domain_protocol + this.domain_name + '/scrum/api-token-auth/', JSON.stringify({'username': this.login_username, 'password': this.login_password, 'project': this.login_project}), this.httpOptions).subscribe(
