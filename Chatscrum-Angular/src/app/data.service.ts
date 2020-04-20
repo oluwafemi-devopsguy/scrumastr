@@ -111,7 +111,7 @@ export class DataService {
 
 
     if(usertype == "Owner") {
-      window.location.replace("https://slack.com/oauth/v2/authorize?client_id=1047148162967.1067254009940" + "&state=main_chat_" + project_name + ">>>" + email + "&scope=channels:history,channels:read,chat:write,emoji:read,files:read,groups:read,im:history,im:read,incoming-webhook,mpim:read,reactions:read,team:read,users.profile:read,users:read,mpim:history,groups:history&user_scope=channels:history,channels:read,channels:write,chat:write,emoji:read,files:read,groups:history,groups:read,im:history,im:read,mpim:history,mpim:read,reactions:read,search:read,stars:read,team:read,users:read&redirect_uri=https://856b844e.ngrok.io/scrum/events")
+      window.location.replace("https://slack.com/oauth/v2/authorize?client_id=1047148162967.1067254009940" + "&state=main_chat_" + project_name + ">>>" + email + "&scope=channels:history,channels:read,chat:write,emoji:read,files:read,groups:read,im:history,im:read,incoming-webhook,mpim:read,reactions:read,team:read,users.profile:read,users:read,mpim:history,groups:history&user_scope=identity.basic,identity.email,identity.avatar&redirect_uri=https://4c10c6a7.ngrok.io/scrum/events")
       console.log(project_name);
     }
   }
