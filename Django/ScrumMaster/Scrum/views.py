@@ -986,7 +986,7 @@ class Events(APIView):
                     html = "<html><body>An error occured!!!</body></html>" 
                     return HttpResponse(html)
                 
-                
+                 
                 
                 
 
