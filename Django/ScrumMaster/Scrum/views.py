@@ -183,6 +183,7 @@ def send_message(request):
     )
 
 
+
     #Fetch all recent Messages for a particular project in the database
 @csrf_exempt
 @permission_classes((IsAuthenticated, ))
