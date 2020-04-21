@@ -990,9 +990,11 @@
       <div class="container"  #con id='con' style="overflow-y:scroll">
         <div class="slackChat" #conn id="conn">
           <div *ngFor="let message of wsService.messages">
-            <div class="container slackMessage">
-              <div class="userName">
-                <h3>{{message.username}}</h3>
+            <div class="container slackMessage" style="position: relative;">
+              <img src={{message.profile_picture}} alt="" class="chatProfilePicture">
+              <div class="chatUserName"> 
+                <h5 >{{message.username}}</h5>
+                   
               </div>
               <div class="userMsg">
                 <span>{{message.message}}</span>

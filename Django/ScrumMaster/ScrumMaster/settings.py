@@ -200,7 +200,7 @@ CHANNEL_LAYERS = {
     }
 }
 
-FRONTEND = 'http://localhost:4200/home/'
+FRONTEND = 'https://int.chatscrum.com/'
 
 SECURE_SSL_REDIRECT = False
 
@@ -210,7 +210,7 @@ AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID', '')
 AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY', '')
 
 
-REGION = config('REGION', '')
+AWS_REGION = config('AWS_REGION', '')
 
 AWS_WS_GATEWAY = config('AWS_WS_GATEWAY', '')
 

@@ -235,6 +235,7 @@ class ChatMessage(models.Model):
     project_name = models.CharField(max_length=200)
     message = models.CharField(max_length=400)
     timestamp = models.CharField(max_length=100)
+    profile_picture = models.TextField(blank=True, null=True, default="https://secure.gravatar.com/avatar/8ca9b9d6ee37371cba9ee9362cdbbc9b.jpg?s=512&d=https%3A%2F%2Fa.slack-edge.com%2F00b63%2Fimg%2Favatars%2Fava_0005-512.png")
 
     def __str__(self):        
         return '{} {} '.format(self.username,self.project_name)

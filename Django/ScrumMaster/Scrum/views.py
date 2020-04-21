@@ -40,7 +40,8 @@ from time import sleep
 
 @csrf_exempt
 def test(request): 
-    return JsonResponse({'message': 'hello Daud'}, status=200)
+    return JsonResponse({'message': 'hello daud'}, status=200)
+     
 
 @csrf_exempt
 def _parse_body(body):
@@ -86,13 +87,14 @@ def disconnect(request):
     )
 
 def _send_to_connection(connection_id, data):
-    gatewayapi = boto3.client(
+    gatewayapi = boto3.client( 
         "apigatewaymanagementapi",
-        endpoint_url=str(settings.AWS_WS_GATEWAY),
-        region_name=str(settings.REGION),
-        aws_access_key_id=str(settings.AWS_ACCESS_KEY_ID),
-        aws_secret_access_key=str(settings.AWS_SECRET_ACCESS_KEY),
+        endpoint_url= settings.AWS_WS_GATEWAY, 
+        region_name= settings.AWS_REGION, 
+        aws_access_key_id= settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key= settings.AWS_SECRET_ACCESS_KEY, 
     )
+    print(settings.AWS_WS_GATEWAY)
     return gatewayapi.post_to_connection(
         ConnectionId=connection_id,
         Data=json.dumps(data).encode('utf-8')
@@ -127,8 +129,6 @@ def _send_to_connection(connection_id, data):
 
 
 @csrf_exempt
-@permission_classes((IsAuthenticated, ))
-@authentication_classes((JSONWebTokenAuthentication,))
 def send_message(request):
     body = _parse_body(request.body)
     username = body['body']['username']
@@ -146,18 +146,38 @@ def send_message(request):
 
     print("Project name :::::::", project_name)
     connections = Connection.objects.filter(project=proj)
-    
+
     my_message = {"username":username, "project_name":project_name, "message":message, "timestamp":timestamp}
 
     data = {'messages':[my_message]}
     print(connections)
 
-    # # Send the message data to all connections; one connection a time
-    for connection in connections:
-        _send_to_connection(
-            connection.connection_id, data
-        )
+    slack_details = ScrumSlack.objects.get(scrumproject=proj)
+    channel_id = slack_details.channel_id
+    bot_access_token = slack_details.access_token
+    scrumuser = ScrumUser.objects.get(nickname = username)
+    scrum_proj_role = ScrumProjectRole.objects.get(project=proj, user=scrumuser)
+    profile_picture = scrum_proj_role.slack_profile_picture
+
+    sc = WebClient(bot_access_token)
+
+    sc.chat_postMessage(
+       
+        channel= channel_id,
+        username = username,
+        text = message,
+        #as_user = False,
+        #icon_url = profile_picture
+
+
+    )
     
+    # # Send the message data to all connections; one connection a time
+   # for connection in connections:
+   #     _send_to_connection(
+    #        connection.connection_id, data
+    #    )
+
     return JsonResponse(
         {'message': 'successfully send'}, status=200
     )
@@ -175,7 +195,7 @@ def get_recentmessages(request):
 
     #Fetch all recent messages by their project name
     all_messages = ChatMessage.objects.filter(project_name=project_name)[:30]
-    result_list = (list(all_messages.values('username', 'project_name', 'message', 'timestamp')))
+    result_list = (list(all_messages.values('username', 'project_name', 'message', 'timestamp', 'profile_picture')))
 
     data = {"messages":result_list}
     print(data)
@@ -184,6 +204,7 @@ def get_recentmessages(request):
         connectionId,
         data
     )
+
 
     return JsonResponse(
         {"message":"all recent messages gotten"},
@@ -1013,11 +1034,6 @@ class Events(APIView):
 
 
 # =========================================URL verification challenge===============================================================
-        if post_data.get('type') == 'url_verification':
-            print("===================================url_verification===========================================================")
-            print(post_data["challenge"])
-            return Response(data=post_data,
-                            status=status.HTTP_200_OK)
 
         if post_data.get('event')["type"] == "message":
 
@@ -1074,11 +1090,11 @@ class Events(APIView):
                     new_message = ScrumChatMessage(room=slack_details.room, user=slack_user_nick, message=slack_message, profile_picture=slack_user.slack_profile_picture)
                     new_message.save()
 
-                    actual_message = ChatMessage(username=slack_user_nick, message=slack_message, project_name=project_name, timestamp=datetime.datetime.now().strftime("%I:%M %p . %d-%m-%Y"))
+                    actual_message = ChatMessage(username=slack_user_nick, message=slack_message, project_name=project_name, timestamp=datetime.datetime.now().strftime("%I:%M %p . %d-%m-%Y"), profile_picture=slack_user.slack_profile_picture)
                     actual_message.save()
 
                     proj = ScrumProject.objects.get(name=project_name)
-                    my_messages = {"username":slack_user_nick, "message":slack_message, "project_name":project_name, "timestamp":datetime.datetime.now().strftime("%I:%M %p . %d-%m-%Y")}
+                    my_messages = {"username":slack_user_nick, "message":slack_message, "project_name":project_name, "profile_picture":slack_user.slack_profile_picture, "timestamp":datetime.datetime.now().strftime("%I:%M %p . %d-%m-%Y")}
                     data = {"messages":[my_messages]}
 
                     connections = Connection.objects.filter(project = proj)
@@ -1086,6 +1102,8 @@ class Events(APIView):
                     for conn in connections:
                         _send_to_connection(conn.connection_id, data)
 
+                    return Response(data=post_data,
+                                status=status.HTTP_200_OK)
 
             
                    # async_to_sync(self.channel_layer.group_send)(
@@ -1095,8 +1113,13 @@ class Events(APIView):
 
             except KeyError as error:
                 # ===========Response for when no client message id
-                return Response(data=post_data,
-                                status=status.HTTP_200_OK)
+                pass
+
+        if post_data.get('type') == 'url_verification':
+            print("===================================url_verification===========================================================")
+            print(post_data["challenge"])
+            return Response(data=post_data,
+                            status=status.HTTP_200_OK)
             
             
             
