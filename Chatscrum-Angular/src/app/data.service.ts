@@ -112,7 +112,7 @@ export class DataService {
 
 
     
-      window.location.replace("https://slack.com/oauth/v2/authorize?client_id=1047148162967.1067254009940" + "&state=main_chat_" + project_name + ">>>" + email + "&scope=channels:history,channels:read,chat:write,emoji:read,files:read,groups:read,im:history,im:read,incoming-webhook,mpim:read,reactions:read,team:read,users.profile:read,users:read,mpim:history,groups:history&user_scope=identity.basic,identity.email,identity.avatar&redirect_uri=https://intapi.chatscrum.com/scrum/events")
+      window.location.replace("https://slack.com/oauth/v2/authorize?client_id=1047148162967.1067254009940" + "&state=main_chat_" + project_name + ">>>" + email + "&scope=channels:history,channels:read,chat:write,emoji:read,files:read,groups:read,im:history,im:read,incoming-webhook,mpim:read,reactions:read,team:read,users.profile:read,users:read,mpim:history,groups:history&user_scope=identity.basic,identity.email,identity.avatar&redirect_uri=" + this.domain_protocol + this.domain_name + "/scrum/events/")
       console.log(project_name);
   }
 
