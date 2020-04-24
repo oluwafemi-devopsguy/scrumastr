@@ -168,9 +168,9 @@ class ScrumSlack(models.Model):
     team_name  = models.CharField(max_length=500)
     team_id  = models.CharField(max_length=500)
     channel_id  = models.CharField(max_length=500)
-    access_token = models.CharField(max_length=500)
-    bot_user_id  = models.CharField(max_length=500)
-    bot_access_token = models.CharField(max_length=500)
+    access_token = models.CharField(max_length=500, null=True)
+    bot_user_id  = models.CharField(max_length=500, null=True)
+    bot_access_token = models.CharField(max_length=500, null=True)
     
     def __str__(self):
         return self.team_name

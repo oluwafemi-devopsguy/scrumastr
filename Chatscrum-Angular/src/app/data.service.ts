@@ -68,6 +68,7 @@ export class DataService {
             this.router.navigate(['login']);
           }, 3000);
 
+          
 
         } else {
           document.getElementById('alert-error').style.display = 'block';
@@ -88,7 +89,7 @@ export class DataService {
         this.createuser_projname = '';
 
         this.slack_app_id = data['client_id']; 
-        //this.connectToSlack();
+        this.addToSlack();
 
       },
       err => {
@@ -106,6 +107,17 @@ export class DataService {
 
   }
 
+  addToSlack() {
+    let usertype = String(sessionStorage.getItem('role'));
+    let email = String(sessionStorage.getItem('username'));
+    let project_name = String(sessionStorage.getItem('proj_name'));
+    let the_name = sessionStorage.getItem('realname');
+
+    if (usertype == 'Owner') {
+      window.location.replace("https://slack.com/oauth/v2/authorize?client_id=1047148162967.1067254009940" + "&state=main_chat_" + project_name + ">>>" + email + "<<<" + the_name + "&scope=channels:history,channels:read,chat:write,emoji:read,files:read,groups:read,im:history,im:read,incoming-webhook,mpim:read,reactions:read,team:read,users.profile:read,users:read,mpim:history,groups:history&user_scope=chat:write")
+    } 
+  }
+
   connectToSlack() {
     let usertype = String(sessionStorage.getItem('role'));
     let email = String(sessionStorage.getItem('username'));
@@ -113,8 +125,8 @@ export class DataService {
     let the_name = sessionStorage.getItem('realname');
 
 
-    
-      window.location.replace("https://slack.com/oauth/v2/authorize?client_id=1047148162967.1067254009940" + "&state=main_chat_" + project_name + ">>>" + email + "<<<" + the_name + "&scope=channels:history,channels:read,chat:write,emoji:read,files:read,groups:read,im:history,im:read,incoming-webhook,mpim:read,reactions:read,team:read,users.profile:read,users:read,mpim:history,groups:history&user_scope=chat:write")
+    //window.location.replace("https://slack.com/oauth/v2/authorize?client_id=1047148162967.1067254009940" + "&state=main_chat_" + project_name + ">>>" + email + "<<<" + the_name + "&scope=channels:history,channels:read,chat:write,emoji:read,files:read,groups:read,im:history,im:read,incoming-webhook,mpim:read,reactions:read,team:read,users.profile:read,users:read,mpim:history,groups:history&user_scope=chat:write")
+    window.location.replace("https://slack.com/oauth/v2/authorize?client_id=1047148162967.1067254009940" + "&state=main_chat_" + project_name + ">>>" + email + "<<<" + the_name + "&user_scope=identity.basic, identity.email, identity.avatar&redirect_uri=https://392faf64.ngrok.io/scrum/addslack/")
       console.log(project_name);
   }
 
@@ -180,7 +192,7 @@ export class DataService {
   }
 
   allProjectGoals(project_id) {
-    return this.http.get<any>(this.domain_protocol + this.domain_name + '/scrum/api/scrumprojects/' + project_id, this.httpOptions);
+    return this.http.get<any>(  'http://localhost:8000/scrum/api/scrumprojects/' + project_id, this.httpOptions);
   }
 
   allSprints(project_id) {
