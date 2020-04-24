@@ -230,15 +230,33 @@ class Connection(models.Model):
         ordering = ['-id'] 
 
 
+
+
 class ChatMessage(models.Model):
     username = models.CharField(max_length=50)
     project_name = models.CharField(max_length=200)
     message = models.CharField(max_length=400)
     timestamp = models.CharField(max_length=100)
     profile_picture = models.TextField(blank=True, null=True, default="https://secure.gravatar.com/avatar/8ca9b9d6ee37371cba9ee9362cdbbc9b.jpg?s=512&d=https%3A%2F%2Fa.slack-edge.com%2F00b63%2Fimg%2Favatars%2Fava_0005-512.png")
+    #slack_id = models.OneToOneField(ChatSlack, on_delete=models.CASCADE, null=True)
 
     def __str__(self):        
         return '{} {} '.format(self.username,self.project_name)
 
     class Meta:
         ordering = ['id']
+
+
+class ChatSlack(models.Model):
+    #user = models.ForeignKey(ChatMessage, on_delete=models.CASCADE, null=True, default='')
+    slack_user_id = models.CharField(max_length=50, default='')
+    username = models.CharField(max_length=50, default='')
+
+    def __str__(self):
+        return self.slack_user_id
+
+    class Meta:
+        ordering = ['id']
+
+
+

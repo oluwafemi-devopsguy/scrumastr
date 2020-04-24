@@ -66,6 +66,9 @@ def connect_to_project(request):
     connection_id = body['connectionId']
     project_name = body['body']['project_name']
 
+    if (project_name == "test"):
+        project_name = "testing"
+
     proj = ScrumProject.objects.get(name=project_name)
     print("Connecting to project ", project_name, " with connect id ", connection_id )  
     Connection(connection_id=connection_id, project=proj).save()
@@ -137,7 +140,8 @@ def send_message(request):
     timestamp = body['body']['timestamp']
     token = body['body']['token']
 
-    
+    if (project_name == "test"):
+        project_name = "testing"
     #Save message sent in the database
     ChatMessage(username=username, project_name=project_name, message=message, timestamp=timestamp).save()
 
@@ -152,12 +156,20 @@ def send_message(request):
     data = {'messages':[my_message]}
     print(connections)
 
-    slack_details = ScrumSlack.objects.get(scrumproject=proj)
+
+    slack_id = ChatSlack.objects.filter(username=username)[0].slack_user_id
+
+    print(slack_id)
+
+     
+    
+
+    slack_details = ScrumSlack.objects.get(scrumproject=proj, user_id = slack_id)
     channel_id = slack_details.channel_id
     bot_access_token = slack_details.access_token
     scrumuser = ScrumUser.objects.get(nickname = username)
     scrum_proj_role = ScrumProjectRole.objects.get(project=proj, user=scrumuser)
-    profile_picture = scrum_proj_role.slack_profile_picture
+    profile_picture = scrum_proj_role.slack_profile_picture 
 
     sc = WebClient(bot_access_token)
 
@@ -166,7 +178,7 @@ def send_message(request):
         channel= channel_id,
         username = username,
         text = message,
-        #as_user = False,
+        #as_user = True,
         #icon_url = profile_picture
 
 
@@ -194,6 +206,8 @@ def get_recentmessages(request):
     project_name = body['body']['project_name']
     token = body['body']['token']
 
+    if (project_name == "test"):
+        project_name = "testing"
     #Fetch all recent messages by their project name
     all_messages = ChatMessage.objects.filter(project_name=project_name)[:30]
     result_list = (list(all_messages.values('username', 'project_name', 'message', 'timestamp', 'profile_picture')))
@@ -932,18 +946,26 @@ class Events(APIView):
         sc = WebClient(settings.SLACK_APP_TOKEN)
         auth_code = request.GET.get('code', '')
         the_state = request.GET.get('state', '')
-        splitter = the_state.find(">>>") 
+        splitter = the_state.find(">>>")
+        splitter_s = the_state.find("<<") 
         project_id = the_state[:splitter] 
-        user_email = the_state[(splitter+3):]
+        user_email = the_state[(splitter+3):splitter_s]
+        real_name = the_state[(splitter_s+3):]
         post_data = request.data
+
+        if (project_id[10:] == "test"):
+            project_id = "main_chat_testing"
         scrum_project = ScrumProject.objects.get(name = project_id[10:])
 
 
 # =================================Get Auth code response from slack==============================================
         print("====================================auth code=================" + auth_code)
         print(auth_code)
+        print(splitter_s)
         print(project_id)
         print(user_email)
+        print("\n")
+        print(real_name)
         
         print("====================================auth code=================" )
         if auth_code:
@@ -962,11 +984,13 @@ class Events(APIView):
 
 
             if auth_response["ok"] == True:
+                if auth_response['authed_user']['access_token'] == KeyError:
+                    auth_response['authed_user']['access_token'] = auth_response['access_token']
                 print(auth_response)
                 print("====================Get usermail etc==========================")
-                print(auth_response['authed_user']['access_token'])
+              #  print(auth_response['authed_user']['access_token'])
                 print(auth_response["access_token"])
-                user_sc = WebClient(auth_response["authed_user"]["access_token"])
+                user_sc = WebClient(auth_response["access_token"])
                 user_response = user_sc.api_call(
                     "users.identity" 
                                  )
@@ -1006,12 +1030,15 @@ class Events(APIView):
             access_token=auth_response['authed_user']["access_token"], 
             bot_access_token=auth_response["access_token"]
             )
+            print(auth_response['authed_user']["id"])
             #===============================Update Scrumy user details for Add to slack======================================================================
             user_role.slack_user_id = user_response["user"]["id"]
             user_role.slack_email = user_response["user"]["email"]
             user_role.slack_username = user_response["user"]["name"]
             user_role.slack_profile_picture = user_response["user"]["image_512"]
             user_role.save()
+            ChatSlack.objects.get_or_create(username=real_name, slack_user_id= auth_response['authed_user']['id'])
+            
             print("===================================================user channel add=========================")
         except KeyError as error:
             print(user_role.slack_user_id)
@@ -1035,6 +1062,11 @@ class Events(APIView):
 
 
 # =========================================URL verification challenge===============================================================
+        if post_data.get('type') == 'url_verification':
+            print("===================================url_verification===========================================================")
+            print(post_data["challenge"])
+            return Response(data=post_data,
+                            status=status.HTTP_200_OK)
 
         if post_data.get('event')["type"] == "message":
 
@@ -1057,6 +1089,7 @@ class Events(APIView):
                                 status=status.HTTP_200_OK)
 
             try:
+                print(post_data['event']['user'])
                 scrumslack_details = ScrumSlack.objects.get(channel_id= post_data['event']['channel'], user_id=post_data['event']['user'], team_id=post_data['team_id'])
                 project_name = scrumslack_details.scrumproject.name
                 slack_details= ScrumSlack.objects.filter(channel_id=post_data["event"]["channel"]).first() 
@@ -1085,7 +1118,7 @@ class Events(APIView):
                             
                         #else:
                          #   print("pattern not matched") 
-
+                    
 
                     chatRoom = ScrumChatRoom.objects.get(id = slack_details.room_id).hash
                     new_message = ScrumChatMessage(room=slack_details.room, user=slack_user_nick, message=slack_message, profile_picture=slack_user.slack_profile_picture)
@@ -1093,6 +1126,8 @@ class Events(APIView):
 
                     actual_message = ChatMessage(username=slack_user_nick, message=slack_message, project_name=project_name, timestamp=datetime.datetime.now().strftime("%I:%M %p . %d-%m-%Y"), profile_picture=slack_user.slack_profile_picture)
                     actual_message.save()
+
+                    
 
                     proj = ScrumProject.objects.get(name=project_name)
                     my_messages = {"username":slack_user_nick, "message":slack_message, "project_name":project_name, "profile_picture":slack_user.slack_profile_picture, "timestamp":datetime.datetime.now().strftime("%I:%M %p . %d-%m-%Y")}
@@ -1116,11 +1151,7 @@ class Events(APIView):
                 # ===========Response for when no client message id
                 pass
 
-        if post_data.get('type') == 'url_verification':
-            print("===================================url_verification===========================================================")
-            print(post_data["challenge"])
-            return Response(data=post_data,
-                            status=status.HTTP_200_OK)
+        
             
             
             
