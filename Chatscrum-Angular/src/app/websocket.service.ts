@@ -45,7 +45,7 @@ export class WebsocketService {
       const context = {
         action:"getRecentMessages", 
         project_name:String(sessionStorage.getItem('proj_name')),
-        "token": sessionStorage.getItem('token')
+        "token": sessionStorage.getItem('ws_token')
       };
 
       this.ws.send(JSON.stringify(context));
@@ -91,7 +91,7 @@ export class WebsocketService {
         "username": String(sessionStorage.getItem('realname')),
         "timestamp": this.getCurrentTime(),
         "message": this.chat_text,
-        "token": sessionStorage.getItem('token')
+        "token": sessionStorage.getItem('ws_token')
         
       }
 
