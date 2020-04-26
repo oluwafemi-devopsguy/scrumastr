@@ -199,7 +199,7 @@ export class DataService {
   }
 
   allProjectGoals(project_id) {
-    return this.http.get<any>(  'http://localhost:8000/scrum/api/scrumprojects/' + project_id, this.httpOptions);
+    return this.http.get<any>(  this.domain_protocol + this.domain_name + '/scrum/api/scrumprojects/' + project_id, this.httpOptions);
   }
 
   allSprints(project_id) {
