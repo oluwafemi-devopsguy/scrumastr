@@ -251,12 +251,31 @@ class ChatSlack(models.Model):
     #user = models.ForeignKey(ChatMessage, on_delete=models.CASCADE, null=True, default='')
     slack_user_id = models.CharField(max_length=50, default='')
     username = models.CharField(max_length=50, default='')
+    project = models.ForeignKey(ScrumProject, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.slack_user_id
 
     class Meta:
         ordering = ['id']
+
+
+class SlackApps(models.Model):
+    scrumproject = models.ForeignKey(ScrumProject, on_delete=models.CASCADE)
+    room = models.ForeignKey(ScrumChatRoom, on_delete=models.CASCADE)
+    user_id  = models.CharField(max_length=500)
+    team_name  = models.CharField(max_length=500)
+    team_id  = models.CharField(max_length=500)
+    channel_id  = models.CharField(max_length=500)
+    access_token = models.CharField(max_length=500, null=True)
+    bot_user_id  = models.CharField(max_length=500, null=True)
+    bot_access_token = models.CharField(max_length=500, null=True)
+    
+    def __str__(self):
+        return self.team_name
+    
+    class Meta:
+        ordering = ['-id']
 
 
 

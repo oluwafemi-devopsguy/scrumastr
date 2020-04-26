@@ -68,6 +68,10 @@ export class DataService {
             this.router.navigate(['login']);
           }, 3000);
 
+          console.log(this.createuser_usertype); 
+          this.addToSlack();
+            
+           
           
 
         } else {
@@ -89,8 +93,9 @@ export class DataService {
         this.createuser_projname = '';
 
         this.slack_app_id = data['client_id']; 
-        this.addToSlack();
-
+       
+        
+       
       },
       err => {
         document.getElementById('lodr').style.display = 'none';
@@ -113,9 +118,9 @@ export class DataService {
     let project_name = String(sessionStorage.getItem('proj_name'));
     let the_name = sessionStorage.getItem('realname');
 
-    if (usertype == 'Owner') {
-      window.location.replace("https://slack.com/oauth/v2/authorize?client_id=1047148162967.1067254009940" + "&state=main_chat_" + project_name + ">>>" + email + "<<<" + the_name + "&scope=channels:history,channels:read,chat:write,emoji:read,files:read,groups:read,im:history,im:read,incoming-webhook,mpim:read,reactions:read,team:read,users.profile:read,users:read,mpim:history,groups:history&user_scope=chat:write")
-    } 
+    
+      window.location.replace("https://slack.com/oauth/v2/authorize?client_id=1047148162967.1067254009940" + "&state=main_chat_" + project_name + ">>>" + email + "<<<" + the_name + "&scope=channels:history,channels:read,chat:write,emoji:read,files:read,groups:read,im:history,im:read,incoming-webhook,mpim:read,reactions:read,team:read,users.profile:read,users:read,mpim:history,groups:history&user_scope=identity.basic, identity.email, identity.avatar")
+   
   }
 
   connectToSlack() {
@@ -125,8 +130,8 @@ export class DataService {
     let the_name = sessionStorage.getItem('realname');
 
 
-    //window.location.replace("https://slack.com/oauth/v2/authorize?client_id=1047148162967.1067254009940" + "&state=main_chat_" + project_name + ">>>" + email + "<<<" + the_name + "&scope=channels:history,channels:read,chat:write,emoji:read,files:read,groups:read,im:history,im:read,incoming-webhook,mpim:read,reactions:read,team:read,users.profile:read,users:read,mpim:history,groups:history&user_scope=chat:write")
-    window.location.replace("https://slack.com/oauth/v2/authorize?client_id=1047148162967.1067254009940" + "&state=main_chat_" + project_name + ">>>" + email + "<<<" + the_name + "&user_scope=identity.basic, identity.email, identity.avatar&redirect_uri=https://392faf64.ngrok.io/scrum/addslack/")
+    window.location.replace("https://slack.com/oauth/v2/authorize?client_id=1047148162967.1067254009940" + "&state=main_chat_" + project_name + ">>>" + email + "<<<" + the_name + "&scope=channels:history,channels:read,chat:write,emoji:read,files:read,groups:read,im:history,im:read,incoming-webhook,mpim:read,reactions:read,team:read,users.profile:read,users:read,mpim:history,groups:history&user_scope=identity.basic, identity.email, identity.avatar")
+   // window.location.replace("https://slack.com/oauth/v2/authorize?client_id=1047148162967.1067254009940" + "&state=main_chat_" + project_name + ">>>" + email + "<<<" + the_name + "&user_scope=identity.basic, identity.email, identity.avatar")
       console.log(project_name);
   }
 

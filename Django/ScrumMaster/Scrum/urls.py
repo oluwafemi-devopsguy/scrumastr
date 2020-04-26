@@ -33,8 +33,7 @@ urlpatterns = [
     url(r'^api-token-auth/', obtain_jwt_token),
     path(r'create-demo/', views.createDemoUser),
     url(r'^events/', views.Events.as_view()),
-    url(r'^addslack/', views.AddSlack.as_view()),
-
+    
     path('test/', views.test, name='test'),
     path('connect/', views.connect, name='connect'),
     path('disconnect/', views.disconnect, name='disconnect'),
