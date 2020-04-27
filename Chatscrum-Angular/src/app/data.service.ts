@@ -69,7 +69,7 @@ export class DataService {
           }, 3000);
 
           console.log(this.createuser_usertype); 
-          this.addToSlack();
+         // this.addToSlack();
             
            
           
