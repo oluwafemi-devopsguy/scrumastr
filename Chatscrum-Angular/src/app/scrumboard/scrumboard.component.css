@@ -64,6 +64,8 @@ body {
   }
 } */
 
+
+
 .navbarr {
   top: 0;
   width: 100vw;
@@ -1372,20 +1374,20 @@ summary:focus {
 
 }
 
-.slackMessage .userName {
+.slackMessage .chatUserName {
   margin-top: 10px;
 }
 
-.slackMessage .userName h3 {
+.slackMessage .chatUserName h5 {
   font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: bold;
   font-size: 14px;
   line-height: 16px;
-  align-items: center;
   color: #4DFFD4;
-  margin-left: 35px;
-  margin-top: -19px;
+  position: absolute;
+  left: 65px;
+  top: 25px;
 }
 
 .slackMessage .userMsg {
@@ -2148,4 +2150,11 @@ summary:focus {
 
 .projectsDropDownContent .slider.round:before {
   border-radius: 50%;
+}
+
+.slackChat .chatProfilePicture {
+  width: 35px;
+  border-radius: 50%;
+  border: 1px solid white;
+  margin-top: 10px;
 }

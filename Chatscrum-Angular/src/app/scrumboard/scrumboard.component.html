@@ -67,7 +67,7 @@
         </li>
 
         <li class="nav-item">
-          <a class="nav-link otherNavTools" id="slackTab" role="tab">
+          <a class="nav-link otherNavTools" id="slackTab" role="tab" (click)="connectSlack()">
             <h4>Slack <img src="https://res.cloudinary.com/ros4eva/image/upload/v1582046655/Group_jinais.png" width="12"
                 height="12"></h4>
             <span class="slackStatus">Connected</span>
@@ -987,13 +987,14 @@
     </div>
 
     <div class="split right pb-5" id="splitRight" >
-      <div class="container" id="conn" style=" overflow:scroll;">
-        <div *ngFor="let message of wsService.messages">
-          <div class="slackChat">
-            <div class="container slackMessage" >
-              <div class="userName">
-               
-                <h3>{{message.username}}</h3>
+      <div class="container"  #con id='con' style="overflow-y:scroll">
+        <div class="slackChat" #conn id="conn">
+          <div *ngFor="let message of wsService.messages">
+            <div class="container slackMessage" style="position: relative;">
+              <img src={{message.profile_picture}} alt="" class="chatProfilePicture">
+              <div class="chatUserName"> 
+                <h5 >{{message.username}}</h5>
+                   
               </div>
               <div class="userMsg">
                 <span>{{message.message}}</span>
@@ -1004,8 +1005,6 @@
             </div>
           </div>
         </div>
-        
-        
       </div>
       <div class="slackMsgSection">
          
