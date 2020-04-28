@@ -806,13 +806,15 @@ def jwt_response_payload_handler(token, user=None, request=None):
         proj_role.color = userBgColor()
         print("coloooooooooooooooooooooooooooor" + proj_role.color)
         proj_role.save()
-
-    try:
-        ws_token, created = Token.objects.get_or_create(user=user)
-        if (ws_token or created):  
-            ws_token = Token.objects.get(user=user)
-    except:
-        pass
+        
+    ws_token, created = Token.objects.get_or_create(user=user)
+    # try:
+    #     ws_token, created = Token.objects.get_or_create(user=user)
+    #    # if (ws_token or created):  
+    #     #    ws_token = Token.objects.get(user=user)
+    #     print(ws_token.key)
+    # except:
+    #     pass
 
 
     user_slack = bool(proj_role.slack_email)

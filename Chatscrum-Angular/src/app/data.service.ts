@@ -57,7 +57,7 @@ export class DataService {
   constructor(private http: HttpClient, private router: Router) { }
 
   createUser() {
-    this.http.post(  this.domain_protocol + this.domain_name + '/scrum/api/scrumusers/', JSON.stringify({'email': this.createuser_email, 'password': this.createuser_password, 'full_name': this.createuser_fullname, 'usertype': this.createuser_usertype, 'projname': this.createuser_projname}), this.httpOptions).subscribe(
+    this.http.post( this.domain_protocol + this.domain_name +  '/scrum/api/scrumusers/', JSON.stringify({'email': this.createuser_email, 'password': this.createuser_password, 'full_name': this.createuser_fullname, 'usertype': this.createuser_usertype, 'projname': this.createuser_projname}), this.httpOptions).subscribe(
       data => {
         if (
           data['message'] == 'User Created Successfully.' ||
