@@ -2197,7 +2197,7 @@ summary:focus {
  }
  .slackmodal-header{
       justify-content: space-around;
-     background: rgba(0,0,0,0.2);
+     background:#693b58;
      color:black;
      padding:5px 16px;
      margin: auto;
@@ -2207,14 +2207,15 @@ summary:focus {
      margin:0;
      padding-bottom:5px;
      text-align: center;
-     color:green;
+     color:white;
  }
 
  .slackmodal-footer {
+
      color: white;
      width:60%;
      margin: 20px auto;
-     align-items: center;
+     
  }
 
  .slackmodal-body{
@@ -2223,7 +2224,7 @@ summary:focus {
      text-align: center;
  }
  .slackbtn {
-     background-color: turquoise;
+     background-color: #6ec4cb;
      height: 40px; 
      border-radius:8px;
      margin-left:25px;
@@ -2235,6 +2236,7 @@ summary:focus {
  }
 
  .slackclose{
+      font-size: 18px;
      float:right;
      padding-top :5px ;
      padding-right:5px;
