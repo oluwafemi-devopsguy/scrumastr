@@ -111,6 +111,7 @@ export class DataService {
     );
 
   }
+  
 
   addToSlack() {
     let usertype = String(sessionStorage.getItem('role'));
@@ -134,7 +135,7 @@ export class DataService {
    // window.location.replace("https://slack.com/oauth/v2/authorize?client_id=1047148162967.1067254009940" + "&state=main_chat_" + project_name + ">>>" + email + "<<<" + the_name + "&user_scope=identity.basic, identity.email, identity.avatar")
       console.log(project_name);
   }
-  
+
 
   login() {
     this.http.post( this.domain_protocol + this.domain_name + '/scrum/api-token-auth/', JSON.stringify({'username': this.login_username, 'password': this.login_password, 'project': this.login_project}), this.httpOptions).subscribe(
