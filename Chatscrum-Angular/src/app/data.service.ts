@@ -111,7 +111,6 @@ export class DataService {
     );
 
   }
-  
 
   addToSlack() {
     let usertype = String(sessionStorage.getItem('role'));
