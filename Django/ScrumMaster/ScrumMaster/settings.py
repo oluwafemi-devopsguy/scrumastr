@@ -202,7 +202,7 @@ CHANNEL_LAYERS = {
     }
 }
 
-FRONTEND = 'https://int.chatscrum.com/'
+FRONTEND = 'https://int.chatscrum.com/login'
 
 SECURE_SSL_REDIRECT = False
 

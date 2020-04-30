@@ -57,6 +57,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
   public historyForUser;
   public historyForUserRole;
   public messages = [];
+  public uses_slack = sessionStorage.getItem('user_slack');
 
   @ViewChildren('details') details: QueryList<any>;
 
@@ -79,8 +80,10 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
     this.getAllUsersGoals()
     this.getAllSprints()
     this.wsService.getMessages()
+    this.hideAddTaskandNoteBTN();
+    this.openSlackModal();
     
-    
+    console.log(this.uses_slack);
   }
 
 
@@ -108,9 +111,20 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
     });
    }
 
-   
 
- 
+
+  openSlackModal() {
+    let modal = document.getElementById('slackModal');
+    if (this.uses_slack == 'false') {
+      modal.style.display = 'block';
+    }
+    
+  }
+
+  closeSlackModal(event) {
+    let modal = document.getElementById('slackModal')
+    modal.style.display='none'; 
+  }
 
   sendAMessage(input) {
     this.wsService.sendMessage();
@@ -350,9 +364,14 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
       let projectDD = document.getElementById('projectsDDContent') as HTMLElement;
       let themeDD = document.getElementById('themeDDContent') as HTMLElement;
       let sprintDD = document.getElementById('sprintDDContent') as HTMLElement;
+      let mymodal = document.getElementById('slackModal');
       let target = e.target as HTMLElement
       if (e.target == modal) {
         modal.style.display = 'none';
+      }
+
+      if(e.target == mymodal) {
+        mymodal.style.display = 'none';
       }
 
       if (e.target == modal1) {
