@@ -121,7 +121,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
     
   }
 
-  closeSlackModal(event) {
+  closeSlackModal() {
     let modal = document.getElementById('slackModal')
     modal.style.display='none'; 
   }
