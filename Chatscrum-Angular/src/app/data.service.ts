@@ -42,6 +42,7 @@ export class DataService {
   public taskToEdit;
   public image_uploaded: File = null;
   public image_name;
+   
 
 
 
@@ -56,7 +57,7 @@ export class DataService {
   constructor(private http: HttpClient, private router: Router) { }
 
   createUser() {
-    this.http.post(this.domain_protocol + this.domain_name + '/scrum/api/scrumusers/', JSON.stringify({'email': this.createuser_email, 'password': this.createuser_password, 'full_name': this.createuser_fullname, 'usertype': this.createuser_usertype, 'projname': this.createuser_projname}), this.httpOptions).subscribe(
+    this.http.post(  this.domain_protocol + this.domain_name + '/scrum/api/scrumusers/', JSON.stringify({'email': this.createuser_email, 'password': this.createuser_password, 'full_name': this.createuser_fullname, 'usertype': this.createuser_usertype, 'projname': this.createuser_projname}), this.httpOptions).subscribe(
       data => {
         if (
           data['message'] == 'User Created Successfully.' ||
@@ -67,6 +68,11 @@ export class DataService {
             this.router.navigate(['login']);
           }, 3000);
 
+          console.log(this.createuser_usertype); 
+         // this.addToSlack();
+            
+           
+          
 
         } else {
           document.getElementById('alert-error').style.display = 'block';
@@ -86,8 +92,10 @@ export class DataService {
         this.createuser_fullname = '';
         this.createuser_projname = '';
 
-        this.slack_app_id = data['client_id'];
-
+        this.slack_app_id = data['client_id']; 
+       
+        
+       
       },
       err => {
         document.getElementById('lodr').style.display = 'none';
@@ -104,10 +112,34 @@ export class DataService {
 
   }
 
+  addToSlack() {
+    let usertype = String(sessionStorage.getItem('role'));
+    let email = String(sessionStorage.getItem('username'));
+    let project_name = String(sessionStorage.getItem('proj_name'));
+    let the_name = sessionStorage.getItem('realname');
+
+    
+      window.location.replace("https://slack.com/oauth/v2/authorize?client_id=1047148162967.1067254009940" + "&state=main_chat_" + project_name + ">>>" + email + "<<<" + the_name + "&scope=channels:history,channels:read,chat:write,emoji:read,files:read,groups:read,im:history,im:read,incoming-webhook,mpim:read,reactions:read,team:read,users.profile:read,users:read,mpim:history,groups:history&user_scope=users:read,chat:write,channels:read")
+   
+  }
+
+  connectToSlack() {
+    let usertype = String(sessionStorage.getItem('role'));
+    let email = String(sessionStorage.getItem('username'));
+    let project_name = String(sessionStorage.getItem('proj_name'));
+    let the_name = sessionStorage.getItem('realname');
+
+
+    window.location.replace("https://slack.com/oauth/v2/authorize?client_id=1047148162967.1067254009940" + "&state=main_chat_" + project_name + ">>>" + email + "<<<" + the_name + "&scope=channels:history,channels:read,chat:write,emoji:read,files:read,groups:read,im:history,im:read,incoming-webhook,mpim:read,reactions:read,team:read,users.profile:read,users:read,mpim:history,groups:history&user_scope=users:read,chat:write, channels:read")
+   // window.location.replace("https://slack.com/oauth/v2/authorize?client_id=1047148162967.1067254009940" + "&state=main_chat_" + project_name + ">>>" + email + "<<<" + the_name + "&user_scope=identity.basic, identity.email, identity.avatar")
+      console.log(project_name);
+  }
+
 
   login() {
-    this.http.post(this.domain_protocol + this.domain_name + '/scrum/api-token-auth/', JSON.stringify({'username': this.login_username, 'password': this.login_password, 'project': this.login_project}), this.httpOptions).subscribe(
+    this.http.post( this.domain_protocol + this.domain_name + '/scrum/api-token-auth/', JSON.stringify({'username': this.login_username, 'password': this.login_password, 'project': this.login_project}), this.httpOptions).subscribe(
       data => {
+        
         localStorage.setItem('full_data', JSON.stringify(data));
         sessionStorage.setItem('username', this.login_username);
         sessionStorage.setItem('realname', data['name']);
@@ -119,6 +151,7 @@ export class DataService {
         sessionStorage.setItem('user_slack', data['user_slack']);
         sessionStorage.setItem('project_slack', data['project_slack']);
         sessionStorage.setItem('slack_username', data['slack_username']);
+        sessionStorage.setItem('ws_token', data['ws_token']);
         localStorage.setItem('sessiontf', data['to_clear_board']);
         this.username = this.login_username;
         this.realname = data['name'];
@@ -166,7 +199,7 @@ export class DataService {
   }
 
   allProjectGoals(project_id) {
-    return this.http.get<any>(this.domain_protocol + this.domain_name + '/scrum/api/scrumprojects/' + project_id, this.httpOptions);
+    return this.http.get<any>(  this.domain_protocol + this.domain_name + '/scrum/api/scrumprojects/' + project_id, this.httpOptions);
   }
 
   allSprints(project_id) {
