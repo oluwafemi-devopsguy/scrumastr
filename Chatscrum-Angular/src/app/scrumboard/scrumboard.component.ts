@@ -135,6 +135,14 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
     this.dataService.connectToSlack();
   }
 
+  showSprintCreate() {
+    if (this.loggedUserRole == "Owner" || this.loggedUserRole == "Admin") {
+      let active = document.getElementById('sprintAlert');
+    active.style.display = 'block';
+    }
+    
+  }
+
   load() {
     if (window.localStorage) {
       if (!localStorage.getItem('firstLoad')) {
