@@ -806,13 +806,15 @@ def jwt_response_payload_handler(token, user=None, request=None):
         proj_role.color = userBgColor()
         print("coloooooooooooooooooooooooooooor" + proj_role.color)
         proj_role.save()
-
-    try:
-        ws_token, created = Token.objects.get_or_create(user=user)
-        if (ws_token or created):  
-            ws_token = Token.objects.get(user=user)
-    except:
-        pass
+        
+    ws_token, created = Token.objects.get_or_create(user=user)
+    # try:
+    #     ws_token, created = Token.objects.get_or_create(user=user)
+    #    # if (ws_token or created):  
+    #     #    ws_token = Token.objects.get(user=user)
+    #     print(ws_token.key)
+    # except:
+    #     pass
 
 
     user_slack = bool(proj_role.slack_email)
@@ -1000,7 +1002,7 @@ class Events(APIView):
                 client_id=settings.SLACK_CLIENT_ID,
                 client_secret= settings.SLACK_CLIENT_SECRET,
                 code=auth_code,
-                scope="channels:read users:read chat:write"
+                scope="channels:read users:read chat:write groups:read channels:history groups:history"
                 
                 
               )
@@ -1080,6 +1082,8 @@ class Events(APIView):
             user_role.slack_username = user_response["user"]["name"]
             user_role.slack_profile_picture = user_response["user"]["profile"]["image_512"]
             user_role.save()
+
+            print(user_response)
            
             
             print("===================================================user channel add=========================")
