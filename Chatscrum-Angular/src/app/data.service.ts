@@ -12,6 +12,7 @@ export class DataService {
   public domain_protocol = 'https://';
   public websocket = 'wss://';
   public client_id = '1047148162967.1067254009940';
+  
 
   public message;
   public goal_name;
