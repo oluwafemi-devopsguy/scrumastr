@@ -382,6 +382,30 @@ def move_goal(request, goal_id, to_id):
         return HttpResponseRedirect(reverse('login'))
 '''
 
+class ScrumFetchViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = ScrumUserFetchSerializer
+
+    def create(self, request, username=None, *args, **kwargs):
+        print("Okayyy")
+        
+        email = request.data['username']
+        print(email)
+       
+            
+        get_user = User.objects.get(username=email)
+        scrum_details = ScrumUser.objects.get(user=get_user)
+        full_name = scrum_details.nickname
+        
+        print('done')
+        return JsonResponse(
+            {
+            'fullname': full_name,
+            'message': 'Details gotten sucessfully'
+        }
+        )
+        
+
 class ScrumEmailViewSet(viewsets.ModelViewSet):
     queryset = ScrumEmail.objects.all()
     serializer_class = ScrumEmailSerializer
@@ -418,7 +442,12 @@ def createDemoUser(request):
     
     return JsonResponse({'username': demo_user.username, 'password': demo_user_password, 'project': demo_project_name})
     
-    
+
+
+
+
+
+
 class ScrumUserViewSet(viewsets.ModelViewSet):
     queryset = ScrumUser.objects.all()
     serializer_class = ScrumUserSerializer
@@ -1194,22 +1223,31 @@ class Events(APIView):
                    # new_message = ScrumChatMessage(room=slack_details.room, user=slack_user_nick, message=slack_message, profile_picture=slack_user.slack_profile_picture)
                     #new_message.save()
 
-                    actual_message = ChatMessage(username=slack_user_nick, message=slack_message, project_name=project_name, timestamp=datetime.datetime.now().strftime("%I:%M %p . %d-%m-%Y"), profile_picture=slack_user.slack_profile_picture)
-                    actual_message.save()
-
                     
 
-                    proj = ScrumProject.objects.get(name=project_name)
-                    my_messages = {"username":slack_user_nick, "message":slack_message, "project_name":project_name, "profile_picture":slack_user.slack_profile_picture, "timestamp":datetime.datetime.now().strftime("%I:%M %p . %d-%m-%Y")}
-                    data = {"messages":[my_messages]}
+                    
+                    try:
+                        return Response(data=post_data,
+                                status=status.HTTP_200_OK)
+                        actual_message = ChatMessage(username=slack_user_nick, message=slack_message, project_name=project_name, timestamp=datetime.datetime.now().strftime("%I:%M %p . %d-%m-%Y"), profile_picture=slack_user.slack_profile_picture)
+                        actual_message.save()
+                        proj = ScrumProject.objects.get(name=project_name)
+                        my_messages = {"username":slack_user_nick, "message":slack_message, "project_name":project_name, "profile_picture":slack_user.slack_profile_picture, "timestamp":datetime.datetime.now().strftime("%I:%M %p . %d-%m-%Y")}
+                        data = {"messages":[my_messages]}
 
-                    connections = Connection.objects.filter(project = proj)
+                        connections = Connection.objects.filter(project = proj)
 
-                    for conn in connections:
-                        _send_to_connection(conn.connection_id, data)
+                        for conn in connections:
+                            _send_to_connection(conn.connection_id, data)
+
+                    except:
+                        pass
 
                     return Response(data=post_data,
                                 status=status.HTTP_200_OK)
+                    
+
+                    
 
             
                    # async_to_sync(self.channel_layer.group_send)(

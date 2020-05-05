@@ -82,8 +82,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
     this.wsService.getMessages()
     this.hideAddTaskandNoteBTN();
     this.openSlackModal();
-    
-    console.log(this.uses_slack);
+   
   }
 
 

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { timingSafeEqual } from 'crypto';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class DataService {
   public domain_protocol = 'https://';
   public websocket = 'wss://';
   public client_id = '1047148162967.1067254009940';
-  
+
 
   public message;
   public goal_name;
@@ -113,6 +114,8 @@ export class DataService {
 
   }
 
+  
+
   addToSlack() {
     let usertype = String(sessionStorage.getItem('role'));
     let email = String(sessionStorage.getItem('username'));
@@ -138,7 +141,7 @@ export class DataService {
 
 
   login() {
-    this.http.post( this.domain_protocol + this.domain_name + '/scrum/api-token-auth/', JSON.stringify({'username': this.login_username, 'password': this.login_password, 'project': this.login_project}), this.httpOptions).subscribe(
+    this.http.post( this.domain_protocol + this.domain_name +  '/scrum/api-token-auth/', JSON.stringify({'username': this.login_username, 'password': this.login_password, 'project': this.login_project}), this.httpOptions).subscribe(
       data => {
         
         localStorage.setItem('full_data', JSON.stringify(data));
@@ -181,6 +184,20 @@ export class DataService {
     );
   }
 
+  fetchIdentity(email) {
+    this.http.post( this.domain_protocol + this.domain_name + '/scrum/api/scrumuserfetch/', JSON.stringify({"username": email}), this.httpOptions).subscribe(
+      data => {
+        let fullname = data['fullname'];
+        
+        this.createuser_fullname = fullname;
+      },
+
+      err=> {
+        console.log("Could not be fetched")
+      }
+    )
+  }
+
   getHeader() {
     return { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'JWT ' + sessionStorage.getItem('token') }) }
   }
@@ -200,7 +217,7 @@ export class DataService {
   }
 
   allProjectGoals(project_id) {
-    return this.http.get<any>( this.domain_protocol + this.domain_name +  '/scrum/api/scrumprojects/' + project_id, this.httpOptions);
+    return this.http.get<any>( this.domain_protocol + this.domain_name + '/scrum/api/scrumprojects/' + project_id, this.httpOptions);
   }
 
   allSprints(project_id) {
