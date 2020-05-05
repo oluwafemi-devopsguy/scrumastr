@@ -1228,7 +1228,7 @@ class Events(APIView):
                     
                     try:
                         return Response(data=post_data,
-                                status=status.HTTP_200_OK)
+                                status=status.HTTP_200_OK, headers=X-Slack-No-Retry: 1)
                         actual_message = ChatMessage(username=slack_user_nick, message=slack_message, project_name=project_name, timestamp=datetime.datetime.now().strftime("%I:%M %p . %d-%m-%Y"), profile_picture=slack_user.slack_profile_picture)
                         actual_message.save()
                         proj = ScrumProject.objects.get(name=project_name)
@@ -1244,7 +1244,7 @@ class Events(APIView):
                         pass
 
                     return Response(data=post_data,
-                                status=status.HTTP_200_OK)
+                                status=status.HTTP_200_OK, headers=X-Slack-No-Retry: 1)
                     
 
                     
