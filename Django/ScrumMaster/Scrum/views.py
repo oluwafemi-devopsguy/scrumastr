@@ -1168,13 +1168,12 @@ class Events(APIView):
                             status=status.HTTP_200_OK)
 
         if post_data.get('event')["type"] == "message":
-            try:
-                return Response(data=post_data,
-                            status=status.HTTP_200_OK)
-            except:
-                pass
+            
+            
 
             try:
+                return Response(
+                        status=status.HTTP_200_OK)
                 slack_user = ScrumProjectRole.objects.filter(slack_user_id=post_data["event"]["user"]).first()
 
                 if slack_user is not None: 
