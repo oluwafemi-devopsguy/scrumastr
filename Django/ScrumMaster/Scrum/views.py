@@ -1168,6 +1168,11 @@ class Events(APIView):
                             status=status.HTTP_200_OK)
 
         if post_data.get('event')["type"] == "message":
+            try:
+                return Response(data=post_data,
+                            status=status.HTTP_200_OK)
+            except:
+                pass
 
             try:
                 slack_user = ScrumProjectRole.objects.filter(slack_user_id=post_data["event"]["user"]).first()
@@ -1226,25 +1231,22 @@ class Events(APIView):
                     
 
                     
-                    try:
-                        return Response(data=post_data,
-                                status=status.HTTP_200_OK, headers=X-Slack-No-Retry: 1)
-                        actual_message = ChatMessage(username=slack_user_nick, message=slack_message, project_name=project_name, timestamp=datetime.datetime.now().strftime("%I:%M %p . %d-%m-%Y"), profile_picture=slack_user.slack_profile_picture)
-                        actual_message.save()
-                        proj = ScrumProject.objects.get(name=project_name)
-                        my_messages = {"username":slack_user_nick, "message":slack_message, "project_name":project_name, "profile_picture":slack_user.slack_profile_picture, "timestamp":datetime.datetime.now().strftime("%I:%M %p . %d-%m-%Y")}
-                        data = {"messages":[my_messages]}
+                   
+                    actual_message = ChatMessage(username=slack_user_nick, message=slack_message, project_name=project_name, timestamp=datetime.datetime.now().strftime("%I:%M %p . %d-%m-%Y"), profile_picture=slack_user.slack_profile_picture)
+                    actual_message.save()
+                    proj = ScrumProject.objects.get(name=project_name)
+                    my_messages = {"username":slack_user_nick, "message":slack_message, "project_name":project_name, "profile_picture":slack_user.slack_profile_picture, "timestamp":datetime.datetime.now().strftime("%I:%M %p . %d-%m-%Y")}
+                    data = {"messages":[my_messages]}
 
-                        connections = Connection.objects.filter(project = proj)
+                    connections = Connection.objects.filter(project = proj)
 
-                        for conn in connections:
-                            _send_to_connection(conn.connection_id, data)
+                    for conn in connections:
+                        _send_to_connection(conn.connection_id, data)
 
-                    except:
-                        pass
+                    
 
                     return Response(data=post_data,
-                                status=status.HTTP_200_OK, headers=X-Slack-No-Retry: 1)
+                                status=status.HTTP_200_OK)
                     
 
                     
