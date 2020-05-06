@@ -146,7 +146,7 @@ def send_message(request):
         print('Bad token')
         #Save message sent in the database
         print(username)
-        ChatMessage(username=username, project_name=project_name, message=message, timestamp=timestamp).save()
+       # ChatMessage(username=username, project_name=project_name, message=message, timestamp=timestamp).save()
 
     
         proj = ScrumProject.objects.get(name=project_name)
