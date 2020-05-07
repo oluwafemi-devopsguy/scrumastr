@@ -143,11 +143,10 @@ def send_message(request):
         Token.objects.get(key=token)
 
     
-        print('Bad token')
+        #print('Bad token')
         #Save message sent in the database
         print(username)
-       # ChatMessage(username=username, project_name=project_name, message=message, timestamp=timestamp).save()
-
+       
     
         proj = ScrumProject.objects.get(name=project_name)
 
@@ -185,14 +184,8 @@ def send_message(request):
             #icon_url = profile_picture
 
 
-        )
-        
-        # # Send the message data to all connections; one connection a time
-    # for connection in connections:
-    #     _send_to_connection(
-        #        connection.connection_id, data
-        #    )
-
+        ).headers['X-Slack-No-Retry'] = 1
+      
         return JsonResponse(
             {'message': 'successfully send'}, status=200
         )
@@ -1153,7 +1146,7 @@ class Events(APIView):
 
 
  
-    def post(self, request):            
+    def post(self, request, *args, **kwargs):            
         print("=========================REQUEST DATA==================================")    
         post_data = request.data 
         print(post_data)
@@ -1168,104 +1161,95 @@ class Events(APIView):
                             status=status.HTTP_200_OK)
 
         if post_data.get('event')["type"] == "message":
-            
+            retry_count = request.META.get('HTTP_X_SLACK_RETRY_NUM', None)
+
+            if retry_count is None:
             
 
-            try:
-                return Response(
-                        status=status.HTTP_200_OK)
-                slack_user = ScrumProjectRole.objects.filter(slack_user_id=post_data["event"]["user"]).first()
+                try:
 
-                if slack_user is not None: 
-                    print("==========================Slack user=================" + slack_user.user.nickname)
-                    slack_user_nick = slack_user.user.nickname
-                    slack_profile_picture = slack_user.slack_profile_picture
-                else:
+                    slack_user = ScrumProjectRole.objects.filter(slack_user_id=post_data["event"]["user"]).first()
+
+                    if slack_user is not None: 
+                        print("==========================Slack user=================" + slack_user.user.nickname)
+                        slack_user_nick = slack_user.user.nickname
+                        slack_profile_picture = slack_user.slack_profile_picture
+                    else:
+                        slack_user_nick = post_data["event"]["user"]
+                        slack_profile_picture = "https://ca.slack-edge.com/T73UK2WNS-UKRNK9ULR-gd4dbac35d17-24"               
+                except ScrumUser.DoesNotExist as error:
+                    print("User Not matched: failed")
                     slack_user_nick = post_data["event"]["user"]
-                    slack_profile_picture = "https://ca.slack-edge.com/T73UK2WNS-UKRNK9ULR-gd4dbac35d17-24"               
-            except ScrumUser.DoesNotExist as error:
-                print("User Not matched: failed")
-                slack_user_nick = post_data["event"]["user"]
-            except KeyError as error:
-                slack_user = ScrumProjectRole.objects.filter(slack_user_id=post_data["event"]["username"]).first()
-                return Response(data=post_data,
-                                status=status.HTTP_200_OK)
-
-            try:
-                print(post_data['event']['user'])
-                scrumslack_details = ScrumSlack.objects.get(channel_id= post_data['event']['channel'], user_id=post_data['event']['user'], team_id=post_data['team_id'])
-                project_name = scrumslack_details.scrumproject.name
-                slack_details= ScrumSlack.objects.filter(channel_id=post_data["event"]["channel"]).first() 
-                print("========================================Slack details================================") 
-                print(post_data["event"]["channel"])
-                print(slack_details)  
-                if slack_details is not None: 
-                    slack_message = post_data["event"]["text"]
-                    
-
-                    #slack_message_array = re.split(r'\s', slack_message)
-                    print(slack_message)
-
-                    #for each_word in slack_message_array:
-                        #match =re.match(r'<@([\w\.-]+)>',each_word ) 
-                        #if match:
-                            #print(match.group(1))
-                            #try:
-                              #  a = ScrumProjectRole.objects.get(slack_user_id=match.group(1))
-                             #   slack_message = slack_message.replace(each_word, a.user.nickname)
-                              #  print(slack_message)
-                              #  print("pattern matched")
-                        #    except ScrumProjectRole.DoesNotExist as e:
-                         #       slack_message = slack_message.replace(each_word, match.group(1))
-                            
-                            
-                        #else:
-                         #   print("pattern not matched") 
-                    
-
-                    chatRoom = ScrumChatRoom.objects.get(id = slack_details.room_id).hash
-                   # new_message = ScrumChatMessage(room=slack_details.room, user=slack_user_nick, message=slack_message, profile_picture=slack_user.slack_profile_picture)
-                    #new_message.save()
-
-                    
-
-                    
-                   
-                    actual_message = ChatMessage(username=slack_user_nick, message=slack_message, project_name=project_name, timestamp=datetime.datetime.now().strftime("%I:%M %p . %d-%m-%Y"), profile_picture=slack_user.slack_profile_picture)
-                    actual_message.save()
-                    proj = ScrumProject.objects.get(name=project_name)
-                    my_messages = {"username":slack_user_nick, "message":slack_message, "project_name":project_name, "profile_picture":slack_user.slack_profile_picture, "timestamp":datetime.datetime.now().strftime("%I:%M %p . %d-%m-%Y")}
-                    data = {"messages":[my_messages]}
-
-                    connections = Connection.objects.filter(project = proj)
-
-                    for conn in connections:
-                        _send_to_connection(conn.connection_id, data)
-
-                    
-
+                except KeyError as error:
+                    slack_user = ScrumProjectRole.objects.filter(slack_user_id=post_data["event"]["username"]).first()
                     return Response(data=post_data,
-                                status=status.HTTP_200_OK)
+                                    status=status.HTTP_200_OK)
+
+                try:
+                    print(post_data['event']['user'])
+                    scrumslack_details = ScrumSlack.objects.get(channel_id= post_data['event']['channel'], user_id=post_data['event']['user'], team_id=post_data['team_id'])
+                    project_name = scrumslack_details.scrumproject.name
+                    slack_details= ScrumSlack.objects.filter(channel_id=post_data["event"]["channel"]).first() 
+                    print("========================================Slack details================================") 
+                    print(post_data["event"]["channel"])
+                    print(slack_details)  
+                    if slack_details is not None: 
+                        slack_message = post_data["event"]["text"]
+                        
+
+                        #slack_message_array = re.split(r'\s', slack_message)
+                        print(slack_message)
+
+                        #for each_word in slack_message_array:
+                            #match =re.match(r'<@([\w\.-]+)>',each_word ) 
+                            #if match:
+                                #print(match.group(1))
+                                #try:
+                                #  a = ScrumProjectRole.objects.get(slack_user_id=match.group(1))
+                                #   slack_message = slack_message.replace(each_word, a.user.nickname)
+                                #  print(slack_message)
+                                #  print("pattern matched")
+                            #    except ScrumProjectRole.DoesNotExist as e:
+                            #       slack_message = slack_message.replace(each_word, match.group(1))
+                                
+                                
+                            #else:
+                            #   print("pattern not matched") 
+                        
+
+                        chatRoom = ScrumChatRoom.objects.get(id = slack_details.room_id).hash
+                    # new_message = ScrumChatMessage(room=slack_details.room, user=slack_user_nick, message=slack_message, profile_picture=slack_user.slack_profile_picture)
+                        #new_message.save()
+
+                        
+
+                        
                     
+                       
+                        proj = ScrumProject.objects.get(name=project_name)
+                        my_messages = {"username":slack_user_nick, "message":slack_message, "project_name":project_name, "profile_picture":slack_user.slack_profile_picture, "timestamp":datetime.datetime.now().strftime("%I:%M %p . %d-%m-%Y")}
+                        data = {"messages":[my_messages]}
 
-                    
+                        connections = Connection.objects.filter(project = proj)
 
-            
-                   # async_to_sync(self.channel_layer.group_send)(
-                    #    chatRoom,
-                     #       {"type": "chat_message", 'user': slack_user_nick, 'message': slack_message, 'date_Time':datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H:%M:%S"), 'profile_picture': slack_profile_picture},
-                     #   )
+                        for conn in connections:
+                            _send_to_connection(conn.connection_id, data)
 
-            except KeyError as error:
-                # ===========Response for when no client message id
-                pass
+                        
+
+                        return Response(data=post_data,
+                                    status=status.HTTP_200_OK)
+
+                except KeyError as error:
+                    # ===========Response for when no client message id
+                    pass
 
         
             
             
             
 
-        return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_204_NO_CONTENT, headers={'X-Slack-No-Retry':1})
 
             
 
