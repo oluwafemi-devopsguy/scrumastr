@@ -12,7 +12,8 @@ export class DataService {
   public domain_name = 'api.chatscrum.com';
   public domain_protocol = 'https://';
   public websocket = 'wss://';
-  public client_id = '1047148162967.1067254009940';
+  // public client_id = '1047148162967.1067254009940';
+  public client_id = '241971098774.1099398721171';
 
 
   public message;
@@ -141,7 +142,7 @@ export class DataService {
 
 
   login() {
-    this.http.post( this.domain_protocol + this.domain_name +  '/scrum/api-token-auth/', JSON.stringify({'username': this.login_username, 'password': this.login_password, 'project': this.login_project}), this.httpOptions).subscribe(
+    this.http.post( this.domain_protocol + this.domain_name + '/scrum/api-token-auth/', JSON.stringify({'username': this.login_username, 'password': this.login_password, 'project': this.login_project}), this.httpOptions).subscribe(
       data => {
         
         localStorage.setItem('full_data', JSON.stringify(data));

@@ -146,9 +146,10 @@ def send_message(request):
         #print('Bad token')
         #Save message sent in the database
         print(username)
-       
+
     
         proj = ScrumProject.objects.get(name=project_name)
+        ChatMessage(username=slack_user_nick, message=slack_message, project_name=project_name, timestamp=datetime.datetime.now().strftime("%I:%M %p . %d-%m-%Y"), profile_picture=slack_user.slack_profile_picture).save()
 
         print("Project name :::::::", project_name)
         connections = Connection.objects.filter(project=proj)
@@ -156,7 +157,10 @@ def send_message(request):
         my_message = {"username":username, "project_name":project_name, "message":message, "timestamp":timestamp}
 
         data = {'messages':[my_message]}
-        print(connections)
+        print(data)
+
+        for conn in connections:
+            _send_to_connection(conn.connection_id, data)
 
 
         slack_id = ChatSlack.objects.get(username=username, project=proj).slack_user_id
@@ -175,16 +179,16 @@ def send_message(request):
 
         sc = WebClient(bot_access_token)
 
-        sc.chat_postMessage(
+      #  sc.chat_postMessage(
         
-            channel= channel_id,
-            username = username,
-            text = message,
+       #     channel= channel_id,
+        #    username = username,
+         #   text = message,
             #as_user = True,
             #icon_url = profile_picture
 
 
-        ).headers['X-Slack-No-Retry'] = 1
+        #).headers['X-Slack-No-Retry'] = 1
       
         return JsonResponse(
             {'message': 'successfully send'}, status=200
@@ -208,12 +212,8 @@ def get_recentmessages(request):
     try:
         Token.objects.get(key=token)
 
-    
-
-        if (project_name == "test"):
-            project_name = "testing"
         #Fetch all recent messages by their project name
-        all_messages = ChatMessage.objects.filter(project_name=project_name)[:30]
+        all_messages = ChatMessage.objects.filter(project_name=project_name)[:1]
         result_list = (list(all_messages.values('username', 'project_name', 'message', 'timestamp', 'profile_picture')))
 
         data = {"messages":result_list}
@@ -1224,7 +1224,8 @@ class Events(APIView):
                         
 
                         
-                    
+                        #actual_message = ChatMessage(username=slack_user_nick, message=slack_message, project_name=project_name, timestamp=datetime.datetime.now().strftime("%I:%M %p . %d-%m-%Y"), profile_picture=slack_user.slack_profile_picture)
+                        #actual_message.save()
                        
                         proj = ScrumProject.objects.get(name=project_name)
                         my_messages = {"username":slack_user_nick, "message":slack_message, "project_name":project_name, "profile_picture":slack_user.slack_profile_picture, "timestamp":datetime.datetime.now().strftime("%I:%M %p . %d-%m-%Y")}
