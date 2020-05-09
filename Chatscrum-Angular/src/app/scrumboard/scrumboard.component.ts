@@ -82,8 +82,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
     this.wsService.getMessages()
     this.hideAddTaskandNoteBTN();
     this.openSlackModal();
-    
-    console.log(this.uses_slack);
+   
   }
 
 
@@ -133,6 +132,14 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
 
   connectSlack() {
     this.dataService.connectToSlack();
+  }
+
+  showSprintCreate() {
+    if (this.loggedUserRole == "Owner" || this.loggedUserRole == "Admin") {
+      let active = document.getElementById('sprintAlert');
+    active.style.display = 'block';
+    }
+    
   }
 
   load() {

@@ -2176,6 +2176,7 @@ summary:focus {
   align-self: center;
   
   
+  
 
  }
 
@@ -2193,6 +2194,7 @@ summary:focus {
      animation-duration: 0.6s;
      box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
      line-height: 1.6em;
+     
 
  }
  .slackmodal-header{
@@ -2225,10 +2227,17 @@ summary:focus {
  }
  .slackbtn {
      background-color: #6ec4cb;
-     height: 40px; 
      border-radius:8px;
      margin-left:25px;
      color: black;
+     padding: 5px auto;
+     text-align:center;
+     width:150px;
+     
+ }
+
+ .slackbtn p {
+  margin:10px 10px;
  }
 
  .slackbtn:hover, .slackbtn:focus {

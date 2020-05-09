@@ -11,6 +11,7 @@ import { Title } from "@angular/platform-browser";
 })
 export class SignupComponent implements OnInit {
   public create_new_project: boolean = false;
+  public fieldvalue = '';
 
   constructor(private router: Router, public dataService: DataService, private titleService: Title) {
 
@@ -24,6 +25,7 @@ export class SignupComponent implements OnInit {
     if (sessionStorage.getItem('token')) {
       this.router.navigate(['scrumboard/' + sessionStorage.getItem('project_id')])
     }
+   
   }
 
   sgnBTN() {
@@ -53,5 +55,10 @@ export class SignupComponent implements OnInit {
     document.getElementById('alert-error').style.display = 'none';
     this.dataService.createUser();
   }
+
+  keyup(event) {
+    this.dataService.fetchIdentity(this.dataService.createuser_email);
+  }
+
 
 }
