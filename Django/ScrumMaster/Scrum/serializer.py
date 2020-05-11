@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.contrib.auth.models import User
 from .models import *
 
 class ScrumSlackSerializer(serializers.ModelSerializer):
@@ -15,6 +16,11 @@ class ScrumNoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = ScrumNote
         fields = ('id','user', 'note', 'priority', 'time_created')
+
+class ScrumUserFetchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ( 'username', 'id')
 
 class ScrumLogSerializer(serializers.ModelSerializer):
     class Meta:
