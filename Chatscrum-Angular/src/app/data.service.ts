@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { timingSafeEqual } from 'crypto';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -9,11 +10,9 @@ import { timingSafeEqual } from 'crypto';
 
 export class DataService {
 
-  public domain_name = 'api.chatscrum.com';
-  public domain_protocol = 'https://';
-  public websocket = 'wss://';
-  // public client_id = '1047148162967.1067254009940';
-  public client_id = '241971098774.1099398721171';
+  public domain_name = environment.domain_name;
+  public domain_protocol = environment.domain_protocol;
+  public client_id = environment.slack_client_id;
 
 
   public message;
@@ -60,7 +59,7 @@ export class DataService {
   constructor(private http: HttpClient, private router: Router) { }
 
   createUser() {
-    this.http.post( this.domain_protocol + this.domain_name + '/scrum/api/scrumusers/', JSON.stringify({'email': this.createuser_email, 'password': this.createuser_password, 'full_name': this.createuser_fullname, 'usertype': this.createuser_usertype, 'projname': this.createuser_projname}), this.httpOptions).subscribe(
+    this.http.post( this.domain_protocol + this.domain_name +  '/scrum/api/scrumusers/', JSON.stringify({'email': this.createuser_email, 'password': this.createuser_password, 'full_name': this.createuser_fullname, 'usertype': this.createuser_usertype, 'projname': this.createuser_projname}), this.httpOptions).subscribe(
       data => {
         if (
           data['message'] == 'User Created Successfully.' ||
@@ -123,7 +122,7 @@ export class DataService {
     let project_name = String(sessionStorage.getItem('proj_name'));
     let the_name = sessionStorage.getItem('realname');
 
-    
+      sessionStorage.removeItem('token');
       window.location.replace("https://slack.com/oauth/v2/authorize?client_id=" + this.client_id + "&state=main_chat_" + project_name + ">>>" + email + "<<<" + the_name + "&scope=channels:history,channels:read,chat:write,emoji:read,files:read,groups:read,im:history,im:read,incoming-webhook,mpim:read,reactions:read,team:read,users.profile:read,users:read,mpim:history,groups:history&user_scope=users:read,chat:write,channels:read,channels:history,groups:read,groups:history")
    
   }
@@ -134,15 +133,15 @@ export class DataService {
     let project_name = String(sessionStorage.getItem('proj_name'));
     let the_name = sessionStorage.getItem('realname');
 
-
+    sessionStorage.removeItem('token');
     window.location.replace("https://slack.com/oauth/v2/authorize?client_id=" + this.client_id + "&state=main_chat_" + project_name + ">>>" + email + "<<<" + the_name + "&scope=channels:history,channels:read,chat:write,emoji:read,files:read,groups:read,im:history,im:read,incoming-webhook,mpim:read,reactions:read,team:read,users.profile:read,users:read,mpim:history,groups:history&user_scope=users:read,chat:write,channels:read,channels:history,groups:read,groups:history")
    // window.location.replace("https://slack.com/oauth/v2/authorize?client_id=1047148162967.1067254009940" + "&state=main_chat_" + project_name + ">>>" + email + "<<<" + the_name + "&user_scope=identity.basic, identity.email, identity.avatar")
-      console.log(project_name);
+     
   }
 
 
   login() {
-    this.http.post( this.domain_protocol + this.domain_name + '/scrum/api-token-auth/', JSON.stringify({'username': this.login_username, 'password': this.login_password, 'project': this.login_project}), this.httpOptions).subscribe(
+    this.http.post( this.domain_protocol + this.domain_name +  '/scrum/api-token-auth/', JSON.stringify({'username': this.login_username, 'password': this.login_password, 'project': this.login_project}), this.httpOptions).subscribe(
       data => {
         
         localStorage.setItem('full_data', JSON.stringify(data));
@@ -186,7 +185,7 @@ export class DataService {
   }
 
   fetchIdentity(email) {
-    this.http.post( this.domain_protocol + this.domain_name + '/scrum/api/scrumuserfetch/', JSON.stringify({"username": email}), this.httpOptions).subscribe(
+    this.http.post( this.domain_protocol + this.domain_name +  '/scrum/api/scrumuserfetch/', JSON.stringify({"username": email}), this.httpOptions).subscribe(
       data => {
         let fullname = data['fullname'];
         

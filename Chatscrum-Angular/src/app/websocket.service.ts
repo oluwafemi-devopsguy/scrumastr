@@ -1,5 +1,6 @@
 import { Injectable, ElementRef, ViewChild } from '@angular/core';
 import {formatDate} from '@angular/common';
+import { environment } from "../environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ export class WebsocketService {
   
 
   public ws: any;
-  public ws_url = 'wss://9zvbc650m4.execute-api.us-east-2.amazonaws.com/chatscrum/';
+  public ws_url = environment.ws_url;
   public messages = [];
   public chat_text:String;
   public mutableObserver: MutationObserver;
