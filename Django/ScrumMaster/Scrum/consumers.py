@@ -18,7 +18,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 #         pass
         
 #     async def receive(self, text_data):
-#         text_data_json = json.loads(text_data)
+#         text_data_json = json.loads(text_data) 
 #         user = text_data_json['user']
 #         message = text_data_json['message']
 #         print(user, message)
