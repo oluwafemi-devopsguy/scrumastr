@@ -1028,9 +1028,7 @@ class Events(APIView):
                 client_id=settings.SLACK_CLIENT_ID,
                 client_secret= settings.SLACK_CLIENT_SECRET,
                 code=auth_code,
-                scope="channels:read users:read chat:write groups:read channels:history groups:history"
-                
-                
+                scope="channels:read users:read chat:write groups:read channels:history groups:history"  
               )
 
 

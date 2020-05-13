@@ -1,3 +1,4 @@
+'''
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from .models import *
@@ -205,3 +206,4 @@ class ChatConsumer(AsyncWebsocketConsumer):
         date_Time = (datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H:%M:%S"))
         profile_picture = event['profile_picture']
         await self.send(text_data=json.dumps({'user': user, 'message': message, 'date_Time':date_Time, 'profile_picture': profile_picture}, sort_keys=True, indent=1,cls=DjangoJSONEncoder))  
+'''
