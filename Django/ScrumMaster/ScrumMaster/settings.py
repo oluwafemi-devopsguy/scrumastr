@@ -32,7 +32,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'channels',
+   # 'channels',
     'Scrum.apps.ScrumConfig',
     'rest_framework',
     'corsheaders',
@@ -188,11 +188,11 @@ MEDIA_URL = '/media/'
 LOGIN_REDIRECT_URL = '/home'
 
 
-ASGI_APPLICATION = "ScrumMaster.routing.application"
+#ASGI_APPLICATION = "ScrumMaster.routing.application"
 
 
 #Uncomment if you have redis.
-
+'''
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
@@ -201,8 +201,8 @@ CHANNEL_LAYERS = {
         }
     }
 }
-
-FRONTEND = 'https://int.chatscrum.com/login'
+'''
+FRONTEND = 'http://localhost:4200/home'
 
 SECURE_SSL_REDIRECT = False
 
