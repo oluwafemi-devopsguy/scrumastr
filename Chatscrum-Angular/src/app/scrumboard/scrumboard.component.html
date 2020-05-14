@@ -1042,12 +1042,12 @@
       </div>
       <div class="slackMsgSection">
          
-       <!-- <div *ngIf = "uses_slack == 'false'"> -->
+        <div *ngIf = "uses_slack == 'true'"> 
           <form>
             <textarea #sendSlackMsg (keyup.enter)="sendAMessage(sendSlackMsg)" placeholder="Send a message" class="inputMsg" #chat_text= "ngModel" [(ngModel)]= "wsService.chat_text" name=chat_text id="inputSlackMsg">
               </textarea>
           </form>
-       <!--  </div>  -->
+         </div>  
 
       </div>
     </div>

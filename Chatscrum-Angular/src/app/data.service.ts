@@ -13,6 +13,7 @@ export class DataService {
   public domain_name = environment.domain_name;
   public domain_protocol = environment.domain_protocol;
   public client_id = environment.slack_client_id;
+  //public client_id = '1047148162967.1067254009940';
 
 
   public message;
@@ -185,7 +186,7 @@ export class DataService {
   }
 
   fetchIdentity(email) {
-    this.http.post( this.domain_protocol + this.domain_name +  '/scrum/api/scrumuserfetch/', JSON.stringify({"username": email}), this.httpOptions).subscribe(
+    this.http.post( this.domain_protocol + this.domain_name + '/scrum/api/scrumuserfetch/', JSON.stringify({"username": email}), this.httpOptions).subscribe(
       data => {
         let fullname = data['fullname'];
         
