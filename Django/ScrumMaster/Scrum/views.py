@@ -217,7 +217,7 @@ def get_recentmessages(request):
         Token.objects.get(key=token)
 
         #Fetch all recent messages by their project name
-        all_messages = ChatMessage.objects.filter(project_name=project_name).order_by('-id')[:30]
+        all_messages = ChatMessage.objects.filter(project_name=project_name).order_by('-id')[:80]
         result_list =(list(all_messages.values('username', 'project_name', 'message', 'timestamp', 'profile_picture')))
 
         data = {"messages":result_list[::-1]}
