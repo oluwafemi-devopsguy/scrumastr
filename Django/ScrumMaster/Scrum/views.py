@@ -217,10 +217,10 @@ def get_recentmessages(request):
         Token.objects.get(key=token)
 
         #Fetch all recent messages by their project name
-        all_messages = ChatMessage.objects.filter(project_name=project_name)[:30]
-        result_list = (list(all_messages.values('username', 'project_name', 'message', 'timestamp', 'profile_picture')))
+        all_messages = ChatMessage.objects.filter(project_name=project_name).order_by('-id')[:30]
+        result_list =(list(all_messages.values('username', 'project_name', 'message', 'timestamp', 'profile_picture')))
 
-        data = {"messages":result_list}
+        data = {"messages":result_list[::-1]}
         print(data)
         
         _send_to_connection(
@@ -752,11 +752,13 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             print(myfile.name)
         
             filename = fs.save(myfile.name, myfile)
+            file_url = fs.url(filename)
+            print(file_url)
             goal.file = filename
             self.createHistory(goal.name, goal.status, goal.goal_project_id, goal.hours, goal.time_created, goal.user, goal.project, goal.file, goal.id, 'Image Added Successfully by')
             goal.save()
             
-            return JsonResponse({'message': 'Image Added Successfully', 'data': filtered_users(request.data['project_id'])})
+            return JsonResponse({'message': 'Image Added Successfully', 'data': filtered_users(request.data['project_id']), 'image':str(settings.MY_URL +file_url)})
         elif request.data['mode'] == 2:
             goal = scrum_project.scrumgoal_set.get(goal_project_id=request.data['goal_id'][1:], moveable=True)
             scrum_project_b = scrum_project.scrumgoal_set.get(goal_project_id=request.data['goal_id'][1:], moveable=True).user

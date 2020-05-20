@@ -58,6 +58,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
   public historyForUserRole;
   public messages = [];
   public uses_slack = sessionStorage.getItem('user_slack');
+  public imageUploaded;
 
   @ViewChildren('details') details: QueryList<any>;
 
@@ -82,6 +83,25 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
     this.wsService.getMessages()
     this.hideAddTaskandNoteBTN();
     this.openSlackModal();
+
+    let observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+       
+       if (mutation.type == 'childList') {
+         
+         let elem = document.getElementById('con');
+         elem.scrollTop = elem.scrollHeight;
+         
+       }
+      });
+ 
+      
+ 
+     });
+     observer.observe(this.elem.nativeElement, {
+       childList: true,
+       subtree: true
+     });
    
   }
 
@@ -1018,6 +1038,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
     if (name.value.length >= 1) {
       this.dataService.imageUploadRequest(this.project_id).subscribe(
         data => {
+          console.log(data['data'])
           this.NotificationBox(data['message'])
           this.users = []
           this.TFTD = []
