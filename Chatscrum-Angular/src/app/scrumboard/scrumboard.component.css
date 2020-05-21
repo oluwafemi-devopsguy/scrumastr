@@ -2038,7 +2038,7 @@ summary:focus {
 
 .cdk-drag-preview {
   box-sizing: border-box;
-  border-radius: 2px;
+  border-radius: 5px;
   border: 1px solid rgba(255, 76, 109, 0.25);
   background: #FFFFFF;
   border-radius: 5px;
@@ -2050,6 +2050,9 @@ summary:focus {
   font-size: 13px;
   line-height: 18px;
   color: rgba(0, 0, 0, 0.9);
+  width:200px;
+  
+  transition:ease-in 0.3ms;
 }
 
 .example-list {

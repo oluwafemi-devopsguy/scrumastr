@@ -187,7 +187,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 LOGIN_REDIRECT_URL = '/home'
 
-MY_URL = 'https://localhost:8000'
+#MY_URL = 'https://localhost:8000'
 
 
 #ASGI_APPLICATION = "ScrumMaster.routing.application"

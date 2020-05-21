@@ -129,7 +129,11 @@ def _send_to_connection(connection_id, data):
 #         {'message': 'successfully send'}, status=200
 #     )
 
-
+def createHistory(name, status, goal_project_id, hours, time_created, user, project, file, goal, message):
+        concat_message = message + self.request.user.username
+        print(concat_message)
+        goal = ScrumGoalHistory (name=name, status=status, time_created = time_created, goal_project_id=goal_project_id, user=user, project=project, file=file, goal_id=goal, done_by=self.request.user, message=concat_message)
+        goal.save()
 @csrf_exempt
 def send_message(request):
     body = _parse_body(request.body)
@@ -221,7 +225,6 @@ def get_recentmessages(request):
         result_list =(list(all_messages.values('username', 'project_name', 'message', 'timestamp', 'profile_picture')))
 
         data = {"messages":result_list[::-1]}
-        print(data)
         
         _send_to_connection(
             connectionId,
@@ -237,7 +240,43 @@ def get_recentmessages(request):
 
     except:
         return JsonResponse({'message': 'Token not authenticated'})
-        
+
+def move_goal(request):
+    body = _parse_body(request.body)
+    connectionId = body['connectionId']
+    project_id = body['body']['project_id']
+    from_id = body['body']['from_id'][1:]
+    to_id = body['body']['to_id'][1:]
+    token = body['body']['token']
+
+    try:
+        Token.objects.get(key=token)
+        scrum_project = ScrumProject.objects.get(id=project_id)
+        scrum_project_role = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
+
+        if (scrum_project_role.role == "Developer" or scrum_project_role.role == "Quality Analyst"):
+            return JsonResponse({'message':"You are not allowed to move goal"})
+
+        goal = scrum_project.scrumgoal_set.get(goal_project_id=from_id, moveable=True)
+        if goal.moveable == True:
+            print(to_id)
+            author = ScrumProjectRole.objects.get(id=to_id)
+            goal.user = author
+            createHistory(goal.name, goal.status, goal.goal_project_id, goal.hours, goal.time_created, goal.user, goal.project, goal.file, goal.id, 'Goal Reassigned Successfully by')
+            goal.save()
+            data = {'message': 'Goal Reassigned Successfully!', 'data': filtered_users(project_id)}
+            connection = Connection.objects.all()
+            for connect in connection:
+                _send_to_connection(
+                    connect.connection_id,
+                    data
+                )
+           # return JsonResponse({'message': 'Goal Reassigned Successfully!', 'data': filtered_users(project_id)})
+        else:
+            return JsonResponse({'message': 'Permission Denied: Sprint Period Elapsed!!!', 'data': filtered_users(request.data['project_id'])})
+
+    except:
+        return JsonResponse({'message':'You are not Authenticated'})
 
 #     )
 
@@ -758,7 +797,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             self.createHistory(goal.name, goal.status, goal.goal_project_id, goal.hours, goal.time_created, goal.user, goal.project, goal.file, goal.id, 'Image Added Successfully by')
             goal.save()
             
-            return JsonResponse({'message': 'Image Added Successfully', 'data': filtered_users(request.data['project_id']), 'image':str(settings.MY_URL +file_url)})
+            return JsonResponse({'message': 'Image Added Successfully', 'data': filtered_users(request.data['project_id'])})
         elif request.data['mode'] == 2:
             goal = scrum_project.scrumgoal_set.get(goal_project_id=request.data['goal_id'][1:], moveable=True)
             scrum_project_b = scrum_project.scrumgoal_set.get(goal_project_id=request.data['goal_id'][1:], moveable=True).user

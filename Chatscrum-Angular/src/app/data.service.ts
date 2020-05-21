@@ -62,7 +62,7 @@ export class DataService {
   constructor(private http: HttpClient, private router: Router) { }
 
   createUser() {
-    this.http.post(  this.domain_protocol + this.domain_name + '/scrum/api/scrumusers/', JSON.stringify({'email': this.createuser_email, 'password': this.createuser_password, 'full_name': this.createuser_fullname, 'usertype': this.createuser_usertype, 'projname': this.createuser_projname}), this.httpOptions).subscribe(
+    this.http.post( this.domain_protocol + this.domain_name +  '/scrum/api/scrumusers/', JSON.stringify({'email': this.createuser_email, 'password': this.createuser_password, 'full_name': this.createuser_fullname, 'usertype': this.createuser_usertype, 'projname': this.createuser_projname}), this.httpOptions).subscribe(
       data => {
         if (
           data['message'] == 'User Created Successfully.' ||
@@ -144,7 +144,7 @@ export class DataService {
 
 
   login() {
-    this.http.post(  this.domain_protocol + this.domain_name + '/scrum/api-token-auth/', JSON.stringify({'username': this.login_username, 'password': this.login_password, 'project': this.login_project}), this.httpOptions).subscribe(
+    this.http.post( this.domain_protocol + this.domain_name +  '/scrum/api-token-auth/', JSON.stringify({'username': this.login_username, 'password': this.login_password, 'project': this.login_project}), this.httpOptions).subscribe(
       data => {
         
         localStorage.setItem('full_data', JSON.stringify(data));
@@ -261,11 +261,11 @@ export class DataService {
   }
 
   moveGoalRequest(goal_id, to_id, hours, push_id, project_id) {
-    return this.http.patch( this.domain_protocol + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({ 'goal_id': goal_id, 'to_id': to_id, 'hours': hours, 'project_id': project_id, 'push_id': push_id }), this.getHeader());
+    return this.http.patch( this.domain_protocol + this.domain_name +  '/scrum/api/scrumgoals/', JSON.stringify({ 'goal_id': goal_id, 'to_id': to_id, 'hours': hours, 'project_id': project_id, 'push_id': push_id }), this.getHeader());
   } 
 
   changeGoalOwner(goal_id, to_id, project_id) {
-    return this.http.put( this.domain_protocol + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({ 'mode': 0, 'goal_id': goal_id, 'to_id': to_id, 'project_id': project_id }), this.getHeader());
+    return this.http.put( this.domain_protocol + this.domain_name +  '/scrum/api/scrumgoals/', JSON.stringify({ 'mode': 0, 'goal_id': goal_id, 'to_id': to_id, 'project_id': project_id }), this.getHeader());
   }
 
   autoClearTftRequest(project_id) {

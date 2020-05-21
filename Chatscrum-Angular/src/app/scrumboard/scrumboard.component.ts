@@ -1038,7 +1038,6 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
     if (name.value.length >= 1) {
       this.dataService.imageUploadRequest(this.project_id).subscribe(
         data => {
-          console.log(data['data'])
           this.NotificationBox(data['message'])
           this.users = []
           this.TFTD = []
