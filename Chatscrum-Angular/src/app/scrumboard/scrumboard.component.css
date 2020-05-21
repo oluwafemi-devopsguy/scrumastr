@@ -27,6 +27,7 @@ body {
   background: white;
   color: black;
   height:100%;
+  position:fixed;
 }
 
 .preloader {
@@ -108,31 +109,46 @@ body {
 }
 
 
+
+
 .main {
   padding: 16px;
   padding-top: 0px;
 }
-
+/*
 .split {
   height: 100%;
   position: fixed;
   z-index: 1;
   padding-top: 22px;
+} */
+
+.splitleft {
+  overflow-y: scroll;
+  max-height:95vh;
 }
 
-.left {
-  width: 76%;
-  left: 0;
-  overflow-x: scroll!important;
-}
 
-.right {
-  width: 24%;
-  right: 0;
+
+
+
+
+
+.splitright {
+ 
+  /*right: 0;*/
+  
   background: #343434;
   overflow-y: scroll;
   margin-top: -1px;
+  min-height:95vh;
+  max-height:95vh; 
   
+  
+}
+
+.stayhere{
+  position:fixed;
 }
 
 .ex h4 {
@@ -1412,13 +1428,18 @@ summary:focus {
   
 }
 
+.row{
+  vertical-align: bottom;
+}
+
 #inputSlackMsg {
-  position: fixed;
+  position: relative;
   bottom: 0;
-  width: 100%;
+  width: 105%;
+  align:center;
   background-color: white;
   padding: 10px;
-  height: 50px;
+  height: 10vh;
   background: rgba(255, 255, 255, 0.2);
   border: none;
   color: white;
@@ -1461,6 +1482,7 @@ summary:focus {
 
 .slackMsgSection {
   margin-top: 8em;
+  margin-left:0;
 }
 
 .nav-tabs .nav-link {

@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  domain_protocol:"https://",
-  domain_name: "api.chatscrum.com",
+  domain_protocol:"http://",
+  domain_name: "localhost:8000",
   slack_client_id: "241971098774.1099398721171",
   ws_url : "wss://9zvbc650m4.execute-api.us-east-2.amazonaws.com/chatscrum/",
 
