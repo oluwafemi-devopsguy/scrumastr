@@ -12,14 +12,18 @@ from .models import *
 from .serializer import *
 from rest_framework import viewsets, status
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework.serializers import ValidationError
+from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from django.core import serializers
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from slack import WebClient
+
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 import random
@@ -36,8 +40,9 @@ from time import sleep
 
 
 @csrf_exempt
-def test(request):
-    return JsonResponse({'message': 'hello Daud'}, status=200)
+def test(request): 
+    return JsonResponse({'message': 'hello daud'}, status=200)
+     
 
 @csrf_exempt
 def _parse_body(body):
@@ -62,6 +67,7 @@ def connect_to_project(request):
     connection_id = body['connectionId']
     project_name = body['body']['project_name']
 
+
     proj = ScrumProject.objects.get(name=project_name)
     print("Connecting to project ", project_name, " with connect id ", connection_id )  
     Connection(connection_id=connection_id, project=proj).save()
@@ -83,13 +89,14 @@ def disconnect(request):
     )
 
 def _send_to_connection(connection_id, data):
-    gatewayapi = boto3.client(
+    gatewayapi = boto3.client( 
         "apigatewaymanagementapi",
-        endpoint_url=str(settings.AWS_WS_GATEWAY),
-        region_name=str(settings.REGION),
-        aws_access_key_id=str(settings.AWS_ACCESS_KEY_ID),
-        aws_secret_access_key=str(settings.AWS_SECRET_ACCESS_KEY),
+        endpoint_url= settings.AWS_WS_GATEWAY, 
+        region_name= settings.AWS_REGION, 
+        aws_access_key_id= settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key= settings.AWS_SECRET_ACCESS_KEY, 
     )
+    print(settings.AWS_WS_GATEWAY)
     return gatewayapi.post_to_connection(
         ConnectionId=connection_id,
         Data=json.dumps(data).encode('utf-8')
@@ -122,7 +129,11 @@ def _send_to_connection(connection_id, data):
 #         {'message': 'successfully send'}, status=200
 #     )
 
-
+def createHistory(name, status, goal_project_id, hours, time_created, user, project, file, goal, message):
+        concat_message = message + self.request.user.username
+        print(concat_message)
+        goal = ScrumGoalHistory (name=name, status=status, time_created = time_created, goal_project_id=goal_project_id, user=user, project=project, file=file, goal_id=goal, done_by=self.request.user, message=concat_message)
+        goal.save()
 @csrf_exempt
 def send_message(request):
     body = _parse_body(request.body)
@@ -130,59 +141,142 @@ def send_message(request):
     project_name = body['body']['project_name']
     message = body['body']['message']
     timestamp = body['body']['timestamp']
+    token = body['body']['token']
+
+    print("Hello")
+
+    try:
+        Token.objects.get(key=token)
 
     
-    #Save message sent in the database
-    ChatMessage(username=username, project_name=project_name, message=message, timestamp=timestamp).save()
+        #print('Bad token')
+        #Save message sent in the database
+        
 
-   
-    proj = ScrumProject.objects.get(name=project_name)
-
-    print("Project name :::::::", project_name)
-    connections = Connection.objects.filter(project=proj)
     
-    my_message = {"username":username, "project_name":project_name, "message":message, "timestamp":timestamp}
+        proj = ScrumProject.objects.get(name=project_name)
+       # chat = ChatMessage(username=username, message=message, project_name=proj, timestamp=timestamp)
+       # chat.save()
+        print(username)
+        print("Project name :::::::", project_name)
 
-    data = {'messages':[my_message]}
-    print(connections)
+        connections = Connection.objects.filter(project=proj)
 
-    # # Send the message data to all connections; one connection a time
-    for connection in connections:
-        _send_to_connection(
-            connection.connection_id, data
+        my_message = {"username":username, "project_name":project_name, "message":message, "timestamp":timestamp}
+
+        data = {'messages':[my_message]}
+        print(data)
+        '''
+        for connection in connections:
+            _send_to_connection(connection.connection_id, data)
+        '''
+
+        slack_id = ChatSlack.objects.get(username=username, project=proj).slack_user_id
+
+        print(slack_id)
+
+        
+        
+
+        slack_details = ScrumSlack.objects.get(scrumproject=proj, user_id = slack_id)
+        channel_id = slack_details.channel_id
+        bot_access_token = slack_details.access_token
+        scrumuser = ScrumUser.objects.get(nickname = username)
+        scrum_proj_role = ScrumProjectRole.objects.get(project=proj, user=scrumuser)
+        profile_picture = scrum_proj_role.slack_profile_picture 
+
+        sc = WebClient(bot_access_token)
+
+        sc.chat_postMessage(
+        
+            channel= channel_id,
+            username = username,
+            text = message,
+            #as_user = True,
+            #icon_url = profile_picture
+
+
+        ).headers['X-Slack-No-Retry'] = 1
+      
+        return JsonResponse(
+            {'message': 'successfully send'}, status=200
         )
-    
-    return JsonResponse(
-        {'message': 'successfully send'}, status=200
-    )
+
+    except:
+        return JsonResponse({'message': 'Token not authenticated'})
+
 
 
     #Fetch all recent Messages for a particular project in the database
 @csrf_exempt
+@permission_classes((IsAuthenticated, ))
+@authentication_classes((JSONWebTokenAuthentication,))
 def get_recentmessages(request):
     body = _parse_body(request.body)
     connectionId = body['connectionId']
     project_name = body['body']['project_name']
+    token = body['body']['token']
 
-    #Fetch all recent messages by their project name
-    all_messages = ChatMessage.objects.filter(project_name=project_name)[:30]
-    result_list = (list(all_messages.values('username', 'project_name', 'message', 'timestamp')))
+    try:
+        Token.objects.get(key=token)
 
-    data = {"messages":result_list}
-    print(data)
+        #Fetch all recent messages by their project name
+        all_messages = ChatMessage.objects.filter(project_name=project_name).order_by('-id')[:80]
+        result_list =(list(all_messages.values('username', 'project_name', 'message', 'timestamp', 'profile_picture')))
 
-    _send_to_connection(
-        connectionId,
-        data
-    )
-
-    return JsonResponse(
-        {"message":"all recent messages gotten"},
-        status = 200
-    )
+        data = {"messages":result_list[::-1]}
+        
+        _send_to_connection(
+            connectionId,
+            data
+        )
+ 
+        
+        return JsonResponse(
+            {"message":"all recent messages gotten"},
+            status = 200
+        )
     
 
+    except:
+        return JsonResponse({'message': 'Token not authenticated'})
 
+def move_goal(request):
+    body = _parse_body(request.body)
+    connectionId = body['connectionId']
+    project_id = body['body']['project_id']
+    from_id = body['body']['from_id'][1:]
+    to_id = body['body']['to_id'][1:]
+    token = body['body']['token']
+
+    try:
+        Token.objects.get(key=token)
+        scrum_project = ScrumProject.objects.get(id=project_id)
+        scrum_project_role = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
+
+        if (scrum_project_role.role == "Developer" or scrum_project_role.role == "Quality Analyst"):
+            return JsonResponse({'message':"You are not allowed to move goal"})
+
+        goal = scrum_project.scrumgoal_set.get(goal_project_id=from_id, moveable=True)
+        if goal.moveable == True:
+            print(to_id)
+            author = ScrumProjectRole.objects.get(id=to_id)
+            goal.user = author
+            createHistory(goal.name, goal.status, goal.goal_project_id, goal.hours, goal.time_created, goal.user, goal.project, goal.file, goal.id, 'Goal Reassigned Successfully by')
+            goal.save()
+            data = {'message': 'Goal Reassigned Successfully!', 'data': filtered_users(project_id)}
+            connection = Connection.objects.all()
+            for connect in connection:
+                _send_to_connection(
+                    connect.connection_id,
+                    data
+                )
+           # return JsonResponse({'message': 'Goal Reassigned Successfully!', 'data': filtered_users(project_id)})
+        else:
+            return JsonResponse({'message': 'Permission Denied: Sprint Period Elapsed!!!', 'data': filtered_users(request.data['project_id'])})
+
+    except:
+        return JsonResponse({'message':'You are not Authenticated'})
 
 #     )
 
@@ -324,6 +418,30 @@ def move_goal(request, goal_id, to_id):
         return HttpResponseRedirect(reverse('login'))
 '''
 
+class ScrumFetchViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = ScrumUserFetchSerializer
+
+    def create(self, request, username=None, *args, **kwargs):
+        print("Okayyy")
+        
+        email = request.data['username']
+        print(email)
+       
+            
+        get_user = User.objects.get(username=email)
+        scrum_details = ScrumUser.objects.get(user=get_user)
+        full_name = scrum_details.nickname
+        
+        print('done')
+        return JsonResponse(
+            {
+            'fullname': full_name,
+            'message': 'Details gotten sucessfully'
+        }
+        )
+        
+
 class ScrumEmailViewSet(viewsets.ModelViewSet):
     queryset = ScrumEmail.objects.all()
     serializer_class = ScrumEmailSerializer
@@ -360,7 +478,12 @@ def createDemoUser(request):
     
     return JsonResponse({'username': demo_user.username, 'password': demo_user_password, 'project': demo_project_name})
     
-    
+
+
+
+
+
+
 class ScrumUserViewSet(viewsets.ModelViewSet):
     queryset = ScrumUser.objects.all()
     serializer_class = ScrumUserSerializer
@@ -668,6 +791,8 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
             print(myfile.name)
         
             filename = fs.save(myfile.name, myfile)
+            file_url = fs.url(filename)
+            print(file_url)
             goal.file = filename
             self.createHistory(goal.name, goal.status, goal.goal_project_id, goal.hours, goal.time_created, goal.user, goal.project, goal.file, goal.id, 'Image Added Successfully by')
             goal.save()
@@ -748,6 +873,15 @@ def jwt_response_payload_handler(token, user=None, request=None):
         proj_role.color = userBgColor()
         print("coloooooooooooooooooooooooooooor" + proj_role.color)
         proj_role.save()
+        
+    ws_token, created = Token.objects.get_or_create(user=user)
+    # try:
+    #     ws_token, created = Token.objects.get_or_create(user=user)
+    #    # if (ws_token or created):  
+    #     #    ws_token = Token.objects.get(user=user)
+    #     print(ws_token.key)
+    # except:
+    #     pass
 
 
     user_slack = bool(proj_role.slack_email)
@@ -769,7 +903,8 @@ def jwt_response_payload_handler(token, user=None, request=None):
         'user_slack' : user_slack,
         'project_slack' : project_slack,
         "slack_username": slack_username,
-        "to_clear_board": project.to_clear_TFT
+        "to_clear_board": project.to_clear_TFT,
+        "ws_token": ws_token.key
     }
     
 
@@ -888,7 +1023,6 @@ class SprintViewSet(viewsets.ModelViewSet):
 
  
 
-
 class Events(APIView):
     print("Testing from slack=================")
     channel_layer = get_channel_layer()
@@ -899,98 +1033,163 @@ class Events(APIView):
     
     def get(self, request, *args, **kwargs):
         # Return code in Url parameter or empty string if no code
-        sc = SlackClient("")
+        sc = WebClient(settings.SLACK_APP_TOKEN)
         auth_code = request.GET.get('code', '')
         the_state = request.GET.get('state', '')
-        splitter = the_state.find(">>>") 
+        splitter = the_state.find(">>>")
+        splitter_s = the_state.find("<<") 
         project_id = the_state[:splitter] 
-        user_email = the_state[(splitter+3):]
+        user_email = the_state[(splitter+3):splitter_s]
+        real_name = the_state[(splitter_s+3):]
         post_data = request.data
-        scrum_project = ScrumProject.objects.get(name = project_id[10:])
+
+        if (project_id[10:] == "test"):
+            project_id = "main_chat_testing"
+        scrum_project, created = ScrumProject.objects.get_or_create(name = project_id[10:])
 
 
 # =================================Get Auth code response from slack==============================================
+        if(created or scrum_project):
+            scrum_project = ScrumProject.objects.get(name=project_id[10:])
         print("====================================auth code=================" + auth_code)
+        print(auth_code)
+        print(splitter_s)
         print(project_id)
         print(user_email)
-        print(self.slack_app.CLIENT_ID)
-        print("====================================auth code=================" + self.slack_app.CLIENT_ID)
+        print("\n")
+        print(real_name)
+        
+        print("====================================auth code=================" )
         if auth_code:
-            auth_response = sc.api_call(
-                "oauth.access",
-                client_id=self.slack_app.CLIENT_ID,
-                client_secret=self.slack_app.CLIENT_SECRET,
+            encoding = {"Content-Type":"text/html", "charset":"utf-8"}
+            print(encoding)
+            client = WebClient("")
+            auth_response = client.oauth_v2_access(
+
+                client_id=settings.SLACK_CLIENT_ID,
+                client_secret= settings.SLACK_CLIENT_SECRET,
                 code=auth_code,
-                scope="identity.basic identity.email"
+                scope="channels:read users:read chat:write groups:read channels:history groups:history"  
               )
 
 
             if auth_response["ok"] == True:
-                print("====================Get usermail etc==========================")
                 print(auth_response)
+                print("====================Get usermail etc==========================")
+              #  print(auth_response['authed_user']['access_token'])
+                print('========this token===========')
                 print(auth_response["access_token"])
-                user_sc = SlackClient(auth_response["access_token"])
-                user_response = user_sc.api_call(
-                    "users.identity" 
-                                 )
+                print('========this token===========')
+                user_sc = WebClient(auth_response['authed_user']["access_token"])
+                user_response = user_sc.users_info( 
+                    user=auth_response['authed_user']["id"]
+                )
+                
                 print("=============USER DETAILS============" )
                 
-                print(user_response)
+                
+                
                 # print( user_response["user"]["email"])
                 try:
                     print("============= INSIDE TRY GET USER============" )
-                    user= ScrumUser.objects.get(user__username=user_email)
-                    print(user)
-                    user_role = user.scrumprojectrole_set.get(user=user, project = scrum_project)
-                    print(user_role)
+                    my_user, created = User.objects.get_or_create(username=user_email)
+                    if (my_user or created):
+                        my_user = User.objects.get(username=user_email)
+                    user, created= ScrumUser.objects.get_or_create(user__username=user_email)
+                    if(user or created):
+                        user = ScrumUser.objects.get(user__username=user_email)
+                        print(user)
+                    user_role, created = user.scrumprojectrole_set.get_or_create(user=user, project = scrum_project)
+                    if (user_role or created):
+                        user_role = user.scrumprojectrole_set.get(user=user, project=scrum_project)
+                        print(user_role)
                     
                     print("============= AFTER TRY GET USER============" )
                 except:
-                    print(user_response)
+                   
                     html = "<html><body>An error occured!!!</body></html>" 
                     return HttpResponse(html)
+
+                try:
+                   get, created = ChatSlack.objects.get_or_create(username=real_name, slack_user_id= auth_response['authed_user']['id'], project=scrum_project)
+                   if created:
+                       print(ChatSlack.objects.get(username=real_name, slack_user_id= auth_response['authed_user']['id']).username)
+                       print('Successsssssss')
+
+                except:
+                    print('failedddd')
                 
-                
+                 
                 
                 
 
 # =========================================Get Room and project=====================================================================
         chat_room,created = ScrumChatRoom.objects.get_or_create(name=project_id, hash=hashlib.sha256(project_id.encode('UTF-8')).hexdigest())
-          
+        
         try:
             project_token, created = ScrumSlack.objects.get_or_create(
             scrumproject = scrum_project,
             room = chat_room, 
-            user_id=auth_response["user_id"],
-            team_name=auth_response["team_name"],
-            team_id=auth_response["team_id"], 
+            user_id=auth_response['authed_user']["id"],
+            team_name=auth_response['team']["name"],
+            team_id=auth_response['team']["id"], 
             channel_id=auth_response["incoming_webhook"]["channel_id"], 
-            bot_user_id=auth_response["bot"]["bot_user_id"],  
-            access_token=auth_response["access_token"], 
-            bot_access_token=auth_response["bot"]["bot_access_token"]
+            bot_user_id=auth_response["bot_user_id"],  
+            access_token=auth_response['authed_user']["access_token"], 
+            bot_access_token=auth_response["access_token"]
             )
+            print(SlackApps.objects.filter(scrumproject=scrum_project, user_id = auth_response['authed_user']['id']).exists())
+
+            print(auth_response['authed_user']["id"])
             #===============================Update Scrumy user details for Add to slack======================================================================
             user_role.slack_user_id = user_response["user"]["id"]
-            user_role.slack_email = user_response["user"]["email"]
+            user_role.slack_email = str(user_response["user"]["real_name"]) + "@gmail.com"
             user_role.slack_username = user_response["user"]["name"]
-            user_role.slack_profile_picture = user_response["user"]["image_512"]
+            user_role.slack_profile_picture = user_response["user"]["profile"]["image_512"]
             user_role.save()
+
+            print(user_response)
+           
+            
             print("===================================================user channel add=========================")
         except KeyError as error:
-            print(user_role.slack_user_id)
+            #channel_info = user_sc.api_call(
+              #  "channels.info"
+           # )
+            
+            print(user_response)
+            #print(channel_info)
+            '''
+            project_token, created = ScrumSlack.objects.get_or_create(
+                scrumproject = scrum_project,
+                room = chat_room, 
+                user_id=auth_response['authed_user']["id"],
+                team_name='',
+                team_id=auth_response['team']["id"], 
+                channel_id=channel_info['channels'][0]['id'], 
+                bot_user_id='',  
+                access_token=auth_response['authed_user']["access_token"], 
+                bot_access_token=''
+                )
+            print(ScrumSlack.objects.filter(scrumproject=scrum_project, user_id = auth_response['authed_user']['id']).exists())
+            '''
+            print('Scrumslack add faileddddd')
+            print(auth_response['authed_user']["id"])
+            #===============================Update Scrumy user details for Add to slack======================================================================
             user_role.slack_user_id = user_response["user"]["id"]
-            user_role.slack_email = user_response["user"]["email"]
+            user_role.slack_email = str(user_response["user"]["real_name"]) + "@gmail.com"
             user_role.slack_username = user_response["user"]["name"]
-            user_role.slack_profile_picture = user_response["user"]["image_512"]
-            user_role.save()            
-            print("===================================================user add=========================")
-            print(user_role)
+            user_role.slack_profile_picture = user_response["user"]["profile"]["image_512"]
+            user_role.save()
+        
+            
+            print("===================================================user channel add=========================")
        
         return redirect(settings.FRONTEND)
 
 
  
-    def post(self, request):            
+    def post(self, request, *args, **kwargs):            
         print("=========================REQUEST DATA==================================")    
         post_data = request.data 
         print(post_data)
@@ -1005,72 +1204,96 @@ class Events(APIView):
                             status=status.HTTP_200_OK)
 
         if post_data.get('event')["type"] == "message":
+            retry_count = request.META.get('HTTP_X_SLACK_RETRY_NUM', None)
 
-            try:
-                slack_user = ScrumProjectRole.objects.filter(slack_user_id=post_data["event"]["user"]).first()
+            if retry_count is None:
+            
 
-                if slack_user is not None: 
-                    print("==========================Slack user=================" + slack_user.user.nickname)
-                    slack_user_nick = slack_user.user.nickname
-                    slack_profile_picture = slack_user.slack_profile_picture
-                else:
+                try:
+
+                    slack_user = ScrumProjectRole.objects.filter(slack_user_id=post_data["event"]["user"]).first()
+
+                    if slack_user is not None: 
+                        print("==========================Slack user=================" + slack_user.user.nickname)
+                        slack_user_nick = slack_user.user.nickname
+                        slack_profile_picture = slack_user.slack_profile_picture
+                    else:
+                        slack_user_nick = post_data["event"]["user"]
+                        slack_profile_picture = "https://ca.slack-edge.com/T73UK2WNS-UKRNK9ULR-gd4dbac35d17-24"               
+                except ScrumUser.DoesNotExist as error:
+                    print("User Not matched: failed")
                     slack_user_nick = post_data["event"]["user"]
-                    slack_profile_picture = "https://ca.slack-edge.com/T73UK2WNS-UKRNK9ULR-gd4dbac35d17-24"               
-            except ScrumUser.DoesNotExist as error:
-                print("User Not matched: failed")
-                slack_user_nick = post_data["event"]["user"]
-            except KeyError as error:
-                slack_user = ScrumProjectRole.objects.filter(slack_user_id=post_data["event"]["username"]).first()
-                return Response(data=post_data,
-                                status=status.HTTP_200_OK)
+                except KeyError as error:
+                    slack_user = ScrumProjectRole.objects.filter(slack_user_id=post_data["event"]["username"]).first()
+                    return Response(data=post_data,
+                                    status=status.HTTP_200_OK)
 
-            try:
-                slack_details= ScrumSlack.objects.filter(channel_id=post_data["event"]["channel"]).first() 
-                print("========================================Slack details================================") 
-                print(post_data["event"]["channel"])
-                print(slack_details)  
-                if slack_details is not None: 
-                    slack_message = post_data["event"]["text"]
-                    
+                try:
+                    print(post_data['event']['user'])
+                    scrumslack_details = ScrumSlack.objects.get(channel_id= post_data['event']['channel'], user_id=post_data['event']['user'], team_id=post_data['team_id'])
+                    project_name = scrumslack_details.scrumproject.name
+                    slack_details= ScrumSlack.objects.filter(channel_id=post_data["event"]["channel"]).first() 
+                    print("========================================Slack details================================") 
+                    print(post_data["event"]["channel"])
+                    print(slack_details)  
+                    if slack_details is not None: 
+                        slack_message = post_data["event"]["text"]
+                        
 
-                    slack_message_array = re.split(r'\s', slack_message)
-                    print(slack_message_array)
+                        #slack_message_array = re.split(r'\s', slack_message)
+                        print(slack_message)
 
-                    for each_word in slack_message_array:
-                        match =re.match(r'<@([\w\.-]+)>',each_word ) 
-                        if match:
-                            print(match.group(1))
-                            try:
-                                a = ScrumProjectRole.objects.get(slack_user_id=match.group(1))
-                                slack_message = slack_message.replace(each_word, a.user.nickname)
-                                print(slack_message)
-                                print("pattern matched")
-                            except ScrumProjectRole.DoesNotExist as e:
-                                slack_message = slack_message.replace(each_word, match.group(1))
-                            
-                            
-                        else:
-                            print("pattern not matched") 
+                        #for each_word in slack_message_array:
+                            #match =re.match(r'<@([\w\.-]+)>',each_word ) 
+                            #if match:
+                                #print(match.group(1))
+                                #try:
+                                #  a = ScrumProjectRole.objects.get(slack_user_id=match.group(1))
+                                #   slack_message = slack_message.replace(each_word, a.user.nickname)
+                                #  print(slack_message)
+                                #  print("pattern matched")
+                            #    except ScrumProjectRole.DoesNotExist as e:
+                            #       slack_message = slack_message.replace(each_word, match.group(1))
+                                
+                                
+                            #else:
+                            #   print("pattern not matched") 
+                        
 
+                        chatRoom = ScrumChatRoom.objects.get(id = slack_details.room_id).hash
+                    # new_message = ScrumChatMessage(room=slack_details.room, user=slack_user_nick, message=slack_message, profile_picture=slack_user.slack_profile_picture)
+                        #new_message.save()
 
-                    chatRoom = ScrumChatRoom.objects.get(id = slack_details.room_id).hash
-                    new_message = ScrumChatMessage(room=slack_details.room, user=slack_user_nick, message=slack_message, profile_picture=slack_user.slack_profile_picture)
-                    new_message.save()
+                        
+
+                        
+                        actual_message = ChatMessage(username=slack_user_nick, message=slack_message, project_name=project_name, timestamp=datetime.datetime.now().strftime("%I:%M %p . %d-%m-%Y"), profile_picture=slack_user.slack_profile_picture)
+                        actual_message.save()
+                       
+                        proj = ScrumProject.objects.get(name=project_name)
+                        my_messages = {"username":slack_user_nick, "message":slack_message, "project_name":project_name, "profile_picture":slack_user.slack_profile_picture, "timestamp":datetime.datetime.now().strftime("%I:%M %p . %d-%m-%Y")}
+                        data = {"messages":[my_messages]}
+
+                        connections = Connection.objects.filter(project = proj)
+
+                        for conn in connections:
+                            _send_to_connection(conn.connection_id, data)
+
+                        
+
+                        return Response(data=post_data,
+                                    status=status.HTTP_200_OK)
+
+                except KeyError as error:
+                    # ===========Response for when no client message id
+                    pass
+
+        
             
-                    async_to_sync(self.channel_layer.group_send)(
-                        chatRoom,
-                            {"type": "chat_message", 'user': slack_user_nick, 'message': slack_message, 'date_Time':datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H:%M:%S"), 'profile_picture': slack_profile_picture},
-                        )
-
-            except KeyError as error:
-                # ===========Response for when no client message id
-                return Response(data=post_data,
-                                status=status.HTTP_200_OK)
-            
             
             
 
-        return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_204_NO_CONTENT, headers={'X-Slack-No-Retry':1})
 
             
 

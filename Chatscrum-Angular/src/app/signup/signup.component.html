@@ -54,7 +54,7 @@
                 <label for="email">Email</label>
                 <input type="email" required placeholder="enter email..." name="email" #email="ngModel"
                   [(ngModel)]="dataService.createuser_email" pattern="[A-Za-z0-9._-]+@[A-Za-z0-9]+\.[a-z]{2,}$"
-                  class="form-control">
+                  class="form-control" (input) ="keyup($event.target.value)" [value]="fieldvalue">
                 <div *ngIf="email.invalid && (email.dirty || email.touched)" class="alert alert-danger"
                   style="border: none; background: none; padding: none; color: #851111; margin-top: -10px; margin-bottom: -15px;">
 
