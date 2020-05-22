@@ -1,8 +1,10 @@
 from django.urls import path
 from django.conf.urls import url, include
+from django.conf.urls.static import static
 from . import views
 from rest_framework.routers import DefaultRouter
 from rest_framework_jwt.views import obtain_jwt_token
+from ScrumMaster import settings
 
 app_name = "Scrum"
 
@@ -43,3 +45,7 @@ urlpatterns = [
     path('get_recentmessages/', views.get_recentmessages, name='get_recentmessages'),
     path('connect_to_project/', views.connect_to_project, name='connecttoproject'),
 ]
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

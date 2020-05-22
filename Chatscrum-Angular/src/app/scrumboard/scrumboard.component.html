@@ -599,7 +599,7 @@
             <bold (click)="sprintAlertHidden()">No</bold>
           </div>
         </div>
-
+        
         <div class="tab-pane fade" id="home" role="tabpanel" aria-labelledby="home-tab">
           <div class="container">
             <div class="row">
@@ -614,19 +614,42 @@
                     (cdkDropListDropped)="drop($event)"
                     id="{{loggedUserId}}e0"
                   >
-                    <div *ngFor="let item of TFTW"  cdkDrag [cdkDragData]="item">
+                    <div *ngFor="let item of TFTW"  cdkDrag [cdkDragData]="item" >
                       <div
                         *ngIf="item['taskFor'] == loggedUserId && item['task'] != '' && item['timeCreated'] &#62;= loggedSprint['dateCreated'] && loggedSprint['endDate'] &#62;= item['timeCreated']">
                         <div class="dragged_item_placeholder" *cdkDragPlaceholder><span class="icon-plus-symbol" style="font-size: 32px;"></span></div>
-                        <div class="excontent" style="border: 1px solid rgba(0, 0, 0, 0.1);">
+                        <div class="excontent" style="border: 1px solid rgba(0, 0, 0, 0.1);" >
                           <div class="task_days_failed" [hidden]="item['days_failed'] == '0'">{{item['days_failed']}}</div>
                           <div style="cursor: move;" class="task_text">
                             {{item['task']}}
                           </div><br>
                           <div class="uploadedImage" *ngIf="item['file']">
                             <img #viewClickedImage [attr.image_to_view]="'image' + item['goalID']"
-                              src="{{dataService.imageApi}}{{item['file']}}"
+                              src="{{dataService.domain_protocol}}{{dataService.domain_name}}{{item['file']}}"
                               (click)="userImageModal(viewClickedImage); hideslackchat()">
+                              <!--Drag Preview-->
+                              <div class="excontent" style="border: 1px solid rgba(0, 0, 0, 0.1);" *cdkDragPreview>
+                                <div class="task_days_failed" [hidden]="item['days_failed'] == '0'">{{item['days_failed']}}</div>
+                                <div style="cursor: move;" class="task_text">
+                                  {{item['task']}}
+                                </div><br>
+                                    
+                                <div class="scrumtools">
+                                  <n style="margin-right: 8px;">{{item['goalID']}}</n>
+                                  <span #loggedUserId [attr.task_to_edit]="item['task']"
+                                    [attr.task_id_to_edit]="item['goalID']" class="icon-pencil tools" alt="edit" title="edit"
+                                    (click)="editTaskModal(loggedUserId)"></span>
+                                  <span #loggedUserUploadImage [attr.task_id_to_upload_img]="item['goalID']"
+                                    class="icon-camera tools" alt="upload image" title="upload image"
+                                    (click)="uploadImage(loggedUserUploadImage)"></span><i class="fas fa-clone tools"
+                                    alt="copy" title="copy" style="font-size: 15px;"
+                                    (click)="copyToClipboard(loggedUserId)"></i>
+                                  <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
+                                  <span alt="history" title="history" id="taskHistory" class="icon-history-clock-button tools" (click)="taskHistory(); viewTaskHistory(item['goalID']); hideslackchat()"></span>
+                                  <span class="icon-move tools" alt="move" title="move"></span>
+                                </div>
+                              </div>
+                              <!--Drag preview Ends-->
                           </div>
 
                           <div class="scrumtools">
@@ -644,6 +667,8 @@
                             <span class="icon-move tools" alt="move" title="move"></span>
                           </div>
                         </div>
+                        
+                        
                       </div>
                     </div>
                   </div>
@@ -670,11 +695,34 @@
                           <div style="cursor: move;" class="task_text">
                             {{item['task']}}
                           </div><br>
-                          <div class="uploadedImage" *ngIf="item['file']">
+                          <div class="uploadedImage" *ngIf="item['file']"> 
                             <img #viewClickedImage [attr.image_to_view]="'image' + item['goalID']"
-                              src="{{dataService.imageApi}}{{item['file']}}"
+                              src="{{dataService.domain_protocol}}{{dataService.domain_name}}{{item['file']}}"
                               (click)="userImageModal(viewClickedImage); hideslackchat()">
-                          </div>
+                              <!--Drag Preview-->
+                              <div class="excontent" style="border: 1px solid rgba(0, 0, 0, 0.1);" *cdkDragPreview>
+                                <div class="task_days_failed" [hidden]="item['days_failed'] == '0'">{{item['days_failed']}}</div>
+                                <div style="cursor: move;" class="task_text">
+                                  {{item['task']}}
+                                </div><br>
+                                    
+                                <div class="scrumtools">
+                                  <n style="margin-right: 8px;">{{item['goalID']}}</n>
+                                  <span #loggedUserId [attr.task_to_edit]="item['task']"
+                                    [attr.task_id_to_edit]="item['goalID']" class="icon-pencil tools" alt="edit" title="edit"
+                                    (click)="editTaskModal(loggedUserId)"></span>
+                                  <span #loggedUserUploadImage [attr.task_id_to_upload_img]="item['goalID']"
+                                    class="icon-camera tools" alt="upload image" title="upload image"
+                                    (click)="uploadImage(loggedUserUploadImage)"></span><i class="fas fa-clone tools"
+                                    alt="copy" title="copy" style="font-size: 15px;"
+                                    (click)="copyToClipboard(loggedUserId)"></i>
+                                  <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
+                                  <span alt="history" title="history" id="taskHistory" class="icon-history-clock-button tools" (click)="taskHistory(); viewTaskHistory(item['goalID']); hideslackchat()"></span>
+                                  <span class="icon-move tools" alt="move" title="move"></span>
+                                </div>
+                              </div>
+                              <!--Drag preview Ends-->
+                           </div> 
 
                           <div class="scrumtools">
                             <n style="margin-right: 8px;">{{item['goalID']}}</n>
@@ -719,7 +767,30 @@
                           </div><br>
                           <div class="uploadedImage" *ngIf="item['file']">
                             <img #viewClickedImage [attr.image_to_view]="'image' + item['goalID']"
-                              src="{{dataService.imageApi}}{{item['file']}}" (click)="userImageModal(viewClickedImage); hideslackchat()">
+                              src="{{dataService.domain_protocol}}{{dataService.domain_name}}{{item['file']}}" (click)="userImageModal(viewClickedImage); hideslackchat()">
+                              <!--Drag Preview-->
+                              <div class="excontent" style="border: 1px solid rgba(0, 0, 0, 0.1);" *cdkDragPreview>
+                                <div class="task_days_failed" [hidden]="item['days_failed'] == '0'">{{item['days_failed']}}</div>
+                                <div style="cursor: move;" class="task_text">
+                                  {{item['task']}}
+                                </div><br>
+                                    
+                                <div class="scrumtools">
+                                  <n style="margin-right: 8px;">{{item['goalID']}}</n>
+                                  <span #loggedUserId [attr.task_to_edit]="item['task']"
+                                    [attr.task_id_to_edit]="item['goalID']" class="icon-pencil tools" alt="edit" title="edit"
+                                    (click)="editTaskModal(loggedUserId)"></span>
+                                  <span #loggedUserUploadImage [attr.task_id_to_upload_img]="item['goalID']"
+                                    class="icon-camera tools" alt="upload image" title="upload image"
+                                    (click)="uploadImage(loggedUserUploadImage)"></span><i class="fas fa-clone tools"
+                                    alt="copy" title="copy" style="font-size: 15px;"
+                                    (click)="copyToClipboard(loggedUserId)"></i>
+                                  <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
+                                  <span alt="history" title="history" id="taskHistory" class="icon-history-clock-button tools" (click)="taskHistory(); viewTaskHistory(item['goalID']); hideslackchat()"></span>
+                                  <span class="icon-move tools" alt="move" title="move"></span>
+                                </div>
+                              </div>
+                              <!--Drag preview Ends-->
                           </div>
                     
                           <div class="scrumtools">
@@ -770,7 +841,30 @@
                               </div><br>
                               <div class="uploadedImage" *ngIf="item['file']">
                                 <img #viewClickedImage [attr.image_to_view]="'image' + item['goalID']"
-                                  src="{{dataService.imageApi}}{{item['file']}}" (click)="userImageModal(viewClickedImage); hideslackchat()">
+                                  src="{{dataService.domain_protocol}}{{dataService.domain_name}}{{item['file']}}" (click)="userImageModal(viewClickedImage); hideslackchat()">
+                                  <!--Drag Preview-->
+                              <div class="excontent" style="border: 1px solid rgba(0, 0, 0, 0.1);" *cdkDragPreview>
+                                <div class="task_days_failed" [hidden]="item['days_failed'] == '0'">{{item['days_failed']}}</div>
+                                <div style="cursor: move;" class="task_text">
+                                  {{item['task']}}
+                                </div><br>
+                                    
+                                <div class="scrumtools">
+                                  <n style="margin-right: 8px;">{{item['goalID']}}</n>
+                                  <span #loggedUserId [attr.task_to_edit]="item['task']"
+                                    [attr.task_id_to_edit]="item['goalID']" class="icon-pencil tools" alt="edit" title="edit"
+                                    (click)="editTaskModal(loggedUserId)"></span>
+                                  <span #loggedUserUploadImage [attr.task_id_to_upload_img]="item['goalID']"
+                                    class="icon-camera tools" alt="upload image" title="upload image"
+                                    (click)="uploadImage(loggedUserUploadImage)"></span><i class="fas fa-clone tools"
+                                    alt="copy" title="copy" style="font-size: 15px;"
+                                    (click)="copyToClipboard(loggedUserId)"></i>
+                                  <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
+                                  <span alt="history" title="history" id="taskHistory" class="icon-history-clock-button tools" (click)="taskHistory(); viewTaskHistory(item['goalID']); hideslackchat()"></span>
+                                  <span class="icon-move tools" alt="move" title="move"></span>
+                                </div>
+                              </div>
+                              <!--Drag preview Ends-->
                               </div>
                               <div class="scrumtools">
                                 <n style="margin-right: 8px;">{{item['goalID']}}</n>
@@ -851,8 +945,31 @@
                                   </div><br>
                                   <div class="uploadedImage" *ngIf="item['file']">
                                     <img #viewClickedImage [attr.image_to_view]="'image' + item['goalID']"
-                                      src="{{dataService.imageApi}}{{item['file']}}"
+                                      src="{{dataService.domain_protocol}}{{dataService.domain_name}}{{item['file']}}"
                                       (click)="userImageModal(viewClickedImage); hideslackchat()">
+                                      <!--Drag Preview-->
+                              <div class="excontent" style="border: 1px solid rgba(0, 0, 0, 0.1);" *cdkDragPreview>
+                                <div class="task_days_failed" [hidden]="item['days_failed'] == '0'">{{item['days_failed']}}</div>
+                                <div style="cursor: move;" class="task_text">
+                                  {{item['task']}}
+                                </div><br>
+                                    
+                                <div class="scrumtools">
+                                  <n style="margin-right: 8px;">{{item['goalID']}}</n>
+                                  <span #loggedUserId [attr.task_to_edit]="item['task']"
+                                    [attr.task_id_to_edit]="item['goalID']" class="icon-pencil tools" alt="edit" title="edit"
+                                    (click)="editTaskModal(loggedUserId)"></span>
+                                  <span #loggedUserUploadImage [attr.task_id_to_upload_img]="item['goalID']"
+                                    class="icon-camera tools" alt="upload image" title="upload image"
+                                    (click)="uploadImage(loggedUserUploadImage)"></span><i class="fas fa-clone tools"
+                                    alt="copy" title="copy" style="font-size: 15px;"
+                                    (click)="copyToClipboard(loggedUserId)"></i>
+                                  <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
+                                  <span alt="history" title="history" id="taskHistory" class="icon-history-clock-button tools" (click)="taskHistory(); viewTaskHistory(item['goalID']); hideslackchat()"></span>
+                                  <span class="icon-move tools" alt="move" title="move"></span>
+                                </div>
+                              </div>
+                              <!--Drag preview Ends-->
                                   </div>
               
                                   <div class="scrumtools">
@@ -891,8 +1008,31 @@
                                   </div><br>
                                   <div class="uploadedImage" *ngIf="item['file']">
                                     <img #viewClickedImage [attr.image_to_view]="'image' + item['goalID']"
-                                      src="{{dataService.imageApi}}{{item['file']}}"
+                                      src="{{dataService.domain_protocol}}{{dataService.domain_name}}{{item['file']}}"
                                       (click)="userImageModal(viewClickedImage); hideslackchat()">
+                                      <!--Drag Preview-->
+                              <div class="excontent" style="border: 1px solid rgba(0, 0, 0, 0.1);" *cdkDragPreview>
+                                <div class="task_days_failed" [hidden]="item['days_failed'] == '0'">{{item['days_failed']}}</div>
+                                <div style="cursor: move;" class="task_text">
+                                  {{item['task']}}
+                                </div><br>
+                                    
+                                <div class="scrumtools">
+                                  <n style="margin-right: 8px;">{{item['goalID']}}</n>
+                                  <span #loggedUserId [attr.task_to_edit]="item['task']"
+                                    [attr.task_id_to_edit]="item['goalID']" class="icon-pencil tools" alt="edit" title="edit"
+                                    (click)="editTaskModal(loggedUserId)"></span>
+                                  <span #loggedUserUploadImage [attr.task_id_to_upload_img]="item['goalID']"
+                                    class="icon-camera tools" alt="upload image" title="upload image"
+                                    (click)="uploadImage(loggedUserUploadImage)"></span><i class="fas fa-clone tools"
+                                    alt="copy" title="copy" style="font-size: 15px;"
+                                    (click)="copyToClipboard(loggedUserId)"></i>
+                                  <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
+                                  <span alt="history" title="history" id="taskHistory" class="icon-history-clock-button tools" (click)="taskHistory(); viewTaskHistory(item['goalID']); hideslackchat()"></span>
+                                  <span class="icon-move tools" alt="move" title="move"></span>
+                                </div>
+                              </div>
+                              <!--Drag preview Ends-->
                                   </div>
               
                                   <div class="scrumtools">
@@ -934,8 +1074,31 @@
                                   </div><br>
                                   <div class="uploadedImage" *ngIf="item['file']">
                                     <img #viewClickedImage [attr.image_to_view]="'image' + item['goalID']"
-                                      src="{{dataService.imageApi}}{{item['file']}}"
+                                      src="{{dataService.domain_protocol}}{{dataService.domain_name}}{{item['file']}}"
                                       (click)="userImageModal(viewClickedImage); hideslackchat()">
+                                      <!--Drag Preview-->
+                              <div class="excontent" style="border: 1px solid rgba(0, 0, 0, 0.1);" *cdkDragPreview>
+                                <div class="task_days_failed" [hidden]="item['days_failed'] == '0'">{{item['days_failed']}}</div>
+                                <div style="cursor: move;" class="task_text">
+                                  {{item['task']}}
+                                </div><br>
+                                    
+                                <div class="scrumtools">
+                                  <n style="margin-right: 8px;">{{item['goalID']}}</n>
+                                  <span #loggedUserId [attr.task_to_edit]="item['task']"
+                                    [attr.task_id_to_edit]="item['goalID']" class="icon-pencil tools" alt="edit" title="edit"
+                                    (click)="editTaskModal(loggedUserId)"></span>
+                                  <span #loggedUserUploadImage [attr.task_id_to_upload_img]="item['goalID']"
+                                    class="icon-camera tools" alt="upload image" title="upload image"
+                                    (click)="uploadImage(loggedUserUploadImage)"></span><i class="fas fa-clone tools"
+                                    alt="copy" title="copy" style="font-size: 15px;"
+                                    (click)="copyToClipboard(loggedUserId)"></i>
+                                  <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
+                                  <span alt="history" title="history" id="taskHistory" class="icon-history-clock-button tools" (click)="taskHistory(); viewTaskHistory(item['goalID']); hideslackchat()"></span>
+                                  <span class="icon-move tools" alt="move" title="move"></span>
+                                </div>
+                              </div>
+                              <!--Drag preview Ends-->
                                   </div>
               
                                   <div class="scrumtools">
@@ -981,8 +1144,31 @@
                                       </div><br>
                                       <div class="uploadedImage" *ngIf="item['file']">
                                         <img #viewClickedImage [attr.image_to_view]="'image' + item['goalID']"
-                                          src="{{dataService.imageApi}}{{item['file']}}"
+                                          src="{{dataService.domain_protocol}}{{dataService.domain_name}}{{item['file']}}"
                                           (click)="userImageModal(viewClickedImage); hideslackchat()">
+                                          <!--Drag Preview-->
+                              <div class="excontent" style="border: 1px solid rgba(0, 0, 0, 0.1);" *cdkDragPreview>
+                                <div class="task_days_failed" [hidden]="item['days_failed'] == '0'">{{item['days_failed']}}</div>
+                                <div style="cursor: move;" class="task_text">
+                                  {{item['task']}}
+                                </div><br>
+                                    
+                                <div class="scrumtools">
+                                  <n style="margin-right: 8px;">{{item['goalID']}}</n>
+                                  <span #loggedUserId [attr.task_to_edit]="item['task']"
+                                    [attr.task_id_to_edit]="item['goalID']" class="icon-pencil tools" alt="edit" title="edit"
+                                    (click)="editTaskModal(loggedUserId)"></span>
+                                  <span #loggedUserUploadImage [attr.task_id_to_upload_img]="item['goalID']"
+                                    class="icon-camera tools" alt="upload image" title="upload image"
+                                    (click)="uploadImage(loggedUserUploadImage)"></span><i class="fas fa-clone tools"
+                                    alt="copy" title="copy" style="font-size: 15px;"
+                                    (click)="copyToClipboard(loggedUserId)"></i>
+                                  <i class="fas fa-envelope tools" alt="task chat" title="task chat"></i>
+                                  <span alt="history" title="history" id="taskHistory" class="icon-history-clock-button tools" (click)="taskHistory(); viewTaskHistory(item['goalID']); hideslackchat()"></span>
+                                  <span class="icon-move tools" alt="move" title="move"></span>
+                                </div>
+                              </div>
+                              <!--Drag preview Ends-->
                                       </div>
                                       <div class="scrumtools">
                                         <n style="margin-right: 8px;">{{item['goalID']}}</n>
@@ -1020,8 +1206,8 @@
       </div>
     </div>
 
-    <div class="split right pb-5" id="splitRight" >
-      <div class="container"  #con id='con' style="overflow-y:scroll">
+    <div class="split right pb-5" id="splitRight">
+      <div class="container"  #con id='con' style="overflow-y:scroll; height:89%; margin-bottom:15px;">
         <div class="slackChat" #conn id="conn">
           <div *ngFor="let message of wsService.messages">
             <div class="container slackMessage" style="position: relative;">
@@ -1040,17 +1226,20 @@
           </div>
         </div>
       </div>
+      <div style="height:3%"></div>
       <div class="slackMsgSection">
          
-        <div *ngIf = "uses_slack == 'true'"> 
+        <div *ngIf = "uses_slack == 'true'" style="width:100%;"> 
           <form>
-            <textarea #sendSlackMsg (keyup.enter)="sendAMessage(sendSlackMsg)" placeholder="Send a message" class="inputMsg" #chat_text= "ngModel" [(ngModel)]= "wsService.chat_text" name=chat_text id="inputSlackMsg">
+            <textarea #sendSlackMsg (keyup.enter)="sendAMessage(sendSlackMsg)" placeholder="Send a message" class="inputMsg" #chat_text= "ngModel" [(ngModel)]= "wsService.chat_text" name=chat_text id="inputSlackMsg" cols="5" rows="100" style=" width:440px; height:8%; padding-right:13px;">
               </textarea>
           </form>
          </div>  
 
       </div>
     </div>
+
+   
     
   </div>
 

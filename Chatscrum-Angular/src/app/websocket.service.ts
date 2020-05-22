@@ -27,6 +27,37 @@ export class WebsocketService {
     
   }
 
+  getProjectGoals() {
+    this.ws.onopen = (event) => {
+      const context = {
+        action: "getProjectGoals",
+        project_id : sessionStorage.getItem('project_id'),
+        "token": sessionStorage.getItem('ws_token')
+      }
+      this.ws.send(JSON.stringify(context))
+
+
+    this.ws.onmessage = (event) => {
+      console.log("goal moved");
+    }
+    }
+  }
+
+  
+
+  moveGoal(to_id, from_id) {
+    const context = {
+      "action":"moveGoal",
+      "project_id":sessionStorage.getItem('project_id'),
+      "to_id" : to_id,
+      "from_id": from_id,
+      "token": sessionStorage.getItem('ws_token')
+
+    }
+
+    this.ws.send(JSON.stringify(context));
+  }
+
  
 
   getMessages() {
