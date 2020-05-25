@@ -3,7 +3,12 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  domain_protocol:"https://",
+  domain_name: "api.chatscrum.com",
+  slack_client_id: "241971098774.1099398721171",
+  ws_url : "wss://9zvbc650m4.execute-api.us-east-2.amazonaws.com/chatscrum/",
+
 };
 
 /*

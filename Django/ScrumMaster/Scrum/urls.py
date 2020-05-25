@@ -1,8 +1,10 @@
 from django.urls import path
 from django.conf.urls import url, include
+from django.conf.urls.static import static
 from . import views
 from rest_framework.routers import DefaultRouter
 from rest_framework_jwt.views import obtain_jwt_token
+from ScrumMaster import settings
 
 app_name = "Scrum"
 
@@ -15,7 +17,9 @@ def_router.register('scrumnotes', views.ScrumNoteViewSet)
 def_router.register('scrumworkid', views.ScrumWorkIdViewSet)
 def_router.register('scrumprojects', views.ScrumProjectViewSet)
 def_router.register('scrumprojectroles', views.ScrumProjectRoleViewSet)
+def_router.register('scrumuserfetch', views.ScrumFetchViewSet)
 def_router.register(r'scrumsprint', views.SprintViewSet, base_name='scrumsprint')
+
 
 '''
     path('create-user/', views.create_user, name="create_user"),
@@ -32,8 +36,8 @@ urlpatterns = [
     url(r'api/', include(def_router.urls)),
     url(r'^api-token-auth/', obtain_jwt_token),
     path(r'create-demo/', views.createDemoUser),
-    url(r'^events/', views.Events.as_view()), 
-
+    url(r'^events/', views.Events.as_view()),
+    
     path('test/', views.test, name='test'),
     path('connect/', views.connect, name='connect'),
     path('disconnect/', views.disconnect, name='disconnect'),
@@ -41,3 +45,7 @@ urlpatterns = [
     path('get_recentmessages/', views.get_recentmessages, name='get_recentmessages'),
     path('connect_to_project/', views.connect_to_project, name='connecttoproject'),
 ]
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

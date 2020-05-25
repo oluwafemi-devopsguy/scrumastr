@@ -64,6 +64,8 @@ body {
   }
 } */
 
+
+
 .navbarr {
   top: 0;
   width: 100vw;
@@ -1372,20 +1374,20 @@ summary:focus {
 
 }
 
-.slackMessage .userName {
+.slackMessage .chatUserName {
   margin-top: 10px;
 }
 
-.slackMessage .userName h3 {
+.slackMessage .chatUserName h5 {
   font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: bold;
   font-size: 14px;
   line-height: 16px;
-  align-items: center;
   color: #4DFFD4;
-  margin-left: 35px;
-  margin-top: -19px;
+  position: absolute;
+  left: 65px;
+  top: 25px;
 }
 
 .slackMessage .userMsg {
@@ -2036,7 +2038,7 @@ summary:focus {
 
 .cdk-drag-preview {
   box-sizing: border-box;
-  border-radius: 2px;
+  border-radius: 5px;
   border: 1px solid rgba(255, 76, 109, 0.25);
   background: #FFFFFF;
   border-radius: 5px;
@@ -2048,6 +2050,9 @@ summary:focus {
   font-size: 13px;
   line-height: 18px;
   color: rgba(0, 0, 0, 0.9);
+  width:200px;
+  
+  transition:ease-in 0.3ms;
 }
 
 .example-list {
@@ -2149,3 +2154,127 @@ summary:focus {
 .projectsDropDownContent .slider.round:before {
   border-radius: 50%;
 }
+
+.slackChat .chatProfilePicture {
+  width: 35px;
+  border-radius: 50%;
+  border: 1px solid white;
+  margin-top: 10px;
+}
+
+
+.modalforslack {
+  display:none;
+  left:0;
+  top:0;
+  z-index:1;
+  position:fixed;
+  -webkit-animation-name: slideIn;
+  -webkit-animation-duration:0.6s;
+  animation-name: slideIn;
+  animation-duration: 0.6s;
+  height:100%;
+  width:100%;
+  overflow: auto;
+  align-self: center;
+  
+  
+  
+
+ }
+
+
+ .slackmodal-content{
+     position: relative;
+     background-color: white;
+     margin:15% auto;
+     width:30%;
+     border: 1px solid transparent;
+     border-radius: 12px;
+     -webkit-animation-name: slideIn;
+     -webkit-animation-duration:0.6s;
+     animation-name: slideIn;
+     animation-duration: 0.6s;
+     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+     line-height: 1.6em;
+     
+
+ }
+ .slackmodal-header{
+      justify-content: space-around;
+     background:#693b58;
+     color:black;
+     padding:5px 16px;
+     margin: auto;
+ }
+
+ .slackmodal-header h4 {
+     margin:0;
+     padding-bottom:5px;
+     text-align: center;
+     color:white;
+ }
+
+ .slackmodal-footer {
+
+     color: white;
+     width:60%;
+     margin: 20px auto;
+     
+ }
+
+ .slackmodal-body{
+     padding:15px ;
+     margin: 5px auto;
+     text-align: center;
+ }
+ .slackbtn {
+     background-color: #6ec4cb;
+     border-radius:8px;
+     margin-left:25px;
+     color: black;
+     padding: 5px auto;
+     text-align:center;
+     width:150px;
+     
+ }
+
+ .slackbtn p {
+  margin:10px 10px;
+ }
+
+ .slackbtn:hover, .slackbtn:focus {
+   cursor: pointer;
+ }
+
+ .slackclose{
+      font-size: 18px;
+     float:right;
+     padding-top :5px ;
+     padding-right:5px;
+     color:white;
+ }
+ .slackclose:hover, .slackclose:focus{
+     color:black;
+     cursor: pointer;
+ }
+
+ @-webkit-keyframes slideIn {
+ from {bottom: -300px; opacity: 0} 
+ to {bottom: 0; opacity: 1}
+ }
+
+ @keyframes slideIn {
+ from {bottom: -300px; opacity: 0}
+ to {bottom: 0; opacity: 1}
+ }
+
+ @-webkit-keyframes fadeIn {
+ from {opacity: 0} 
+ to {opacity: 1}
+ }
+
+ @keyframes fadeIn {
+ from {opacity: 0} 
+ to {opacity: 1}
+ }

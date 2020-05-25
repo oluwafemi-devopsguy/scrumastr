@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { timingSafeEqual } from 'crypto';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -8,10 +10,13 @@ import { Router } from '@angular/router';
 
 export class DataService {
 
-  public domain_name = 'api.chatscrum.com';
-  public domain_protocol = 'https://';
-  public websocket = 'wss://';
-
+  public domain_name = environment.domain_name;
+  public domain_protocol = environment.domain_protocol;
+  public client_id = environment.slack_client_id;
+  //public client_id = '1047148162967.1067254009940';
+  //public domain_protocol = 'http://';
+  //public domain_name = 'localhost:8000';
+  //public domain = 'http://localhost:8000';
 
   public message;
   public goal_name;
@@ -42,6 +47,7 @@ export class DataService {
   public taskToEdit;
   public image_uploaded: File = null;
   public image_name;
+   
 
 
 
@@ -56,7 +62,7 @@ export class DataService {
   constructor(private http: HttpClient, private router: Router) { }
 
   createUser() {
-    this.http.post(this.domain_protocol + this.domain_name + '/scrum/api/scrumusers/', JSON.stringify({'email': this.createuser_email, 'password': this.createuser_password, 'full_name': this.createuser_fullname, 'usertype': this.createuser_usertype, 'projname': this.createuser_projname}), this.httpOptions).subscribe(
+    this.http.post( this.domain_protocol + this.domain_name +  '/scrum/api/scrumusers/', JSON.stringify({'email': this.createuser_email, 'password': this.createuser_password, 'full_name': this.createuser_fullname, 'usertype': this.createuser_usertype, 'projname': this.createuser_projname}), this.httpOptions).subscribe(
       data => {
         if (
           data['message'] == 'User Created Successfully.' ||
@@ -67,6 +73,11 @@ export class DataService {
             this.router.navigate(['login']);
           }, 3000);
 
+          console.log(this.createuser_usertype); 
+         // this.addToSlack();
+            
+           
+          
 
         } else {
           document.getElementById('alert-error').style.display = 'block';
@@ -86,8 +97,10 @@ export class DataService {
         this.createuser_fullname = '';
         this.createuser_projname = '';
 
-        this.slack_app_id = data['client_id'];
-
+        this.slack_app_id = data['client_id']; 
+       
+        
+       
       },
       err => {
         document.getElementById('lodr').style.display = 'none';
@@ -104,10 +117,36 @@ export class DataService {
 
   }
 
+  
+
+  addToSlack() {
+    let usertype = String(sessionStorage.getItem('role'));
+    let email = String(sessionStorage.getItem('username'));
+    let project_name = String(sessionStorage.getItem('proj_name'));
+    let the_name = sessionStorage.getItem('realname');
+
+      sessionStorage.removeItem('token');
+      window.location.replace("https://slack.com/oauth/v2/authorize?client_id=" + this.client_id + "&state=main_chat_" + project_name + ">>>" + email + "<<<" + the_name + "&scope=channels:history,channels:read,chat:write,emoji:read,files:read,groups:read,im:history,im:read,incoming-webhook,mpim:read,reactions:read,team:read,users.profile:read,users:read,mpim:history,groups:history&user_scope=users:read,chat:write,channels:read,channels:history,groups:read,groups:history")
+   
+  }
+
+  connectToSlack() {
+    let usertype = String(sessionStorage.getItem('role'));
+    let email = String(sessionStorage.getItem('username'));
+    let project_name = String(sessionStorage.getItem('proj_name'));
+    let the_name = sessionStorage.getItem('realname');
+
+    sessionStorage.removeItem('token');
+    window.location.replace("https://slack.com/oauth/v2/authorize?client_id=" + this.client_id + "&state=main_chat_" + project_name + ">>>" + email + "<<<" + the_name + "&scope=channels:history,channels:read,chat:write,emoji:read,files:read,groups:read,im:history,im:read,incoming-webhook,mpim:read,reactions:read,team:read,users.profile:read,users:read,mpim:history,groups:history&user_scope=users:read,chat:write,channels:read,channels:history,groups:read,groups:history")
+   // window.location.replace("https://slack.com/oauth/v2/authorize?client_id=1047148162967.1067254009940" + "&state=main_chat_" + project_name + ">>>" + email + "<<<" + the_name + "&user_scope=identity.basic, identity.email, identity.avatar")
+     
+  }
+
 
   login() {
-    this.http.post(this.domain_protocol + this.domain_name + '/scrum/api-token-auth/', JSON.stringify({'username': this.login_username, 'password': this.login_password, 'project': this.login_project}), this.httpOptions).subscribe(
+    this.http.post( this.domain_protocol + this.domain_name +  '/scrum/api-token-auth/', JSON.stringify({'username': this.login_username, 'password': this.login_password, 'project': this.login_project}), this.httpOptions).subscribe(
       data => {
+        
         localStorage.setItem('full_data', JSON.stringify(data));
         sessionStorage.setItem('username', this.login_username);
         sessionStorage.setItem('realname', data['name']);
@@ -119,6 +158,7 @@ export class DataService {
         sessionStorage.setItem('user_slack', data['user_slack']);
         sessionStorage.setItem('project_slack', data['project_slack']);
         sessionStorage.setItem('slack_username', data['slack_username']);
+        sessionStorage.setItem('ws_token', data['ws_token']);
         localStorage.setItem('sessiontf', data['to_clear_board']);
         this.username = this.login_username;
         this.realname = data['name'];
@@ -147,6 +187,20 @@ export class DataService {
     );
   }
 
+  fetchIdentity(email) {
+    this.http.post( this.domain_protocol + this.domain_name + '/scrum/api/scrumuserfetch/', JSON.stringify({"username": email}), this.httpOptions).subscribe(
+      data => {
+        let fullname = data['fullname'];
+        
+        this.createuser_fullname = fullname;
+      },
+
+      err=> {
+        console.log("Could not be fetched")
+      }
+    )
+  }
+
   getHeader() {
     return { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'JWT ' + sessionStorage.getItem('token') }) }
   }
@@ -166,25 +220,25 @@ export class DataService {
   }
 
   allProjectGoals(project_id) {
-    return this.http.get<any>(this.domain_protocol + this.domain_name + '/scrum/api/scrumprojects/' + project_id, this.httpOptions);
+    return this.http.get<any>( this.domain_protocol + this.domain_name + '/scrum/api/scrumprojects/' + project_id, this.httpOptions);
   }
 
   allSprints(project_id) {
-    return this.http.get<any>(this.domain_protocol + this.domain_name + '/scrum/api/scrumsprint/?goal_project_id=' + project_id, this.httpOptions);
+    return this.http.get<any>( this.domain_protocol + this.domain_name + '/scrum/api/scrumsprint/?goal_project_id=' + project_id, this.httpOptions);
   }
 
   startSprintRequest(project_id) {
     let sprint_start_date = new Date(new Date().getTime());
     let sprint_end_date = new Date(new Date().getTime() + (7 * 24 * 60 * 60 * 1000));
-    return this.http.post(this.domain_protocol + this.domain_name + '/scrum/api/scrumsprint/?goal_project_id=' + project_id, JSON.stringify({ "project_id": project_id, "created_on": sprint_start_date, "ends_on": sprint_end_date }), this.getHeader());
+    return this.http.post( this.domain_protocol + this.domain_name + '/scrum/api/scrumsprint/?goal_project_id=' + project_id, JSON.stringify({ "project_id": project_id, "created_on": sprint_start_date, "ends_on": sprint_end_date }), this.getHeader());
   }
 
   addTaskRequest(project_id, user_role_id) {
-    return this.http.post(this.domain_protocol + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({ "name": this.goal_name, "user": 'm' + user_role_id, "project_id": project_id }), this.getHeader());
+    return this.http.post( this.domain_protocol + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({ "name": this.goal_name, "user": 'm' + user_role_id, "project_id": project_id }), this.getHeader());
   }
 
   editTaskRequest(project_id) {
-    return this.http.put(this.domain_protocol + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({ "mode": 1, "goal_id": this.taskIdToEdit, "new_name": this.taskToEdit, "project_id": project_id }), this.getHeader());
+    return this.http.put( this.domain_protocol + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({ "mode": 1, "goal_id": this.taskIdToEdit, "new_name": this.taskToEdit, "project_id": project_id }), this.getHeader());
   }
 
   imageUploadRequest(project_id) {
@@ -195,36 +249,35 @@ export class DataService {
     imageUpload.append("goal_id", this.taskIdToEdit);
     imageUpload.append("project_id", project_id);
 
-    return this.http.put(this.domain_protocol + this.domain_name + '/scrum/api/scrumgoals/', imageUpload, this.ImageAuthgetHeader());
-
+    return this.http.put( this.domain_protocol + this.domain_name + '/scrum/api/scrumgoals/', imageUpload, this.ImageAuthgetHeader())
   }
 
   addNoteRequest(project_id, user_role_id, note, priority) {
-    return this.http.post(this.domain_protocol + this.domain_name + '/scrum/api/scrumnotes/', JSON.stringify({ 'note': note, 'priority': priority, 'user': 'm' + user_role_id, 'project_id': project_id }), this.getHeader());
+    return this.http.post( this.domain_protocol + this.domain_name + '/scrum/api/scrumnotes/', JSON.stringify({ 'note': note, 'priority': priority, 'user': 'm' + user_role_id, 'project_id': project_id }), this.getHeader());
   }
 
   deleteNoteRequest(project_id, note_id) {
-    return this.http.put(this.domain_protocol + this.domain_name + '/scrum/api/scrumnotes/', JSON.stringify({ 'id': note_id, 'project_id': project_id }), this.getHeader());
+    return this.http.put( this.domain_protocol + this.domain_name + '/scrum/api/scrumnotes/', JSON.stringify({ 'id': note_id, 'project_id': project_id }), this.getHeader());
   }
 
   moveGoalRequest(goal_id, to_id, hours, push_id, project_id) {
-    return this.http.patch(this.domain_protocol + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({ 'goal_id': goal_id, 'to_id': to_id, 'hours': hours, 'project_id': project_id, 'push_id': push_id }), this.getHeader());
+    return this.http.patch( this.domain_protocol + this.domain_name +  '/scrum/api/scrumgoals/', JSON.stringify({ 'goal_id': goal_id, 'to_id': to_id, 'hours': hours, 'project_id': project_id, 'push_id': push_id }), this.getHeader());
   } 
 
   changeGoalOwner(goal_id, to_id, project_id) {
-    return this.http.put(this.domain_protocol + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({ 'mode': 0, 'goal_id': goal_id, 'to_id': to_id, 'project_id': project_id }), this.getHeader());
+    return this.http.put( this.domain_protocol + this.domain_name +  '/scrum/api/scrumgoals/', JSON.stringify({ 'mode': 0, 'goal_id': goal_id, 'to_id': to_id, 'project_id': project_id }), this.getHeader());
   }
 
   autoClearTftRequest(project_id) {
-    return this.http.put(this.domain_protocol + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({ 'mode': 3, 'project_id': project_id }), this.getHeader());
+    return this.http.put( this.domain_protocol + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({ 'mode': 3, 'project_id': project_id }), this.getHeader());
   }
 
   deleteTaskRequest(goal_id, goal_name, project_id) {
-    return this.http.put(this.domain_protocol + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({ 'mode': 2, 'goal_id': 'm'+goal_id, 'new_name': goal_name, 'project_id': project_id }), this.getHeader());
+    return this.http.put( this.domain_protocol + this.domain_name + '/scrum/api/scrumgoals/', JSON.stringify({ 'mode': 2, 'goal_id': 'm'+goal_id, 'new_name': goal_name, 'project_id': project_id }), this.getHeader());
   }
 
   changeUserRoleRequest(user_id, role, project_id) {
-    return this.http.patch(this.domain_protocol + this.domain_name + '/scrum/api/scrumprojectroles/', JSON.stringify({ 'role': role, 'id': 'm'+user_id, 'project_id': project_id }), this.getHeader());
+    return this.http.patch( this.domain_protocol + this.domain_name + '/scrum/api/scrumprojectroles/', JSON.stringify({ 'role': role, 'id': 'm'+user_id, 'project_id': project_id }), this.getHeader());
   }
 
 }

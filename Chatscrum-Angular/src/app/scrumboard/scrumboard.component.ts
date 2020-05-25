@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChildren, QueryList, ViewChild } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChildren, QueryList, ViewChild, AfterViewInit, AfterViewChecked } from '@angular/core';
 import { CdkDragStart, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { ActivatedRoute } from '@angular/router';
 import { Title } from "@angular/platform-browser";
@@ -16,7 +16,9 @@ import { element } from 'protractor';
   templateUrl: './scrumboard.component.html',
   styleUrls: ['./scrumboard.component.css']
 })
-export class ScrumboardComponent implements OnInit {
+export class ScrumboardComponent implements OnInit, AfterViewInit{
+  @ViewChild('con') cont: ElementRef;
+  @ViewChild('conn', {read: ElementRef})  elem: ElementRef;
 
   public imgName = "No image selected";
   public alert;
@@ -55,6 +57,8 @@ export class ScrumboardComponent implements OnInit {
   public historyForUser;
   public historyForUserRole;
   public messages = [];
+  public uses_slack = sessionStorage.getItem('user_slack');
+  public imageUploaded;
 
   @ViewChildren('details') details: QueryList<any>;
 
@@ -65,7 +69,9 @@ export class ScrumboardComponent implements OnInit {
     private pageTitle: Title,
     private route: ActivatedRoute,
     public wsService: WebsocketService,
-  ) { }
+  ) { 
+   
+  }
 
   ngOnInit() {
     this.load()
@@ -75,17 +81,85 @@ export class ScrumboardComponent implements OnInit {
     this.getAllUsersGoals()
     this.getAllSprints()
     this.wsService.getMessages()
-    
+    this.hideAddTaskandNoteBTN();
+    this.openSlackModal();
+
+    let observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+       
+       if (mutation.type == 'childList') {
+         
+         let elem = document.getElementById('con');
+         elem.scrollTop = elem.scrollHeight;
+         
+       }
+      });
+ 
+      
+ 
+     });
+     observer.observe(this.elem.nativeElement, {
+       childList: true,
+       subtree: true
+     });
+   
   }
 
 
-  // ngAfterViewInit(): void {
+
+   ngAfterViewInit(): void {
+     
+   
+    let observer = new MutationObserver((mutations) => {
+     mutations.forEach((mutation) => {
+      
+      if (mutation.type == 'childList') {
+        
+        let elem = document.getElementById('splitRight');
+        elem.scrollTop = elem.scrollHeight;
+        
+      }
+     });
+
+     
+
+    });
+    observer.observe(this.elem.nativeElement, {
+      childList: true,
+      subtree: true
+    });
+   }
+
+
+
+  openSlackModal() {
+    let modal = document.getElementById('slackModal');
+    if (this.uses_slack == 'false') {
+      modal.style.display = 'block';
+    }
     
-  // }
+  }
+
+  closeSlackModal() {
+    let modal = document.getElementById('slackModal')
+    modal.style.display='none'; 
+  }
 
   sendAMessage(input) {
     this.wsService.sendMessage();
     input.value = ''
+  }
+
+  connectSlack() {
+    this.dataService.connectToSlack();
+  }
+
+  showSprintCreate() {
+    if (this.loggedUserRole == "Owner" || this.loggedUserRole == "Admin") {
+      let active = document.getElementById('sprintAlert');
+    active.style.display = 'block';
+    }
+    
   }
 
   load() {
@@ -317,9 +391,14 @@ export class ScrumboardComponent implements OnInit {
       let projectDD = document.getElementById('projectsDDContent') as HTMLElement;
       let themeDD = document.getElementById('themeDDContent') as HTMLElement;
       let sprintDD = document.getElementById('sprintDDContent') as HTMLElement;
+      let mymodal = document.getElementById('slackModal');
       let target = e.target as HTMLElement
       if (e.target == modal) {
         modal.style.display = 'none';
+      }
+
+      if(e.target == mymodal) {
+        mymodal.style.display = 'none';
       }
 
       if (e.target == modal1) {
