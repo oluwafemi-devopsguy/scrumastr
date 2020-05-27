@@ -1214,40 +1214,46 @@
         </div>
     
         <div class="splitright pb-2 col-md-3" id="splitRight">
-            <div class="container"  #con id='con' style="overflow-y:scroll; height:91%; margin-bottom:15px;">
-              
-              <div class="slackChat" #conn id="conn">
-                <div *ngFor="let message of wsService.messages">
-                  <div class="container slackMessage" style="position: relative;">
-                    <img src={{message.profile_picture}} alt="" class="chatProfilePicture">
-                    <div class="chatUserName"> 
-                      <h5 >{{message.username}}</h5>
-                         
-                    </div>
-                    <div class="userMsg">
-                      <span>{{message.message}}</span>
-                    </div>
-                    <div class="msgTime">
-                      <p>{{message.timestamp}}</p>
+            <section id="messages" class="pb-2">
+              <div class="container"  #con id='con'>
+                <div class="slackChat" #conn id="conn">
+                  <div *ngFor="let message of wsService.messages">
+                    <div class="container slackMessage" style="position: relative;">
+                      <img src={{message.profile_picture}} alt="" class="chatProfilePicture">
+                      <div class="chatUserName"> 
+                        <h5 >{{message.username}}</h5>
+                           
+                      </div>
+                      <div class="userMsg">
+                        <span>{{message.message}}</span>
+                      </div>
+                      <div class="msgTime">
+                        <p>{{message.timestamp}}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
+                
               </div>
-              
+            </section>
+            
+            <div class="row mx-auto pt-2" >
+              <span class="text-5 text-success" style="font-size:30px;" alt="enlarge screen"><i class="fas fa-chevron-circle-left fa-5 "></i></span>
             </div>
-          
 
           
-            <div class="slackMsgSection col-sm-12 mt-2 ml-0">
+            <div class="row no-gutters mx-auto">
+              <div class="slackMsgSection col-sm-12 mt-2 ml-0">
              
-              <div *ngIf = "uses_slack == 'true'" style="width:100%;"> 
-                <form>
-                  <textarea #sendSlackMsg (keyup.enter)="sendAMessage(sendSlackMsg)" placeholder="Send a message" class="inputMsg" #chat_text= "ngModel" [(ngModel)]= "wsService.chat_text" name=chat_text id="inputSlackMsg" cols="5" rows="100" style=" padding-right:13px;">
-                    </textarea>
-                </form>
-               </div>  
-      
-            </div> 
+                <div *ngIf = "uses_slack == 'true'" style="width:100%;"> 
+                  <form>
+                    <textarea #sendSlackMsg (keyup.enter)="sendAMessage(sendSlackMsg)" placeholder="Send a message" class="inputMsg" #chat_text= "ngModel" [(ngModel)]= "wsService.chat_text" name=chat_text id="inputSlackMsg" style="padding-right:13px;">
+                      </textarea>
+                  </form>
+                 </div>  
+        
+              </div> 
+            </div>
             
           
           

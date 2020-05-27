@@ -147,8 +147,10 @@ body {
   
 }
 
-.stayhere{
-  position:fixed;
+#messages{
+  max-height:78vh;
+  min-height:78vh;
+  overflow-y: scroll;
 }
 
 .ex h4 {
@@ -1435,13 +1437,13 @@ summary:focus {
 #inputSlackMsg {
   position: relative;
   bottom: 0;
-  width: 105%;
-  align:center;
+  width: 100%;
   background-color: white;
   padding: 10px;
   height: 10vh;
   background: rgba(255, 255, 255, 0.2);
   border: none;
+  border-radius: 10px;
   color: white;
   resize: none;
   }
@@ -1483,6 +1485,7 @@ summary:focus {
 .slackMsgSection {
   margin-top: 8em;
   margin-left:0;
+  position: relative;
 }
 
 .nav-tabs .nav-link {
