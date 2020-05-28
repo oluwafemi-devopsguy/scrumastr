@@ -128,7 +128,9 @@ body {
   max-height:95vh;
 }
 
-@media screen and (max-height:440px) and (max-width:449px) and (min-height:300px) and (min-width:200px){
+
+
+@media screen and (max-height:440px) and (max-width:1760px) and (min-height:320px) and (min-width:1200px){
   .splitright{
   background: #343434;
   overflow-y: scroll;
@@ -136,10 +138,16 @@ body {
   min-height:85vh;
   max-height:85vh; 
   }
+
+  #messages{
+    height:70%;
+    overflow-y: scroll;
+    overflow-x:hidden;
+  }
 }
 
 
-@media screen and (min-width:450px) and (min-height:580px)
+@media screen and (min-width:450px) and (min-height:460px)
 {
   .splitright {
  
@@ -153,13 +161,15 @@ body {
     
     
   }
+
+  #messages{
+    height:80%;
+    overflow-y: scroll;
+    overflow-x:hidden;
+  }
 }
 
-#messages{
-  height:80%;
-  overflow-y: scroll;
-  overflow-x:auto;
-}
+
 
 .ex h4 {
   font-family: 'Roboto', sans-serif;
