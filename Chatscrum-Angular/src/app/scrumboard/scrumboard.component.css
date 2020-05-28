@@ -128,29 +128,37 @@ body {
   max-height:95vh;
 }
 
-
-
-
-
-
-
-.splitright {
- 
-  /*right: 0;*/
-  
+@media screen and (max-height:440px) and (max-width:449px) and (min-height:300px) and (min-width:200px){
+  .splitright{
   background: #343434;
   overflow-y: scroll;
   margin-top: -1px;
-  min-height:95vh;
-  max-height:95vh; 
-  
-  
+  min-height:85vh;
+  max-height:85vh; 
+  }
+}
+
+
+@media screen and (min-width:450px) and (min-height:580px)
+{
+  .splitright {
+ 
+    /*right: 0;*/
+    
+    background: #343434;
+    overflow-y: scroll;
+    margin-top: -1px;
+    min-height:95vh;
+    max-height:95vh; 
+    
+    
+  }
 }
 
 #messages{
-  max-height:78vh;
-  min-height:78vh;
+  height:80%;
   overflow-y: scroll;
+  overflow-x:auto;
 }
 
 .ex h4 {
@@ -1486,6 +1494,7 @@ summary:focus {
   margin-top: 8em;
   margin-left:0;
   position: relative;
+  bottom:0;
 }
 
 .nav-tabs .nav-link {
