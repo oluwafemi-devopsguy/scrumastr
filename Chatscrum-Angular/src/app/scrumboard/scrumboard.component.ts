@@ -115,7 +115,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
       
       if (mutation.type == 'childList') {
         
-        let elem = document.getElementById('splitRight');
+        let elem = document.getElementById('messages');
         elem.scrollTop = elem.scrollHeight;
         
       }
