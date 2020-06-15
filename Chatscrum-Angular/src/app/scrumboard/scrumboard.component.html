@@ -1218,7 +1218,7 @@
               <section id="messages" class="pb-2 mx-auto" >
                 <div class="container"  #con id='con'>
                   <div class="slackChat" #conn id="conn">
-                    <div *ngFor="let message of wsService.messages">
+                    <div *ngFor="let message of my_messages">
                       <div class="container slackMessage" style="position: relative;">
                         <img src={{message.profile_picture}} alt="" class="chatProfilePicture">
                         <div class="chatUserName"> 

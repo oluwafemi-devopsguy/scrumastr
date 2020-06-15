@@ -223,8 +223,9 @@ def get_recentmessages(request):
         #Fetch all recent messages by their project name
         all_messages = ChatMessage.objects.filter(project_name=project_name).order_by('-id')[:80]
         result_list =(list(all_messages.values('username', 'project_name', 'message', 'timestamp', 'profile_picture')))
-
-        data = {"messages":result_list[::-1]}
+       
+        data = {"type":"all_messages","messages":result_list[::-1]}
+        
         
         _send_to_connection(
             connectionId,
@@ -241,46 +242,244 @@ def get_recentmessages(request):
     except:
         return JsonResponse({'message': 'Token not authenticated'})
 
-def move_goal(request):
-    body = _parse_body(request.body)
-    connectionId = body['connectionId']
-    project_id = body['body']['project_id']
-    from_id = body['body']['from_id'][1:]
-    to_id = body['body']['to_id'][1:]
-    token = body['body']['token']
+class GetProjectGoals(viewsets.ModelViewSet):
+    #queryset = ScrumProject.objects.all()
+    #serializer_class = ScrumProjectSerializer
 
-    try:
-        Token.objects.get(key=token)
+    def create(self, request, *args, **kwargs):
+        
+        print(request.body)
+        body = _parse_body(request.body)
+        connectionId = body['connectionId']
+        project_id = body['body']['project_id']
+        token = body['body']['token']
+
+        try: 
+            Token.objects.get(key=token)
+            query = ScrumProject.objects.get(pk=project_id)
+            slack_installed = query.scrumslack_set.all().exists()
+        # slack_app_id = ChatscrumSlackApp.objects.all().first()
+            my_data = {"type":"get_goals", "project_name":query.name, "data":filtered_users(project_id), "slack_installed":slack_installed}
+            
+            _send_to_connection(connectionId, my_data)
+            return JsonResponse({"message":""})
+        except ScrumProject.DoesNotExist:
+            return JsonResponse({'detail': 'Not found.'})
+
+    
+class GetAllMessagesViewSet(viewsets.ModelViewSet):
+    queryset = ChatMessage.objects.all()
+    serializer_class = ChatMessageSerializer
+
+
+    def create(self, request):
+        project_name = request.data['project_name']
+        token = request.data['token']
+
+        try:
+            query= ChatMessage.objects.filter(project_name = project_name).order_by('-id')[:80]
+            values = list(query.values('username', 'project_name', 'message', 'timestamp', 'profile_picture'))
+            data = values[::-1]
+           
+            
+
+        except:
+            return JsonResponse({"message":"not found"})
+
+        return JsonResponse({"message":data})
+
+
+class ChangeGoalOwnerViewSet(viewsets.ModelViewSet):
+    queryset = ScrumGoal.objects.all()
+    serializer_class = ScrumGoalSerializer
+
+
+    def create(self, request):
+        body = _parse_body(request.body)
+        connectionId = body['connectionId']
+        project_id = body['body']['project_id']
+        from_id = body['body']['from_id'][1:]
+        to_id = body['body']['to_id'][1:]
+        token = body['body']['token']
+
+        try:
+            Token.objects.get(key=token)
+            scrum_project = ScrumProject.objects.get(id=project_id)
+            scrum_project_role = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
+
+            if (scrum_project_role.role == "Developer" or scrum_project_role.role == "Quality Analyst"):
+                return JsonResponse({'message':"You are not allowed to move goal"})
+
+            goal = scrum_project.scrumgoal_set.get(goal_project_id=from_id, moveable=True)
+            if goal.moveable == True:
+                print(to_id)
+                author = ScrumProjectRole.objects.get(id=to_id)
+                goal.user = author
+                createHistory(goal.name, goal.status, goal.goal_project_id, goal.hours, goal.time_created, goal.user, goal.project, goal.file, goal.id, 'Goal Reassigned Successfully by')
+                goal.save()
+                data = {'message': 'Goal Reassigned Successfully!', 'data': filtered_users(project_id)}
+                connection = Connection.objects.all()
+                for connect in connection:
+                    _send_to_connection(
+                        connect.connection_id,
+                        data
+                    )
+            # return JsonResponse({'message': 'Goal Reassigned Successfully!', 'data': filtered_users(project_id)})
+            else:
+                return JsonResponse({'message': 'Permission Denied: Sprint Period Elapsed!!!', 'data': filtered_users(request.data['project_id'])})
+
+        except:
+            return JsonResponse({'message':'You are not Authenticated'})
+
+
+class MoveGoalViewSet(viewsets.ModelViewSet):
+    queryset = ScrumGoal.objects.all()
+    serializer_class = ScrumGoalSerializer
+
+    def create(self, request):
+        body = _parse_body(request.body)
+        username = body['body']['username']
+        user = User.objects.get(username=username)
+        request.user = user
+        
+        
+        
+        goal_id = body['body']['goal_id'][1:]
+        to_id = int(body['body']['to_id'])
+        project_id = body['body']['project_id']
+        hours = body['body']['hours']
+        push_id = body['body']['push_id']
         scrum_project = ScrumProject.objects.get(id=project_id)
-        scrum_project_role = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
+        scrum_project_a = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
+        scrum_project_b = scrum_project.scrumgoal_set.get(goal_project_id=goal_id, moveable=True).user
+       # goal_id = request.data['goal_id'][1:]
+       # to_id = int(request.data['to_id'])
+        goal_item = scrum_project.scrumgoal_set.get(goal_project_id=goal_id, moveable=True)
+        connections = Connection.objects.filter(project=scrum_project)
+        print(goal_id)
+        print(scrum_project_b.user.user)
+        print(connections)
+        print(goal_item.status)
+        
+        
+        
 
-        if (scrum_project_role.role == "Developer" or scrum_project_role.role == "Quality Analyst"):
-            return JsonResponse({'message':"You are not allowed to move goal"})
+        
+        if to_id == 4:
+            if scrum_project_a.role == 'Developer':
+                if request.user != scrum_project_b.user.user:
+                    data = {'type':'move_goal','message': 'Permission Denied: Unauthorized Deletion of Goal.', 'data': filtered_users(project_id)}
+                   
+                    for connect in connections:
+                        _send_to_connection(connect.connection_id, data)
+                    return JsonResponse({'message': 'Permission Denied: Unauthorized Deletion of Goal.', 'data': filtered_users(project_id)})
+                    
+            del_goal = scrum_project.scrumgoal_set.get(goal_project_id=goal_id, moveable=True)
+            del_goal.visible = False
+            del_goal.save()         
+            createHistory(goal_item.name, goal_item.status, goal_item.goal_project_id, goal_item.hours, goal_item.time_created, goal_item.user, goal_item.project, goal_item.file, goal_item.id, 'Goal Removed Successfully by')
+            data = {'type':'move_goal','message': 'Goal Removed Successfully!'}
 
-        goal = scrum_project.scrumgoal_set.get(goal_project_id=from_id, moveable=True)
-        if goal.moveable == True:
-            print(to_id)
-            author = ScrumProjectRole.objects.get(id=to_id)
-            goal.user = author
-            createHistory(goal.name, goal.status, goal.goal_project_id, goal.hours, goal.time_created, goal.user, goal.project, goal.file, goal.id, 'Goal Reassigned Successfully by')
-            goal.save()
-            data = {'message': 'Goal Reassigned Successfully!', 'data': filtered_users(project_id)}
-            connection = Connection.objects.all()
-            for connect in connection:
-                _send_to_connection(
-                    connect.connection_id,
-                    data
-                )
-           # return JsonResponse({'message': 'Goal Reassigned Successfully!', 'data': filtered_users(project_id)})
-        else:
-            return JsonResponse({'message': 'Permission Denied: Sprint Period Elapsed!!!', 'data': filtered_users(request.data['project_id'])})
+            for connect in connections:
+                 _send_to_connection(connect.connection_id, data)
+            return JsonResponse({'message': 'Goal Removed Successfully!'})
+        else:           
+            group = scrum_project_a.role
+            from_allowed = []
+            to_allowed = []
+            if group == 'Developer':
+                if request.user != scrum_project_b.user.user:
+                    data = {'type':'move_goal','message': 'Permission Denied: Unauthorized Movement of Goal.', 'data': filtered_users(project_id)}
+                    for connect in connections:
+                        _send_to_connection(connect.connection_id, data)
+                    return JsonResponse({'message': 'Permission Denied: Unauthorized Movement of Goal.', 'data': filtered_users(project_id)})
+            
+            if group == 'Owner':
+                from_allowed = [0, 1, 2, 3]
+                to_allowed = [0, 1, 2, 3]
+            elif group == 'Admin':
+                from_allowed = [0, 1, 2]
+                to_allowed = [0, 1, 2]
+            elif group == 'Developer':
+                from_allowed = [0, 1, 2]
+                to_allowed = [0, 1, 2]
+            elif group == 'Quality Analyst':
+                from_allowed = [0, 1, 2, 3]
+                to_allowed = [0, 1, 2, 3]
+            
+            state_prev = goal_item.status
+            print("=======================PATCH REQUEST DATA======================")
+            print(body['body'])
+            
+            if (goal_item.status in from_allowed) and (to_id in to_allowed):
+                goal_item.status = to_id
+            elif group == 'Quality Analyst' and goal_item.status == 2 and to_id == 0:
+                goal_item.status = to_id
+            elif request.user == scrum_project_b.user.user:
+                if goal_item.status == 1 and to_id == 0:
+                    goal_item.status = to_id
+                elif goal_item.status == 0 and to_id == 1:
+                    goal_item.status = to_id
+                else:
+                    print(request.user.scrumuser)
+                    data = {'type':'move_goal','message': 'Permission Denied: Unauthorized Movement of Goal.', 'data': filtered_users(project_id)}
+                    
+                    for connect in connections:
+                        _send_to_connection(connect.connection_id, data)
+                    return JsonResponse({'message': 'Permission Denied: Unauthorized Movement of Goal.', 'data': filtered_users(project_id)})
+            else:
+                data = {'type':'move_goal','message': 'Permission Denied: Unauthorized Movement of Goal.', 'data': filtered_users(project_id)}
+                for connect in connections:
+                    _send_to_connection(connect.connection_id, data)
+                return JsonResponse({'message': 'Permission Denied: Unauthorized Movement of Goal.', 'data': filtered_users(project_id)})
+            if goal_item.moveable == True:
+                message = 'Goal Moved Successfully!'
+                if to_id == 2 and hours :
+                    goal_item.push_id = push_id
+                    goal_item.status = to_id
+                    goal_item.hours = goal_item.hours
+                    goal_item.push_id = push_id
+                    message = 'Goal Moved Successfully! Push ID is ' + push_id
+                if hours > 8:
+                    goal_item.status = state_prev
+                    message = 'Error: Task cannot Exceeds 8hours or less than an hour of completion.'
+                elif hours == -1 and goal_item.hours == -1 and to_id > 1:
+                     goal_item.status = state_prev
+                     message = 'Error: A Task must have hours assigned.'
+                elif hours == -13:
+                     goal_item.status = state_prev
+                     if push_id == "Canceled":
+                        message = "Error,  No Work ID assigned"
+                     else:
+                        message = 'Error: A Task must have hours assigned.'
+                elif to_id == 2 and state_prev == 1 :
+                    goal_item.hours = hours
+                    message = 'Goal Moved Successfully! Hours Applied!'
 
-    except:
-        return JsonResponse({'message':'You are not Authenticated'})
+                if to_id == 2 and hours < 8 and push_id == "Null Value":
+                    goal_item.status = state_prev
+                    message = 'Error: No PUSH-ID added.'               
 
-#     )
 
-# Create your views here.
+                if state_prev == 1 and to_id == 0:
+                    goal_item.days_failed = goal_item.days_failed + 1 
+                
+                self.createHistory(goal_item.name, goal_item.status, goal_item.goal_project_id, goal_item.hours, goal_item.time_created, goal_item.user, goal_item.project, goal_item.file, goal_item.id, 'Goal Moved Successfully by')          
+                goal_item.save()
+            else:
+                message = "Sprint Period Elapsed, The Goal Cannot be Moved!"
+            data = {'type':'move_goal','message': message, 'data': filtered_users(project_id)}
+            for connect in connections:
+                _send_to_connection(connect.connection_id, {'type':'move_goal', 'data':data})
+            return JsonResponse({'message': message, 'data': filtered_users(project_id)})
+
+    def createHistory(self, name, status, goal_project_id, hours, time_created, user, project, file, goal, message):
+        concat_message = message + self.request.user.username
+        print(concat_message)
+        goal = ScrumGoalHistory (name=name, status=status, time_created = time_created, goal_project_id=goal_project_id, user=user, project=project, file=file, goal_id=goal, done_by=self.request.user, message=concat_message)
+        goal.save()
+        return
+
 
 '''
 def create_user(request):
@@ -575,8 +774,8 @@ class ScrumProjectViewSet(viewsets.ModelViewSet):
             slack_installed = queryset.scrumslack_set.all().exists()
             slack_app_id = ChatscrumSlackApp.objects.all().first()
             print("======================Slack exists=======================" )
-            print(slack_installed)
             return JsonResponse({'project_name': queryset.name,"slack_app_id":slack_app_id.CLIENT_ID, "slack_installed":slack_installed, 'data': filtered_users(pk)})
+
         except ScrumProject.DoesNotExist:
             return JsonResponse({'detail': 'Not found.'})
         except ChatscrumSlackApp.DoesNotExist:
@@ -631,7 +830,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
         scrum_project_role = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
         author = ScrumProjectRole.objects.get(id=user_id)
         sprint = ScrumSprint.objects.filter(goal_project_id = request.data['project_id'])
-   
+        print(type(request.user))
         if scrum_project_role != author and scrum_project_role.role != 'Owner': 
             return JsonResponse({'message': 'Permission Denied: Unauthorized Addition of a Goal.', 'data': filtered_users(request.data['project_id'])})
         
@@ -670,6 +869,9 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
         goal_id = request.data['goal_id'][1:]
         to_id = int(request.data['to_id'])
         goal_item = scrum_project.scrumgoal_set.get(goal_project_id=goal_id, moveable=True)
+
+        print(type(request.user))
+        print(type(scrum_project_b.user.user))
 
         
         if to_id == 4:
@@ -717,6 +919,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
                 elif goal_item.status == 0 and to_id == 1:
                     goal_item.status = to_id
                 else:
+                   
                     return JsonResponse({'message': 'Permission Denied: Unauthorized Movement of Goal.', 'data': filtered_users(request.data['project_id'])})
             else:
                 return JsonResponse({'message': 'Permission Denied: Unauthorized Movement of Goal.', 'data': filtered_users(request.data['project_id'])})
@@ -756,7 +959,7 @@ class ScrumGoalViewSet(viewsets.ModelViewSet):
                 goal_item.save()
             else:
                 message = "Sprint Period Elapsed, The Goal Cannot be Moved!"
-            
+            print("noted")
             return JsonResponse({'message': message, 'data': filtered_users(request.data['project_id'])})
             
     def put(self, request):
@@ -901,6 +1104,7 @@ def jwt_response_payload_handler(token, user=None, request=None):
         'project_id': project.id,
         'role_id': project.scrumprojectrole_set.get(user=user.scrumuser).id,
         'user_slack' : user_slack,
+        'project_name': project.name,
         'project_slack' : project_slack,
         "slack_username": slack_username,
         "to_clear_board": project.to_clear_TFT,
@@ -1272,10 +1476,10 @@ class Events(APIView):
                        
                         proj = ScrumProject.objects.get(name=project_name)
                         my_messages = {"username":slack_user_nick, "message":slack_message, "project_name":project_name, "profile_picture":slack_user.slack_profile_picture, "timestamp":datetime.datetime.now().strftime("%I:%M %p . %d-%m-%Y")}
-                        data = {"messages":[my_messages]}
+                        data = {"type":"all_messages", "messages":[my_messages]}
 
                         connections = Connection.objects.filter(project = proj)
-
+                        print(connections)
                         for conn in connections:
                             _send_to_connection(conn.connection_id, data)
 

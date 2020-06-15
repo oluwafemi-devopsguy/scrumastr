@@ -6,6 +6,10 @@ import { Router } from '@angular/router';
 import { WebsocketService } from '../websocket.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DataService } from '../data.service';
+import {concatMap, concat} from 'rxjs/operators';
+import {Observable, Subject, BehaviorSubject} from "rxjs";
+import ReconnectingWebSocket from "reconnecting-websocket";
+
 
 import * as $AB from 'jquery';
 import { element } from 'protractor';
@@ -60,6 +64,15 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
   public uses_slack = sessionStorage.getItem('user_slack');
   public imageUploaded;
 
+  public ws: any;
+  public ws_url = this.wsService.ws_url;
+  public my_messages = [];
+  public chat_text:String;
+  public all_goals = new BehaviorSubject([]);
+  public project_name:String;
+  public mutableObserver: MutationObserver;
+  full_data = localStorage.getItem('full_data');
+
   @ViewChildren('details') details: QueryList<any>;
 
   constructor(
@@ -70,20 +83,27 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
     private route: ActivatedRoute,
     public wsService: WebsocketService,
   ) { 
-   
+    this.ws = new ReconnectingWebSocket(this.ws_url);
   }
 
-  ngOnInit() {
+  ngOnInit() { 
+    //this.wsService.getProjectGoals().subscribe()
+   
     this.load()
     this.rose()
     this.close()
     this.pageTitle.setTitle('Scrumboard')
-    this.getAllUsersGoals()
+    this.getMessages().subscribe(data=> {
+      this.getAllUsersGoals(data)
+    })
+    
+    console.log('starting')
     this.getAllSprints()
-    this.wsService.getMessages()
+    
+    console.log('starting')
     this.hideAddTaskandNoteBTN();
     this.openSlackModal();
-
+    
     let observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
        
@@ -109,7 +129,6 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
 
    ngAfterViewInit(): void {
      
-   
     let observer = new MutationObserver((mutations) => {
      mutations.forEach((mutation) => {
       
@@ -146,7 +165,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
   }
 
   sendAMessage(input) {
-    this.wsService.sendMessage();
+    this.sendMessage();
     input.value = ''
   }
 
@@ -862,22 +881,19 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
     }
   }
 
-  getAllUsersGoals() {
-    this.dataService.allProjectGoals(this.project_id).subscribe(
-      data => {
-        this.loggedProject = data['project_name']
-        sessionStorage.setItem('proj_name', data['project_name'])
-        this.participants = data['data']
+  getAllUsersGoals(data) {
+      
+       // console.log(this.wsService.all_goals.getValue())
+       //concat(this.wsService.getMessages(), this.wsService.all_goals.getValue())
+       
+       this.loggedProject = sessionStorage.getItem('project_name')
+       this.participants = data['data']
+
         if (this.participants.length != 0) {
           this.filterUsers(this.participants)
           this.filterUserNotes(this.participants)
         }
-      },
-
-      error => {
-        console.log(error)
-      }
-    )
+     
   }
 
   changeLoggedSprint(selectedSprintID, createDate, endDate) {
@@ -1133,7 +1149,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
       this.NotificationBox('Goal name cannot be empty!')
     }
   }
-
+  /*
   processMoveGoalRequest() {
     this.dataService.moveGoalRequest(this.goal_id, this.to_id, this.hours, this.push_id, this.project_id).subscribe(
       data => {
@@ -1151,7 +1167,35 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
         this.NotificationBox('Unexpected error!, please try move the task again.')
       }
     )
-  }
+  } */
+
+  processMoveGoalRequest():any {
+    
+    this.moveGoal(this.goal_id, this.to_id, this.hours, this.push_id, this.project_id).subscribe()
+    console.log(this.wsService.all_goals.getValue())
+    this.getMessages().subscribe(
+     data => {
+       console.log(data['data']['data'])
+        this.NotificationBox(data['data']['message']);
+        this.users = [];
+        this.TFTD = [];
+        this.TFTW = [];
+        this.done = [];
+        this.verify = [];
+        this.filterUsers(data['data']['data']);
+        console.log('okayyyyy')
+      },
+      error => {
+        console.log(error)
+       this.NotificationBox('Unexpected error!, please try move the task again.')
+      },
+
+      
+    )
+    
+    
+    
+  } 
 
   drop(event: CdkDragDrop<string[]>) {
     this.to_id = event.container.id[event.container.id.length-1];
@@ -1172,6 +1216,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
         } else if (goal_for != event.container.id.slice(0, event.container.id.indexOf('e')) && this.loggedUserRole == "Owner" || this.loggedUserRole == "Admin" || this.loggedUserRole == "Quality Analyst") {
           this.dataService.changeGoalOwner(this.goal_id, 'u'+event.container.id.slice(0, event.container.id.indexOf('e')), this.project_id).subscribe(
             data => {
+              console.log("changing")
               this.NotificationBox(data['message']);
               this.users = [];
               this.TFTD = [];
@@ -1191,10 +1236,13 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
         } else {
           this.processMoveGoalRequest();
         }
+        console.log("finished")
         transferArrayItem(event.previousContainer.data,
           event.container.data,
           event.previousIndex,
           event.currentIndex);
+
+        console.log("finished")
       }
     }else {
       this.NotificationBox(`Permission Denied! You Can Only Move Task For ${this.loggedUser}`)
@@ -1291,4 +1339,189 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
     })
   }
 
+
+  getProjectGoals():Observable<any>{
+    // ws = new WebSocket(this.ws_url);
+        return new Observable <any>(
+          observer => {
+           
+
+             const context = {
+               action: "getProjectGoals",
+               project_id : String(sessionStorage.getItem('project_id')),
+               "token": sessionStorage.getItem('ws_token')
+             }
+             
+             this.ws.send(JSON.stringify(context))
+             console.log('sending')
+             
+           
+   
+           
+           this.ws.onmessage = (event) => {
+              if (JSON.parse(event.data)['type'] == 'get_goals') {
+               observer.next(event.data)
+               console.log("goals gotten");
+               let data = JSON.parse(event.data)
+               console.log(data['data'])
+               
+               console.log(data)
+                 if (data['data']!==0) {
+                 sessionStorage.setItem('proj_name', data['project_name'])
+                 sessionStorage.setItem('user_data', JSON.stringify(data['data']))
+                 }  
+                  
+               observer.error("Error") 
+              }
+              
+             } 
+
+             
+             
+
+        })
+        
+    
+       
+     
+ }
+
+  
+
+  
+
+ 
+
+  getMessages():Observable<any> {
+    
+    return new Observable(observer => {
+      this.ws.onopen = (event) => {
+        console.log('opened')
+        const secondContext = {
+          action: "connectToProject",
+          project_name: String(sessionStorage.getItem('project_name'))
+        }
+  
+        this.ws.send(JSON.stringify(secondContext));
+  
+  
+        const context = {
+          action:"getRecentMessages", 
+          project_name:String(sessionStorage.getItem('project_name')),
+          "token": sessionStorage.getItem('ws_token')
+        };
+  
+        this.ws.send(JSON.stringify(context));
+  
+        const context_3 = {
+          action: "getProjectGoals",
+          project_id : String(sessionStorage.getItem('project_id')),
+          "token": sessionStorage.getItem('ws_token')
+        }
+        
+        this.ws.send(JSON.stringify(context_3))
+        console.log('sending')
+  
+      };
+  
+  
+      this.ws.onmessage = (event) => {
+  
+        let data = JSON.parse(event.data) 
+  
+          if (data['type'] == 'all_messages') {
+            console.log(data)
+            if (data['messages'] !== undefined) {
+  
+              data['messages'].forEach((message) => {
+                this.my_messages.push(message);
+              })
+            }
+          }
+  
+          if (data['type'] == 'get_goals') {
+            console.log(data)
+            this.all_goals.next(data)
+            observer.next(data)
+            sessionStorage.setItem('goals', JSON.stringify(data));
+          }
+  
+          if (data['type'] == 'move_goal') {
+            this.all_goals.next(data)
+            observer.next(data)
+            console.log(data['data']['data'])
+            this.users = [];
+            this.TFTD = [];
+            this.TFTW = [];
+            this.done = [];
+            this.verify = [];
+            this.filterUsers(data['data']['data'])
+            
+            
+            
+            console.log(this.all_goals)
+          }
+  
+          
+      }
+     
+    })
+    
+  }
+
+  moveGoal(goal_id, to_id, hours, push_id=null, project_id):Observable<any> {
+    return new Observable(observer => {
+      const context = {
+        "action":"moveGoal",
+        "project_id":project_id,
+        "to_id" : to_id,
+        "username": sessionStorage.getItem('username'),
+        "goal_id": goal_id,
+        "push_id": push_id,
+        "hours":hours,
+        "token": sessionStorage.getItem('ws_token')
+      }
+  
+      this.ws.send(JSON.stringify(context));
+      observer.next("Done")
+    })
+    
+  }
+
+
+
+
+  getCurrentTime() {
+    let currentDate = new Date();
+    return formatDate(currentDate, "h:mm a . dd-MM-yyyy", 'en-US');
+    //return new Date().toLocaleTimeString().replace(/([\d]+:[\d]{2})(:[\d]{2})(.*)/, "$1$3");
+  }
+
+  autoScroll() {
+    window.scrollBy(0,1);
+    let scrolldelay = setTimeout('autoscroll()', 10);
+  }
+
+  sendMessage() {
+    if (this.chat_text) {
+      let context = {
+        "action": "sendMessage",
+        "project_name": String(sessionStorage.getItem('project_name')),
+        "username": String(sessionStorage.getItem('realname')),
+        "timestamp": this.getCurrentTime(),
+        "message": this.chat_text,
+        "token": sessionStorage.getItem('ws_token')
+        
+      }
+
+      this.ws.send(JSON.stringify(context));
+      this.chat_text = '';
+      
+      
+    }
+  }
+
+
 }
+
+
