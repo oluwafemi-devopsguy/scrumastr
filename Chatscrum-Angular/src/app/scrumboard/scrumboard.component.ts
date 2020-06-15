@@ -9,6 +9,7 @@ import { DataService } from '../data.service';
 import {concatMap, concat} from 'rxjs/operators';
 import {Observable, Subject, BehaviorSubject} from "rxjs";
 import ReconnectingWebSocket from "reconnecting-websocket";
+import {formatDate} from '@angular/common';
 
 
 import * as $AB from 'jquery';
@@ -67,7 +68,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
   public ws: any;
   public ws_url = this.wsService.ws_url;
   public my_messages = [];
-  public chat_text:String;
+  public chat_text = '';
   public all_goals = new BehaviorSubject([]);
   public project_name:String;
   public mutableObserver: MutationObserver;
@@ -97,10 +98,10 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
       this.getAllUsersGoals(data)
     })
     
-    console.log('starting')
+    
     this.getAllSprints()
     
-    console.log('starting')
+  
     this.hideAddTaskandNoteBTN();
     this.openSlackModal();
     
@@ -1172,10 +1173,10 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
   processMoveGoalRequest():any {
     
     this.moveGoal(this.goal_id, this.to_id, this.hours, this.push_id, this.project_id).subscribe()
-    console.log(this.wsService.all_goals.getValue())
+    
     this.getMessages().subscribe(
      data => {
-       console.log(data['data']['data'])
+     
         this.NotificationBox(data['data']['message']);
         this.users = [];
         this.TFTD = [];
@@ -1183,7 +1184,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
         this.done = [];
         this.verify = [];
         this.filterUsers(data['data']['data']);
-        console.log('okayyyyy')
+        
       },
       error => {
         console.log(error)
@@ -1236,13 +1237,13 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
         } else {
           this.processMoveGoalRequest();
         }
-        console.log("finished")
+        
         transferArrayItem(event.previousContainer.data,
           event.container.data,
           event.previousIndex,
           event.currentIndex);
 
-        console.log("finished")
+      
       }
     }else {
       this.NotificationBox(`Permission Denied! You Can Only Move Task For ${this.loggedUser}`)
@@ -1396,7 +1397,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
     
     return new Observable(observer => {
       this.ws.onopen = (event) => {
-        console.log('opened')
+       
         const secondContext = {
           action: "connectToProject",
           project_name: String(sessionStorage.getItem('project_name'))
@@ -1420,7 +1421,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
         }
         
         this.ws.send(JSON.stringify(context_3))
-        console.log('sending')
+      
   
       };
   
@@ -1430,7 +1431,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
         let data = JSON.parse(event.data) 
   
           if (data['type'] == 'all_messages') {
-            console.log(data)
+           
             if (data['messages'] !== undefined) {
   
               data['messages'].forEach((message) => {
@@ -1440,7 +1441,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
           }
   
           if (data['type'] == 'get_goals') {
-            console.log(data)
+            
             this.all_goals.next(data)
             observer.next(data)
             sessionStorage.setItem('goals', JSON.stringify(data));
@@ -1449,7 +1450,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
           if (data['type'] == 'move_goal') {
             this.all_goals.next(data)
             observer.next(data)
-            console.log(data['data']['data'])
+           
             this.users = [];
             this.TFTD = [];
             this.TFTW = [];
@@ -1459,7 +1460,6 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
             
             
             
-            console.log(this.all_goals)
           }
   
           
@@ -1503,7 +1503,9 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
   }
 
   sendMessage() {
+    
     if (this.chat_text) {
+     
       let context = {
         "action": "sendMessage",
         "project_name": String(sessionStorage.getItem('project_name')),
@@ -1513,7 +1515,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
         "token": sessionStorage.getItem('ws_token')
         
       }
-
+      
       this.ws.send(JSON.stringify(context));
       this.chat_text = '';
       

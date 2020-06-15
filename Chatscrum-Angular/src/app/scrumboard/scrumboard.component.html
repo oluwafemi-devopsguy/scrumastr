@@ -1248,7 +1248,7 @@
                
                   <div *ngIf = "uses_slack == 'true'" style="width:100%;"> 
                     <form>
-                      <textarea #sendSlackMsg (keyup.enter)="sendAMessage(sendSlackMsg)" placeholder="Send a message" class="inputMsg" #chat_text= "ngModel" [(ngModel)]= "wsService.chat_text" name=chat_text id="inputSlackMsg" style="padding-right:13px;">
+                      <textarea #sendSlackMsg (keyup.enter)="sendAMessage(sendSlackMsg)" placeholder="Send a message" class="inputMsg" #chattext= "ngModel" [(ngModel)]= "chat_text" name=chattext id="inputSlackMsg" style="padding-right:13px;">
                         </textarea>
                     </form>
                    </div>  
