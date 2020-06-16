@@ -1400,7 +1400,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
        
         const secondContext = {
           action: "connectToProject",
-          project_name: String(sessionStorage.getItem('project_name'))
+          project_id: String(sessionStorage.getItem('project_id'))
         }
   
         this.ws.send(JSON.stringify(secondContext));
@@ -1408,7 +1408,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
   
         const context = {
           action:"getRecentMessages", 
-          project_name:String(sessionStorage.getItem('project_name')),
+          project_id:String(sessionStorage.getItem('project_id')),
           "token": sessionStorage.getItem('ws_token')
         };
   
@@ -1509,7 +1509,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
      
       let context = {
         "action": "sendMessage",
-        "project_name": String(sessionStorage.getItem('project_name')),
+        "project_id": String(sessionStorage.getItem('project_id')),
         "username": String(sessionStorage.getItem('realname')),
         "timestamp": this.getCurrentTime(),
         "message": this.chat_text,

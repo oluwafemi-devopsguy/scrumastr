@@ -65,11 +65,11 @@ def connect(request):
 def connect_to_project(request):
     body = _parse_body(request.body)
     connection_id = body['connectionId']
-    project_name = body['body']['project_name']
+    project_id = body['body']['project_id']
 
 
-    proj = ScrumProject.objects.get(name=project_name)
-    print("Connecting to project ", project_name, " with connect id ", connection_id )  
+    proj = ScrumProject.objects.get(pk=project_id)
+    print("Connecting to project ", project_id, " with connect id ", connection_id )  
     Connection(connection_id=connection_id, project=proj).save()
     
 
@@ -138,7 +138,7 @@ def createHistory(name, status, goal_project_id, hours, time_created, user, proj
 def send_message(request):
     body = _parse_body(request.body)
     username = body['body']['username']
-    project_name = body['body']['project_name']
+    project_name = body['body']['project_id']
     message = body['body']['message']
     timestamp = body['body']['timestamp']
     token = body['body']['token']
@@ -154,7 +154,7 @@ def send_message(request):
         
 
     
-        proj = ScrumProject.objects.get(name=project_name)
+        proj = ScrumProject.objects.get(pk=project_name)
        # chat = ChatMessage(username=username, message=message, project_name=proj, timestamp=timestamp)
        # chat.save()
         print(username)
@@ -214,8 +214,10 @@ def send_message(request):
 def get_recentmessages(request):
     body = _parse_body(request.body)
     connectionId = body['connectionId']
-    project_name = body['body']['project_name']
+    project_id = body['body']['project_id']
     token = body['body']['token']
+    proj = ScrumProject.objects.get(pk=project_id)
+    project_name = proj.name
 
     try:
         Token.objects.get(key=token)
