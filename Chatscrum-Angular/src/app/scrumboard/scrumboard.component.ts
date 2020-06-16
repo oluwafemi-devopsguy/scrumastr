@@ -1502,6 +1502,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
     let scrolldelay = setTimeout('autoscroll()', 10);
   }
 
+  
   sendMessage() {
     
     if (this.chat_text) {
