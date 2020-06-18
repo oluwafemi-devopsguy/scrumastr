@@ -501,8 +501,10 @@ class DeleteUserViewSet(viewsets.ModelViewSet):
             return JsonResponse({"message":"Permission Denied", "data":filtered_users(project_id)})
 
        # del_user = User.objects.get(pk=intended_user)
-        ScrumProjectRole.objects.get(project=project, id=intended_user).delete()
-
+        author = ScrumProjectRole.objects.get(project=project, id=intended_user)
+        if author.role == "Owner":
+            return JsonResponse({"message":"You cannot delete an Owner", "data":filtered_users(project_id)})
+        author.delete()
         return JsonResponse({"message":"User deleted Successfully", "data":filtered_users(project_id)})
 
 
