@@ -75,4 +75,11 @@ class ScrumProjectSerializer(serializers.HyperlinkedModelSerializer):
         model = ScrumProject
         fields = ('name', 'id', 'scrumprojectrole_set','scrumslack_set', 'project_count')
 
+class ChatMessageSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        
+        model = ChatMessage
+        fields = ('username', 'project_name', 'message', 'timestamp', 'profile_picture')
+
 
