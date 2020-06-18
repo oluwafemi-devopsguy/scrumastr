@@ -287,4 +287,8 @@ export class DataService {
     return this.http.patch( this.domain_protocol + this.domain_name + '/scrum/api/scrumprojectroles/', JSON.stringify({ 'role': role, 'id': 'm'+user_id, 'project_id': project_id }), this.getHeader());
   }
 
+  deleteUser(user_role, intended_user, project_id) {
+    return this.http.post(this.domain_protocol + this.domain_name + '/scrum/api/delete_user/', JSON.stringify({"intended_user":intended_user, "user_role":user_role, "project_id":project_id}), this.getHeader())
+  }
+
 }

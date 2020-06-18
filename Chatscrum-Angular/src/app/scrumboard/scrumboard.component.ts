@@ -1309,6 +1309,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
     if (this.loggedUserRole == "Owner" || this.loggedUserRole == "Admin") {
       this.dataService.changeUserRoleRequest(this.addToUser, this.new_role, this.project_id).subscribe(
         data => {
+          console.log(this.addToUser)
           this.NotificationBox(data['message'])
           // this.users = [];
           // this.TFTD = [];
@@ -1337,6 +1338,20 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
           }
         });
       }
+    })
+  }
+
+  deleteUser() {
+    this.dataService.deleteUser(this.loggedUserRole, this.addToUser, JSON.parse(sessionStorage.getItem('project_id'))).subscribe(data=> {
+      this.NotificationBox(data['message'])
+        this.users = [];
+        this.TFTD = [];
+        this.TFTW = [];
+        this.done = [];
+        this.verify = [];
+      this.filterUsers(data['data'])
+      this.close()
+      
     })
   }
 

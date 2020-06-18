@@ -20,6 +20,7 @@ def_router.register('scrumprojectroles', views.ScrumProjectRoleViewSet)
 def_router.register('scrumuserfetch', views.ScrumFetchViewSet)
 def_router.register(r'scrumsprint', views.SprintViewSet, base_name='scrumsprint')
 def_router.register('get_messages', views.GetAllMessagesViewSet)
+def_router.register('delete_user', views.DeleteUserViewSet)
 
 
 '''

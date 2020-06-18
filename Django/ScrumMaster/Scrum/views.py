@@ -483,6 +483,31 @@ class MoveGoalViewSet(viewsets.ModelViewSet):
         return
 
 
+class DeleteUserViewSet(viewsets.ModelViewSet):
+    queryset = ScrumProjectRole.objects.all()
+    serializer_class = ScrumProjectRoleSerializer
+
+    def create(self, request):
+        project_id = request.data['project_id']
+        user_role = request.data['user_role']
+        intended_user = request.data['intended_user']
+
+        project = ScrumProject.objects.get(pk=project_id)
+        
+
+        role = ScrumProjectRole.objects.get(project=project, user=request.user.scrumuser).role
+
+        if role == 'Developer' or role == 'Quality Analyst' or role == 'Admin':
+            return JsonResponse({"message":"Permission Denied", "data":filtered_users(project_id)})
+
+       # del_user = User.objects.get(pk=intended_user)
+        ScrumProjectRole.objects.get(project=project, id=intended_user).delete()
+
+        return JsonResponse({"message":"User deleted Successfully", "data":filtered_users(project_id)})
+
+
+        
+
 '''
 def create_user(request):
     return render(request, "create_user.html")
