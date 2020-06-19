@@ -1352,7 +1352,13 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
       this.filterUsers(data['data'])
       this.close()
       
-    })
+    },
+    
+    error=> {
+      sessionStorage.removeItem('token'); 
+      this.router.navigate(['home']);
+    }
+    )
   }
 
 
