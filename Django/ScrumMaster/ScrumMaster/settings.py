@@ -140,6 +140,7 @@ EMAIL_HOST_USER = 'usmanajibolaabass@gmail.com'
 EMAIL_PORT = 587
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
+LOGIN_URL = 'http://localhost:4200/login'
 
 
 # Password validation

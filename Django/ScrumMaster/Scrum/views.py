@@ -1103,6 +1103,7 @@ def jwt_response_payload_handler(token, user=None, request=None):
     proj_role = project.scrumprojectrole_set.get(user=user.scrumuser)
     nickname = proj_role.user.nickname
     email = proj_role.user.user.username
+    login = settings.LOGIN_URL
 
     owners_list = ScrumProjectRole.objects.filter(role="Owner", project=project)
     if project.scrumprojectrole_set.get(user=user.scrumuser).color == "white":
@@ -1119,7 +1120,7 @@ def jwt_response_payload_handler(token, user=None, request=None):
     #     print(ws_token.key)
     # except:
     #     pass
-    context = Context({"nickname":nickname, "project":project, "email":email})
+    context = Context({"nickname":nickname, "project":project, "email":email, "login":login})
     template = Template(
         '''
             <html>
@@ -1156,7 +1157,7 @@ def jwt_response_payload_handler(token, user=None, request=None):
                                         <tr> 
                                         <td style="padding:0;vertical-align:middle;padding-left:56px;padding-right:56px;word-break:break-word;word-wrap:break-word">
                                             <div style="margin-bottom:22px;margin-top:16px;text-align:center">
-                                                <a href="https://chatscrum.com/login" style="border-radius:3px;display:inline-block;font-size:17px;font-weight:700;line-height:27px;padding:13px 35px 12px 35px;text-align:center;text-decoration:none!important;font-family:'Open Sans',Helvetica,Arial,sans-serif;background-color:#26A69A;color:#fff; cursor:pointer;">
+                                                <a href="{{login}}" style="border-radius:3px;display:inline-block;font-size:17px;font-weight:700;line-height:27px;padding:13px 35px 12px 35px;text-align:center;text-decoration:none!important;font-family:'Open Sans',Helvetica,Arial,sans-serif;background-color:#26A69A;color:#fff; cursor:pointer;">
                                 
                                                     Login Here
                                                 </a>
@@ -1230,7 +1231,7 @@ def jwt_response_payload_handler(token, user=None, request=None):
                 <head>
                 <style>
                 p {
-                    font-size = 14px
+                    font-size = 18px
                 }
                 </style>
                 </head>

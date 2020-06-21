@@ -69,7 +69,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
   public ws_url = this.wsService.ws_url;
   public my_messages = [];
   public chat_text = '';
-  public all_goals = new BehaviorSubject([]);
+  public all_goals = new BehaviorSubject(null);
   public project_name:String;
   public mutableObserver: MutationObserver;
   full_data = localStorage.getItem('full_data');
@@ -1440,8 +1440,10 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
           project_id : String(sessionStorage.getItem('project_id')),
           "token": sessionStorage.getItem('ws_token')
         }
-        
-        this.ws.send(JSON.stringify(context_3))
+          if (this.all_goals.value == null) {
+          this.ws.send(JSON.stringify(context_3))
+          }
+       
       
   
       };
