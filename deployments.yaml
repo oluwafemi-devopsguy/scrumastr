@@ -63,7 +63,7 @@ spec:
     spec:
       containers:
       - name: chatscrum
-        image: diamondeyes/chatscrum:v1
+        image: showpopulous/chatscrum:v1
         ports:
         - containerPort: 5000
         - containerPort: 5100
