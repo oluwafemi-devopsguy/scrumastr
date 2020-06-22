@@ -1106,6 +1106,7 @@ def jwt_response_payload_handler(token, user=None, request=None):
     login = settings.LOGIN_URL
 
     owners_list = ScrumProjectRole.objects.filter(role="Owner", project=project)
+    admin_list = ScrumProjectRole.objects.filter(role="Admin", project=project)
     if project.scrumprojectrole_set.get(user=user.scrumuser).color == "white":
         
         proj_role.color = userBgColor()
@@ -1173,7 +1174,7 @@ def jwt_response_payload_handler(token, user=None, request=None):
                                         
                                         Thanks, <br>
                                         Chatscrum Team <br>
-                                        © Copyright 2020.
+                                      
 
 
                                     </p>
@@ -1261,6 +1262,46 @@ def jwt_response_payload_handler(token, user=None, request=None):
             )
             owner_email.content_subtype="html"
             owner_email.send(fail_silently=False)
+
+        for admin in admin_list:
+            email=admin.user.user.username
+            context = Context({"nickname":admin.user.nickname, "project":project, "email":admin.user.user.username, "user":nickname})
+            template = Template(
+                '''
+                <html>
+                <head>
+                <style>
+                p {
+                    font-size = 18px
+                }
+                </style>
+                </head>
+
+                <body>
+                <span> <p>Hi</p><h2>{{nickname}},</h2></span>
+                <p>
+                 {{user}} has just joined your project {{project.name}}. 
+                </p> 
+                
+
+                <p>Thanks,</p> 
+                <p>Chatscrum Team</p>
+                <p> © Copyright 2020.</p>
+                </body>
+                
+                </html>
+                '''
+            )
+
+            content=template.render(context)
+            admin_email = EmailMessage(
+            'New User Added',
+            content,
+            settings.DEFAULT_FROM_EMAIL, 
+            [email]
+            )
+            admin_email.content_subtype="html"
+            admin_email.send(fail_silently=False)
 
         print('Email successfully sent')
     user_slack = bool(proj_role.slack_email)
