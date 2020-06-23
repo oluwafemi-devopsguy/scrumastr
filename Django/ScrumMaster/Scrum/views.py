@@ -459,6 +459,9 @@ class MoveGoalViewSet(viewsets.ModelViewSet):
                 </head>
 
                 <body>
+                <div style="text-align":center;>
+                  <img  src="https://res.cloudinary.com/ros4eva/image/upload/v1576318445/images_iii9fe.png" style="width: 116px; height: 26px;">
+                </div>
                 <div>
                 <span> <p>Hi</p><h2>{{qa_nickname}},</h2></span>
                 <p>
@@ -530,6 +533,9 @@ class MoveGoalViewSet(viewsets.ModelViewSet):
                 </head>
 
                 <body>
+                 <div style="text-align":center;>
+                  <img  src="https://res.cloudinary.com/ros4eva/image/upload/v1576318445/images_iii9fe.png" style="width: 116px; height: 26px;">
+                </div>
                 <div>
                 <span> <p>Hi</p><h2>{{qa_nickname}},</h2></span>
                 <p>
@@ -1258,6 +1264,7 @@ def jwt_response_payload_handler(token, user=None, request=None):
                                 <tbody>
                                 <tr>
                                 <td style="padding:0;vertical-align:middle;padding-left:9%;padding-right:9%;word-break:break-word;word-wrap:break-word">
+                                    <img  src="https://res.cloudinary.com/ros4eva/image/upload/v1576318445/images_iii9fe.png" style="width: 116px; height: 26px;">
                                     <p style="margin-top:0;font-style:normal;font-weight:400;font-size:18px;line-height:24px;margin-bottom:10px;font-family:'Open Sans',Helvetica,Arial,sans-serif;color:#414042">Hello  <strong style="font-size:20px;">{{nickname}}!<strong></p>
                                     <p style="margin-top:0;font-style:normal;font-weight:400;font-size:16px;line-height:24px;margin-bottom:10px;font-family:'Open Sans',Helvetica,Arial,sans-serif;color:#414042">
                                     Thank you for signing up. Chatscrum  is a simple and organised way to plan and build software. <br> <br> 
@@ -1349,6 +1356,7 @@ def jwt_response_payload_handler(token, user=None, request=None):
                 </head>
 
                 <body>
+                <img  src="https://res.cloudinary.com/ros4eva/image/upload/v1576318445/images_iii9fe.png" style="width: 116px; height: 26px;">
                 <span> <p>Hi</p><h2>{{nickname}},</h2></span>
                 <p>
                  {{user}} has just joined your project {{project.name}}. 
@@ -1389,6 +1397,7 @@ def jwt_response_payload_handler(token, user=None, request=None):
                 </head>
 
                 <body>
+                <img  src="https://res.cloudinary.com/ros4eva/image/upload/v1576318445/images_iii9fe.png" style="width: 116px; height: 26px;">
                 <span> <p>Hi</p><h2>{{nickname}},</h2></span>
                 <p>
                  {{user}} has just joined your project {{project.name}}. 
