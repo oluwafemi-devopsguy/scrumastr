@@ -356,15 +356,14 @@ class MoveGoalViewSet(viewsets.ModelViewSet):
         scrum_project = ScrumProject.objects.get(id=project_id)
         scrum_project_a = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
         scrum_project_b = scrum_project.scrumgoal_set.get(goal_project_id=goal_id, moveable=True).user
-       # goal_id = request.data['goal_id'][1:]
-       # to_id = int(request.data['to_id'])
+        qa_list = ScrumProjectRole.objects.filter(project=scrum_project, role="Quality Analyst")
         goal_item = scrum_project.scrumgoal_set.get(goal_project_id=goal_id, moveable=True)
         connections = Connection.objects.filter(project=scrum_project)
         print(goal_id)
         print(scrum_project_b.user.user)
         print(connections)
         print(goal_item.status)
-        
+        login = settings.LOGIN_URL
         
         
 
@@ -444,6 +443,63 @@ class MoveGoalViewSet(viewsets.ModelViewSet):
                     goal_item.hours = goal_item.hours
                     goal_item.push_id = push_id
                     message = 'Goal Moved Successfully! Push ID is ' + push_id
+
+                    for qa in qa_list:
+                        email = qa.user.user.username
+                        context = Context({"nickname":request.user.scrumuser.nickname, "goal_id":goal_id, "push_id":push_id, "qa_nickname":qa.user.nickname, "login":login})
+
+                        template = Template('''
+                        <html>
+                <head>
+                <style>
+                p {
+                    font-size = 20px
+                }
+                </style>
+                </head>
+
+                <body>
+                <div>
+                <span> <p>Hi</p><h2>{{qa_nickname}},</h2></span>
+                <p>
+                 {{nickname}} has just moved a goal to verify. 
+                </p> 
+                
+                <p>Goal ID: {{goal_id}}</p>
+                <p>Push ID: {{push_id}}</p>
+
+                    <a></a>
+                    
+                    <a href="{{login}}" style="border-radius:3px;display:inline-block;font-size:17px;font-weight:700;line-height:27px;padding:13px 35px 12px 35px;text-align:center;text-decoration:none!important;font-family:'Open Sans',Helvetica,Arial,sans-serif;background-color:#26A69A;color:#fff; cursor:pointer;">
+    
+                        Login Here
+                    </a>
+
+
+                
+               
+
+                <p>Thanks,</p> 
+                <p>Chatscrum Team</p>
+                <p> © Copyright 2020.</p>
+                
+                </div>
+                </body>
+                
+                </html>
+
+                                    ''')
+                        content = template.render(context)
+
+                        qa_email = EmailMessage(
+                            'Verify task',
+                            content,
+                            settings.DEFAULT_FROM_EMAIL,
+                            [email]
+                        )
+
+                        qa_email.content_subtype = "html"
+                        qa_email.send(fail_silently=False)
                 if hours > 8:
                     goal_item.status = state_prev
                     message = 'Error: Task cannot Exceeds 8hours or less than an hour of completion.'
@@ -459,7 +515,62 @@ class MoveGoalViewSet(viewsets.ModelViewSet):
                 elif to_id == 2 and state_prev == 1 :
                     goal_item.hours = hours
                     message = 'Goal Moved Successfully! Hours Applied!'
+                    for qa in qa_list:
+                        email = qa.user.user.username
+                        context = Context({"nickname":request.user.scrumuser.nickname, "goal_id":goal_id, "push_id":push_id, "qa_nickname":qa.user.nickname, "login":login})
 
+                        template = Template('''
+                <html>
+                <head>
+                <style>
+                p {
+                    font-size = 20px
+                }
+                </style>
+                </head>
+
+                <body>
+                <div>
+                <span> <p>Hi</p><h2>{{qa_nickname}},</h2></span>
+                <p>
+                 {{nickname}} has just moved a goal to verify. 
+                </p> 
+                
+                <p>Goal ID: {{goal_id}}</p>
+                <p>Push ID: {{push_id}}</p>
+
+                    <a></a>
+                    
+                    <a href="{{login}}" style="border-radius:3px;display:inline-block;font-size:17px;font-weight:700;line-height:27px;padding:13px 35px 12px 35px;text-align:center;text-decoration:none!important;font-family:'Open Sans',Helvetica,Arial,sans-serif;background-color:#26A69A;color:#fff; cursor:pointer;">
+    
+                        Login Here
+                    </a>
+
+
+                
+               
+
+                <p>Thanks,</p> 
+                <p>Chatscrum Team</p>
+                <p> © Copyright 2020.</p>
+                
+                </div>
+                </body>
+                
+                </html>
+
+                                    ''')
+                        content = template.render(context)
+
+                        qa_email = EmailMessage(
+                            'Verify task',
+                            content,
+                            settings.DEFAULT_FROM_EMAIL,
+                            [email]
+                        )
+
+                        qa_email.content_subtype = "html"
+                        qa_email.send(fail_silently=False)
                 if to_id == 2 and hours < 8 and push_id == "Null Value":
                     goal_item.status = state_prev
                     message = 'Error: No PUSH-ID added.'               
@@ -1246,7 +1357,7 @@ def jwt_response_payload_handler(token, user=None, request=None):
 
                 <p>Thanks,</p> 
                 <p>Chatscrum Team</p>
-                <p> © Copyright 2020.</p>
+              
                 </body>
                 
                 </html>
