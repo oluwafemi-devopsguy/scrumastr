@@ -89,7 +89,6 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
 
   ngOnInit() { 
     //this.wsService.getProjectGoals().subscribe()
-   
     this.load()
     this.rose()
     this.close()
