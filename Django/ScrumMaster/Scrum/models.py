@@ -230,7 +230,7 @@ class Connection(models.Model):
         ordering = ['-id'] 
 
 
-
+ 
 
 class ChatMessage(models.Model):
     username = models.CharField(max_length=50)

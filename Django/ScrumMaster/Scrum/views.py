@@ -1,4 +1,4 @@
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage, EmailMultiAlternatives
 from ScrumMaster import settings
 from smtplib import SMTPException
 from django.shortcuts import render, redirect
@@ -23,6 +23,7 @@ from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from slack import WebClient
+from django.template import Template, Context
 
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
@@ -32,6 +33,7 @@ import re
 import json
 import hashlib
 import boto3
+import html
 
 from Scrum.initials import *
 
@@ -354,15 +356,14 @@ class MoveGoalViewSet(viewsets.ModelViewSet):
         scrum_project = ScrumProject.objects.get(id=project_id)
         scrum_project_a = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
         scrum_project_b = scrum_project.scrumgoal_set.get(goal_project_id=goal_id, moveable=True).user
-       # goal_id = request.data['goal_id'][1:]
-       # to_id = int(request.data['to_id'])
+        qa_list = ScrumProjectRole.objects.filter(project=scrum_project, role="Quality Analyst")
         goal_item = scrum_project.scrumgoal_set.get(goal_project_id=goal_id, moveable=True)
         connections = Connection.objects.filter(project=scrum_project)
         print(goal_id)
         print(scrum_project_b.user.user)
         print(connections)
         print(goal_item.status)
-        
+        login = settings.LOGIN_URL
         
         
 
@@ -442,6 +443,66 @@ class MoveGoalViewSet(viewsets.ModelViewSet):
                     goal_item.hours = goal_item.hours
                     goal_item.push_id = push_id
                     message = 'Goal Moved Successfully! Push ID is ' + push_id
+
+                    for qa in qa_list:
+                        email = qa.user.user.username
+                        context = Context({"nickname":request.user.scrumuser.nickname, "goal_id":goal_id, "push_id":push_id, "qa_nickname":qa.user.nickname, "login":login})
+
+                        template = Template('''
+                        <html>
+                <head>
+                <style>
+                p {
+                    font-size = 20px
+                }
+                </style>
+                </head>
+
+                <body>
+                <div style="text-align":center;>
+                  <img  src="https://res.cloudinary.com/ros4eva/image/upload/v1576318445/images_iii9fe.png" style="width: 116px; height: 26px;">
+                </div>
+                <div>
+                <span> <p>Hi</p><h2>{{qa_nickname}},</h2></span>
+                <p>
+                 {{nickname}} has just moved a goal to verify. 
+                </p> 
+                
+                <p>Goal ID: {{goal_id}}</p>
+                <p>Push ID: {{push_id}}</p>
+
+                    <a></a>
+                    
+                    <a href="{{login}}" style="border-radius:3px;display:inline-block;font-size:17px;font-weight:700;line-height:27px;padding:13px 35px 12px 35px;text-align:center;text-decoration:none!important;font-family:'Open Sans',Helvetica,Arial,sans-serif;background-color:#26A69A;color:#fff; cursor:pointer;">
+    
+                        Login Here
+                    </a>
+
+
+                
+               
+
+                <p>Thanks,</p> 
+                <p>Chatscrum Team</p>
+                <p> © Copyright 2020.</p>
+                
+                </div>
+                </body>
+                
+                </html>
+
+                                    ''')
+                        content = template.render(context)
+
+                        qa_email = EmailMessage(
+                            'Verify task',
+                            content,
+                            settings.DEFAULT_FROM_EMAIL,
+                            [email]
+                        )
+
+                        qa_email.content_subtype = "html"
+                        qa_email.send(fail_silently=False)
                 if hours > 8:
                     goal_item.status = state_prev
                     message = 'Error: Task cannot Exceeds 8hours or less than an hour of completion.'
@@ -457,7 +518,65 @@ class MoveGoalViewSet(viewsets.ModelViewSet):
                 elif to_id == 2 and state_prev == 1 :
                     goal_item.hours = hours
                     message = 'Goal Moved Successfully! Hours Applied!'
+                    for qa in qa_list:
+                        email = qa.user.user.username
+                        context = Context({"nickname":request.user.scrumuser.nickname, "goal_id":goal_id, "push_id":push_id, "qa_nickname":qa.user.nickname, "login":login})
 
+                        template = Template('''
+                <html>
+                <head>
+                <style>
+                p {
+                    font-size = 20px
+                }
+                </style>
+                </head>
+
+                <body>
+                 <div style="text-align":center;>
+                  <img  src="https://res.cloudinary.com/ros4eva/image/upload/v1576318445/images_iii9fe.png" style="width: 116px; height: 26px;">
+                </div>
+                <div>
+                <span> <p>Hi</p><h2>{{qa_nickname}},</h2></span>
+                <p>
+                 {{nickname}} has just moved a goal to verify. 
+                </p> 
+                
+                <p>Goal ID: {{goal_id}}</p>
+                <p>Push ID: {{push_id}}</p>
+
+                    <a></a>
+                    
+                    <a href="{{login}}" style="border-radius:3px;display:inline-block;font-size:17px;font-weight:700;line-height:27px;padding:13px 35px 12px 35px;text-align:center;text-decoration:none!important;font-family:'Open Sans',Helvetica,Arial,sans-serif;background-color:#26A69A;color:#fff; cursor:pointer;">
+    
+                        Login Here
+                    </a>
+
+
+                
+               
+
+                <p>Thanks,</p> 
+                <p>Chatscrum Team</p>
+                <p> © Copyright 2020.</p>
+                
+                </div>
+                </body>
+                
+                </html>
+
+                                    ''')
+                        content = template.render(context)
+
+                        qa_email = EmailMessage(
+                            'Verify task',
+                            content,
+                            settings.DEFAULT_FROM_EMAIL,
+                            [email]
+                        )
+
+                        qa_email.content_subtype = "html"
+                        qa_email.send(fail_silently=False)
                 if to_id == 2 and hours < 8 and push_id == "Null Value":
                     goal_item.status = state_prev
                     message = 'Error: No PUSH-ID added.'               
@@ -482,6 +601,33 @@ class MoveGoalViewSet(viewsets.ModelViewSet):
         goal.save()
         return
 
+
+class DeleteUserViewSet(viewsets.ModelViewSet):
+    queryset = ScrumProjectRole.objects.all()
+    serializer_class = ScrumProjectRoleSerializer
+
+    def create(self, request):
+        project_id = request.data['project_id']
+        user_role = request.data['user_role']
+        intended_user = request.data['intended_user']
+
+        project = ScrumProject.objects.get(pk=project_id)
+        
+
+        role = ScrumProjectRole.objects.get(project=project, user=request.user.scrumuser).role
+
+        if role == 'Developer' or role == 'Quality Analyst' or role == 'Admin':
+            return JsonResponse({"message":"Permission Denied", "data":filtered_users(project_id)})
+
+       # del_user = User.objects.get(pk=intended_user)
+        author = ScrumProjectRole.objects.get(project=project, id=intended_user)
+        if author.role == "Owner":
+            return JsonResponse({"message":"You cannot delete an Owner", "data":filtered_users(project_id)})
+        author.delete()
+        return JsonResponse({"message":"User deleted Successfully", "data":filtered_users(project_id)})
+
+
+        
 
 '''
 def create_user(request):
@@ -1072,7 +1218,12 @@ def jwt_response_payload_handler(token, user=None, request=None):
         scrum_project_role.save()
 
     proj_role = project.scrumprojectrole_set.get(user=user.scrumuser)
+    nickname = proj_role.user.nickname
+    email = proj_role.user.user.username
+    login = settings.LOGIN_URL
 
+    owners_list = ScrumProjectRole.objects.filter(role="Owner", project=project)
+    admin_list = ScrumProjectRole.objects.filter(role="Admin", project=project)
     if project.scrumprojectrole_set.get(user=user.scrumuser).color == "white":
         
         proj_role.color = userBgColor()
@@ -1087,8 +1238,192 @@ def jwt_response_payload_handler(token, user=None, request=None):
     #     print(ws_token.key)
     # except:
     #     pass
+    context = Context({"nickname":nickname, "project":project, "email":email, "login":login})
+    template = Template(
+        '''
+            <html>
+                <head>
+                </head>
+                <body style="background-color:#f6f6f6;">
+                <div style="margin:10px;padding:0; padding-top:20px;padding-bottom:25px;font-family:'Open Sans',Helvetica,Arial,sans-serif;min-width:100%;background-color:#f6f6f6">
+                <center style="display:table;table-layout:fixed;width:100%;font-family:'Open Sans',Helvetica,Arial,sans-serif;background-color:#f6f6f6">
+                    <table style="border-collapse:collapse;border-spacing:0;width:100%">
+                    <tbody>
+                    <tr>
+                    <td style="padding:0;vertical-align:middle" align="center">
+                    <table style="border-collapse:collapse;border-spacing:0;margin-left:auto;margin-right:auto;width:100%;max-width:600px;table-layout:fixed">
+                    <tr>
+                    <td style="padding:0 10px;vertical-align:middle;text-align:left">
+                        <table style="border-collapse:collapse;border-spacing:0;table-layout:fixed;width:100%;background-color:#fff">
+                        
+                        <tbody>
+                            <tr>
+                            <td style="padding-top:10px;padding-left:0;vertical-align:middle">
+
+                            <table style="border-collapse:collapse;border-spacing:0">
+                                <tbody>
+                                <tr>
+                                <td style="padding:0;vertical-align:middle;padding-left:9%;padding-right:9%;word-break:break-word;word-wrap:break-word">
+                                    <img  src="https://res.cloudinary.com/ros4eva/image/upload/v1576318445/images_iii9fe.png" style="width: 116px; height: 26px;">
+                                    <p style="margin-top:0;font-style:normal;font-weight:400;font-size:18px;line-height:24px;margin-bottom:10px;font-family:'Open Sans',Helvetica,Arial,sans-serif;color:#414042">Hello  <strong style="font-size:20px;">{{nickname}}!<strong></p>
+                                    <p style="margin-top:0;font-style:normal;font-weight:400;font-size:16px;line-height:24px;margin-bottom:10px;font-family:'Open Sans',Helvetica,Arial,sans-serif;color:#414042">
+                                    Thank you for signing up. Chatscrum  is a simple and organised way to plan and build software. <br> <br> 
+                                    Project: {{project.name}} <br>
+                                    Email: {{email}}
+                                    </p> <br>
+                                    <table style="border-collapse:collapse;border-spacing:0" width="100%%">
+                                        <tbody>
+                                        <tr> 
+                                        <td style="padding:0;vertical-align:middle;padding-left:56px;padding-right:56px;word-break:break-word;word-wrap:break-word">
+                                            <div style="margin-bottom:22px;margin-top:16px;text-align:center">
+                                                <a href="{{login}}" style="border-radius:3px;display:inline-block;font-size:17px;font-weight:700;line-height:27px;padding:13px 35px 12px 35px;text-align:center;text-decoration:none!important;font-family:'Open Sans',Helvetica,Arial,sans-serif;background-color:#26A69A;color:#fff; cursor:pointer;">
+                                
+                                                    Login Here
+                                                </a>
+                                            </div>
+                                        </td>
+                                        </tr>
+                                        </tbody>
+                                    
+                                    </table>
+
+                                    <p style="margin-top:0;font-style:normal;font-weight:400;font-size:16px;line-height:24px;margin-bottom:10px;font-family:'Open Sans',Helvetica,Arial,sans-serif;color:#414042">
+                                        Welcome and Happy Building! <br><br>
+                                        
+                                        Thanks, <br>
+                                        Chatscrum Team <br>
+                                      
 
 
+                                    </p>
+                                </td>
+                                
+                                </tr>
+                                </tbody>
+                            
+                            </table>
+                            
+                            </td>
+                            
+                            </tr>
+                        </tbody>
+                        
+                        </table>
+                    </td>
+                    </tr>
+                    
+                    </table>
+                    
+                    </td>
+                    </tr>
+                    </tbody>
+                    
+                    
+                    </table>
+                </center>
+                </div>
+
+                </body>
+            </html>
+        '''
+    )
+    content = template.render(context)
+
+    
+
+    if created:
+        email = EmailMessage(
+            'Welcome to ChatScrum',
+            content,
+            settings.DEFAULT_FROM_EMAIL, 
+            [email]
+        )
+        email.content_subtype = "html" 
+        email.send(fail_silently=False)
+
+        for owner in owners_list:
+            email=owner.user.user.username
+            context = Context({"nickname":owner.user.nickname, "project":project, "email":owner.user.user.username, "user":nickname})
+            template = Template(
+                '''
+                <html>
+                <head>
+                <style>
+                p {
+                    font-size = 18px
+                }
+                </style>
+                </head>
+
+                <body>
+                <img  src="https://res.cloudinary.com/ros4eva/image/upload/v1576318445/images_iii9fe.png" style="width: 116px; height: 26px;">
+                <span> <p>Hi</p><h2>{{nickname}},</h2></span>
+                <p>
+                 {{user}} has just joined your project {{project.name}}. 
+                </p> 
+                
+
+                <p>Thanks,</p> 
+                <p>Chatscrum Team</p>
+              
+                </body>
+                
+                </html>
+                '''
+            )
+
+            content=template.render(context)
+            owner_email = EmailMessage(
+            'New User Added',
+            content,
+            settings.DEFAULT_FROM_EMAIL, 
+            [email]
+            )
+            owner_email.content_subtype="html"
+            owner_email.send(fail_silently=False)
+
+        for admin in admin_list:
+            email=admin.user.user.username
+            context = Context({"nickname":admin.user.nickname, "project":project, "email":admin.user.user.username, "user":nickname})
+            template = Template(
+                '''
+                <html>
+                <head>
+                <style>
+                p {
+                    font-size = 18px
+                }
+                </style>
+                </head>
+
+                <body>
+                <img  src="https://res.cloudinary.com/ros4eva/image/upload/v1576318445/images_iii9fe.png" style="width: 116px; height: 26px;">
+                <span> <p>Hi</p><h2>{{nickname}},</h2></span>
+                <p>
+                 {{user}} has just joined your project {{project.name}}. 
+                </p> 
+                
+
+                <p>Thanks,</p> 
+                <p>Chatscrum Team</p>
+                <p> © Copyright 2020.</p>
+                </body>
+                
+                </html>
+                '''
+            )
+
+            content=template.render(context)
+            admin_email = EmailMessage(
+            'New User Added',
+            content,
+            settings.DEFAULT_FROM_EMAIL, 
+            [email]
+            )
+            admin_email.content_subtype="html"
+            admin_email.send(fail_silently=False)
+
+        print('Email successfully sent')
     user_slack = bool(proj_role.slack_email)
     if project.scrumslack_set.all().exists():
         project_slack = "True"

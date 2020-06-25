@@ -17,7 +17,7 @@ export class DataService {
   //public domain_protocol = 'http://';
   //public domain_name = 'localhost:8000';
   //public domain = 'http://localhost:8000';
-
+  public my_project = sessionStorage.getItem('project_name')
   public message;
   public goal_name;
 
@@ -122,9 +122,9 @@ export class DataService {
   addToSlack() {
     let usertype = String(sessionStorage.getItem('role'));
     let email = String(sessionStorage.getItem('username'));
-    let project_name = String(sessionStorage.getItem('proj_name'));
+    let project_name = this.my_project
     let the_name = sessionStorage.getItem('realname');
-
+      console.log(project_name)
       sessionStorage.removeItem('token');
       window.location.replace("https://slack.com/oauth/v2/authorize?client_id=" + this.client_id + "&state=main_chat_" + project_name + ">>>" + email + "<<<" + the_name + "&scope=channels:history,channels:read,chat:write,emoji:read,files:read,groups:read,im:history,im:read,incoming-webhook,mpim:read,reactions:read,team:read,users.profile:read,users:read,mpim:history,groups:history&user_scope=users:read,chat:write,channels:read,channels:history,groups:read,groups:history")
    
@@ -133,9 +133,9 @@ export class DataService {
   connectToSlack() {
     let usertype = String(sessionStorage.getItem('role'));
     let email = String(sessionStorage.getItem('username'));
-    let project_name = String(sessionStorage.getItem('proj_name'));
+    let project_name =this.my_project
     let the_name = sessionStorage.getItem('realname');
-
+    console.log(project_name)
     sessionStorage.removeItem('token');
     window.location.replace("https://slack.com/oauth/v2/authorize?client_id=" + this.client_id + "&state=main_chat_" + project_name + ">>>" + email + "<<<" + the_name + "&scope=channels:history,channels:read,chat:write,emoji:read,files:read,groups:read,im:history,im:read,incoming-webhook,mpim:read,reactions:read,team:read,users.profile:read,users:read,mpim:history,groups:history&user_scope=users:read,chat:write,channels:read,channels:history,groups:read,groups:history")
    // window.location.replace("https://slack.com/oauth/v2/authorize?client_id=1047148162967.1067254009940" + "&state=main_chat_" + project_name + ">>>" + email + "<<<" + the_name + "&user_scope=identity.basic, identity.email, identity.avatar")
@@ -174,6 +174,7 @@ export class DataService {
         this.slack_username = data['slack_username'];
         this.message = 'Welcome!';
         this.router.navigate(['scrumboard', data['project_id']]);
+        this.my_project = JSON.parse(data['project_name']);
         this.login_username = '';
         this.login_password = '';
         this.login_project = '';
@@ -285,6 +286,10 @@ export class DataService {
 
   changeUserRoleRequest(user_id, role, project_id) {
     return this.http.patch( this.domain_protocol + this.domain_name + '/scrum/api/scrumprojectroles/', JSON.stringify({ 'role': role, 'id': 'm'+user_id, 'project_id': project_id }), this.getHeader());
+  }
+
+  deleteUser(user_role, intended_user, project_id) {
+    return this.http.post(this.domain_protocol + this.domain_name + '/scrum/api/delete_user/', JSON.stringify({"intended_user":intended_user, "user_role":user_role, "project_id":project_id}), this.getHeader())
   }
 
 }
