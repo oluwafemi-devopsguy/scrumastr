@@ -496,7 +496,7 @@ class MoveGoalViewSet(viewsets.ModelViewSet):
 
                         qa_email = EmailMessage(
                             'Verify task',
-                            content,
+                            content, 
                             settings.DEFAULT_FROM_EMAIL,
                             [email]
                         )
