@@ -186,9 +186,9 @@ def send_message(request):
         scrumuser = ScrumUser.objects.get(nickname = username)
         scrum_proj_role = ScrumProjectRole.objects.get(project=proj, user=scrumuser)
         profile_picture = scrum_proj_role.slack_profile_picture 
-
+        
         sc = WebClient(bot_access_token)
-
+        
         sc.chat_postMessage(
         
             channel= channel_id,
@@ -199,7 +199,7 @@ def send_message(request):
 
 
         ).headers['X-Slack-No-Retry'] = 1
-      
+       
         return JsonResponse(
             {'message': 'successfully send'}, status=200
         )
