@@ -1473,11 +1473,11 @@ summary:focus {
   color: white;
   resize: none;
   }
-  /*
+  
   #inputSlackMsg::focus {
   border-color: none;
   border: none;
-  } */
+  }
   
   #inputSlackMsg::placeholder {
   font-family: 'Roboto', sans-serif;

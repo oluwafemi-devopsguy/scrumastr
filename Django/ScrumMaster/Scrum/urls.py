@@ -19,7 +19,6 @@ def_router.register('scrumprojects', views.ScrumProjectViewSet)
 def_router.register('scrumprojectroles', views.ScrumProjectRoleViewSet)
 def_router.register('scrumuserfetch', views.ScrumFetchViewSet)
 def_router.register(r'scrumsprint', views.SprintViewSet, base_name='scrumsprint')
-def_router.register('get_messages', views.GetAllMessagesViewSet)
 
 
 '''
@@ -45,12 +44,7 @@ urlpatterns = [
     path('send_message/', views.send_message, name='sendmessage'),
     path('get_recentmessages/', views.get_recentmessages, name='get_recentmessages'),
     path('connect_to_project/', views.connect_to_project, name='connecttoproject'),
-    path('change_goalowner/', views.ChangeGoalOwnerViewSet.as_view({'post':'create'}), name="moveGoal"),
-    path('move_goal/', views.MoveGoalViewSet.as_view({'post':'create'}), name="moveGoal"),
-    path('get_project_goals/', views.GetProjectGoals.as_view({'post':'create'}), name='getProjectGoals'),
 ]
-
-
 
 
 if settings.DEBUG:

@@ -1,8 +1,6 @@
 import { Injectable, ElementRef, ViewChild } from '@angular/core';
 import {formatDate} from '@angular/common';
 import { environment } from "../environments/environment";
-import {Observable, Subject, BehaviorSubject} from "rxjs";
-import ReconnectingWebSocket from "reconnecting-websocket";
 
 @Injectable({
   providedIn: 'root'
@@ -16,8 +14,6 @@ export class WebsocketService {
   public ws_url = environment.ws_url;
   public messages = [];
   public chat_text:String;
-  public all_goals = new BehaviorSubject([]);
-  public project_name:String;
   public mutableObserver: MutationObserver;
   full_data = localStorage.getItem('full_data');
   
@@ -26,154 +22,87 @@ export class WebsocketService {
   
   constructor() {  
     
-    this.ws = new ReconnectingWebSocket(this.ws_url);
+    this.ws = new WebSocket(this.ws_url);
     
     
   }
 
-  getProjectGoals():Observable<any>{
-    // ws = new WebSocket(this.ws_url);
-        return new Observable <any>(
-          observer => {
-           
+  getProjectGoals() {
+    this.ws.onopen = (event) => {
+      const context = {
+        action: "getProjectGoals",
+        project_id : sessionStorage.getItem('project_id'),
+        "token": sessionStorage.getItem('ws_token')
+      }
+      this.ws.send(JSON.stringify(context))
 
-             const context = {
-               action: "getProjectGoals",
-               project_id : String(sessionStorage.getItem('project_id')),
-               "token": sessionStorage.getItem('ws_token')
-             }
-             
-             this.ws.send(JSON.stringify(context))
-             console.log('sending')
-             
-           
-   
-           
-           this.ws.onmessage = (event) => {
-              if (JSON.parse(event.data)['type'] == 'get_goals') {
-               observer.next(event.data)
-               console.log("goals gotten");
-               let data = JSON.parse(event.data)
-               console.log(data['data'])
-               
-               console.log(data)
-                 if (data['data']!==0) {
-                 sessionStorage.setItem('proj_name', data['project_name'])
-                 sessionStorage.setItem('user_data', JSON.stringify(data['data']))
-                 }  
-                  
-               observer.error("Error") 
-              }
-              
-             } 
 
-             
-             
-
-        })
-        
-    
-       
-     
- }
+    this.ws.onmessage = (event) => {
+      console.log("goal moved");
+    }
+    }
+  }
 
   
 
-  
+  moveGoal(to_id, from_id) {
+    const context = {
+      "action":"moveGoal",
+      "project_id":sessionStorage.getItem('project_id'),
+      "to_id" : to_id,
+      "from_id": from_id,
+      "token": sessionStorage.getItem('ws_token')
+
+    }
+
+    this.ws.send(JSON.stringify(context));
+  }
 
  
 
-  getMessages():Observable<any> {
+  getMessages() {
     
-    return new Observable(observer => {
-      this.ws.onopen = (event) => {
-        console.log('opened')
-        const secondContext = {
-          action: "connectToProject",
-          project_name: String(sessionStorage.getItem('project_name'))
-        }
-  
-        this.ws.send(JSON.stringify(secondContext));
-  
-  
-        const context = {
-          action:"getRecentMessages", 
-          project_name:String(sessionStorage.getItem('project_name')),
-          "token": sessionStorage.getItem('ws_token')
-        };
-  
-        this.ws.send(JSON.stringify(context));
-  
-        const context_3 = {
-          action: "getProjectGoals",
-          project_id : String(sessionStorage.getItem('project_id')),
-          "token": sessionStorage.getItem('ws_token')
-        }
-        
-        this.ws.send(JSON.stringify(context_3))
-        console.log('sending')
-  
-      };
-  
-  
-      this.ws.onmessage = (event) => {
-  
-        let data = JSON.parse(event.data) 
-  
-          if (data['type'] == 'all_messages') {
-            console.log(data)
-            if (data['messages'] !== undefined) {
-  
-              data['messages'].forEach((message) => {
-                this.messages.push(message);
-              })
-            }
-          }
-  
-          if (data['type'] == 'get_goals') {
-            console.log(data)
-            this.all_goals.next(data)
-            observer.next(data)
-            sessionStorage.setItem('goals', JSON.stringify(data));
-          }
-  
-          if (data['type'] == 'move_goal') {
-            this.all_goals.next(data)
-            observer.next(data)
-            
-            
-            
-            console.log(this.all_goals)
-          }
-  
-          
-      }
-     
-    })
-    
-  }
+   
 
-  moveGoal(goal_id, to_id, hours, push_id=null, project_id):Observable<any> {
-    return new Observable(observer => {
+    this.ws.onopen = (event) => {
+
+      const secondContext = {
+        action: "connectToProject",
+        project_name: String(sessionStorage.getItem('proj_name'))
+      }
+
+      this.ws.send(JSON.stringify(secondContext));
+
+
       const context = {
-        "action":"moveGoal",
-        "project_id":project_id,
-        "to_id" : to_id,
-        "username": sessionStorage.getItem('username'),
-        "goal_id": goal_id,
-        "push_id": push_id,
-        "hours":hours,
+        action:"getRecentMessages", 
+        project_name:String(sessionStorage.getItem('proj_name')),
         "token": sessionStorage.getItem('ws_token')
-      }
-  
+      };
+
       this.ws.send(JSON.stringify(context));
-      observer.next("Done")
-    })
+
+      
+
+    };
+
+
+    this.ws.onmessage = (event) => {
+
+      let data = JSON.parse(event.data) 
+
+        if (data['messages'] !== undefined) {
+
+          data['messages'].forEach((message) => {
+            this.messages.push(message);
+          })
+        }
+    }
+   
+    
+  
     
   }
-
-
-
 
   getCurrentTime() {
     let currentDate = new Date();
@@ -190,7 +119,7 @@ export class WebsocketService {
     if (this.chat_text) {
       let context = {
         "action": "sendMessage",
-        "project_name": String(sessionStorage.getItem('project_name')),
+        "project_name": String(sessionStorage.getItem('proj_name')),
         "username": String(sessionStorage.getItem('realname')),
         "timestamp": this.getCurrentTime(),
         "message": this.chat_text,

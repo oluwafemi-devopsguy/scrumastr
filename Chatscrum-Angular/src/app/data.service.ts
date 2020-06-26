@@ -142,12 +142,6 @@ export class DataService {
      
   }
 
-  getMessages() {
-  
-  return this.http.post<any>( this.domain_protocol + this.domain_name + '/scrum/api/get_messages/', JSON.stringify({"project_name":sessionStorage.getItem("project_name"), "token":sessionStorage.getItem("ws_token")}), this.httpOptions)
-    
-  }
-
 
   login() {
     this.http.post( this.domain_protocol + this.domain_name +  '/scrum/api-token-auth/', JSON.stringify({'username': this.login_username, 'password': this.login_password, 'project': this.login_project}), this.httpOptions).subscribe(
@@ -165,7 +159,6 @@ export class DataService {
         sessionStorage.setItem('project_slack', data['project_slack']);
         sessionStorage.setItem('slack_username', data['slack_username']);
         sessionStorage.setItem('ws_token', data['ws_token']);
-        sessionStorage.setItem('project_name', data['project_name']);
         localStorage.setItem('sessiontf', data['to_clear_board']);
         this.username = this.login_username;
         this.realname = data['name'];
@@ -205,7 +198,7 @@ export class DataService {
       err=> {
         console.log("Could not be fetched")
       }
-    ) 
+    )
   }
 
   getHeader() {
@@ -219,16 +212,16 @@ export class DataService {
   loggedIn() {
     return sessionStorage.getItem('token')
   }
- 
+
 
   logout() {
-    sessionStorage.removeItem('token'); 
+    sessionStorage.removeItem('token');
     this.router.navigate(['home']);
   }
 
- allProjectGoals(project_id) {
+  allProjectGoals(project_id) {
     return this.http.get<any>( this.domain_protocol + this.domain_name + '/scrum/api/scrumprojects/' + project_id, this.httpOptions);
-  }  
+  }
 
   allSprints(project_id) {
     return this.http.get<any>( this.domain_protocol + this.domain_name + '/scrum/api/scrumsprint/?goal_project_id=' + project_id, this.httpOptions);
