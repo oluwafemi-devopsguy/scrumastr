@@ -626,29 +626,6 @@ class DeleteUserViewSet(viewsets.ModelViewSet):
         return JsonResponse({"message":"User deleted Successfully", "data":filtered_users(project_id)})
 
 
-class ChangeGoalOwnerViewSet(viewsets.ModelViewSet):
-    queryset = ScrumGoal.objects.all()
-    serializer_class = ScrumGoalSerializer
-    def put(self, request):
-        scrum_project = ScrumProject.objects.get(id=request.data['project_id'])
-        scrum_project_role = scrum_project.scrumprojectrole_set.get(user=request.user.scrumuser)
-        # scrum_project_b = scrum_project.scrumgoal_set.get(goal_project_id=request.data['goal_id'][1:]).user
-        from_id = request.data['goal_id'][1:]
-        to_id = request.data['to_id'][1:]
-        
-        if scrum_project_role.role == 'Developer' or scrum_project_role.role == 'Quality Analyst':
-            return JsonResponse({'message': 'Permission Denied: Unauthorized Reassignment of Goal.', 'data': filtered_users(request.data['project_id'])})
-            
-        goal = scrum_project.scrumgoal_set.get(goal_project_id=from_id, moveable=True)
-        if goal.moveable == True:
-            print(to_id)
-            author = ScrumProjectRole.objects.get(id=to_id)
-            goal.user = author
-            self.createHistory(goal.name, goal.status, goal.goal_project_id, goal.hours, goal.time_created, goal.user, goal.project, goal.file, goal.id, 'Goal Reassigned Successfully by')
-            goal.save()
-            return JsonResponse({'message': 'Goal Reassigned Successfully!', 'data': filtered_users(request.data['project_id'])})
-        else:
-            return JsonResponse({'message': 'Permission Denied: Sprint Period Elapsed!!!', 'data': filtered_users(request.data['project_id'])})       
 
 '''
 def create_user(request):
