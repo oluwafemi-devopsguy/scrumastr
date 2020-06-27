@@ -1213,7 +1213,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
       } else {
         if (this.to_id == '2' && from_id != '3') {
           this.push_id_form();
-        } else if (goal_for != event.container.id.slice(0, event.container.id.indexOf('e')) && this.loggedUserRole == "Owner" || this.loggedUserRole == "Admin" || this.loggedUserRole == "Quality Analyst") {
+        } else if (goal_for != event.container.id.slice(0, event.container.id.indexOf('e')) && this.loggedUserRole == "Owner" || this.loggedUserRole == "Admin" ) {
           this.dataService.changeGoalOwner(this.goal_id, 'u'+event.container.id.slice(0, event.container.id.indexOf('e')), this.project_id).subscribe(
             data => {
               console.log("changing")
