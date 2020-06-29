@@ -142,6 +142,8 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 LOGIN_URL = 'http://localhost:4200/login'
 
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10*1024*1024
+
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators

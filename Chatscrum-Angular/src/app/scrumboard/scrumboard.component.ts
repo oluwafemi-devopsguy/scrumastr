@@ -1202,6 +1202,10 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
     this.goal_id = 'm' + event.item.data.goalID;
     let from_id = event.previousContainer.id[event.previousContainer.id.length-1];
     let goal_for = event.item.data.taskFor
+    console.log(event.item.data.taskFor)
+    console.log(goal_for)
+    console.log(this.addToUser)
+    console.log(event.container.id.slice(0, event.container.id.indexOf('e')))
     if (this.loggedUserRole == "Owner" || this.loggedUserRole == "Admin" || this.loggedUserRole == "Quality Analyst" || goal_for == this.addToUser) {
       if (event.previousContainer === event.container) {
         moveItemInArray(event.container.data, 
@@ -1213,7 +1217,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
       } else {
         if (this.to_id == '2' && from_id != '3') {
           this.push_id_form();
-        } else if (goal_for != event.container.id.slice(0, event.container.id.indexOf('e')) && this.loggedUserRole == "Owner" || this.loggedUserRole == "Admin" ) {
+        } else if (goal_for != event.container.id.slice(0, event.container.id.indexOf('e')) && (this.loggedUserRole == "Owner" || this.loggedUserRole == "Admin" || this.loggedUserRole == "Quality Analyst" )) {
           this.dataService.changeGoalOwner(this.goal_id, 'u'+event.container.id.slice(0, event.container.id.indexOf('e')), this.project_id).subscribe(
             data => {
               console.log("changing")
