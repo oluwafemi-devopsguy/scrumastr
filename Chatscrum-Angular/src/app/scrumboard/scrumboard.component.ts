@@ -885,7 +885,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
       let project_id = JSON.parse(sessionStorage.getItem('project_id'))
       this.dataService.allProjectGoals(project_id).subscribe(
         data=>{
-          
+           
           this.loggedProject = sessionStorage.getItem('project_name')
           this.participants = data['data']
 
