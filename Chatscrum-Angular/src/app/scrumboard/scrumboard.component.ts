@@ -892,7 +892,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
         if (this.participants.length != 0) {
           this.filterUsers(this.participants)
           this.filterUserNotes(this.participants)
-        }
+        } 
 
       
       }
