@@ -94,10 +94,10 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
     this.close()
     this.pageTitle.setTitle('Scrumboard')
     this.getMessages().subscribe(data=> {
-      this.getAllUsersGoals(data)
+      //this.getAllUsersGoals(data)
     })
     
-    
+    this.getAllUsersGoals()
     this.getAllSprints()
     
   
@@ -881,10 +881,36 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
     }
   }
 
-  getAllUsersGoals(data) {
+  getAllUsersGoals() {
+      let project_id = JSON.parse(sessionStorage.getItem('project_id'))
+      this.dataService.allProjectGoals(project_id).subscribe(
+        data=>{
+           
+          this.loggedProject = sessionStorage.getItem('project_name')
+          this.participants = data['data']
+
+        if (this.participants.length != 0) {
+          this.filterUsers(this.participants)
+          this.filterUserNotes(this.participants)
+        } 
+
       
-       // console.log(this.wsService.all_goals.getValue())
-       //concat(this.wsService.getMessages(), this.wsService.all_goals.getValue())
+      }
+      
+      )
+
+      this.dataService.getMessages().subscribe(
+        data=>
+        {
+          
+          if (data['message'] != undefined) {
+            data['message'].forEach(message => {
+              this.my_messages.push(message)
+            })
+          }
+        }
+        )
+       /*
        
        this.loggedProject = sessionStorage.getItem('project_name')
        this.participants = data['data']
@@ -893,7 +919,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
           this.filterUsers(this.participants)
           this.filterUserNotes(this.participants)
         }
-     
+     */
   }
 
   changeLoggedSprint(selectedSprintID, createDate, endDate) {
@@ -1213,7 +1239,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
       } else {
         if (this.to_id == '2' && from_id != '3') {
           this.push_id_form();
-        } else if (goal_for != event.container.id.slice(0, event.container.id.indexOf('e')) && this.loggedUserRole == "Owner" || this.loggedUserRole == "Admin" || this.loggedUserRole == "Quality Analyst") {
+        } else if (goal_for != event.container.id.slice(0, event.container.id.indexOf('e')) && (this.loggedUserRole == "Owner" || this.loggedUserRole == "Admin" || this.loggedUserRole == "Quality Analyst" )) {
           this.dataService.changeGoalOwner(this.goal_id, 'u'+event.container.id.slice(0, event.container.id.indexOf('e')), this.project_id).subscribe(
             data => {
               console.log("changing")
@@ -1424,7 +1450,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
         }
   
         this.ws.send(JSON.stringify(secondContext));
-  
+    /*
   
         const context = {
           action:"getRecentMessages", 
@@ -1432,16 +1458,16 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
           "token": sessionStorage.getItem('ws_token')
         };
   
-        this.ws.send(JSON.stringify(context));
+        this.ws.send(JSON.stringify(context)); */
   
         const context_3 = {
           action: "getProjectGoals",
           project_id : String(sessionStorage.getItem('project_id')),
           "token": sessionStorage.getItem('ws_token')
         }
-          if (this.all_goals.value == null) {
-          this.ws.send(JSON.stringify(context_3))
-          }
+       //   if (this.all_goals.value == null) {
+         // this.ws.send(JSON.stringify(context_3))
+        //  }
        
       
   

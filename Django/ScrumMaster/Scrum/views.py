@@ -186,9 +186,9 @@ def send_message(request):
         scrumuser = ScrumUser.objects.get(nickname = username)
         scrum_proj_role = ScrumProjectRole.objects.get(project=proj, user=scrumuser)
         profile_picture = scrum_proj_role.slack_profile_picture 
-
+        
         sc = WebClient(bot_access_token)
-
+        
         sc.chat_postMessage(
         
             channel= channel_id,
@@ -199,7 +199,7 @@ def send_message(request):
 
 
         ).headers['X-Slack-No-Retry'] = 1
-      
+       
         return JsonResponse(
             {'message': 'successfully send'}, status=200
         )
@@ -365,7 +365,6 @@ class MoveGoalViewSet(viewsets.ModelViewSet):
         print(goal_item.status)
         login = settings.LOGIN_URL
         
-        
 
         
         if to_id == 4:
@@ -496,7 +495,7 @@ class MoveGoalViewSet(viewsets.ModelViewSet):
 
                         qa_email = EmailMessage(
                             'Verify task',
-                            content,
+                            content, 
                             settings.DEFAULT_FROM_EMAIL,
                             [email]
                         )
@@ -627,7 +626,6 @@ class DeleteUserViewSet(viewsets.ModelViewSet):
         return JsonResponse({"message":"User deleted Successfully", "data":filtered_users(project_id)})
 
 
-        
 
 '''
 def create_user(request):
