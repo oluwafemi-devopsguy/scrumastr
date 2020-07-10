@@ -1,8 +1,7 @@
+*/.ini 
 Django/ScrumMaster/ScrumMaster/__pycache__/
 Django/ScrumMaster/Scrum/__pycache__/
 Django/ScrumMaster/Scrum/migrations/__pycache__/
 Django/ScrumMaster/websocket/__pycache__/
 Django/ScrumMaster/websocket/migrations/__pycache__/
 Django/ScrumMaster/ScrumMaster/__init__.py/
-Django/ScrumMaster/settings.ini
-*.ini 

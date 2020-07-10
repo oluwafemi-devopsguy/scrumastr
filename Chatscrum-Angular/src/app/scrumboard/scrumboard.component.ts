@@ -168,13 +168,11 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
 
   openDropUpEvent()  {
     this.userListOpened= true
-    console.log(this.userListOpened)
     this.sendable = false;
   }
 
   closeDropUpEvent() {
     this.userListOpened=false
-    console.log(this.userListOpened);
   }
 
   openSlackModal() {
@@ -922,9 +920,9 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
     let project_id = JSON.parse(sessionStorage.getItem('project_id'))
       this.dataService.allProjectUsers(project_id).subscribe(
         data=> {
-          console.log(data);
+         
           this.listUsers = data['data']
-          console.log(this.listUsers);
+          
          
         });  
   }
@@ -935,7 +933,6 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
      
       this.dataService.allProjectGoals(project_id).subscribe(
         data=>{
-          console.log(data)
            
           this.loggedProject = sessionStorage.getItem('project_name')
           this.participants = data['data']
