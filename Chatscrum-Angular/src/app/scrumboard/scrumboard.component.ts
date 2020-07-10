@@ -172,7 +172,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
   }
 
   closeDropUpEvent() {
-    this.userListOpened=false
+    this.userListOpened=false 
   }
 
   openSlackModal() {
