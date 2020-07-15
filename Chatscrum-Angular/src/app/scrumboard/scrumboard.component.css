@@ -417,6 +417,10 @@ body {
   
 }
 
+textarea [mention] {
+  background-color: red;
+}
+
 .modal-bodyForTask {
   padding: 2px 16px;
 }
