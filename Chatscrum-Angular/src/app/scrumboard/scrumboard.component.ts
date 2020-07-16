@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChildren, QueryList, ViewChild, AfterViewInit, AfterViewChecked } from '@angular/core';
+import { Component, OnInit, ElementRef, TemplateRef, ViewChildren, QueryList, ViewChild, AfterViewInit, AfterViewChecked } from '@angular/core';
 import { CdkDragStart, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { ActivatedRoute } from '@angular/router';
 import { Title } from "@angular/platform-browser";
@@ -14,6 +14,8 @@ import {formatDate} from '@angular/common';
 
 import * as $AB from 'jquery';
 import { element } from 'protractor';
+import { Template } from '@angular/compiler/src/render3/r3_ast';
+import { template } from '@angular/core/src/render3';
 
 
 @Component({
@@ -21,10 +23,17 @@ import { element } from 'protractor';
   templateUrl: './scrumboard.component.html',
   styleUrls: ['./scrumboard.component.css']
 })
+
+
 export class ScrumboardComponent implements OnInit, AfterViewInit{
-  @ViewChild('con') cont: ElementRef;
+  @ViewChild('con') con: ElementRef;
   @ViewChild('conn', {read: ElementRef})  elem: ElementRef;
 
+ 
+  public mentionConfig = {triggerChar:'@', returnTrigger:true, maxItems:10, labelKey:'name', dropUp:true};  
+  public userListOpened: Boolean = false;
+  public sendable: Boolean = true;
+  public listUsers:string[] = [];
   public imgName = "No image selected";
   public alert;
   public TFTW = [];
@@ -96,6 +105,8 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
     this.getMessages().subscribe(data=> {
       //this.getAllUsersGoals(data)
     })
+
+    this.getAllUsernames()
     
     this.getAllUsersGoals()
     this.getAllSprints()
@@ -107,15 +118,20 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
     let observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
        
-       if (mutation.type == 'childList') {
-         
-         let elem = document.getElementById('con');
+       if (mutation.type == 'childList' ) {
+        
+         let elem = document.getElementById('messages');
          elem.scrollTop = elem.scrollHeight;
          
        }
       });
- 
-      
+
+      let records = observer.takeRecords()
+
+      records.forEach(record=> {
+        let elem = document.getElementById('messages')
+        elem.scrollTop = elem.scrollHeight;
+      })
  
      });
      observer.observe(this.elem.nativeElement, {
@@ -131,10 +147,10 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
      
     let observer = new MutationObserver((mutations) => {
      mutations.forEach((mutation) => {
-      
+     
       if (mutation.type == 'childList') {
-        
-        let elem = document.getElementById('messages');
+        console.log(mutation)
+        let elem = document.getElementById('con');
         elem.scrollTop = elem.scrollHeight;
         
       }
@@ -150,6 +166,14 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
    }
 
 
+  openDropUpEvent()  {
+    this.userListOpened= true
+    this.sendable = false;
+  }
+
+  closeDropUpEvent() {
+    this.userListOpened=false 
+  }
 
   openSlackModal() {
     let modal = document.getElementById('slackModal');
@@ -165,8 +189,19 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
   }
 
   sendAMessage(input) {
-    this.sendMessage();
-    input.value = ''
+        if (!this.sendable) {
+          this.sendable = true
+          return
+        }
+
+        if (this.sendable && !this.userListOpened) {
+          this.sendMessage();
+          input.value = ''
+        }
+
+      
+       
+     
   }
 
   connectSlack() {
@@ -881,8 +916,21 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
     }
   }
 
+  getAllUsernames() {
+    let project_id = JSON.parse(sessionStorage.getItem('project_id'))
+      this.dataService.allProjectUsers(project_id).subscribe(
+        data=> {
+         
+          this.listUsers = data['data']
+          
+         
+        });  
+  }
+
   getAllUsersGoals() {
+      
       let project_id = JSON.parse(sessionStorage.getItem('project_id'))
+     
       this.dataService.allProjectGoals(project_id).subscribe(
         data=>{
            
@@ -1554,6 +1602,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
   sendMessage() {
     
     if (this.chat_text) {
+      
      
       let context = {
         "action": "sendMessage",
