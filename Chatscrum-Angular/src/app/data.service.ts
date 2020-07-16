@@ -220,15 +220,11 @@ export class DataService {
   loggedIn() {
     return sessionStorage.getItem('token')
   }
-  
+ 
 
   logout() {
     sessionStorage.removeItem('token'); 
     this.router.navigate(['home']);
-  }
-
-  allProjectUsers(project_id) {
-    return this.http.post<any>(this.domain_protocol + this.domain_name + '/scrum/api/get_all_usernames/', JSON.stringify({"project_id":project_id}), this.getHeader())
   }
 
  allProjectGoals(project_id) {

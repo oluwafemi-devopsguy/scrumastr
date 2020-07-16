@@ -145,22 +145,29 @@ def send_message(request):
     timestamp = body['body']['timestamp']
     token = body['body']['token']
 
-  
+    print("Hello")
 
     try:
         Token.objects.get(key=token)
+
+    
+        #print('Bad token')
+        #Save message sent in the database
         
 
     
         proj = ScrumProject.objects.get(pk=project_name)
-        current_user = ScrumUser.objects.get(nickname=username).user
+       # chat = ChatMessage(username=username, message=message, project_name=proj, timestamp=timestamp)
+       # chat.save()
+        print(username)
+        print("Project name :::::::", project_name)
 
         connections = Connection.objects.filter(project=proj)
 
         my_message = {"username":username, "project_name":project_name, "message":message, "timestamp":timestamp}
 
         data = {'messages':[my_message]}
-        
+        print(data)
         '''
         for connection in connections:
             _send_to_connection(connection.connection_id, data)
@@ -169,87 +176,11 @@ def send_message(request):
         slack_id = ChatSlack.objects.get(username=username, project=proj).slack_user_id
 
         print(slack_id)
-        pattern = re.compile(r'@[a-zA-Z]+')
-
-        split_message = message.split(" ")
-       # old_answerlist = pattern.findall(message)
-        answer_list = pattern.findall(message)
-        verify_array = []
-        print(answer_list)
-
-
-        for answer in answer_list:
-            if answer not in verify_array:
-                temp = answer
-                verify_array.append(temp)
-
-                try:
-                    if temp[-1]== "\n":
-                        temp = temp[0:-1]           
-                    scrumuser = ScrumUser.objects.get(nickname=temp[1:]).user
-                    id_slack = ScrumSlack.objects.get(scrumproject=proj, scrum_details=scrumuser).user_id
-                    message = message.replace(answer, "<" + '@' + id_slack + ">")
-                except:
-                    pass
-                print(1)
-                try:
-                    next_message = (split_message[split_message.index(temp)+1])
-                    if next_message[-1] == "\n":
-                        next_message = next_message = (split_message[split_message.index(temp)+1])[0:-1]
-                    nickname = str(temp[1:] + " " + next_message)
-                    
-                    print((nickname))
-                    my_nickname = ScrumUser.objects.get(nickname = nickname).nickname
-                    
-                    print("gotten 2")
-                    print(message)
-                    value = str(answer + " " + next_message)
-                    scrumuser = ScrumUser.objects.get(nickname=value[1:]).user
-                    print(scrumuser)
-                    id_slack = ScrumSlack.objects.get(scrumproject=proj, scrum_details=scrumuser).user_id
-                    print(id_slack)
-                    new_value = "<" +'@' + id_slack  + ">"
-                    
-                    message = message.replace(value, new_value)
-
-                    
-                    
-                except:
-                    pass
-                try:
-                    second_message = (split_message[split_message.index(temp)+1])
-                    third_message = (split_message[split_message.index(temp)+2])
-                    if third_message[-1] =='\n':
-                        third_message = (split_message[split_message.index(temp)+2])[0:-1]
-
-                    value = str(answer + " " + second_message + " " + third_message)
-                    print(value)
-                    print(len(value))
-                    
-                    scrumuser =  ScrumUser.objects.get(nickname=value[1:]).user
-                    
-                    id_slack = ScrumSlack.objects.get(scrumproject=proj, scrum_details=scrumuser).user_id
-                    
-                    new_value = "<" + '@' + id_slack  + ">"
-                   
-                    
-                    message = message.replace(value, new_value)
-                    print("done")
-                
-
-
-                except:
-                    pass
-                
-                print(message)
-
-       
 
         
-                
         
+
         slack_details = ScrumSlack.objects.get(scrumproject=proj, user_id = slack_id)
-        print("sent to slack")
         channel_id = slack_details.channel_id
         bot_access_token = slack_details.access_token
         scrumuser = ScrumUser.objects.get(nickname = username)
@@ -268,7 +199,7 @@ def send_message(request):
 
 
         ).headers['X-Slack-No-Retry'] = 1
-        
+       
         return JsonResponse(
             {'message': 'successfully send'}, status=200
         )
@@ -314,25 +245,6 @@ def get_recentmessages(request):
 
     except:
         return JsonResponse({'message': 'Token not authenticated'})
-
-class GetAllUsernames(viewsets.ModelViewSet):
-    queryset = ScrumProject.objects.all()
-    serializer_class = ScrumProjectSerializer
-
-    def create(self, request):
-        project_id = request.data['project_id']
-        project = ScrumProject.objects.get(pk=project_id)
-        all_users = []
-
-        project_role = ScrumProjectRole.objects.filter(project=project)
-        
-        for proj in project_role:
-            username = proj.user.nickname
-            all_users.append(username)
-
-        return JsonResponse({"message":"Project Users gotten", "data":all_users})
-
-
 
 class GetProjectGoals(viewsets.ModelViewSet):
     #queryset = ScrumProject.objects.all()
@@ -1749,7 +1661,7 @@ class Events(APIView):
                  
                 
                 
-        i_am = User.objects.get(username=user_email)
+
 # =========================================Get Room and project=====================================================================
         chat_room,created = ScrumChatRoom.objects.get_or_create(name=project_id, hash=hashlib.sha256(project_id.encode('UTF-8')).hexdigest())
         
@@ -1763,8 +1675,7 @@ class Events(APIView):
             channel_id=auth_response["incoming_webhook"]["channel_id"], 
             bot_user_id=auth_response["bot_user_id"],  
             access_token=auth_response['authed_user']["access_token"], 
-            bot_access_token=auth_response["access_token"],
-            scrum_details = i_am
+            bot_access_token=auth_response["access_token"]
             )
             print(SlackApps.objects.filter(scrumproject=scrum_project, user_id = auth_response['authed_user']['id']).exists())
 
@@ -1886,29 +1797,15 @@ class Events(APIView):
                                 
                             #else:
                             #   print("pattern not matched") 
-                        proj = ScrumProject.objects.get(name = project_name)
                         
 
                         chatRoom = ScrumChatRoom.objects.get(id = slack_details.room_id).hash
-                        pattern = re.compile(r'<@[a-zA-Z0-9]+>')
-                       
-                        answer_list = pattern.findall(slack_message)
-                        verify_array = []
-                        print(answer_list)
+                    # new_message = ScrumChatMessage(room=slack_details.room, user=slack_user_nick, message=slack_message, profile_picture=slack_user.slack_profile_picture)
+                        #new_message.save()
 
+                        
 
-                        for answer in answer_list:
-                            if answer not in verify_array:
-                                temp = answer
-                                verify_array.append(temp)
-                                if temp[-1] == '\n':
-                                    temp = temp[0:-1]
-                                value = str(temp[2:-1])
-                                print(value)
-                                scrumuser = ScrumSlack.objects.get(scrumproject=proj, user_id=value).scrum_details.scrumuser.nickname
-
-
-                                slack_message = slack_message.replace(answer, '@'+scrumuser)
+                        
                         actual_message = ChatMessage(username=slack_user_nick, message=slack_message, project_name=project_name, timestamp=datetime.datetime.now().strftime("%I:%M %p . %d-%m-%Y"), profile_picture=slack_user.slack_profile_picture)
                         actual_message.save()
                        

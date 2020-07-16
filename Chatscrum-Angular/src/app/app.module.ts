@@ -15,7 +15,6 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { WebsocketService } from './websocket.service';
-import { MentionModule } from 'angular-mentions';
 
 
 @NgModule({
@@ -28,7 +27,6 @@ import { MentionModule } from 'angular-mentions';
     TermsComponent,
     HomeComponent,
     
-    
   ],
   
   imports: [
@@ -36,8 +34,7 @@ import { MentionModule } from 'angular-mentions';
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    DragDropModule,
-    MentionModule
+    DragDropModule
   ],
   schemas: [NO_ERRORS_SCHEMA],
   providers: [

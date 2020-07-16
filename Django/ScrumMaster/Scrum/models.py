@@ -161,8 +161,6 @@ class ScrumGoalHistory(models.Model):
 #     class Meta:
 #         ordering = ['-id']
 
-
-
 class ScrumSlack(models.Model):
     scrumproject = models.ForeignKey(ScrumProject, on_delete=models.CASCADE)
     room = models.ForeignKey(ScrumChatRoom, on_delete=models.CASCADE)
@@ -173,7 +171,6 @@ class ScrumSlack(models.Model):
     access_token = models.CharField(max_length=500, null=True)
     bot_user_id  = models.CharField(max_length=500, null=True)
     bot_access_token = models.CharField(max_length=500, null=True)
-    scrum_details = models.ForeignKey(User, on_delete=models.CASCADE, default=None)    
     
     def __str__(self):
         return self.team_name
