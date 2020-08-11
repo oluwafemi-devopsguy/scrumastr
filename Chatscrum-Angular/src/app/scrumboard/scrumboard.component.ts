@@ -73,6 +73,7 @@ export class ScrumboardComponent implements OnInit, AfterViewInit{
   public messages = [];
   public uses_slack = sessionStorage.getItem('user_slack');
   public imageUploaded;
+  public mention = {'item':''};
 
   public ws: any;
   public ws_url = this.wsService.ws_url;
