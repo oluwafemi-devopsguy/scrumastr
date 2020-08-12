@@ -1,7 +1,7 @@
-After pulling  this project from the remote repository, you should see two new folders (Angular, Django) and this README file.
+.After pulling  this project from the remote repository, you should see two new folders (Angular, Django) and this README file.
 
 Django contains all the full source.
-l
+
 To get the slack.com to redirect to the Angular front end. open settings.py and edit "FRONTEND" variable on the last line to the appropriate frontend URL
 
 To deploy for Angular, you need to create a new Angular2 project outside of this git repository. Then copy the files from the Angular directory to the src folder in the new project you just created.
