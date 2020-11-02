@@ -121,11 +121,11 @@ DATABASES = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'chatscrum',
-        'USER': 'usman',
-        'PASSWORD': 'usman123',
-        'HOST': 'localhost',
-        'PORT': ''
+        'NAME': 'chat',
+        'USER': 'linuxjobber',
+        'PASSWORD': '8iu7*IU&',
+        'HOST': 'mysql-6cf74b5d8-br8kz',
+        'PORT': '3306'
 
     }
 }

@@ -13,8 +13,13 @@ RUN yum -y --setopt=tsflags=nodocs update && \
 
 RUN yum -y update && yum -y install git
 
+RUN yum -y install \
+https://repo.ius.io/ius-release-el7.rpm \
+https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 
-RUN yum -y install httpd-devel \
+RUN yum install yum-utils
+
+RUN yum -y install httpd-devel --skip-broken\ 
       zlib-devel \
       bzip2-devel \
       openssl-devel \
