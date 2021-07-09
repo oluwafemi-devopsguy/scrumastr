@@ -1,41 +1,71 @@
-pipeline {
-  environment {
-    imagename = "chatscrum-jenkins"
-    registryCredential = 'dockafm'
-    dockerImage = ''
-  }
-  agent any
-  stages {
-    stage('Cloning Git') {
-      steps {
-        git([url: 'https://github.com/git-fm/scrumastr.git', branch: 'master', credentialsId: 'gitjenkins-token'])
+pipeline { 
 
-      }
+    environment { 
+
+        registry = "dockafm/chatscrum-newproject" 
+
+        registryCredential = 'dockerhub' 
+
+        dockerImage = '' 
+
     }
-    stage('Building image') {
-      steps{
-        script {
-          dockerImage = docker.build imagename
+
+    agent any 
+
+    stages { 
+
+        stage('Cloning our Git') { 
+
+            steps { 
+
+                git 'https://github.com/git-fm/scrumastr.git' 
+
+            }
+
+        } 
+
+        stage('Building our image') { 
+
+            steps { 
+
+                script { 
+
+                    dockerImage = docker.build registry + ":$BUILD_NUMBER" 
+
+                }
+
+            } 
+
         }
-      }
-    }
-    stage('Deploy Image') {
-      steps{
-        script {
-          docker.withRegistry( '', registryCredential ) {
-            dockerImage.push("$BUILD_NUMBER")
-             dockerImage.push('latest')
 
-          }
-        }
-      }
-    }
-    stage('Remove Unused docker image') {
-      steps{
-        sh "docker rmi $imagename:$BUILD_NUMBER"
-         sh "docker rmi $imagename:latest"
+        stage('Deploy our image') { 
 
-      }
+            steps { 
+
+                script { 
+
+                    docker.withRegistry( '', registryCredential ) { 
+
+                        dockerImage.push() 
+
+                    }
+
+                } 
+
+            }
+
+        } 
+
+        stage('Cleaning up') { 
+
+            steps { 
+
+                sh "docker rmi $registry:$BUILD_NUMBER" 
+
+            }
+
+        } 
+
     }
-  }
+
 }
